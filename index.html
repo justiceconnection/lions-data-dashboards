@@ -20,9 +20,10 @@
   .kpi .v{font-size:25px;font-weight:700;color:var(--ink)}
   .kpi .l{color:var(--mut);font-size:12px;margin-top:3px}
   .kpi select.mini{margin-top:6px;font-size:11.5px;padding:3px 6px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;max-width:100%}
-  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .ax2row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .ctl{display:flex;flex-direction:column;gap:5px}
-  .ctl label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
+  .ctl label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);white-space:nowrap;height:14px;line-height:14px}
   input[type=month],select,button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
   button{cursor:pointer}
   .chk{display:flex;align-items:center;gap:7px;padding-bottom:7px}
@@ -102,8 +103,8 @@
       <button data-v="category" class="on">Category</button><button data-v="district">District</button></div></div>
   </div>
   <div class="controls">
-    <div class="chk"><input type="checkbox" id="ax2"><label for="ax2">2nd y-axis</label></div>
-    <div class="ctl" id="ax2box" hidden><label>2nd axis (right)</label><div class="seg" id="ax2by" style="margin-bottom:6px"><button data-v="series" class="on">Series</button><button data-v="metric">Metric</button></div><div id="ax2sel"></div></div>
+    <div class="ctl" id="ax2box"><label>2nd Axis (Right)</label>
+      <div class="ax2row"><div class="seg" id="ax2by"><button data-v="series" class="on">Series</button><button data-v="metric">Metric</button></div><div id="ax2sel"></div></div></div>
   </div>
 
   <div class="kpihdr" id="kpihdr">Topline — <b id="kpiMetric">Cases filed</b> · <span id="kpiScope"></span></div>
@@ -281,8 +282,8 @@ const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!la
 function renderChart(){
   const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const pct=isPct(state.metric);
   const left=buildSeries(leftItems(),'y');
-  const metricMode = state.ax2 && state.ax2by==='metric' && state.ax2sel.size>0;
-  const right=(state.ax2 && state.ax2by!=='metric' && state.ax2sel.size)?buildSeries([...state.ax2sel],'y1'):[];
+  const metricMode = state.ax2by==='metric' && state.ax2sel.size>0;
+  const right=(state.ax2by!=='metric' && state.ax2sel.size)?buildSeries([...state.ax2sel],'y1'):[];
   const mk=(s,j,pal,dash)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats),state.metric); const col=pal[j%pal.length];
     return {label:s.label+(s.axis==='y1'?' (R)':''),data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:dash?[5,4]:[],yAxisID:s.axis,_col:col,_pct:pct}; };
   const datasets=[...left.map((s,j)=>mk(s,j,PALETTE,false)), ...right.map((s,j)=>mk(s,j,RPAL,true))];
@@ -399,14 +400,12 @@ async function init(){ renderNav();
     onChange:async v=>{ state.dists=new Set(v); if(!(state.dists.has('National')||state.dists.size===0)) await ensureFull(); render(); }});
   cMS=multiSelect("category",{items:CATLIST,allValue:"ALL",allLabel:"All categories",initial:state.cats,searchable:false,
     onChange:v=>{ state.cats=new Set(v); render(); }});
+  buildAx2Picker();
   document.getElementById("metric").addEventListener("change",e=>{ state.metric=e.target.value; render(); });
   document.querySelectorAll('#seriesBy button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#seriesBy button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.seriesBy=b.dataset.v;
-    if(state.seriesBy==='district') await ensureFull(); if(state.ax2) buildAx2Picker(); render(); }));
+    if(state.seriesBy==='district') await ensureFull(); if(state.ax2by==='series') buildAx2Picker(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); }));
   document.querySelectorAll('#occ button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#occ button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.occ=b.dataset.v; render(); }));
-  document.getElementById("ax2").addEventListener("change",async e=>{ state.ax2=e.target.checked; const box=document.getElementById('ax2box');
-    if(state.ax2){ if(state.seriesBy==='district') await ensureFull(); box.hidden=false; buildAx2Picker(); }
-    else { state.ax2sel=new Set(); box.hidden=true; } renderChart(); });
   document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); buildAx2Picker(); renderChart(); }));
   document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
