@@ -57,11 +57,11 @@
   #dl{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
   .foot{color:var(--mut);font-size:11.5px;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
   #status{color:var(--mut);font-size:12px}
-  .dashnav{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px}
-  .dashnav a{font-size:13px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);text-decoration:none;font-weight:500}
-  .dashnav a:hover{border-color:var(--accent)}
-  .dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-  .dashsel{display:none;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:2px 0 14px;width:100%;max-width:360px}
+  .dashnav{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 16px}
+  .dashnav a{font-size:14.5px;padding:9px 18px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--accent);text-decoration:none;font-weight:600}
+  .dashnav a:hover{opacity:.88}
+  .dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .dashsel{display:none;font:inherit;font-size:14.5px;font-weight:600;color:var(--accent);background:var(--ink);border:1px solid var(--ink);border-radius:8px;padding:9px 12px;margin:2px 0 16px;width:100%;max-width:360px}
   @media(max-width:600px){.dashnav{display:none}.dashsel{display:block}}
 </style></head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
@@ -248,6 +248,7 @@ function buildCSV(){
 }
 
 // flat multi-select; opts.plain => no All sentinel (used for reasons)
+function fmtDist(c){ return (c&&c.length===3 && 'NSEWMC'.includes(c[2])) ? c.slice(0,2)+'-'+c[2] : c; }
 function multiSelect(mountId,opts){
   const wrap=document.getElementById(mountId); wrap.classList.add('ms'); wrap.innerHTML='';
   const btn=document.createElement('button'); btn.type='button'; btn.className='ms-btn';
@@ -255,16 +256,16 @@ function multiSelect(mountId,opts){
   const bar=document.createElement('div'); bar.className='ms-bar';
   const bAll=document.createElement('a'); bAll.textContent='Select all'; bAll.href='#';
   const bClr=document.createElement('a'); bClr.textContent='Clear all'; bClr.href='#'; bar.append(bAll,bClr);
-  let searchEl=null; const list=document.createElement('div'); list.className='ms-list'; const sel=opts.initial;
+  let searchEl=null; const list=document.createElement('div'); list.className='ms-list'; const sel=opts.initial; const F=opts.fmt||(v=>v);
   const label=()=>{ if(opts.plain){ return sel.size===0?(opts.emptyLabel||'None'):(sel.size===opts.items.length?(opts.allLabel||'All'):sel.size+' selected'); }
-    return (sel.has(opts.allValue)||sel.size===0)?opts.allLabel:(sel.size===1?[...sel][0]:sel.size+' selected'); };
+    return (sel.has(opts.allValue)||sel.size===0)?opts.allLabel:(sel.size===1?F([...sel][0]):sel.size+' selected'); };
   function renderList(){ const q=searchEl?searchEl.value.toLowerCase():''; list.innerHTML='';
     const items=(opts.plain?[]:[{v:opts.allValue,t:opts.allLabel}]).concat(opts.items.map(v=>({v,t:v})));
     for(const it of items){ if(q&&it.v!==opts.allValue&&!it.t.toLowerCase().includes(q)) continue;
       const lab=document.createElement('label'); const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=sel.has(it.v);
       cb.addEventListener('change',()=>{ if(!opts.plain&&it.v===opts.allValue){ sel.clear(); sel.add(opts.allValue); }
         else { if(!opts.plain) sel.delete(opts.allValue); if(cb.checked)sel.add(it.v); else sel.delete(it.v); if(!opts.plain&&sel.size===0)sel.add(opts.allValue); }
-        btn.textContent=label(); renderList(); opts.onChange([...sel]); }); lab.append(cb,document.createTextNode(' '+it.t)); list.append(lab); } }
+        btn.textContent=label(); renderList(); opts.onChange([...sel]); }); lab.append(cb,document.createTextNode(' '+(it.v===opts.allValue?it.t:F(it.v)))); list.append(lab); } }
   bAll.addEventListener('click',e=>{ e.preventDefault(); sel.clear(); for(const v of opts.items) sel.add(v); btn.textContent=label(); renderList(); opts.onChange([...sel]); });
   bClr.addEventListener('click',e=>{ e.preventDefault(); sel.clear(); if(!opts.plain) sel.add(opts.allValue); btn.textContent=label(); renderList(); opts.onChange([...sel]); });
   if(opts.searchable){ searchEl=document.createElement('input'); searchEl.className='ms-search'; searchEl.placeholder='Filter…'; searchEl.addEventListener('input',renderList); panel.append(searchEl); }
@@ -336,18 +337,18 @@ async function init(){ renderNav();
   catch(e){ document.getElementById("status").textContent="could not load decl_cat_cube_national.csv — serve this folder over http"; return; }
   const ms=[...new Set(CAT_NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   CATLIST=[...new Set(CAT_NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();
-  dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,
+  dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,fmt:fmtDist,
     onChange:v=>{ state.dists=new Set(v); render(); }});
   buildDimPicker();
   multiSelect("reason",{items:REASON_ORDER,plain:true,allLabel:"All reasons",emptyLabel:"pick reasons…",initial:state.reasons,searchable:false,
     onChange:v=>{ state.reasons=new Set(v); render(); }});
   document.querySelectorAll('#dimSeg button').forEach(x=>x.addEventListener('click',async()=>{ document.querySelectorAll('#dimSeg button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.dim=x.dataset.v;
     if(isAg()) await ensureAgency(); buildDimPicker(); render(); }));
-  document.querySelectorAll('#presets button').forEach(x=>x.addEventListener('click',()=>{ const p=PRESETS[x.dataset.p]; state.from=p[0]; state.to=p[1]; document.getElementById('from').value=p[0]; document.getElementById('to').value=p[1]; render(); }));
+  document.querySelectorAll('#presets button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); const p=PRESETS[x.dataset.p]; state.from=p[0]; state.to=p[1]; document.getElementById('from').value=p[0]; document.getElementById('to').value=p[1]; render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
   document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
-  document.getElementById("from").addEventListener("change",e=>{ state.from=e.target.value; render(); });
-  document.getElementById("to").addEventListener("change",e=>{ state.to=e.target.value; render(); });
+  document.getElementById("from").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.from=e.target.value; render(); });
+  document.getElementById("to").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
   ensureCatFull(); render();
 }

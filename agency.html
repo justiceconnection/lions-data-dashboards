@@ -69,11 +69,11 @@
   .foot{color:var(--mut);font-size:11.5px;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
   #status{color:var(--mut);font-size:12px}
   @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
-  .dashnav{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px}
-  .dashnav a{font-size:13px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);text-decoration:none;font-weight:500}
-  .dashnav a:hover{border-color:var(--accent)}
-  .dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-  .dashsel{display:none;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:2px 0 14px;width:100%;max-width:360px}
+  .dashnav{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 16px}
+  .dashnav a{font-size:14.5px;padding:9px 18px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--accent);text-decoration:none;font-weight:600}
+  .dashnav a:hover{opacity:.88}
+  .dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .dashsel{display:none;font:inherit;font-size:14.5px;font-weight:600;color:var(--accent);background:var(--ink);border:1px solid var(--ink);border-radius:8px;padding:9px 12px;margin:2px 0 16px;width:100%;max-width:360px}
   @media(max-width:600px){.dashnav{display:none}.dashsel{display:block}}
 </style></head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
@@ -127,7 +127,7 @@
 
   <div class="card">
     <h3><span id="chart2Title">Share of referred cases — % of total</span>
-      <span class="seg" id="mixMode"><button data-v="sum" class="on">Sum</button><button data-v="stacked">Stacked</button></span></h3>
+      <span class="seg" id="mixMode"><button data-v="sum">Sum</button><button data-v="stacked" class="on">Stacked</button></span></h3>
     <div id="legend2"></div>
     <div class="chartbox sm"><canvas id="chart2"></canvas></div>
   </div>
@@ -154,7 +154,7 @@ const DEFAULT_AGS_V=['SSA','HUD','IRS','Bureau of Prisons','ICE','HSI','FBI','DE
 const state={cls:'R',dists:new Set(['National']),
   ags:new Set(DEFAULT_AGS_R),occ:'lead',metric:'cases_filed',
   agsC:new Set(DEFAULT_AGS_V),role:'Defendant',basis:'cases',metricC:'cases_filed',
-  mixMode:'sum',from:'2012-10',to:'2026-05'};
+  mixMode:'stacked',from:'2012-10',to:'2026-05'};
 let NAT=null,FULL=null,CNAT=null,CFULL=null,SPINE=[],fullLoading=false,cfullLoading=false,civilLoading=false;
 let dMS=null,chart=null,chart2=null,chart3=null;
 let AGLIST_R=[],AGLIST_V=[],DEPTS_R=[],DEPTS_V=[];
@@ -415,6 +415,7 @@ function buildCSV(){
 }
 
 // flat multi-select (districts)
+function fmtDist(c){ return (c&&c.length===3 && 'NSEWMC'.includes(c[2])) ? c.slice(0,2)+'-'+c[2] : c; }
 function multiSelect(mountId,opts){
   const wrap=document.getElementById(mountId); wrap.classList.add('ms'); wrap.innerHTML='';
   const btn=document.createElement('button'); btn.type='button'; btn.className='ms-btn';
@@ -422,15 +423,15 @@ function multiSelect(mountId,opts){
   const bar=document.createElement('div'); bar.className='ms-bar';
   const bAll=document.createElement('a'); bAll.textContent='Select all'; bAll.href='#';
   const bClr=document.createElement('a'); bClr.textContent='Clear all'; bClr.href='#';
-  bar.append(bAll,bClr); let searchEl=null; const list=document.createElement('div'); list.className='ms-list'; const sel=opts.initial;
-  const label=()=> (sel.has(opts.allValue)||sel.size===0)?opts.allLabel:(sel.size===1?[...sel][0]:sel.size+' selected');
+  bar.append(bAll,bClr); let searchEl=null; const list=document.createElement('div'); list.className='ms-list'; const sel=opts.initial; const F=opts.fmt||(v=>v);
+  const label=()=> (sel.has(opts.allValue)||sel.size===0)?opts.allLabel:(sel.size===1?F([...sel][0]):sel.size+' selected');
   function renderList(){ const q=searchEl?searchEl.value.toLowerCase():''; list.innerHTML='';
     const items=[{v:opts.allValue,t:opts.allLabel}].concat(opts.items.map(v=>({v,t:v})));
     for(const it of items){ if(q&&it.v!==opts.allValue&&!it.t.toLowerCase().includes(q)) continue;
       const lab=document.createElement('label'); const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=sel.has(it.v);
       cb.addEventListener('change',()=>{ if(it.v===opts.allValue){ sel.clear(); sel.add(opts.allValue); }
         else { sel.delete(opts.allValue); if(cb.checked)sel.add(it.v); else sel.delete(it.v); if(sel.size===0)sel.add(opts.allValue); }
-        btn.textContent=label(); renderList(); opts.onChange([...sel]); }); lab.append(cb,document.createTextNode(' '+it.t)); list.append(lab); } }
+        btn.textContent=label(); renderList(); opts.onChange([...sel]); }); lab.append(cb,document.createTextNode(' '+(it.v===opts.allValue?it.t:F(it.v)))); list.append(lab); } }
   bAll.addEventListener('click',e=>{ e.preventDefault(); sel.clear(); for(const v of opts.items) sel.add(v); btn.textContent=label(); renderList(); opts.onChange([...sel]); });
   bClr.addEventListener('click',e=>{ e.preventDefault(); sel.clear(); sel.add(opts.allValue); btn.textContent=label(); renderList(); opts.onChange([...sel]); });
   if(opts.searchable){ searchEl=document.createElement('input'); searchEl.className='ms-search'; searchEl.placeholder='Filter…'; searchEl.addEventListener('input',renderList); panel.append(searchEl); }
@@ -510,7 +511,7 @@ async function render(){ const st=document.getElementById("status");
   document.getElementById('foot').innerHTML=isCiv()?FOOT_V:FOOT_R;
   const needFull=!(state.dists.has('National')||state.dists.size===0);
   if(needFull){ if(isCiv()) await ensureFullC(); else await ensureFull(); }
-  st.textContent=(isCiv()?'Civil · U.S. as '+state.role+' · '+state.basis+' · ':'Criminal · ')+(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].join(', '))+" · "+curAgs().size+" agencies";
+  st.textContent=(isCiv()?'Civil · U.S. as '+state.role+' · '+state.basis+' · ':'Criminal · ')+(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+curAgs().size+" agencies";
   renderKPIs(); renderChart(); renderChart2(); renderChart3(); renderTable();
 }
 
@@ -526,7 +527,7 @@ async function init(){ renderNav();
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   const b=buildDepts(NAT,DEPT_ORDER_R,SUB_ORDER_R); DEPTS_R=b.DEPTS; AGLIST_R=b.AGLIST;
   populateMetric();
-  dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,
+  dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,fmt:fmtDist,
     onChange:async v=>{ state.dists=new Set(v); render(); }});
   buildAgencyPicker();
   document.getElementById("metric").addEventListener("change",e=>{ setMetric(e.target.value); render(); });
@@ -535,11 +536,11 @@ async function init(){ renderNav();
   document.querySelectorAll('#role button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#role button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.role=x.dataset.v; render(); }));
   document.querySelectorAll('#basis button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.basis=x.dataset.v; populateMetric(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.mixMode=x.dataset.v; renderChart2(); }));
-  document.querySelectorAll('#presets button').forEach(x=>x.addEventListener('click',()=>{ const p=PRESETS[x.dataset.p]; state.from=p[0]; state.to=p[1]; document.getElementById('from').value=p[0]; document.getElementById('to').value=p[1]; render(); }));
+  document.querySelectorAll('#presets button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); const p=PRESETS[x.dataset.p]; state.from=p[0]; state.to=p[1]; document.getElementById('from').value=p[0]; document.getElementById('to').value=p[1]; render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
   document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
-  document.getElementById("from").addEventListener("change",e=>{ state.from=e.target.value; render(); });
-  document.getElementById("to").addEventListener("change",e=>{ state.to=e.target.value; render(); });
+  document.getElementById("from").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.from=e.target.value; render(); });
+  document.getElementById("to").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
   ensureFull(); render();
 }

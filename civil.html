@@ -57,11 +57,11 @@
   .foot{color:var(--mut);font-size:11.5px;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
   #status{color:var(--mut);font-size:12px}
   @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
-  .dashnav{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px}
-  .dashnav a{font-size:13px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);text-decoration:none;font-weight:500}
-  .dashnav a:hover{border-color:var(--accent)}
-  .dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-  .dashsel{display:none;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:2px 0 14px;width:100%;max-width:360px}
+  .dashnav{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 16px}
+  .dashnav a{font-size:14.5px;padding:9px 18px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--accent);text-decoration:none;font-weight:600}
+  .dashnav a:hover{opacity:.88}
+  .dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .dashsel{display:none;font:inherit;font-size:14.5px;font-weight:600;color:var(--accent);background:var(--ink);border:1px solid var(--ink);border-radius:8px;padding:9px 12px;margin:2px 0 16px;width:100%;max-width:360px}
   @media(max-width:600px){.dashnav{display:none}.dashsel{display:block}}
 </style></head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
@@ -84,7 +84,7 @@
     <div class="ctl"><label>Chart series by</label><div class="seg" id="seriesBy">
       <button data-v="category" class="on">Cause</button><button data-v="district">District</button></div></div>
     <div class="chk"><input type="checkbox" id="ax2"><label for="ax2">2nd y-axis</label></div>
-    <div class="ctl" id="ax2box" hidden><label>2nd axis series (right)</label><div id="ax2sel"></div></div>
+    <div class="ctl" id="ax2box" hidden><label>2nd axis (right)</label><div class="seg" id="ax2by" style="margin-bottom:6px"><button data-v="series" class="on">Series</button><button data-v="metric">Metric</button></div><div id="ax2sel"></div></div>
   </div>
   <div class="controls">
     <div class="ctl"><label>Administration</label><div class="seg" id="presets">
@@ -105,7 +105,7 @@
   <div class="card"><h3><span id="chartTitle">Cases filed</span></h3><div id="legend"></div>
     <div class="chartbox"><canvas id="chart"></canvas></div></div>
   <div class="card"><h3><span id="chart2Title">Cause of action mix</span>
-    <span class="seg" id="mixMode"><button data-v="sum" class="on">Sum</button><button data-v="stacked">Stacked</button></span></h3>
+    <span class="seg" id="mixMode"><button data-v="sum">Sum</button><button data-v="stacked" class="on">Stacked</button></span></h3>
     <div id="legend2"></div><div class="chartbox sm"><canvas id="chart2"></canvas></div></div>
   <div class="card"><h3><span id="chart3Title">Disposition mix — % of cases terminated</span></h3>
     <div id="legend3"></div><div id="chart3msg"></div><div class="chartbox sm" id="chart3box"><canvas id="chart3"></canvas></div></div>
@@ -117,7 +117,7 @@
   <div class="foot">Two master toggles: U.S. role (Plaintiff / Defendant / All Other) and Matters vs Cases (swaps the metric list). Cause of action = the 14 report categories (Appendix A). Charts mirror the criminal dashboard; the disposition chart applies to Cases only. <b>Pending is currently a provisional running net (filed − terminated); it does not yet match the report's absolute pending stock — being refined.</b> Cause categories, disposition, and U.S. role validated against DOJ Annual Report Tables 4 & 5 (FY2025 ~104%, vintage drift). Multi-court (district/state/bankruptcy). Source: DOJ EOUSA LIONS (May 2026 vintage), PII-free aggregate.</div>
 </div>
 <script>
-const state={dists:new Set(['National']),cats:new Set(['ALL']),role:'Defendant',basis:'cases',metric:'cases_filed',seriesBy:'category',ax2:false,ax2sel:new Set(),kpiCat:'Immigration',mixMode:'sum',from:'2012-10',to:'2026-05'};
+const state={dists:new Set(['National']),cats:new Set(['ALL']),role:'Defendant',basis:'cases',metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),kpiCat:'Immigration',mixMode:'stacked',from:'2012-10',to:'2026-05'};
 let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=null, chart=null, chart2=null, chart3=null, CATLIST=[];
 const NUM=["matters_received","cases_filed","matters_terminated","cases_terminated","d_judg_us","d_settle","d_against","d_dismissed","d_other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
@@ -180,6 +180,7 @@ function metricArray(R, metric){ switch(metric){
 function metricLabel(m){ const e=metricsList().find(x=>x[0]===m); return e?e[1]:m; }
 function visIdx(){ const r=[]; for(let i=0;i<SPINE.length;i++){ const ym=SPINE[i]; if(ym>=state.from&&ym<=state.to) r.push(i);} return r; }
 
+function fmtDist(c){ return (c&&c.length===3 && 'NSEWMC'.includes(c[2])) ? c.slice(0,2)+'-'+c[2] : c; }
 function buildSeries(items, axis){
   const dsel=(state.dists.has('National')||state.dists.size===0)?['National']:[...state.dists];
   const csel=(state.cats.has('ALL')||state.cats.size===0)?['ALL']:[...state.cats];
@@ -187,7 +188,7 @@ function buildSeries(items, axis){
   if(state.seriesBy==='category'){ const ds=new Set(dsel);
     for(const cat of items) out.push({key:axis+':c:'+cat,label:(cat==='ALL'?'All causes':cat),dists:ds,cats:new Set([cat]),axis});
   } else { const cs=new Set(csel);
-    for(const d of items) out.push({key:axis+':d:'+d,label:(d==='National'?'National':d),dists:new Set([d]),cats:cs,axis});
+    for(const d of items) out.push({key:axis+':d:'+d,label:fmtDist(d),dists:new Set([d]),cats:cs,axis});
   }
   return out;
 }
@@ -255,19 +256,25 @@ function baseScales(pct,rightTitle,anyR){ return {x:{ticks:{color:'#6b6c68',maxT
 function renderChart(){
   const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const pct=false;
   const left=buildSeries(leftItems(),'y');
-  const right=(state.ax2 && state.ax2sel.size)?buildSeries([...state.ax2sel],'y1'):[];
+  const metricMode=state.ax2 && state.ax2by==='metric' && state.ax2sel.size>0;
+  const right=(state.ax2 && state.ax2by!=='metric' && state.ax2sel.size)?buildSeries([...state.ax2sel],'y1'):[];
   const mk=(s,j,pal,dash)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats,state.role),state.metric); const col=pal[j%pal.length];
     return {label:s.label+(s.axis==='y1'?' (R)':''),data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:dash?[5,4]:[],yAxisID:s.axis,_col:col}; };
   const datasets=[...left.map((s,j)=>mk(s,j,PALETTE,false)), ...right.map((s,j)=>mk(s,j,RPAL,true))];
+  const rMetrics=metricMode?[...state.ax2sel]:[];
+  rMetrics.forEach((m2,j)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role),m2); const col=RPAL[j%RPAL.length];
+    datasets.push({label:metricLabel(m2)+' (R)',data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col}); });
+  const anyR=right.length>0||rMetrics.length>0;
+  const rTitle=metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):rightLabelText();
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
-     + (right.length?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'');
+     + (anyR?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'');
   document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" — "+state.role+" — by "+(state.seriesBy==='category'?'cause of action':'district');
   if(typeof window==='undefined'||!window.Chart){ return; }
   if(chart) chart.destroy();
   chart=new window.Chart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':c.parsed.y.toLocaleString())}}},
-      scales:baseScales(false,rightLabelText(),right.length>0)},plugins:[adminBands]});
+      scales:baseScales(false,rTitle,anyR)},plugins:[adminBands]});
 }
 
 function renderChart2(){
@@ -307,7 +314,7 @@ function renderChart3(){
 function render(){ const st=document.getElementById("status");
   const needFull=!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district';
   if(needFull && !FULL && fullLoading){ st.textContent="loading district detail…"; return; }
-  st.textContent=(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].join(', '))+" · U.S. as "+state.role+" · "+state.basis;
+  st.textContent=(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · U.S. as "+state.role+" · "+state.basis;
   renderKPIs(); renderChart(); renderChart2(); renderChart3(); renderTable(); }
 
 function buildCSV(){
@@ -325,16 +332,16 @@ function multiSelect(mountId,opts){
   const bar=document.createElement('div'); bar.className='ms-bar';
   const bAll=document.createElement('a'); bAll.textContent='Select all'; bAll.href='#';
   const bClr=document.createElement('a'); bClr.textContent='Clear all'; bClr.href='#'; bar.append(bAll,bClr);
-  let searchEl=null; const list=document.createElement('div'); list.className='ms-list'; const sel=opts.initial;
-  const label=()=>{ if(opts.plain){ return sel.size===0?(opts.emptyLabel||'None'):(sel.size===1?[...sel][0]:sel.size+' selected'); }
-    return (sel.has(opts.allValue)||sel.size===0)?opts.allLabel:(sel.size===1?[...sel][0]:sel.size+' selected'); };
+  let searchEl=null; const list=document.createElement('div'); list.className='ms-list'; const sel=opts.initial; const F=opts.fmt||(v=>v);
+  const label=()=>{ if(opts.plain){ return sel.size===0?(opts.emptyLabel||'None'):(sel.size===1?F([...sel][0]):sel.size+' selected'); }
+    return (sel.has(opts.allValue)||sel.size===0)?opts.allLabel:(sel.size===1?F([...sel][0]):sel.size+' selected'); };
   function renderList(){ const q=searchEl?searchEl.value.toLowerCase():''; list.innerHTML='';
     const items=(opts.plain?[]:[{v:opts.allValue,t:opts.allLabel}]).concat(opts.items.map(v=>({v,t:v})));
     for(const it of items){ if(q&&it.v!==opts.allValue&&!it.t.toLowerCase().includes(q)) continue;
       const lab=document.createElement('label'); const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=sel.has(it.v);
       cb.addEventListener('change',()=>{ if(!opts.plain&&it.v===opts.allValue){ sel.clear(); sel.add(opts.allValue); }
         else { if(!opts.plain) sel.delete(opts.allValue); if(cb.checked)sel.add(it.v); else sel.delete(it.v); if(!opts.plain&&sel.size===0)sel.add(opts.allValue); }
-        btn.textContent=label(); renderList(); opts.onChange([...sel]); }); lab.append(cb,document.createTextNode(' '+it.t)); list.append(lab); } }
+        btn.textContent=label(); renderList(); opts.onChange([...sel]); }); lab.append(cb,document.createTextNode(' '+(it.v===opts.allValue?it.t:F(it.v)))); list.append(lab); } }
   bAll.addEventListener('click',e=>{ e.preventDefault(); sel.clear(); for(const v of opts.items) sel.add(v); btn.textContent=label(); renderList(); opts.onChange([...sel]); });
   bClr.addEventListener('click',e=>{ e.preventDefault(); sel.clear(); if(!opts.plain) sel.add(opts.allValue); btn.textContent=label(); renderList(); opts.onChange([...sel]); });
   if(opts.searchable){ searchEl=document.createElement('input'); searchEl.className='ms-search'; searchEl.placeholder='Filter…'; searchEl.addEventListener('input',renderList); panel.append(searchEl); }
@@ -345,7 +352,10 @@ function multiSelect(mountId,opts){
 }
 function districtList(){ return FULL?[...new Set(FULL.map(r=>r.district))].sort():[]; }
 function buildAx2Picker(){ state.ax2sel=new Set();
-  ax2MS=multiSelect('ax2sel',{items:state.seriesBy==='category'?CATLIST:districtList(),plain:true,emptyLabel:'pick series…',initial:state.ax2sel,searchable:state.seriesBy==='district',
+  const metricMode=state.ax2by==='metric';
+  const items=metricMode?metricsList().map(m=>m[0]):(state.seriesBy==='category'?CATLIST:districtList());
+  ax2MS=multiSelect('ax2sel',{items,plain:true,emptyLabel:metricMode?'pick metrics…':'pick series…',initial:state.ax2sel,searchable:!metricMode&&state.seriesBy==='district',
+    fmt:metricMode?metricLabel:(state.seriesBy==='district'?fmtDist:undefined),
     onChange:v=>{ state.ax2sel=new Set(v); renderChart(); }}); }
 async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; document.getElementById("status").textContent="loading district detail…";
   try{ const r=await fetch("./civil_cube.csv",{cache:"no-cache"}); FULL=parseCSV(await r.text()); if(dMS) dMS.setItems(districtList()); }
@@ -358,21 +368,22 @@ async function init(){ renderNav();
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   CATLIST=[...new Set(NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();
   populateMetric();
-  dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,
+  dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,fmt:fmtDist,
     onChange:async v=>{ state.dists=new Set(v); if(!(state.dists.has('National')||state.dists.size===0)) await ensureFull(); render(); }});
   cMS=multiSelect("category",{items:CATLIST,allValue:"ALL",allLabel:"All causes",initial:state.cats,searchable:false,
     onChange:v=>{ state.cats=new Set(v); render(); }});
   document.getElementById("metric").addEventListener("change",e=>{ state.metric=e.target.value; render(); });
   document.querySelectorAll('#role button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#role button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.role=b.dataset.v; render(); }));
-  document.querySelectorAll('#basis button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.basis=b.dataset.v; populateMetric(); render(); }));
+  document.querySelectorAll('#basis button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.basis=b.dataset.v; populateMetric(); if(state.ax2&&state.ax2by==='metric') buildAx2Picker(); render(); }));
   document.querySelectorAll('#seriesBy button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#seriesBy button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.seriesBy=b.dataset.v; if(state.seriesBy==='district') await ensureFull(); if(state.ax2) buildAx2Picker(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); }));
   document.getElementById("ax2").addEventListener("change",async e=>{ state.ax2=e.target.checked; const bx=document.getElementById('ax2box'); if(state.ax2){ if(state.seriesBy==='district') await ensureFull(); bx.hidden=false; buildAx2Picker(); } else { state.ax2sel=new Set(); bx.hidden=true; } renderChart(); });
-  document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const p=PRESETS[b.dataset.p]; state.from=p[0]; state.to=p[1]; document.getElementById('from').value=p[0]; document.getElementById('to').value=p[1]; render(); }));
+  document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); buildAx2Picker(); renderChart(); }));
+  document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); const p=PRESETS[b.dataset.p]; state.from=p[0]; state.to=p[1]; document.getElementById('from').value=p[0]; document.getElementById('to').value=p[1]; render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
   document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
-  document.getElementById("from").addEventListener("change",e=>{ state.from=e.target.value; render(); });
-  document.getElementById("to").addEventListener("change",e=>{ state.to=e.target.value; render(); });
+  document.getElementById("from").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
+  document.getElementById("to").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
   ensureFull(); render();
 }
