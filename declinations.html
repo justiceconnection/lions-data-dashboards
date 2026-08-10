@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Criminal Matters Declined — Dashboard (LIONS)</title>
+<title>Criminal Matter Declinations — LIONS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root{--bg:#fbfbfb;--panel:#ffffff;--panel2:#ffffff;--ink:#212123;--mut:#6b6c68;--line:#e4e4e1;--accent:#eaf54c;--accent-ink:#212123}
@@ -54,6 +54,9 @@
   tbody tr:hover{background:#f5f5f3}
   tr.edge td{color:#b0b1ac} tr.recent td{color:#9a7b2e}
   .bottombar{display:flex;justify-content:flex-end;margin-top:10px}
+  .tabletoggle{margin:8px 0}
+  .disc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+  .disc:hover{border-color:var(--accent)}
   #dl{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
   .foot{color:var(--mut);font-size:11.5px;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
   #status{color:var(--mut);font-size:12px}
@@ -66,7 +69,7 @@
 </style></head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
-  <h1>Criminal Matters Declined — Dashboard</h1>
+  <h1>Criminal Matter Declinations</h1>
   <div class="sub">DOJ U.S. Attorneys (LIONS), declinations by reason. <span id="status">loading…</span></div>
 
   <div class="master"><span class="ml">Break down by</span>
@@ -74,17 +77,17 @@
   </div>
 
   <div class="controls">
-    <div class="ctl"><label>District (multi)</label><div id="district"></div></div>
-    <div class="ctl"><label id="dimLabel">Program category (multi)</label><div id="dimpick"></div></div>
-    <div class="ctl"><label>Declination reason (multi)</label><div id="reason"></div></div>
-  </div>
-  <div class="controls">
-    <div class="ctl"><label>Administration</label><div class="seg" id="presets">
+    <div class="ctl"><label>Administration (multi)</label><div class="seg" id="presets">
       <button data-p="obama2">Obama II</button><button data-p="trump1">Trump I</button>
       <button data-p="biden">Biden</button><button data-p="trump2">Trump II</button>
       <button data-p="all">All</button></div></div>
     <div class="ctl"><label>From</label><input type="month" id="from"></div>
     <div class="ctl"><label>To</label><input type="month" id="to"></div>
+  </div>
+  <div class="controls">
+    <div class="ctl"><label>District (multi)</label><div id="district"></div></div>
+    <div class="ctl"><label id="dimLabel">Program category (multi)</label><div id="dimpick"></div></div>
+    <div class="ctl"><label>Declination reason (multi)</label><div id="reason"></div></div>
   </div>
 
   <div class="card">
@@ -100,7 +103,8 @@
 
   <div id="summary"></div>
   <div id="note"></div>
-  <div class="tblwrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+  <div class="tabletoggle"><button id="tblToggle" class="disc" aria-expanded="false">▸ Show data table</button></div>
+  <div id="tablePanel" hidden><div class="tblwrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div></div>
   <div class="bottombar"><button id="dl">Download CSV</button></div>
 
   <div class="foot">A declined matter is a criminal matter the U.S. Attorney chose not to prosecute (LIONS disposition "DE"), attributed to its first declination and that record's reason. Reasons follow the current EOUSA scheme (Annual Report Tables 14 & 15); the default view starts FY2015, when this seven-reason coding took effect (earlier matters used a legacy detailed coding folded into these categories, so pre-2015 figures are approximate). Break down by <b>program category</b> (Table 14; primary program group) or <b>referring agency</b> (Table 15; lead investigative agency, Table 3D groups). Top chart stacks the selected reasons; bottom chart shows them as separate lines; both are filtered to the selected districts and categories/agencies. Shaded bands = administrations. Last 3 months provisional. Source: DOJ EOUSA LIONS (May 2026 vintage), PII-free aggregate.</div>
@@ -120,7 +124,7 @@ const REASON_ORDER=REASONS.map(r=>r[0]);
 const RCOLOR=Object.fromEntries(REASONS);
 const DEFAULT_REASONS=REASON_ORDER.filter(r=>r!=="Other"); // the 7
 const state={dim:'category',dists:new Set(['National']),cats:new Set(['ALL']),ags:null,
-  reasons:new Set(DEFAULT_REASONS),from:'2014-10',to:'2026-05'};
+  reasons:new Set(DEFAULT_REASONS),admins:new Set(),from:'2014-10',to:'2026-05'};
 let CAT_NAT=null,CAT_FULL=null,AG_NAT=null,AG_FULL=null,SPINE=[],
   catFullLoading=false,agLoading=false,agFullLoading=false,dMS=null,chart=null,chart2=null;
 let CATLIST=[],DEPTS_AG=[],AGLIST=[];
@@ -128,8 +132,14 @@ const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"}
 const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-05"],all:["2014-10","2026-05"]};
 const DEPT_ORDER=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
-const DASHBOARDS=[{name:"Criminal Caseload",file:"index.html"},{name:"Civil by Cause of Action",file:"civil.html"},{name:"By Referring Agency",file:"agency.html"},{name:"Matters Declined",file:"declinations.html"}];
+const DASHBOARDS=[{name:"Criminal Cases",file:"index.html"},{name:"Civil Matters and Cases",file:"civil.html"},{name:"Cases by Referring Agency",file:"agency.html"},{name:"Criminal Matter Declinations",file:"declinations.html"}];
 const CURRENT="declinations.html";
+const ADMIN_SEQ=['obama2','trump1','biden','trump2'];
+function applyAdmins(){ const idx=[...state.admins].map(k=>ADMIN_SEQ.indexOf(k)).sort((a,b)=>a-b);
+  document.querySelectorAll('#presets button').forEach(x=>x.classList.toggle('on', state.admins.has(x.dataset.p)));
+  if(idx.length){ state.from=PRESETS[ADMIN_SEQ[idx[0]]][0]; state.to=PRESETS[ADMIN_SEQ[idx[idx.length-1]]][1]; }
+  else { state.from=PRESETS.all[0]; state.to=PRESETS.all[1]; }
+  const f=document.getElementById('from'),t=document.getElementById('to'); if(f)f.value=state.from; if(t)t.value=state.to; }
 function renderNav(){ const nav=document.getElementById('dashnav'), sel=document.getElementById('dashsel');
   if(nav) nav.innerHTML=DASHBOARDS.map(d=>`<a href="./${d.file}"${d.file===CURRENT?' class="on"':''}>${d.name}</a>`).join("");
   if(sel){ sel.innerHTML=DASHBOARDS.map(d=>`<option value="${d.file}"${d.file===CURRENT?' selected':''}>${d.name}</option>`).join(""); sel.onchange=()=>{ if(sel.value!==CURRENT) location.href='./'+sel.value; }; } }
@@ -202,9 +212,10 @@ function renderChart(){
 }
 function renderChart2(){
   const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const rs=selReasons();
-  const datasets=rs.map(r=>{ const col=RCOLOR[r]; return {label:r,data:idxs.map(i=>SER[r][i]),borderColor:col,backgroundColor:col,fill:false,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true}; });
-  document.getElementById("legend2").innerHTML=rs.map(r=>`<span class="lg"><span class="sw" style="background:${RCOLOR[r]}"></span>${r}</span>`).join("");
-  document.getElementById("chart2Title").textContent="Matters declined — selected reasons over time";
+  const data=idxs.map(i=>rs.reduce((a,r)=>a+SER[r][i],0));
+  const datasets=[{label:'Total declined (selected reasons)',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true}];
+  document.getElementById("legend2").innerHTML=`<span class="lg"><span class="sw" style="background:#212123"></span>Total of selected reasons</span>`;
+  document.getElementById("chart2Title").textContent="Matters declined — total of selected reasons";
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart2) chart2.destroy();
   chart2=new window.Chart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets},
@@ -344,12 +355,18 @@ async function init(){ renderNav();
     onChange:v=>{ state.reasons=new Set(v); render(); }});
   document.querySelectorAll('#dimSeg button').forEach(x=>x.addEventListener('click',async()=>{ document.querySelectorAll('#dimSeg button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.dim=x.dataset.v;
     if(isAg()) await ensureAgency(); buildDimPicker(); render(); }));
-  document.querySelectorAll('#presets button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); const p=PRESETS[x.dataset.p]; state.from=p[0]; state.to=p[1]; document.getElementById('from').value=p[0]; document.getElementById('to').value=p[1]; render(); }));
+  document.querySelectorAll('#presets button').forEach(btn=>btn.addEventListener('click',()=>{ const k=btn.dataset.p;
+    if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
+    const ns=new Set(state.admins); ns.has(k)?ns.delete(k):ns.add(k);
+    const idx=[...ns].map(x=>ADMIN_SEQ.indexOf(x)).sort((a,b)=>a-b);
+    const contig=idx.length===0||(idx[idx.length-1]-idx[0]+1===idx.length);
+    state.admins=contig?ns:new Set([k]); applyAdmins(); render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
   document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
-  document.getElementById("from").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.from=e.target.value; render(); });
-  document.getElementById("to").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
+  document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.from=e.target.value; render(); });
+  document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
+  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
   ensureCatFull(); render();
 }
 if(typeof document!=='undefined') init();

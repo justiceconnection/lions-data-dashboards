@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Federal Criminal Caseload — Dashboard (LIONS)</title>
+<title>Criminal Cases — LIONS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root{--bg:#fbfbfb;--panel:#ffffff;--panel2:#ffffff;--ink:#212123;--mut:#6b6c68;--line:#e4e4e1;--accent:#eaf54c;--accent-ink:#212123}
@@ -61,6 +61,9 @@
   tbody tr:hover{background:#f5f5f3}
   tr.edge td{color:#b0b1ac} tr.recent td{color:#9a7b2e}
   .bottombar{display:flex;justify-content:flex-end;margin-top:10px}
+  .tabletoggle{margin:8px 0}
+  .disc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+  .disc:hover{border-color:var(--accent)}
   #dl{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
   .foot{color:var(--mut);font-size:11.5px;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
   #status{color:var(--mut);font-size:12px}
@@ -74,7 +77,7 @@
 </style></head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
-  <h1>Federal Criminal Caseload — Dashboard</h1>
+  <h1>Criminal Cases</h1>
   <div class="sub">DOJ U.S. Attorneys (LIONS). <span id="status">loading…</span></div>
 
   <div class="occbar">Program-category basis:
@@ -84,21 +87,23 @@
 
 
   <div class="controls">
-    <div class="ctl"><label>District (multi)</label><div id="district"></div></div>
-    <div class="ctl"><label>Program category (multi)</label><div id="category"></div></div>
-    <div class="ctl"><label>Metric</label><select id="metric"></select></div>
-    <div class="ctl"><label>Chart series by</label><div class="seg" id="seriesBy">
-      <button data-v="category" class="on">Category</button><button data-v="district">District</button></div></div>
-    <div class="chk"><input type="checkbox" id="ax2"><label for="ax2">2nd y-axis</label></div>
-    <div class="ctl" id="ax2box" hidden><label>2nd axis (right)</label><div class="seg" id="ax2by" style="margin-bottom:6px"><button data-v="series" class="on">Series</button><button data-v="metric">Metric</button></div><div id="ax2sel"></div></div>
-  </div>
-  <div class="controls">
-    <div class="ctl"><label>Administration</label><div class="seg" id="presets">
+    <div class="ctl"><label>Administration (multi)</label><div class="seg" id="presets">
       <button data-p="obama2">Obama II</button><button data-p="trump1">Trump I</button>
       <button data-p="biden">Biden</button><button data-p="trump2">Trump II</button>
       <button data-p="all">All</button></div></div>
     <div class="ctl"><label>From</label><input type="month" id="from"></div>
     <div class="ctl"><label>To</label><input type="month" id="to"></div>
+  </div>
+  <div class="controls">
+    <div class="ctl"><label>District (multi)</label><div id="district"></div></div>
+    <div class="ctl"><label>Program category (multi)</label><div id="category"></div></div>
+    <div class="ctl"><label>Metric</label><select id="metric"></select></div>
+    <div class="ctl"><label>Chart series by</label><div class="seg" id="seriesBy">
+      <button data-v="category" class="on">Category</button><button data-v="district">District</button></div></div>
+  </div>
+  <div class="controls">
+    <div class="chk"><input type="checkbox" id="ax2"><label for="ax2">2nd y-axis</label></div>
+    <div class="ctl" id="ax2box" hidden><label>2nd axis (right)</label><div class="seg" id="ax2by" style="margin-bottom:6px"><button data-v="series" class="on">Series</button><button data-v="metric">Metric</button></div><div id="ax2sel"></div></div>
   </div>
 
   <div class="kpihdr" id="kpihdr">Topline — <b id="kpiMetric">Cases filed</b> · <span id="kpiScope"></span></div>
@@ -124,6 +129,8 @@
 
   <div id="summary"></div>
   <div id="note"></div>
+  <div class="tabletoggle"><button id="tblToggle" class="disc" aria-expanded="false">▸ Show data table</button></div>
+  <div id="tablePanel" hidden>
   <div class="tblwrap"><table>
     <thead><tr>
       <th>Month</th><th>Cases filed</th><th>Filed 3-mo</th><th>Cases term.</th><th>Term. 3-mo</th>
@@ -131,12 +138,13 @@
     </tr></thead>
     <tbody id="tbody"></tbody>
   </table></div>
+  </div>
   <div class="bottombar"><button id="dl">Download CSV</button></div>
 
   <div class="foot">KPI cards use the selected districts and time range; the two "%" cards use the category chosen in their dropdown. Top chart: selected metric over time (series by category or district; optional right axis with its own picker). Bottom chart: program-category mix as % of cases filed — "Sum" = combined share of selected categories, "Stacked" = each category's share stacked (with "All categories", this shows all 16). Multiple categories are all-occurrences ("All categories" is a distinct total); ratio metrics aggregate as ratio-of-sums. Shaded bands = administrations. Last 3 months provisional. Source: DOJ EOUSA LIONS (May 2026 vintage), PII-free aggregate.</div>
 </div>
 <script>
-const state={dists:new Set(['National']),cats:new Set(['ALL']),metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),occ:'all',kpiCat:'Immigration',mixMode:'stacked',from:'2012-10',to:'2026-05'};
+const state={dists:new Set(['National']),cats:new Set(['ALL']),metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),occ:'all',kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2012-10',to:'2026-05'};
 let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=null, chart=null, chart2=null, CATLIST=[];
 const NUM=["cases_filed","defendants_filed","cases_terminated","defendants_terminated","guilty","not_guilty","dismissed","rule_20_21","other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
@@ -144,8 +152,14 @@ const RPAL=["#2a78d6","#c02d5a","#1d9e75","#7a4fc0","#0e8a8a","#d9622b"];
 const METRICS=[["cases_filed","Cases filed"],["cases_filed_3mo","Cases filed (3-mo avg)"],["cases_terminated","Cases terminated"],["cases_terminated_3mo","Cases terminated (3-mo avg)"],["clearance","Clearance %"],["clearance_3mo","Clearance % (3-mo)"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
 const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-06",c:"rgba(33,33,35,0.06)"}];
 const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-05"],all:["2012-10","2026-05"]};
-const DASHBOARDS=[{name:"Criminal Caseload",file:"index.html"},{name:"Civil by Cause of Action",file:"civil.html"},{name:"By Referring Agency",file:"agency.html"},{name:"Matters Declined",file:"declinations.html"}];
+const DASHBOARDS=[{name:"Criminal Cases",file:"index.html"},{name:"Civil Matters and Cases",file:"civil.html"},{name:"Cases by Referring Agency",file:"agency.html"},{name:"Criminal Matter Declinations",file:"declinations.html"}];
 const CURRENT="index.html";
+const ADMIN_SEQ=['obama2','trump1','biden','trump2'];
+function applyAdmins(){ const idx=[...state.admins].map(k=>ADMIN_SEQ.indexOf(k)).sort((a,b)=>a-b);
+  document.querySelectorAll('#presets button').forEach(x=>x.classList.toggle('on', state.admins.has(x.dataset.p)));
+  if(idx.length){ state.from=PRESETS[ADMIN_SEQ[idx[0]]][0]; state.to=PRESETS[ADMIN_SEQ[idx[idx.length-1]]][1]; }
+  else { state.from=PRESETS.all[0]; state.to=PRESETS.all[1]; }
+  const f=document.getElementById('from'),t=document.getElementById('to'); if(f)f.value=state.from; if(t)t.value=state.to; }
 function renderNav(){ const nav=document.getElementById('dashnav'), sel=document.getElementById('dashsel');
   if(nav) nav.innerHTML=DASHBOARDS.map(d=>`<a href="./${d.file}"${d.file===CURRENT?' class="on"':''}>${d.name}</a>`).join("");
   if(sel){ sel.innerHTML=DASHBOARDS.map(d=>`<option value="${d.file}"${d.file===CURRENT?' selected':''}>${d.name}</option>`).join(""); sel.onchange=()=>{ if(sel.value!==CURRENT) location.href='./'+sel.value; }; } }
@@ -363,12 +377,13 @@ function multiSelect(mountId,opts){
   return { setItems(items){ opts.items=items; renderList(); } };
 }
 function districtList(){ return FULL?[...new Set(FULL.map(r=>r.district))].sort():[]; }
-function buildAx2Picker(){ state.ax2sel=new Set();
-  const metricMode=state.ax2by==='metric';
-  const items=metricMode?METRICS.map(m=>m[0]):(state.seriesBy==='category'?CATLIST:districtList());
-  ax2MS=multiSelect('ax2sel',{items,plain:true,emptyLabel:metricMode?'pick metrics…':'pick series…',initial:state.ax2sel,searchable:!metricMode&&state.seriesBy==='district',
-    fmt:metricMode?metricLabel:(state.seriesBy==='district'?fmtDist:undefined),
-    onChange:v=>{ state.ax2sel=new Set(v); renderChart(); }}); }
+function buildAx2Picker(){ state.ax2sel=new Set(); const mount=document.getElementById('ax2sel');
+  if(state.ax2by==='metric'){ mount.classList.remove('ms'); mount.innerHTML='';
+    const sel=document.createElement('select'); sel.innerHTML='<option value="">— pick a metric —</option>'+METRICS.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');
+    sel.addEventListener('change',()=>{ state.ax2sel=sel.value?new Set([sel.value]):new Set(); renderChart(); }); mount.append(sel);
+  } else {
+    ax2MS=multiSelect('ax2sel',{items:(state.seriesBy==='category'?CATLIST:districtList()),plain:true,emptyLabel:'pick series…',initial:state.ax2sel,searchable:state.seriesBy==='district',
+      fmt:state.seriesBy==='district'?fmtDist:undefined, onChange:v=>{ state.ax2sel=new Set(v); renderChart(); }}); } }
 async function ensureFull(){ if(FULL||fullLoading) return;
   fullLoading=true; document.getElementById("status").textContent="loading district detail…";
   try{ const r=await fetch("./lions_cube.csv",{cache:"no-cache"}); FULL=parseCSV(await r.text()); if(dMS) dMS.setItems(districtList()); }
@@ -393,13 +408,18 @@ async function init(){ renderNav();
     if(state.ax2){ if(state.seriesBy==='district') await ensureFull(); box.hidden=false; buildAx2Picker(); }
     else { state.ax2sel=new Set(); box.hidden=true; } renderChart(); });
   document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); buildAx2Picker(); renderChart(); }));
-  document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); const p=PRESETS[b.dataset.p]; state.from=p[0]; state.to=p[1];
-    document.getElementById('from').value=p[0]; document.getElementById('to').value=p[1]; render(); }));
+  document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;
+    if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
+    const ns=new Set(state.admins); ns.has(k)?ns.delete(k):ns.add(k);
+    const idx=[...ns].map(x=>ADMIN_SEQ.indexOf(x)).sort((a,b)=>a-b);
+    const contig=idx.length===0||(idx[idx.length-1]-idx[0]+1===idx.length);
+    state.admins=contig?ns:new Set([k]); applyAdmins(); render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
   document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
-  document.getElementById("from").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
-  document.getElementById("to").addEventListener("change",e=>{ document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
+  document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
+  document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
+  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();
