@@ -517,11 +517,11 @@ function buildDepts(rows,order,suborder){
 function districtList(){ const src=FULL||CFULL; return src?[...new Set(src.map(r=>r.district))].sort():[]; }
 
 async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./agency_cube.csv",{cache:"no-cache"}); FULL=parseCSV_R(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } fullLoading=false; }
+  try{ const r=await fetch("./agency_cube.csv",{cache:"reload"}); FULL=parseCSV_R(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } fullLoading=false; }
 async function ensureFullC(){ if(CFULL||cfullLoading) return; cfullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./civil_agency_cube.csv",{cache:"no-cache"}); CFULL=parseCSV_C(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } cfullLoading=false; }
+  try{ const r=await fetch("./civil_agency_cube.csv",{cache:"reload"}); CFULL=parseCSV_C(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } cfullLoading=false; }
 async function ensureCivil(){ if(CNAT||civilLoading) return; civilLoading=true; document.getElementById("status").textContent="loading civil data…";
-  try{ const r=await fetch("./civil_agency_cube_national.csv",{cache:"no-cache"}); CNAT=parseCSV_C(await r.text());
+  try{ const r=await fetch("./civil_agency_cube_national.csv",{cache:"reload"}); CNAT=parseCSV_C(await r.text());
     const b=buildDepts(CNAT,DEPT_ORDER_V,SUB_ORDER_V); DEPTS_V=b.DEPTS; AGLIST_V=b.AGLIST; }catch(e){ console.error(e); } civilLoading=false; }
 
 function buildAgencyPicker(){
@@ -549,7 +549,7 @@ async function switchClass(cls){
 }
 
 async function init(){ renderNav();
-  try{ const r=await fetch("./agency_cube_national.csv",{cache:"no-cache"}); NAT=parseCSV_R(await r.text()); }
+  try{ const r=await fetch("./agency_cube_national.csv",{cache:"reload"}); NAT=parseCSV_R(await r.text()); }
   catch(e){ document.getElementById("status").textContent="could not load agency_cube_national.csv — serve this folder over http"; return; }
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   const b=buildDepts(NAT,DEPT_ORDER_R,SUB_ORDER_R); DEPTS_R=b.DEPTS; AGLIST_R=b.AGLIST;

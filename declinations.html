@@ -348,11 +348,11 @@ function buildDepts(rows){
 }
 function districtList(){ const src=CAT_FULL||AG_FULL; return src?[...new Set(src.map(r=>r.district))].sort():[]; }
 async function ensureCatFull(){ if(CAT_FULL||catFullLoading) return; catFullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./decl_cat_cube.csv",{cache:"no-cache"}); CAT_FULL=parseCat(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } catFullLoading=false; }
+  try{ const r=await fetch("./decl_cat_cube.csv",{cache:"reload"}); CAT_FULL=parseCat(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } catFullLoading=false; }
 async function ensureAgency(){ if(AG_NAT||agLoading) return; agLoading=true; document.getElementById("status").textContent="loading agency data…";
-  try{ const r=await fetch("./decl_agency_cube_national.csv",{cache:"no-cache"}); AG_NAT=parseAg(await r.text()); buildDepts(AG_NAT); if(!state.ags) state.ags=new Set(AGLIST); }catch(e){ console.error(e); } agLoading=false; }
+  try{ const r=await fetch("./decl_agency_cube_national.csv",{cache:"reload"}); AG_NAT=parseAg(await r.text()); buildDepts(AG_NAT); if(!state.ags) state.ags=new Set(AGLIST); }catch(e){ console.error(e); } agLoading=false; }
 async function ensureAgFull(){ if(AG_FULL||agFullLoading) return; agFullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./decl_agency_cube.csv",{cache:"no-cache"}); AG_FULL=parseAg(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } agFullLoading=false; }
+  try{ const r=await fetch("./decl_agency_cube.csv",{cache:"reload"}); AG_FULL=parseAg(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } agFullLoading=false; }
 
 function buildDimPicker(){
   if(!isAg()){ multiSelect("dimpick",{items:CATLIST,allValue:"ALL",allLabel:"All categories",initial:state.cats,searchable:false,
@@ -361,7 +361,7 @@ function buildDimPicker(){
 }
 
 async function init(){ renderNav();
-  try{ const r=await fetch("./decl_cat_cube_national.csv",{cache:"no-cache"}); CAT_NAT=parseCat(await r.text()); }
+  try{ const r=await fetch("./decl_cat_cube_national.csv",{cache:"reload"}); CAT_NAT=parseCat(await r.text()); }
   catch(e){ document.getElementById("status").textContent="could not load decl_cat_cube_national.csv — serve this folder over http"; return; }
   const ms=[...new Set(CAT_NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   CATLIST=[...new Set(CAT_NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();

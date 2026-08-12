@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Criminal Cases — LIONS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="./multipliers.js"></script>
+<script src="./multipliers.js?v=202606"></script>
 <style>
   :root{--bg:#fbfbfb;--panel:#ffffff;--panel2:#ffffff;--ink:#212123;--mut:#6b6c68;--line:#e4e4e1;--accent:#eaf54c;--accent-ink:#212123}
   *{box-sizing:border-box}
@@ -151,7 +151,7 @@ let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=
 const NUM=["cases_filed","defendants_filed","cases_terminated","defendants_terminated","guilty","not_guilty","dismissed","rule_20_21","other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
 const RPAL=["#2a78d6","#c02d5a","#1d9e75","#7a4fc0","#0e8a8a","#d9622b"];
-const MULT=(window.LIONS_MULT&&window.LIONS_MULT.criminal)||{};
+const MULT=(window.LIONS_MULT&&window.LIONS_MULT.criminal)||{cases_filed:[1.3018,1.0759,1.0437,1.0274,1.0227,1.017,1.0131,1.0118],cases_terminated:[2.9339,1.9899,1.6706,1.4302,1.248,1.1781,1.136,1.0995]};
 function hasPred(m){ return !!MULT[m]; }
 function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const last=SPINE.length-1;
   return arr.map((v,i)=>{ if(v==null) return null; const age=last-i; return v*(age>=0&&age<mm.length?mm[age]:1); }); }
@@ -417,11 +417,11 @@ function buildAx2Picker(){ state.ax2sel=new Set(); const mount=document.getEleme
       fmt:state.seriesBy==='district'?fmtDist:undefined, onChange:v=>{ state.ax2sel=new Set(v); renderChart(); }}); } }
 async function ensureFull(){ if(FULL||fullLoading) return;
   fullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./lions_cube.csv",{cache:"no-cache"}); FULL=parseCSV(await r.text()); if(dMS) dMS.setItems(districtList()); }
+  try{ const r=await fetch("./lions_cube.csv",{cache:"reload"}); FULL=parseCSV(await r.text()); if(dMS) dMS.setItems(districtList()); }
   catch(e){ console.error(e); } fullLoading=false; }
 
 async function init(){ renderNav();
-  try{ const r=await fetch("./lions_cube_national.csv",{cache:"no-cache"}); NAT=parseCSV(await r.text()); }
+  try{ const r=await fetch("./lions_cube_national.csv",{cache:"reload"}); NAT=parseCSV(await r.text()); }
   catch(e){ document.getElementById("status").textContent="could not load lions_cube_national.csv — serve this folder over http"; return; }
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   CATLIST=[...new Set(NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort((a,b)=>(a==='All Other')-(b==='All Other')||a.localeCompare(b));
