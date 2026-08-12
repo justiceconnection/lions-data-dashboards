@@ -146,7 +146,7 @@
   <div class="foot">KPI cards use the selected districts and time range; the two "%" cards use the category chosen in their dropdown. Top chart: selected metric over time (series by category or district; optional right axis with its own picker). Bottom chart: program-category mix as % of cases filed — "Sum" = combined share of selected categories, "Stacked" = each category's share stacked (with "All categories", this shows all 16). Multiple categories are all-occurrences ("All categories" is a distinct total); ratio metrics aggregate as ratio-of-sums. Shaded bands = administrations. Last 3 months provisional. Source: DOJ EOUSA LIONS (May 2026 vintage), PII-free aggregate.</div>
 </div>
 <script>
-const state={dists:new Set(['National']),cats:new Set(['ALL']),metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),occ:'all',kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2012-10',to:'2026-05'};
+const state={dists:new Set(['National']),cats:new Set(['ALL']),metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),occ:'all',kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2012-10',to:'2026-06'};
 let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=null, chart=null, chart2=null, CATLIST=[];
 const NUM=["cases_filed","defendants_filed","cases_terminated","defendants_terminated","guilty","not_guilty","dismissed","rule_20_21","other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
@@ -156,8 +156,8 @@ function hasPred(m){ return !!MULT[m]; }
 function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const last=SPINE.length-1;
   return arr.map((v,i)=>{ if(v==null) return null; const age=last-i; return v*(age>=0&&age<mm.length?mm[age]:1); }); }
 const METRICS=[["cases_filed","Cases filed"],["cases_filed_3mo","Cases filed (3-mo avg)"],["cases_terminated","Cases terminated"],["cases_terminated_3mo","Cases terminated (3-mo avg)"],["clearance","Clearance %"],["clearance_3mo","Clearance % (3-mo)"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
-const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-06",c:"rgba(33,33,35,0.06)"}];
-const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-05"],all:["2012-10","2026-05"]};
+const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-07",c:"rgba(33,33,35,0.06)"}];
+const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2012-10","2026-06"]};
 const DASHBOARDS=[{name:"Criminal Cases",file:"index.html"},{name:"Civil Matters and Cases",file:"civil.html"},{name:"Cases by Referring Agency",file:"agency.html"},{name:"Criminal Matter Declinations",file:"declinations.html"}];
 const CURRENT="index.html";
 const ADMIN_SEQ=['obama2','trump1','biden','trump2'];

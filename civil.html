@@ -125,7 +125,7 @@
   <div class="foot">Two master toggles: U.S. role (Plaintiff / Defendant / All Other) and Matters vs Cases (swaps the metric list). Cause of action = the 14 report categories (Appendix A). Charts mirror the criminal dashboard; the disposition chart applies to Cases only. <b>Pending is currently a provisional running net (filed − terminated); it does not yet match the report's absolute pending stock — being refined.</b> Cause categories, disposition, and U.S. role validated against DOJ Annual Report Tables 4 & 5 (FY2025 ~104%, vintage drift). Multi-court (district/state/bankruptcy). Source: DOJ EOUSA LIONS (May 2026 vintage), PII-free aggregate.</div>
 </div>
 <script>
-const state={dists:new Set(['National']),cats:new Set(['ALL']),role:'Defendant',basis:'cases',metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2012-10',to:'2026-05'};
+const state={dists:new Set(['National']),cats:new Set(['ALL']),role:'Defendant',basis:'cases',metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2012-10',to:'2026-06'};
 let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=null, chart=null, chart2=null, chart3=null, CATLIST=[];
 const NUM=["matters_received","cases_filed","matters_terminated","cases_terminated","d_judg_us","d_settle","d_against","d_dismissed","d_other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
@@ -137,8 +137,8 @@ function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const 
 const DISP=[["d_judg_us","Judgment For U.S.","#1d9e75"],["d_settle","Settlements","#2a78d6"],["d_against","Judgment Against U.S.","#d9622b"],["d_dismissed","Dismissed","#7a4fc0"],["d_other","Other","#8a8b86"]];
 const METRICS_CASES=[["cases_filed","Cases filed"],["cases_filed_3mo","Cases filed (3-mo avg)"],["cases_pending","Cases pending"],["cases_pending_3mo","Cases pending (3-mo avg)"],["cases_terminated","Cases terminated"],["cases_terminated_3mo","Cases terminated (3-mo avg)"]];
 const METRICS_MATTERS=[["matters_received","Matters received"],["matters_received_3mo","Matters received (3-mo avg)"],["matters_pending","Matters pending"],["matters_pending_3mo","Matters pending (3-mo avg)"],["matters_terminated","Matters terminated"],["matters_terminated_3mo","Matters terminated (3-mo avg)"]];
-const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-06",c:"rgba(33,33,35,0.06)"}];
-const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-05"],all:["2012-10","2026-05"]};
+const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-07",c:"rgba(33,33,35,0.06)"}];
+const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2012-10","2026-06"]};
 const DASHBOARDS=[{name:"Criminal Cases",file:"index.html"},{name:"Civil Matters and Cases",file:"civil.html"},{name:"Cases by Referring Agency",file:"agency.html"},{name:"Criminal Matter Declinations",file:"declinations.html"}];
 const CURRENT="civil.html";
 const ADMIN_SEQ=['obama2','trump1','biden','trump2'];

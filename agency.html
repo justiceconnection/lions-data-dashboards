@@ -158,7 +158,7 @@ const DEFAULT_AGS_V=['SSA','HUD','IRS','Bureau of Prisons','ICE','HSI','FBI','DE
 const state={cls:'R',dists:new Set(['National']),
   ags:new Set(DEFAULT_AGS_R),occ:'lead',metric:'cases_filed',
   agsC:new Set(DEFAULT_AGS_V),role:'Defendant',basis:'cases',metricC:'cases_filed',
-  mixMode:'stacked',admins:new Set(),from:'2012-10',to:'2026-05'};
+  mixMode:'stacked',admins:new Set(),from:'2012-10',to:'2026-06'};
 let NAT=null,FULL=null,CNAT=null,CFULL=null,SPINE=[],fullLoading=false,cfullLoading=false,civilLoading=false;
 let dMS=null,chart=null,chart2=null,chart3=null;
 let AGLIST_R=[],AGLIST_V=[],DEPTS_R=[],DEPTS_V=[];
@@ -169,8 +169,8 @@ const DISP=[["ju","Judgment For U.S.","#1d9e75"],["st","Settlements","#2a78d6"],
 const METRICS_R=[["cases_filed","Cases filed"],["cases_filed_3mo","Cases filed (3-mo avg)"],["cases_terminated","Cases terminated"],["cases_terminated_3mo","Cases terminated (3-mo avg)"],["clearance","Clearance %"],["clearance_3mo","Clearance % (3-mo)"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
 const METRICS_CASES=[["cases_filed","Cases filed"],["cases_filed_3mo","Cases filed (3-mo avg)"],["cases_pending","Cases pending"],["cases_pending_3mo","Cases pending (3-mo avg)"],["cases_terminated","Cases terminated"],["cases_terminated_3mo","Cases terminated (3-mo avg)"]];
 const METRICS_MATTERS=[["matters_received","Matters received"],["matters_received_3mo","Matters received (3-mo avg)"],["matters_pending","Matters pending"],["matters_pending_3mo","Matters pending (3-mo avg)"],["matters_terminated","Matters terminated"],["matters_terminated_3mo","Matters terminated (3-mo avg)"]];
-const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-06",c:"rgba(33,33,35,0.06)"}];
-const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-05"],all:["2012-10","2026-05"]};
+const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-07",c:"rgba(33,33,35,0.06)"}];
+const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2012-10","2026-06"]};
 const DEPT_ORDER_R=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER_R={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const DEPT_ORDER_V=["Social Security Admin","DOJ","DHS","Treasury","HUD","HHS","Education","Veterans Affairs","Small Business Admin","Agriculture","Defense","Labor","Interior","State","EPA","OPM","Energy","Commerce","USPS","Other"];

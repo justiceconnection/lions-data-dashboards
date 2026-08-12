@@ -124,12 +124,12 @@ const REASON_ORDER=REASONS.map(r=>r[0]);
 const RCOLOR=Object.fromEntries(REASONS);
 const DEFAULT_REASONS=REASON_ORDER.filter(r=>r!=="Other"); // the 7
 const state={dim:'category',dists:new Set(['National']),cats:new Set(['ALL']),ags:null,
-  reasons:new Set(DEFAULT_REASONS),admins:new Set(),from:'2014-10',to:'2026-05'};
+  reasons:new Set(DEFAULT_REASONS),admins:new Set(),from:'2014-10',to:'2026-06'};
 let CAT_NAT=null,CAT_FULL=null,AG_NAT=null,AG_FULL=null,SPINE=[],
   catFullLoading=false,agLoading=false,agFullLoading=false,dMS=null,chart=null,chart2=null;
 let CATLIST=[],DEPTS_AG=[],AGLIST=[];
-const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-06",c:"rgba(33,33,35,0.06)"}];
-const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-05"],all:["2014-10","2026-05"]};
+const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-07",c:"rgba(33,33,35,0.06)"}];
+const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2014-10","2026-06"]};
 const DEPT_ORDER=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const DASHBOARDS=[{name:"Criminal Cases",file:"index.html"},{name:"Civil Matters and Cases",file:"civil.html"},{name:"Cases by Referring Agency",file:"agency.html"},{name:"Criminal Matter Declinations",file:"declinations.html"}];
