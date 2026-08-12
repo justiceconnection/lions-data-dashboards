@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Criminal Cases — LIONS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="./multipliers.js"></script>
 <style>
   :root{--bg:#fbfbfb;--panel:#ffffff;--panel2:#ffffff;--ink:#212123;--mut:#6b6c68;--line:#e4e4e1;--accent:#eaf54c;--accent-ink:#212123}
   *{box-sizing:border-box}
@@ -134,7 +135,7 @@
   <div id="tablePanel" hidden>
   <div class="tblwrap"><table>
     <thead><tr>
-      <th>Month</th><th>Cases filed</th><th>Filed 3-mo</th><th>Cases term.</th><th>Term. 3-mo</th>
+      <th>Month</th><th>Cases filed</th><th>Filed (pred)</th><th>Filed 3-mo</th><th>Cases term.</th><th>Term. (pred)</th><th>Term. 3-mo</th>
       <th>Clearance %</th><th>Clr % 3-mo</th><th>Def. filed</th><th>Def. term.</th><th>Guilty %</th><th>Dismissed %</th>
     </tr></thead>
     <tbody id="tbody"></tbody>
@@ -150,6 +151,10 @@ let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=
 const NUM=["cases_filed","defendants_filed","cases_terminated","defendants_terminated","guilty","not_guilty","dismissed","rule_20_21","other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
 const RPAL=["#2a78d6","#c02d5a","#1d9e75","#7a4fc0","#0e8a8a","#d9622b"];
+const MULT=(window.LIONS_MULT&&window.LIONS_MULT.criminal)||{};
+function hasPred(m){ return !!MULT[m]; }
+function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const last=SPINE.length-1;
+  return arr.map((v,i)=>{ if(v==null) return null; const age=last-i; return v*(age>=0&&age<mm.length?mm[age]:1); }); }
 const METRICS=[["cases_filed","Cases filed"],["cases_filed_3mo","Cases filed (3-mo avg)"],["cases_terminated","Cases terminated"],["cases_terminated_3mo","Cases terminated (3-mo avg)"],["clearance","Clearance %"],["clearance_3mo","Clearance % (3-mo)"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
 const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-06",c:"rgba(33,33,35,0.06)"}];
 const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-05"],all:["2012-10","2026-05"]};
@@ -255,14 +260,16 @@ function renderTable(){
   const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats);
   const rows=[]; let sf=0,stt=0;
   for(const i of visIdx()){ const ym=SPINE[i]; const filed=R.filed[i],term=R.term[i],dt=R.dt[i];
+    const age=SPINE.length-1-i; const mf=(MULT.cases_filed&&age>=0&&age<8)?MULT.cases_filed[age]:1, mt=(MULT.cases_terminated&&age>=0&&age<8)?MULT.cases_terminated[age]:1;
     const row={ym,filed,term,df:R.df[i],dt,filed3:mean3(R.filed,i),term3:mean3(R.term,i),
+      filedP:Math.round(filed*mf),termP:Math.round(term*mt),
       clr:filed>0?100*term/filed:null,clr3:ratio3(R.term,R.filed,i),
       gpct:dt>0?100*R.guilty[i]/dt:null,dpct:dt>0?100*R.dismissed[i]/dt:null,
       tag:ym<="1996-09"?"edge":(ym>="2026-03"?"recent":"")};
     rows.push(row); sf+=filed; stt+=term; }
   lastRows=rows;
   document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-    return `<tr${cls}><td>${r.ym}</td><td>${rint(r.filed)}</td><td>${r1(r.filed3)}</td><td>${rint(r.term)}</td><td>${r1(r.term3)}</td><td>${p1(r.clr)}</td><td>${p1(r.clr3)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
+    return `<tr${cls}><td>${r.ym}</td><td>${rint(r.filed)}</td><td>${rint(r.filedP)}</td><td>${r1(r.filed3)}</td><td>${rint(r.term)}</td><td>${rint(r.termP)}</td><td>${r1(r.term3)}</td><td>${p1(r.clr)}</td><td>${p1(r.clr3)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
   }).join("");
   const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"—";
   document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b> · clearance <b>${ocl}</b>`;
@@ -275,10 +282,27 @@ const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!la
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
     ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,area.top,x1-x0,area.bottom-area.top);
-    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
     if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
 }};
 
+function fmtMMYYYY(x){ const p=(x||'').split('-'); return p.length===2?p[1]+'-'+p[0]:x; }
+function extTooltip(context){ const {chart,tooltip}=context; let el=document.getElementById('chtt');
+  if(!el){ el=document.createElement('div'); el.id='chtt'; document.body.appendChild(el);
+    el.style.cssText='position:fixed;pointer-events:none;z-index:9999;background:rgba(20,20,22,.95);color:#fff;font:11px/1.45 -apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;padding:8px 10px;border-radius:8px;max-width:340px;box-shadow:0 6px 20px rgba(0,0,0,.32);opacity:0;transition:opacity .08s'; }
+  if(!tooltip||tooltip.opacity===0){ el.style.opacity='0'; return; }
+  const title=tooltip.title&&tooltip.title.length?fmtMMYYYY(tooltip.title[0]):'';
+  let h=title?`<div style="font-weight:600;margin-bottom:4px">${title}</div>`:'';
+  (tooltip.dataPoints||[]).forEach(dp=>{ const ds=dp.dataset; const c=ds._col||ds.borderColor||'#fff';
+    const y=dp.parsed.y; const val=y==null?'—':(ds._pct?(+y).toFixed(1)+'%':Math.round(y).toLocaleString());
+    h+=`<div style="display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;flex:none"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${ds.label}</span><span style="font-variant-numeric:tabular-nums;padding-left:8px">${val}</span></div>`; });
+  el.innerHTML=h; el.style.opacity='1';
+  const r=chart.canvas.getBoundingClientRect(), w=el.offsetWidth, ht=el.offsetHeight;
+  let x=r.left+tooltip.caretX+14, y=r.top+tooltip.caretY-ht/2;
+  if(x+w>window.innerWidth-8) x=r.left+tooltip.caretX-w-14;
+  if(x<8)x=8; if(y<8)y=8; if(y+ht>window.innerHeight-8)y=window.innerHeight-ht-8;
+  el.style.left=x+'px'; el.style.top=y+'px'; }
+const TT={enabled:false,external:extTooltip};
 function renderChart(){
   const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const pct=isPct(state.metric);
   const left=buildSeries(leftItems(),'y');
@@ -286,24 +310,30 @@ function renderChart(){
   const right=(state.ax2by!=='metric' && state.ax2sel.size)?buildSeries([...state.ax2sel],'y1'):[];
   const mk=(s,j,pal,dash)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats),state.metric); const col=pal[j%pal.length];
     return {label:s.label+(s.axis==='y1'?' (R)':''),data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:dash?[5,4]:[],yAxisID:s.axis,_col:col,_pct:pct}; };
-  const datasets=[...left.map((s,j)=>mk(s,j,PALETTE,false)), ...right.map((s,j)=>mk(s,j,RPAL,true))];
+  const leftDs=left.map((s,j)=>mk(s,j,PALETTE,false));
+  const datasets=[...leftDs, ...right.map((s,j)=>mk(s,j,RPAL,true))];
   const rMetrics = metricMode?[...state.ax2sel]:[];
   rMetrics.forEach((m2,j)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats),m2); const col=RPAL[j%RPAL.length];
     datasets.push({label:metricLabel(m2)+' (R)',data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col,_pct:isPct(m2)}); });
+  // prediction: dotted "estimated final" line per left series + shaded delta band (standard multiplier, last 8 months)
+  const showPred=hasPred(state.metric);
+  if(showPred){ left.forEach((s,ai)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats),state.metric); const parr=predOf(arr,state.metric); const col=PALETTE[ai%PALETTE.length];
+    datasets.push({label:s.label+' (est. final)',data:idxs.map(i=>parr[i]),borderColor:col,backgroundColor:col+'22',borderDash:[2,3],borderWidth:1.5,pointRadius:0,spanGaps:true,tension:.25,yAxisID:'y',fill:{target:ai,above:col+'22',below:'transparent'},_col:col,_pct:pct,_pred:true}); }); }
   const anyR=right.length>0||rMetrics.length>0;
   const rightPct=metricMode?rMetrics.every(isPct):pct;
   const rTitle=metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):rightLabelText();
-  document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
-     + (anyR?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'');
+  document.getElementById("legend").innerHTML=datasets.filter(ds=>!ds._pred).map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
+     + (anyR?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'')
+     + (showPred?'<span class="lg" style="color:var(--mut)">┈ dotted = estimated final (reporting-lag adjusted)</span>':'');
   document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" — by "+(state.seriesBy==='category'?'program category':'district');
   if(typeof window==='undefined'||!window.Chart){ return; }
   const yfmt=pct?(v=>v+'%'):(v=>v.toLocaleString()); const y1fmt=rightPct?(v=>v+'%'):(v=>v.toLocaleString());
   const cfg={type:'line',data:{labels,datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':(c.dataset._pct?c.parsed.y.toFixed(1)+'%':c.parsed.y.toLocaleString()))}}},
-      scales:{x:{ticks:{color:'#6b6c68',maxTicksLimit:12,font:{size:10}},grid:{display:false}},
-        y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(state.metric),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:yfmt},grid:{color:'#e6e6e3'}},
-        y1:{position:'right',display:anyR,beginAtZero:!rightPct,title:{display:anyR,text:'Right: '+rTitle,color:'#212123',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:y1fmt},grid:{drawOnChartArea:false}}}},
+      plugins:{legend:{display:false},tooltip:TT},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+        y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(state.metric),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:yfmt},grid:{color:'#e6e6e3'}},
+        y1:{position:'right',display:anyR,beginAtZero:!rightPct,title:{display:anyR,text:'Right: '+rTitle,color:'#212123',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:y1fmt},grid:{drawOnChartArea:false}}}},
     plugins:[adminBands]};
   if(chart) chart.destroy();
   chart=new window.Chart(document.getElementById('chart').getContext('2d'),cfg);
@@ -318,9 +348,9 @@ function renderChart2(){
   let datasets;
   if(state.mixMode==='sum'){
     const data=idxs.map(i=>{ const t=tot[i]; if(!t)return null; let s=0; for(const c of cats) s+=cA[c][i]; return 100*s/t; });
-    datasets=[{label:(allSel?'All categories':cats.length+' selected')+' share',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2}];
+    datasets=[{label:(allSel?'All categories':cats.join(', ')),data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,_pct:true,_col:'#212123'}];
   } else {
-    datasets=cats.map(c=>{ const col=catColor(c); return {label:c,data:idxs.map(i=>{const t=tot[i];return t?100*cA[c][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8}; });
+    datasets=cats.map(c=>{ const col=catColor(c); return {label:c,data:idxs.map(i=>{const t=tot[i];return t?100*cA[c][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
   }
   document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("");
   document.getElementById("chart2Title").textContent="Program category mix — % of cases filed"+(state.mixMode==='stacked'?" (stacked)":" (combined)");
@@ -328,9 +358,9 @@ function renderChart2(){
   const stacked=state.mixMode==='stacked';
   const cfg={type:'line',data:{labels,datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':c.parsed.y.toFixed(1)+'%')}}},
-      scales:{x:{ticks:{color:'#6b6c68',maxTicksLimit:12,font:{size:10}},grid:{display:false}},
-        y:{stacked,beginAtZero:true,title:{display:true,text:'% of cases filed',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
+      plugins:{legend:{display:false},tooltip:TT},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+        y:{stacked,beginAtZero:true,title:{display:true,text:'% of cases filed',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
     plugins:[adminBands]};
   if(chart2) chart2.destroy();
   chart2=new window.Chart(document.getElementById('chart2').getContext('2d'),cfg);
@@ -343,9 +373,9 @@ function render(){ const st=document.getElementById("status");
   renderKPIs(); renderChart(); renderChart2(); renderTable(); }
 
 function buildCSV(){
-  const head=["month","cases_filed","cases_filed_3mo","cases_terminated","cases_terminated_3mo","clearance_pct","clearance_pct_3mo","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"];
+  const head=["month","cases_filed","cases_filed_pred","cases_filed_3mo","cases_terminated","cases_terminated_pred","cases_terminated_3mo","clearance_pct","clearance_pct_3mo","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"];
   const L=[head.join(",")];
-  for(const r of lastRows) L.push([r.ym,r.filed,r.filed3==null?"":r.filed3.toFixed(2),r.term,r.term3==null?"":r.term3.toFixed(2),r.clr==null?"":r.clr.toFixed(2),r.clr3==null?"":r.clr3.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2)].join(","));
+  for(const r of lastRows) L.push([r.ym,r.filed,r.filedP,r.filed3==null?"":r.filed3.toFixed(2),r.term,r.termP,r.term3==null?"":r.term3.toFixed(2),r.clr==null?"":r.clr.toFixed(2),r.clr3==null?"":r.clr3.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2)].join(","));
   const blob=new Blob([L.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
   const ct=(state.cats.has('ALL')||state.cats.size===0)?'ALL':(state.cats.size===1?[...state.cats][0].replace(/\W+/g,''):state.cats.size+'cats');
@@ -394,7 +424,7 @@ async function init(){ renderNav();
   try{ const r=await fetch("./lions_cube_national.csv",{cache:"no-cache"}); NAT=parseCSV(await r.text()); }
   catch(e){ document.getElementById("status").textContent="could not load lions_cube_national.csv — serve this folder over http"; return; }
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
-  CATLIST=[...new Set(NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();
+  CATLIST=[...new Set(NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort((a,b)=>(a==='All Other')-(b==='All Other')||a.localeCompare(b));
   document.getElementById("metric").innerHTML=METRICS.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join("");
   dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,fmt:fmtDist,
     onChange:async v=>{ state.dists=new Set(v); if(!(state.dists.has('National')||state.dists.size===0)) await ensureFull(); render(); }});

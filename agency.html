@@ -311,15 +311,32 @@ const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!la
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
     ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,area.top,x1-x0,area.bottom-area.top);
-    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
     if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
 }};
 
+function fmtMMYYYY(x){ const p=(x||'').split('-'); return p.length===2?p[1]+'-'+p[0]:x; }
+function extTooltip(context){ const {chart,tooltip}=context; let el=document.getElementById('chtt');
+  if(!el){ el=document.createElement('div'); el.id='chtt'; document.body.appendChild(el);
+    el.style.cssText='position:fixed;pointer-events:none;z-index:9999;background:rgba(20,20,22,.95);color:#fff;font:11px/1.45 -apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;padding:8px 10px;border-radius:8px;max-width:340px;box-shadow:0 6px 20px rgba(0,0,0,.32);opacity:0;transition:opacity .08s'; }
+  if(!tooltip||tooltip.opacity===0){ el.style.opacity='0'; return; }
+  const title=tooltip.title&&tooltip.title.length?fmtMMYYYY(tooltip.title[0]):'';
+  let h=title?`<div style="font-weight:600;margin-bottom:4px">${title}</div>`:'';
+  (tooltip.dataPoints||[]).forEach(dp=>{ const ds=dp.dataset; const c=ds._col||ds.borderColor||'#fff';
+    const y=dp.parsed.y; const val=y==null?'—':(ds._pct?(+y).toFixed(1)+'%':Math.round(y).toLocaleString());
+    h+=`<div style="display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;flex:none"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${ds.label}</span><span style="font-variant-numeric:tabular-nums;padding-left:8px">${val}</span></div>`; });
+  el.innerHTML=h; el.style.opacity='1';
+  const r=chart.canvas.getBoundingClientRect(), w=el.offsetWidth, ht=el.offsetHeight;
+  let x=r.left+tooltip.caretX+14, y=r.top+tooltip.caretY-ht/2;
+  if(x+w>window.innerWidth-8) x=r.left+tooltip.caretX-w-14;
+  if(x<8)x=8; if(y<8)y=8; if(y+ht>window.innerHeight-8)y=window.innerHeight-ht-8;
+  el.style.left=x+'px'; el.style.top=y+'px'; }
+const TT={enabled:false,external:extTooltip};
 function renderChart(){
   const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const pct=isPct();
   const ags=selAgs();
   const datasets=ags.map((ag)=>{ const arr=metricArray(aggregate(state.dists,new Set([ag])),curMetric()); const col=agColor(ag);
-    return {label:ag,data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,_col:col}; });
+    return {label:ag,data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,_col:col,_pct:pct}; });
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("");
   document.getElementById("chartTitle").textContent=metricLabel(curMetric())+(isCiv()?" — "+state.role:"")+" — by "+(isCiv()?"client":"referring")+" agency";
   if(typeof window==='undefined'||!window.Chart){ return; }
@@ -327,9 +344,9 @@ function renderChart(){
   if(chart) chart.destroy();
   chart=new window.Chart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':(pct?c.parsed.y.toFixed(1)+'%':c.parsed.y.toLocaleString()))}}},
-      scales:{x:{ticks:{color:'#6b6c68',maxTicksLimit:12,font:{size:10}},grid:{display:false}},
-        y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(curMetric()),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:yfmt},grid:{color:'#e6e6e3'}}}},
+      plugins:{legend:{display:false},tooltip:TT},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+        y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(curMetric()),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:yfmt},grid:{color:'#e6e6e3'}}}},
     plugins:[adminBands]});
 }
 
@@ -341,9 +358,9 @@ function renderChart2(){
   let datasets;
   if(state.mixMode==='sum'){
     const data=idxs.map(i=>{ const t=tot[i]; if(!t)return null; let s=0; for(const a of ags) s+=aA[a][i]; return 100*s/t; });
-    datasets=[{label:ags.length+' agenc'+(ags.length===1?'y':'ies')+' share',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2}];
+    datasets=[{label:ags.length+' agenc'+(ags.length===1?'y':'ies')+' share',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,_pct:true,_col:'#212123'}];
   } else {
-    datasets=ags.map(a=>{ const col=agColor(a); return {label:a,data:idxs.map(i=>{const t=tot[i];return t?100*aA[a][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8}; });
+    datasets=ags.map(a=>{ const col=agColor(a); return {label:a,data:idxs.map(i=>{const t=tot[i];return t?100*aA[a][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
   }
   document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("");
   const denom=isCiv()?primaryLabel():'referred cases filed';
@@ -352,9 +369,9 @@ function renderChart2(){
   if(chart2) chart2.destroy();
   chart2=new window.Chart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':c.parsed.y.toFixed(1)+'%')}}},
-      scales:{x:{ticks:{color:'#6b6c68',maxTicksLimit:12,font:{size:10}},grid:{display:false}},
-        y:{stacked:state.mixMode==='stacked',beginAtZero:true,title:{display:true,text:'% of '+denom,color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
+      plugins:{legend:{display:false},tooltip:TT},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+        y:{stacked:state.mixMode==='stacked',beginAtZero:true,title:{display:true,text:'% of '+denom,color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
     plugins:[adminBands]});
 }
 
@@ -367,13 +384,13 @@ function renderChart3(){
   box.style.display=''; msg.style.display='none';
   const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]);
   const R=aggregate(state.dists,curAgs());
-  const datasets=DISP.map(([key,name,col])=>({label:name,data:idxs.map(i=>{const t=R.ct[i];return t?100*R[key][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8}));
+  const datasets=DISP.map(([key,name,col])=>({label:name,data:idxs.map(i=>{const t=R.ct[i];return t?100*R[key][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}));
   document.getElementById("legend3").innerHTML=DISP.map(([k,name,col])=>`<span class="lg"><span class="sw" style="background:${col}"></span>${name}</span>`).join("");
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart3) chart3.destroy();
   chart3=new window.Chart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':c.parsed.y.toFixed(1)+'%')}}},
-      scales:{x:{ticks:{color:'#6b6c68',maxTicksLimit:12,font:{size:10}},grid:{display:false}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:TT},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
 }
 
 function renderTable(){

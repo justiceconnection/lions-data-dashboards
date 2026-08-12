@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Civil Matters and Cases — LIONS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="./multipliers.js"></script>
 <style>
   :root{--bg:#fbfbfb;--panel:#ffffff;--panel2:#ffffff;--ink:#212123;--mut:#6b6c68;--line:#e4e4e1;--accent:#eaf54c;--accent-ink:#212123}
   *{box-sizing:border-box}
@@ -129,6 +130,10 @@ let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=
 const NUM=["matters_received","cases_filed","matters_terminated","cases_terminated","d_judg_us","d_settle","d_against","d_dismissed","d_other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
 const RPAL=["#2a78d6","#c02d5a","#1d9e75","#7a4fc0","#0e8a8a","#d9622b"];
+const MULT=(window.LIONS_MULT&&window.LIONS_MULT.civil)||{};
+function hasPred(m){ return !!MULT[m]; }
+function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const last=SPINE.length-1;
+  return arr.map((v,i)=>{ if(v==null) return null; const age=last-i; return v*(age>=0&&age<mm.length?mm[age]:1); }); }
 const DISP=[["d_judg_us","Judgment For U.S.","#1d9e75"],["d_settle","Settlements","#2a78d6"],["d_against","Judgment Against U.S.","#d9622b"],["d_dismissed","Dismissed","#7a4fc0"],["d_other","Other","#8a8b86"]];
 const METRICS_CASES=[["cases_filed","Cases filed"],["cases_filed_3mo","Cases filed (3-mo avg)"],["cases_pending","Cases pending"],["cases_pending_3mo","Cases pending (3-mo avg)"],["cases_terminated","Cases terminated"],["cases_terminated_3mo","Cases terminated (3-mo avg)"]];
 const METRICS_MATTERS=[["matters_received","Matters received"],["matters_received_3mo","Matters received (3-mo avg)"],["matters_pending","Matters pending"],["matters_pending_3mo","Matters pending (3-mo avg)"],["matters_terminated","Matters terminated"],["matters_terminated_3mo","Matters terminated (3-mo avg)"]];
@@ -239,13 +244,13 @@ function renderKPIs(){
 
 function renderTable(){
   const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role);
-  const cols=metricsList().map(m=>m[0]);
-  const arrs=cols.map(m=>metricArray(R,m));
+  const cols=[]; for(const [k,lbl] of metricsList()){ cols.push({key:k,label:lbl,pred:false}); if(hasPred(k)) cols.push({key:k,label:lbl+' (pred)',pred:true}); }
+  const arrs=cols.map(c=>{ const a=metricArray(R,c.key); return c.pred?predOf(a,c.key).map(v=>v==null?null:Math.round(v)):a; });
   const rows=[];
   for(const i of visIdx()){ const ym=SPINE[i];
     rows.push({ym, vals:arrs.map(a=>a[i]), tag:ym<="1996-09"?"edge":(ym>="2026-03"?"recent":"")}); }
-  lastRows={cols,rows};
-  document.getElementById("thead").innerHTML="<tr><th>Month</th>"+metricsList().map(m=>`<th>${m[1]}</th>`).join("")+"</tr>";
+  lastRows={head:cols.map(c=>c.pred?c.key+'_pred':c.key),rows};
+  document.getElementById("thead").innerHTML="<tr><th>Month</th>"+cols.map(c=>`<th>${c.label}</th>`).join("")+"</tr>";
   document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
     return `<tr${cls}><td>${r.ym}</td>`+r.vals.map(v=>`<td>${v==null?"—":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
   }).join("");
@@ -259,13 +264,30 @@ const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!la
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
     ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,area.top,x1-x0,area.bottom-area.top);
-    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
     if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
 }};
-function baseScales(pct,rightTitle,anyR){ return {x:{ticks:{color:'#6b6c68',maxTicksLimit:12,font:{size:10}},grid:{display:false}},
-  y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(state.metric),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{color:'#e6e6e3'}},
-  y1:{position:'right',display:anyR,beginAtZero:!pct,title:{display:anyR,text:'Right: '+rightTitle,color:'#212123',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{drawOnChartArea:false}}}; }
+function baseScales(pct,rightTitle,anyR){ return {x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+  y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(state.metric),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{color:'#e6e6e3'}},
+  y1:{position:'right',display:anyR,beginAtZero:!pct,title:{display:anyR,text:'Right: '+rightTitle,color:'#212123',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{drawOnChartArea:false}}}; }
 
+function fmtMMYYYY(x){ const p=(x||'').split('-'); return p.length===2?p[1]+'-'+p[0]:x; }
+function extTooltip(context){ const {chart,tooltip}=context; let el=document.getElementById('chtt');
+  if(!el){ el=document.createElement('div'); el.id='chtt'; document.body.appendChild(el);
+    el.style.cssText='position:fixed;pointer-events:none;z-index:9999;background:rgba(20,20,22,.95);color:#fff;font:11px/1.45 -apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;padding:8px 10px;border-radius:8px;max-width:340px;box-shadow:0 6px 20px rgba(0,0,0,.32);opacity:0;transition:opacity .08s'; }
+  if(!tooltip||tooltip.opacity===0){ el.style.opacity='0'; return; }
+  const title=tooltip.title&&tooltip.title.length?fmtMMYYYY(tooltip.title[0]):'';
+  let h=title?`<div style="font-weight:600;margin-bottom:4px">${title}</div>`:'';
+  (tooltip.dataPoints||[]).forEach(dp=>{ const ds=dp.dataset; const c=ds._col||ds.borderColor||'#fff';
+    const y=dp.parsed.y; const val=y==null?'—':(ds._pct?(+y).toFixed(1)+'%':Math.round(y).toLocaleString());
+    h+=`<div style="display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;flex:none"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${ds.label}</span><span style="font-variant-numeric:tabular-nums;padding-left:8px">${val}</span></div>`; });
+  el.innerHTML=h; el.style.opacity='1';
+  const r=chart.canvas.getBoundingClientRect(), w=el.offsetWidth, ht=el.offsetHeight;
+  let x=r.left+tooltip.caretX+14, y=r.top+tooltip.caretY-ht/2;
+  if(x+w>window.innerWidth-8) x=r.left+tooltip.caretX-w-14;
+  if(x<8)x=8; if(y<8)y=8; if(y+ht>window.innerHeight-8)y=window.innerHeight-ht-8;
+  el.style.left=x+'px'; el.style.top=y+'px'; }
+const TT={enabled:false,external:extTooltip};
 function renderChart(){
   const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const pct=false;
   const left=buildSeries(leftItems(),'y');
@@ -273,20 +295,25 @@ function renderChart(){
   const right=(state.ax2by!=='metric' && state.ax2sel.size)?buildSeries([...state.ax2sel],'y1'):[];
   const mk=(s,j,pal,dash)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats,state.role),state.metric); const col=pal[j%pal.length];
     return {label:s.label+(s.axis==='y1'?' (R)':''),data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:dash?[5,4]:[],yAxisID:s.axis,_col:col}; };
-  const datasets=[...left.map((s,j)=>mk(s,j,PALETTE,false)), ...right.map((s,j)=>mk(s,j,RPAL,true))];
+  const leftDs=left.map((s,j)=>mk(s,j,PALETTE,false));
+  const datasets=[...leftDs, ...right.map((s,j)=>mk(s,j,RPAL,true))];
   const rMetrics=metricMode?[...state.ax2sel]:[];
   rMetrics.forEach((m2,j)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role),m2); const col=RPAL[j%RPAL.length];
     datasets.push({label:metricLabel(m2)+' (R)',data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col}); });
+  const showPred=hasPred(state.metric);
+  if(showPred){ left.forEach((s,ai)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats,state.role),state.metric); const parr=predOf(arr,state.metric); const col=PALETTE[ai%PALETTE.length];
+    datasets.push({label:s.label+' (est. final)',data:idxs.map(i=>parr[i]),borderColor:col,backgroundColor:col+'22',borderDash:[2,3],borderWidth:1.5,pointRadius:0,spanGaps:true,tension:.25,yAxisID:'y',fill:{target:ai,above:col+'22',below:'transparent'},_col:col,_pred:true}); }); }
   const anyR=right.length>0||rMetrics.length>0;
   const rTitle=metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):rightLabelText();
-  document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
-     + (anyR?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'');
+  document.getElementById("legend").innerHTML=datasets.filter(ds=>!ds._pred).map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
+     + (anyR?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'')
+     + (showPred?'<span class="lg" style="color:var(--mut)">┈ dotted = estimated final (reporting-lag adjusted)</span>':'');
   document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" — "+state.role+" — by "+(state.seriesBy==='category'?'cause of action':'district');
   if(typeof window==='undefined'||!window.Chart){ return; }
   if(chart) chart.destroy();
   chart=new window.Chart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':c.parsed.y.toLocaleString())}}},
+      plugins:{legend:{display:false},tooltip:TT},
       scales:baseScales(false,rTitle,anyR)},plugins:[adminBands]});
 }
 
@@ -297,15 +324,15 @@ function renderChart2(){
   const cA={}; for(const c2 of cats) cA[c2]=aggregateRaw(NAT,FULL,SPINE,state.dists,new Set([c2]),state.role)[pf];
   let datasets;
   if(state.mixMode==='sum'){ const data=idxs.map(i=>{const t=tot[i];if(!t)return null;let s=0;for(const c2 of cats)s+=cA[c2][i];return 100*s/t;});
-    datasets=[{label:(allSel?'All causes':cats.length+' selected')+' share',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2}];
-  } else { datasets=cats.map((c2,j)=>{const col=PALETTE[(CATLIST.indexOf(c2)+1)%PALETTE.length];return {label:c2,data:idxs.map(i=>{const t=tot[i];return t?100*cA[c2][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8};}); }
+    datasets=[{label:(allSel?'All causes':cats.join(', ')),data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,_pct:true,_col:'#212123'}];
+  } else { datasets=cats.map((c2,j)=>{const col=PALETTE[(CATLIST.indexOf(c2)+1)%PALETTE.length];return {label:c2,data:idxs.map(i=>{const t=tot[i];return t?100*cA[c2][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col};}); }
   document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("");
   document.getElementById("chart2Title").textContent="Cause of action mix — % of "+primaryLabel()+(state.mixMode==='stacked'?" (stacked)":" (combined)");
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart2) chart2.destroy();
   chart2=new window.Chart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':c.parsed.y.toFixed(1)+'%')}}},
-      scales:{x:{ticks:{color:'#6b6c68',maxTicksLimit:12,font:{size:10}},grid:{display:false}},y:{stacked:state.mixMode==='stacked',beginAtZero:true,title:{display:true,text:'% of '+primaryLabel(),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:TT},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},y:{stacked:state.mixMode==='stacked',beginAtZero:true,title:{display:true,text:'% of '+primaryLabel(),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
 }
 
 function renderChart3(){
@@ -315,13 +342,13 @@ function renderChart3(){
   const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]);
   const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role);
   const datasets=DISP.map(([k,name,col],j)=>{ const key={d_judg_us:'ju',d_settle:'st',d_against:'ag',d_dismissed:'dm',d_other:'ot'}[k];
-    return {label:name,data:idxs.map(i=>{const t=R.ct[i];return t?100*R[key][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8}; });
+    return {label:name,data:idxs.map(i=>{const t=R.ct[i];return t?100*R[key][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
   document.getElementById("legend3").innerHTML=DISP.map(([k,name,col])=>`<span class="lg"><span class="sw" style="background:${col}"></span>${name}</span>`).join("");
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart3) chart3.destroy();
   chart3=new window.Chart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':c.parsed.y.toFixed(1)+'%')}}},
-      scales:{x:{ticks:{color:'#6b6c68',maxTicksLimit:12,font:{size:10}},grid:{display:false}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:10},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:TT},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
 }
 
 function render(){ const st=document.getElementById("status");
@@ -331,7 +358,7 @@ function render(){ const st=document.getElementById("status");
   renderKPIs(); renderChart(); renderChart2(); renderChart3(); renderTable(); }
 
 function buildCSV(){
-  const cols=lastRows.cols, head=["month",...cols];
+  const head=["month",...lastRows.head];
   const L=[head.join(",")];
   for(const r of lastRows.rows) L.push([r.ym,...r.vals.map(v=>v==null?"":(Number.isInteger(v)?v:v.toFixed(2)))].join(","));
   const blob=new Blob([L.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);

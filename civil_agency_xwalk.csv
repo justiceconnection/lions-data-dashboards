@@ -1,0 +1,498 @@
+code,department,subagency
+JUST,DOJ,Other DOJ
+ZSSA,Social Security Admin,SSA
+HHS,HHS,Other HHS
+HUD,HUD,HUD
+AGFM,Agriculture,Agriculture
+PSUS,USPS,USPS
+HSSS,DHS,Secret Service
+DEFE,Defense,Other Defense
+HSZZ,DHS,Other DHS
+ZTAT,Other,Other
+CDOA,Commerce,Commerce
+HSCI,DHS,HSI
+DEFZ,Defense,Other Defense
+AGFC,Agriculture,Agriculture
+ZFCC,Other,Other
+AGSF,Agriculture,Agriculture
+NH,Other,Other
+HHNI,HHS,Other HHS
+ZOPM,OPM,OPM
+HHHP,HHS,Other HHS
+DEIA,Defense,Other Defense
+HSEM,DHS,Other DHS
+ZSEN,Other,Other
+EXWH,Other,Other
+JUIN,DOJ,Other DOJ
+HHRS,HHS,Other HHS
+SBA,Other,Other
+FHA,Other,Other
+LAOS,Labor,Labor
+TRCC,Treasury,Other Treasury
+ZFHL,Other,Other
+ZAID,Other,Other
+HHPI,HHS,Other HHS
+INLM,Interior,Interior
+ZLRB,Other,Other
+TRSB,Treasury,Other Treasury
+FBI,DOJ,FBI
+EPA,Other,Other
+AGMC,Agriculture,Agriculture
+WDMP,Other,Other
+AGSC,Agriculture,Agriculture
+ZACH,Other,Other
+AGRE,Agriculture,Agriculture
+ZTVA,Other,Other
+IGTA,Other,Other
+ZNAL,Other,Other
+ZUSC,Other,Other
+ZCFB,Other,Other
+WDCS,Other,Other
+ZNTX,Other,Other
+INFZ,Interior,Interior
+VAE,Veterans Affairs,Veterans Affairs
+VAW,Veterans Affairs,Veterans Affairs
+VRCH,Veterans Affairs,Veterans Affairs
+VRFL,Veterans Affairs,Veterans Affairs
+JUTX,DOJ,Other DOJ
+CDIE,Commerce,Commerce
+LABZ,Labor,Labor
+TRAZ,Treasury,Other Treasury
+JUIZ,DOJ,Other DOJ
+ZICC,Other,Other
+ZABL,Other,Other
+DE,Defense,Other Defense
+????,Other,Other
+TXN,Other,Other
+TRSZ,Treasury,Other Treasury
+VRMA,Veterans Affairs,Veterans Affairs
+HHAA,HHS,Other HHS
+INN,Interior,Interior
+HSFF,DHS,Other DHS
+CAS,Other,Other
+VRKY,Veterans Affairs,Veterans Affairs
+MA,Other,Other
+VRMD,Veterans Affairs,Veterans Affairs
+WDOS,Other,Other
+ENBP,Energy,Energy
+ID,Other,Other
+TDOZ,Treasury,Other Treasury
+WIW,Other,Other
+CAN,Other,Other
+MPD2,Other,Other
+FLN,Other,Other
+OKE,Other,Other
+VROK,Veterans Affairs,Veterans Affairs
+ZACN,Other,Other
+VRSD,Veterans Affairs,Veterans Affairs
+SD,State,State
+IAN,Other,Other
+VRKS,Veterans Affairs,Veterans Affairs
+VRLA,Veterans Affairs,Veterans Affairs
+ZACV,Other,Other
+MSS,Other,Other
+WVS,Other,Other
+CDMS,Commerce,Commerce
+VRIA,Veterans Affairs,Veterans Affairs
+VAZZ,Veterans Affairs,Veterans Affairs
+VRNE,Veterans Affairs,Veterans Affairs
+BPD,Other,Other
+VRAL,Veterans Affairs,Veterans Affairs
+VRAZ,Veterans Affairs,Veterans Affairs
+COE,Other,Other
+DOED,Other,Other
+ARMY,Defense,Army
+CCC,Other,Other
+NCW,Other,Other
+ILS,Other,Other
+FTC,Other,Other
+NCM,Other,Other
+ZACG,Other,Other
+VRAK,Veterans Affairs,Veterans Affairs
+AK,Other,Other
+JUCI,DOJ,Other DOJ
+VROR,Veterans Affairs,Veterans Affairs
+MSN,Other,Other
+ZMCC,Other,Other
+WY,Other,Other
+NMI,Other,Other
+TNM,Other,Other
+VRSC,Veterans Affairs,Veterans Affairs
+BOP,Other,Other
+VTRR,Other,Other
+SEC,Other,Other
+XXX,Other,Other
+NYW,Other,Other
+RI,Other,Other
+JUCM,DOJ,Other DOJ
+JUDE,DOJ,DEA
+IRS,Treasury,IRS
+VA,Veterans Affairs,Veterans Affairs
+TDFH,Treasury,Other Treasury
+JUDZ,DOJ,DEA
+JUPC,DOJ,Other DOJ
+ZMSP,Other,Other
+HSCE,DHS,ICE
+DEAX,Defense,Other Defense
+AGFL,Agriculture,Agriculture
+JUMS,DOJ,USMS
+ZACE,Defense,Army Corps of Engineers
+NCE,Other,Other
+ZEEO,Other,Other
+ZFDI,Other,Other
+HUGM,HUD,HUD
+INFW,Interior,Interior
+TREA,Treasury,Other Treasury
+AGFO,Agriculture,Agriculture
+CDES,Commerce,Commerce
+DEAF,Defense,Air Force
+CDOS,Commerce,Commerce
+HHSZ,HHS,Other HHS
+DOJ,DOJ,Other DOJ
+CDED,Commerce,Commerce
+TDCG,Treasury,Other Treasury
+ZFMC,Other,Other
+ZFDT,Other,Other
+INNP,Interior,Interior
+TDFR,Treasury,Other Treasury
+ZFEM,Other,Other
+TRSS,Treasury,Other Treasury
+INIA,Interior,Interior
+INMM,Interior,Interior
+HHCD,HHS,Other HHS
+ZNSF,Other,Other
+ZFCA,Other,Other
+SSA,Other,Other
+ZGAO,Other,Other
+VRNY,Veterans Affairs,Veterans Affairs
+DOI,Other,Other
+DAGR,Other,Other
+SSVC,Other,Other
+ZNTS,Other,Other
+ZFEC,Other,Other
+ZNAS,Other,Other
+ZGSN,Other,Other
+JUMZ,DOJ,USMS
+HSI,DHS,HSI
+VASP,Veterans Affairs,Veterans Affairs
+ZFRB,Other,Other
+LAEC,Labor,Labor
+OHS,Other,Other
+INSM,Interior,Interior
+LABL,Labor,Labor
+AGRS,Agriculture,Agriculture
+ZNCA,Other,Other
+ZNSA,Other,Other
+ZNFL,Other,Other
+SDIB,State,State
+TXW,Other,Other
+VRTW,Veterans Affairs,Veterans Affairs
+ZNVA,Other,Other
+VRVA,Veterans Affairs,Veterans Affairs
+EXOM,Other,Other
+HHCS,HHS,Other HHS
+HSFP,DHS,Other DHS
+FLM,Other,Other
+DC,Other,Other
+ZACI,Other,Other
+VRHI,Veterans Affairs,Veterans Affairs
+ZOIC,Other,Other
+VATX,Veterans Affairs,Veterans Affairs
+WIE,Other,Other
+WDC,Other,Other
+ZARC,Other,Other
+CAC,Other,Other
+IGIR,Other,Other
+ZACL,Other,Other
+INMR,Interior,Interior
+VI,Other,Other
+VT,Other,Other
+GAM,Other,Other
+ZNMB,Other,Other
+ZNEA,Other,Other
+CDTT,Commerce,Commerce
+VRMI,Veterans Affairs,Veterans Affairs
+NM,Other,Other
+VRMO,Veterans Affairs,Veterans Affairs
+OR,Other,Other
+WAE,Other,Other
+CDMB,Commerce,Commerce
+MPD7,Other,Other
+MPD3,Other,Other
+CDBS,Commerce,Commerce
+OKN,Other,Other
+ZACB,Other,Other
+ZFSL,Other,Other
+VRCD,Veterans Affairs,Veterans Affairs
+FLS,Other,Other
+GAN,Other,Other
+ZCAC,Other,Other
+DEA,DOJ,DEA
+LAE,Labor,Labor
+ZNMS,Other,Other
+ME,Other,Other
+HHDS,HHS,Other HHS
+VRMS,Veterans Affairs,Veterans Affairs
+VRWV,Veterans Affairs,Veterans Affairs
+ACOE,Defense,Army Corps of Engineers
+IRSB,Treasury,Other Treasury
+MD,Other,Other
+VRPH,Veterans Affairs,Veterans Affairs
+VRTN,Veterans Affairs,Veterans Affairs
+TNW,Other,Other
+NYN,Other,Other
+VRCS,Veterans Affairs,Veterans Affairs
+FRM,Other,Other
+DOC,Other,Other
+DOE,Other,Other
+ATF,DOJ,ATF
+DOT,Other,Other
+WDPW,Other,Other
+UT,Other,Other
+ZACK,Other,Other
+LAW,Labor,Labor
+NPS,Other,Other
+JUCR,DOJ,Other DOJ
+TNE,Other,Other
+IAS,Other,Other
+WVN,Other,Other
+USAF,Defense,Air Force
+FAA,Other,Other
+CIA,Other,Other
+WH,Other,Other
+DESC,Defense,Other Defense
+VRND,Veterans Affairs,Veterans Affairs
+FSA,Other,Other
+JUBP,DOJ,Bureau of Prisons
+JUAF,DOJ,ATF
+DENV,Defense,Navy
+HSOT,DHS,Other DHS
+JUTR,DOJ,Other DOJ
+LABO,Labor,Labor
+JUFZ,DOJ,FBI
+HHIG,HHS,HHS-OIG
+JUOJ,DOJ,Other DOJ
+ZEPA,EPA,EPA
+ZRRB,Other,Other
+HHPH,HHS,Other HHS
+TDOT,Treasury,Other Treasury
+AGFS,Agriculture,Agriculture
+SDOS,State,State
+TDFV,Treasury,Other Treasury
+TDMA,Treasury,Other Treasury
+HUDZ,HUD,HUD
+ZSEC,Other,Other
+DOL,Other,Other
+NAVY,Defense,Navy
+ZCUA,Other,Other
+FDIC,Other,Other
+LAPB,Labor,Labor
+HUFH,HUD,HUD
+LAVR,Labor,Labor
+TRAT,Treasury,Other Treasury
+PSIG,USPS,USPS
+HSTS,DHS,Other DHS
+JUPI,DOJ,Other DOJ
+NYE,Other,Other
+TRCZ,Treasury,Other Treasury
+HHAC,HHS,Other HHS
+CUS,DHS,CBP
+ZEIB,Other,Other
+ZSSS,Other,Other
+ZACC,Other,Other
+TRJF,Treasury,Other Treasury
+INLZ,Interior,Interior
+ZBBG,Other,Other
+LAMS,Labor,Labor
+AGTA,Agriculture,Agriculture
+INGS,Interior,Interior
+JUIG,DOJ,Other DOJ
+INBM,Interior,Interior
+ZCAP,Other,Other
+CDIT,Commerce,Commerce
+EDIG,Education,Education
+VRRI,Veterans Affairs,Veterans Affairs
+TRST,Treasury,Other Treasury
+LALS,Labor,Labor
+DEFB,Defense,Other Defense
+ODNI,Other,Other
+ZACA,Other,Other
+EXOG,Other,Other
+VRDE,Veterans Affairs,Veterans Affairs
+VRGA,Veterans Affairs,Veterans Affairs
+VRIL,Veterans Affairs,Veterans Affairs
+MOE,Other,Other
+VRVT,Veterans Affairs,Veterans Affairs
+ZEPZ,Other,Other
+ZTDA,Other,Other
+VRIN,Veterans Affairs,Veterans Affairs
+ZACS,Other,Other
+MOW,Other,Other
+ZNRO,Other,Other
+MPD1,Other,Other
+VRDC,Veterans Affairs,Veterans Affairs
+MPD5,Other,Other
+MPD4,Other,Other
+TXE,Other,Other
+ZCSB,Other,Other
+KS,Other,Other
+DECO,Defense,Other Defense
+CITA,Other,Other
+ARE,Other,Other
+PAE,Other,Other
+PAM,Other,Other
+VRNB,Veterans Affairs,Veterans Affairs
+AZ,Other,Other
+SC,Other,Other
+VRNH,Veterans Affairs,Veterans Affairs
+OHN,Other,Other
+HHSS,HHS,Other HHS
+MIW,Other,Other
+MT,Other,Other
+DOS,Other,Other
+DCIS,Other,Other
+AGER,Agriculture,Agriculture
+TRDC,Treasury,Other Treasury
+PR,Other,Other
+VRNV,Veterans Affairs,Veterans Affairs
+ALS,Other,Other
+VRLS,Veterans Affairs,Veterans Affairs
+YYYY,Other,Other
+YYY,Other,Other
+VRWY,Veterans Affairs,Veterans Affairs
+VRAR,Veterans Affairs,Veterans Affairs
+PAT,Other,Other
+NARS,Other,Other
+FCC,Other,Other
+CUR,Other,Other
+EEO,Other,Other
+CFT,Other,Other
+CDNT,Commerce,Commerce
+VRMT,Veterans Affairs,Veterans Affairs
+IRI,Treasury,Other Treasury
+DOEA,Other,Other
+ZSBA,Small Business Admin,SBA
+DEIG,Defense,Other Defense
+INTE,Interior,Interior
+DEAR,Defense,Army
+OTHR,Other,Other
+HSCB,DHS,CBP
+AGRI,Agriculture,Agriculture
+JUFB,DOJ,FBI
+EDUC,Education,Education
+ZCFT,Other,Other
+ZCTS,Other,Other
+ZTAZ,Other,Other
+JUAZ,DOJ,ATF
+AGCC,Agriculture,Agriculture
+DEMC,Defense,Other Defense
+AGHM,Agriculture,Agriculture
+HHFD,HHS,FDA
+HHCF,HHS,Other HHS
+ENFP,Energy,Energy
+ZCIA,Other,Other
+GSA,Other,Other
+ZGSA,Other,Other
+TRCB,Treasury,Other Treasury
+VRNJ,Veterans Affairs,Veterans Affairs
+USPS,Other,Other
+CDPT,Commerce,Commerce
+ZRTC,Other,Other
+HUSF,HUD,HUD
+DEOC,Defense,Other Defense
+ZCPS,Other,Other
+ENER,Energy,Energy
+INBR,Interior,Interior
+ZFTC,Other,Other
+LAWP,Labor,Labor
+DEDS,Defense,Other Defense
+ZPBG,Other,Other
+INS,Interior,Interior
+VRNM,Veterans Affairs,Veterans Affairs
+CDBC,Commerce,Commerce
+LAET,Labor,Labor
+HSIG,DHS,Other DHS
+ZHOR,Other,Other
+ZLOC,Other,Other
+IRSZ,Treasury,IRS
+TRFM,Treasury,Other Treasury
+ZINA,Other,Other
+PSUZ,USPS,USPS
+ZSMI,Other,Other
+ZGSP,Other,Other
+HSCG,DHS,Other DHS
+HUHA,HUD,HUD
+VROH,Veterans Affairs,Veterans Affairs
+ZNRC,Other,Other
+ALN,Other,Other
+ZACD,Other,Other
+INNH,Interior,Interior
+CAE,Other,Other
+ZNMD,Other,Other
+ZACM,Other,Other
+ZPEA,Other,Other
+CD,Commerce,Commerce
+ZGPO,Other,Other
+ZACJ,Other,Other
+HHCA,HHS,Other HHS
+ZATK,Other,Other
+ZFIB,Other,Other
+ENID,Energy,Energy
+ENOR,Energy,Energy
+ZFHF,Other,Other
+ZCTB,Other,Other
+DEFA,Defense,Other Defense
+GAS,Other,Other
+ILC,Other,Other
+VRTH,Veterans Affairs,Veterans Affairs
+VRWI,Veterans Affairs,Veterans Affairs
+KYW,Other,Other
+ZACO,Other,Other
+MIE,Other,Other
+ZACT,Other,Other
+ZACR,Other,Other
+WAW,Other,Other
+VRWA,Veterans Affairs,Veterans Affairs
+MN,Other,Other
+MPD6,Other,Other
+ILN,Other,Other
+HI,Other,Other
+ZNOH,Other,Other
+PAW,Other,Other
+VRPP,Veterans Affairs,Veterans Affairs
+VRPR,Veterans Affairs,Veterans Affairs
+ZACP,Other,Other
+CO,Other,Other
+TXS,Other,Other
+DESA,Defense,Other Defense
+ZACQ,Other,Other
+VRME,Veterans Affairs,Veterans Affairs
+KYE,Other,Other
+ZACF,Other,Other
+ZPPC,Other,Other
+VRNC,Veterans Affairs,Veterans Affairs
+OKW,Other,Other
+NYS,Other,Other
+NE,Other,Other
+NV,Other,Other
+ALM,Other,Other
+VRSF,Veterans Affairs,Veterans Affairs
+DCMS,Other,Other
+NJ,Other,Other
+PHS,Other,Other
+USCG,Other,Other
+VRUT,Veterans Affairs,Veterans Affairs
+CDEA,Commerce,Commerce
+LAM,Labor,Labor
+USMS,DOJ,USMS
+CT,Other,Other
+ARW,Other,Other
+ZGSF,Other,Other
+ND,Other,Other
+VRID,Veterans Affairs,Veterans Affairs
+GU,Other,Other
+DOD,Other,Other
+AID,Other,Other
+FHWA,Other,Other
+FDA,HHS,FDA
+ZGPS,Other,Other

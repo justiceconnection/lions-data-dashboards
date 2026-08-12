@@ -9,14 +9,14 @@ ym,department,subagency,reason,declined
 1995-05,ALL,ALL,Alternative to Federal Prosecution,97
 1995-06,ALL,ALL,Alternative to Federal Prosecution,85
 1995-07,ALL,ALL,Alternative to Federal Prosecution,76
-1995-08,ALL,ALL,Alternative to Federal Prosecution,100
+1995-08,ALL,ALL,Alternative to Federal Prosecution,101
 1995-09,ALL,ALL,Alternative to Federal Prosecution,92
 1995-10,ALL,ALL,Alternative to Federal Prosecution,97
 1995-11,ALL,ALL,Alternative to Federal Prosecution,67
 1995-12,ALL,ALL,Alternative to Federal Prosecution,70
 1996-01,ALL,ALL,Alternative to Federal Prosecution,69
 1996-02,ALL,ALL,Alternative to Federal Prosecution,72
-1996-03,ALL,ALL,Alternative to Federal Prosecution,79
+1996-03,ALL,ALL,Alternative to Federal Prosecution,78
 1996-04,ALL,ALL,Alternative to Federal Prosecution,93
 1996-05,ALL,ALL,Alternative to Federal Prosecution,76
 1996-06,ALL,ALL,Alternative to Federal Prosecution,116
@@ -279,7 +279,7 @@ ym,department,subagency,reason,declined
 2017-11,ALL,ALL,Alternative to Federal Prosecution,59
 2017-12,ALL,ALL,Alternative to Federal Prosecution,55
 2018-01,ALL,ALL,Alternative to Federal Prosecution,77
-2018-02,ALL,ALL,Alternative to Federal Prosecution,102
+2018-02,ALL,ALL,Alternative to Federal Prosecution,103
 2018-03,ALL,ALL,Alternative to Federal Prosecution,220
 2018-04,ALL,ALL,Alternative to Federal Prosecution,69
 2018-05,ALL,ALL,Alternative to Federal Prosecution,109
@@ -329,7 +329,7 @@ ym,department,subagency,reason,declined
 2022-01,ALL,ALL,Alternative to Federal Prosecution,82
 2022-02,ALL,ALL,Alternative to Federal Prosecution,102
 2022-03,ALL,ALL,Alternative to Federal Prosecution,193
-2022-04,ALL,ALL,Alternative to Federal Prosecution,73
+2022-04,ALL,ALL,Alternative to Federal Prosecution,74
 2022-05,ALL,ALL,Alternative to Federal Prosecution,105
 2022-06,ALL,ALL,Alternative to Federal Prosecution,90
 2022-07,ALL,ALL,Alternative to Federal Prosecution,78
@@ -355,7 +355,7 @@ ym,department,subagency,reason,declined
 2024-03,ALL,ALL,Alternative to Federal Prosecution,228
 2024-04,ALL,ALL,Alternative to Federal Prosecution,119
 2024-05,ALL,ALL,Alternative to Federal Prosecution,96
-2024-06,ALL,ALL,Alternative to Federal Prosecution,91
+2024-06,ALL,ALL,Alternative to Federal Prosecution,92
 2024-07,ALL,ALL,Alternative to Federal Prosecution,87
 2024-08,ALL,ALL,Alternative to Federal Prosecution,155
 2024-09,ALL,ALL,Alternative to Federal Prosecution,240
@@ -374,40 +374,41 @@ ym,department,subagency,reason,declined
 2025-10,ALL,ALL,Alternative to Federal Prosecution,80
 2025-11,ALL,ALL,Alternative to Federal Prosecution,69
 2025-12,ALL,ALL,Alternative to Federal Prosecution,78
-2026-01,ALL,ALL,Alternative to Federal Prosecution,97
-2026-02,ALL,ALL,Alternative to Federal Prosecution,139
+2026-01,ALL,ALL,Alternative to Federal Prosecution,99
+2026-02,ALL,ALL,Alternative to Federal Prosecution,140
 2026-03,ALL,ALL,Alternative to Federal Prosecution,231
-2026-04,ALL,ALL,Alternative to Federal Prosecution,100
-2026-05,ALL,ALL,Alternative to Federal Prosecution,86
+2026-04,ALL,ALL,Alternative to Federal Prosecution,101
+2026-05,ALL,ALL,Alternative to Federal Prosecution,94
+2026-06,ALL,ALL,Alternative to Federal Prosecution,73
 1994-10,ALL,ALL,Defendant Unavailable,269
 1994-11,ALL,ALL,Defendant Unavailable,268
 1994-12,ALL,ALL,Defendant Unavailable,251
 1995-01,ALL,ALL,Defendant Unavailable,303
 1995-02,ALL,ALL,Defendant Unavailable,309
-1995-03,ALL,ALL,Defendant Unavailable,391
+1995-03,ALL,ALL,Defendant Unavailable,392
 1995-04,ALL,ALL,Defendant Unavailable,307
 1995-05,ALL,ALL,Defendant Unavailable,299
 1995-06,ALL,ALL,Defendant Unavailable,327
 1995-07,ALL,ALL,Defendant Unavailable,282
-1995-08,ALL,ALL,Defendant Unavailable,336
+1995-08,ALL,ALL,Defendant Unavailable,335
 1995-09,ALL,ALL,Defendant Unavailable,399
 1995-10,ALL,ALL,Defendant Unavailable,319
 1995-11,ALL,ALL,Defendant Unavailable,227
 1995-12,ALL,ALL,Defendant Unavailable,221
 1996-01,ALL,ALL,Defendant Unavailable,291
 1996-02,ALL,ALL,Defendant Unavailable,288
-1996-03,ALL,ALL,Defendant Unavailable,332
+1996-03,ALL,ALL,Defendant Unavailable,333
 1996-04,ALL,ALL,Defendant Unavailable,305
 1996-05,ALL,ALL,Defendant Unavailable,359
 1996-06,ALL,ALL,Defendant Unavailable,507
-1996-07,ALL,ALL,Defendant Unavailable,278
+1996-07,ALL,ALL,Defendant Unavailable,279
 1996-08,ALL,ALL,Defendant Unavailable,282
 1996-09,ALL,ALL,Defendant Unavailable,270
 1996-10,ALL,ALL,Defendant Unavailable,285
 1996-11,ALL,ALL,Defendant Unavailable,235
 1996-12,ALL,ALL,Defendant Unavailable,288
 1997-01,ALL,ALL,Defendant Unavailable,401
-1997-02,ALL,ALL,Defendant Unavailable,234
+1997-02,ALL,ALL,Defendant Unavailable,235
 1997-03,ALL,ALL,Defendant Unavailable,264
 1997-04,ALL,ALL,Defendant Unavailable,276
 1997-05,ALL,ALL,Defendant Unavailable,313
@@ -435,7 +436,7 @@ ym,department,subagency,reason,declined
 1999-03,ALL,ALL,Defendant Unavailable,320
 1999-04,ALL,ALL,Defendant Unavailable,304
 1999-05,ALL,ALL,Defendant Unavailable,300
-1999-06,ALL,ALL,Defendant Unavailable,336
+1999-06,ALL,ALL,Defendant Unavailable,337
 1999-07,ALL,ALL,Defendant Unavailable,391
 1999-08,ALL,ALL,Defendant Unavailable,352
 1999-09,ALL,ALL,Defendant Unavailable,272
@@ -473,7 +474,7 @@ ym,department,subagency,reason,declined
 2002-05,ALL,ALL,Defendant Unavailable,426
 2002-06,ALL,ALL,Defendant Unavailable,237
 2002-07,ALL,ALL,Defendant Unavailable,353
-2002-08,ALL,ALL,Defendant Unavailable,366
+2002-08,ALL,ALL,Defendant Unavailable,367
 2002-09,ALL,ALL,Defendant Unavailable,1198
 2002-10,ALL,ALL,Defendant Unavailable,681
 2002-11,ALL,ALL,Defendant Unavailable,262
@@ -498,12 +499,12 @@ ym,department,subagency,reason,declined
 2004-06,ALL,ALL,Defendant Unavailable,331
 2004-07,ALL,ALL,Defendant Unavailable,253
 2004-08,ALL,ALL,Defendant Unavailable,370
-2004-09,ALL,ALL,Defendant Unavailable,480
+2004-09,ALL,ALL,Defendant Unavailable,479
 2004-10,ALL,ALL,Defendant Unavailable,280
 2004-11,ALL,ALL,Defendant Unavailable,251
 2004-12,ALL,ALL,Defendant Unavailable,252
 2005-01,ALL,ALL,Defendant Unavailable,356
-2005-02,ALL,ALL,Defendant Unavailable,291
+2005-02,ALL,ALL,Defendant Unavailable,292
 2005-03,ALL,ALL,Defendant Unavailable,494
 2005-04,ALL,ALL,Defendant Unavailable,289
 2005-05,ALL,ALL,Defendant Unavailable,299
@@ -539,7 +540,7 @@ ym,department,subagency,reason,declined
 2007-11,ALL,ALL,Defendant Unavailable,193
 2007-12,ALL,ALL,Defendant Unavailable,206
 2008-01,ALL,ALL,Defendant Unavailable,271
-2008-02,ALL,ALL,Defendant Unavailable,256
+2008-02,ALL,ALL,Defendant Unavailable,255
 2008-03,ALL,ALL,Defendant Unavailable,423
 2008-04,ALL,ALL,Defendant Unavailable,303
 2008-05,ALL,ALL,Defendant Unavailable,234
@@ -560,7 +561,7 @@ ym,department,subagency,reason,declined
 2009-08,ALL,ALL,Defendant Unavailable,307
 2009-09,ALL,ALL,Defendant Unavailable,513
 2009-10,ALL,ALL,Defendant Unavailable,255
-2009-11,ALL,ALL,Defendant Unavailable,198
+2009-11,ALL,ALL,Defendant Unavailable,197
 2009-12,ALL,ALL,Defendant Unavailable,210
 2010-01,ALL,ALL,Defendant Unavailable,231
 2010-02,ALL,ALL,Defendant Unavailable,269
@@ -582,7 +583,7 @@ ym,department,subagency,reason,declined
 2011-06,ALL,ALL,Defendant Unavailable,237
 2011-07,ALL,ALL,Defendant Unavailable,209
 2011-08,ALL,ALL,Defendant Unavailable,312
-2011-09,ALL,ALL,Defendant Unavailable,440
+2011-09,ALL,ALL,Defendant Unavailable,442
 2011-10,ALL,ALL,Defendant Unavailable,232
 2011-11,ALL,ALL,Defendant Unavailable,195
 2011-12,ALL,ALL,Defendant Unavailable,182
@@ -604,11 +605,11 @@ ym,department,subagency,reason,declined
 2013-04,ALL,ALL,Defendant Unavailable,104
 2013-05,ALL,ALL,Defendant Unavailable,61
 2013-06,ALL,ALL,Defendant Unavailable,80
-2013-07,ALL,ALL,Defendant Unavailable,65
+2013-07,ALL,ALL,Defendant Unavailable,64
 2013-08,ALL,ALL,Defendant Unavailable,61
 2013-09,ALL,ALL,Defendant Unavailable,129
 2013-10,ALL,ALL,Defendant Unavailable,45
-2013-11,ALL,ALL,Defendant Unavailable,24
+2013-11,ALL,ALL,Defendant Unavailable,25
 2013-12,ALL,ALL,Defendant Unavailable,26
 2014-01,ALL,ALL,Defendant Unavailable,24
 2014-02,ALL,ALL,Defendant Unavailable,31
@@ -684,7 +685,7 @@ ym,department,subagency,reason,declined
 2019-12,ALL,ALL,Defendant Unavailable,17
 2020-01,ALL,ALL,Defendant Unavailable,40
 2020-02,ALL,ALL,Defendant Unavailable,41
-2020-03,ALL,ALL,Defendant Unavailable,33
+2020-03,ALL,ALL,Defendant Unavailable,32
 2020-04,ALL,ALL,Defendant Unavailable,27
 2020-05,ALL,ALL,Defendant Unavailable,13
 2020-06,ALL,ALL,Defendant Unavailable,26
@@ -744,7 +745,7 @@ ym,department,subagency,reason,declined
 2024-12,ALL,ALL,Defendant Unavailable,32
 2025-01,ALL,ALL,Defendant Unavailable,41
 2025-02,ALL,ALL,Defendant Unavailable,137
-2025-03,ALL,ALL,Defendant Unavailable,68
+2025-03,ALL,ALL,Defendant Unavailable,69
 2025-04,ALL,ALL,Defendant Unavailable,35
 2025-05,ALL,ALL,Defendant Unavailable,42
 2025-06,ALL,ALL,Defendant Unavailable,32
@@ -753,20 +754,21 @@ ym,department,subagency,reason,declined
 2025-09,ALL,ALL,Defendant Unavailable,90
 2025-10,ALL,ALL,Defendant Unavailable,27
 2025-11,ALL,ALL,Defendant Unavailable,28
-2025-12,ALL,ALL,Defendant Unavailable,20
+2025-12,ALL,ALL,Defendant Unavailable,21
 2026-01,ALL,ALL,Defendant Unavailable,29
 2026-02,ALL,ALL,Defendant Unavailable,34
 2026-03,ALL,ALL,Defendant Unavailable,76
-2026-04,ALL,ALL,Defendant Unavailable,28
-2026-05,ALL,ALL,Defendant Unavailable,30
+2026-04,ALL,ALL,Defendant Unavailable,29
+2026-05,ALL,ALL,Defendant Unavailable,32
+2026-06,ALL,ALL,Defendant Unavailable,26
 1994-10,ALL,ALL,Insufficient Evidence,709
 1994-11,ALL,ALL,Insufficient Evidence,624
 1994-12,ALL,ALL,Insufficient Evidence,642
 1995-01,ALL,ALL,Insufficient Evidence,833
 1995-02,ALL,ALL,Insufficient Evidence,784
-1995-03,ALL,ALL,Insufficient Evidence,970
+1995-03,ALL,ALL,Insufficient Evidence,969
 1995-04,ALL,ALL,Insufficient Evidence,755
-1995-05,ALL,ALL,Insufficient Evidence,751
+1995-05,ALL,ALL,Insufficient Evidence,753
 1995-06,ALL,ALL,Insufficient Evidence,862
 1995-07,ALL,ALL,Insufficient Evidence,751
 1995-08,ALL,ALL,Insufficient Evidence,846
@@ -776,8 +778,8 @@ ym,department,subagency,reason,declined
 1995-12,ALL,ALL,Insufficient Evidence,686
 1996-01,ALL,ALL,Insufficient Evidence,738
 1996-02,ALL,ALL,Insufficient Evidence,707
-1996-03,ALL,ALL,Insufficient Evidence,814
-1996-04,ALL,ALL,Insufficient Evidence,877
+1996-03,ALL,ALL,Insufficient Evidence,815
+1996-04,ALL,ALL,Insufficient Evidence,876
 1996-05,ALL,ALL,Insufficient Evidence,852
 1996-06,ALL,ALL,Insufficient Evidence,1452
 1996-07,ALL,ALL,Insufficient Evidence,798
@@ -822,7 +824,7 @@ ym,department,subagency,reason,declined
 1999-10,ALL,ALL,Insufficient Evidence,639
 1999-11,ALL,ALL,Insufficient Evidence,606
 1999-12,ALL,ALL,Insufficient Evidence,649
-2000-01,ALL,ALL,Insufficient Evidence,648
+2000-01,ALL,ALL,Insufficient Evidence,649
 2000-02,ALL,ALL,Insufficient Evidence,780
 2000-03,ALL,ALL,Insufficient Evidence,1502
 2000-04,ALL,ALL,Insufficient Evidence,737
@@ -853,7 +855,7 @@ ym,department,subagency,reason,declined
 2002-05,ALL,ALL,Insufficient Evidence,1014
 2002-06,ALL,ALL,Insufficient Evidence,686
 2002-07,ALL,ALL,Insufficient Evidence,1006
-2002-08,ALL,ALL,Insufficient Evidence,721
+2002-08,ALL,ALL,Insufficient Evidence,720
 2002-09,ALL,ALL,Insufficient Evidence,922
 2002-10,ALL,ALL,Insufficient Evidence,880
 2002-11,ALL,ALL,Insufficient Evidence,773
@@ -866,7 +868,7 @@ ym,department,subagency,reason,declined
 2003-06,ALL,ALL,Insufficient Evidence,779
 2003-07,ALL,ALL,Insufficient Evidence,803
 2003-08,ALL,ALL,Insufficient Evidence,845
-2003-09,ALL,ALL,Insufficient Evidence,1104
+2003-09,ALL,ALL,Insufficient Evidence,1105
 2003-10,ALL,ALL,Insufficient Evidence,657
 2003-11,ALL,ALL,Insufficient Evidence,490
 2003-12,ALL,ALL,Insufficient Evidence,649
@@ -878,7 +880,7 @@ ym,department,subagency,reason,declined
 2004-06,ALL,ALL,Insufficient Evidence,705
 2004-07,ALL,ALL,Insufficient Evidence,723
 2004-08,ALL,ALL,Insufficient Evidence,925
-2004-09,ALL,ALL,Insufficient Evidence,1406
+2004-09,ALL,ALL,Insufficient Evidence,1407
 2004-10,ALL,ALL,Insufficient Evidence,637
 2004-11,ALL,ALL,Insufficient Evidence,571
 2004-12,ALL,ALL,Insufficient Evidence,628
@@ -887,10 +889,10 @@ ym,department,subagency,reason,declined
 2005-03,ALL,ALL,Insufficient Evidence,1268
 2005-04,ALL,ALL,Insufficient Evidence,711
 2005-05,ALL,ALL,Insufficient Evidence,625
-2005-06,ALL,ALL,Insufficient Evidence,781
+2005-06,ALL,ALL,Insufficient Evidence,780
 2005-07,ALL,ALL,Insufficient Evidence,611
 2005-08,ALL,ALL,Insufficient Evidence,841
-2005-09,ALL,ALL,Insufficient Evidence,1272
+2005-09,ALL,ALL,Insufficient Evidence,1273
 2005-10,ALL,ALL,Insufficient Evidence,820
 2005-11,ALL,ALL,Insufficient Evidence,701
 2005-12,ALL,ALL,Insufficient Evidence,693
@@ -908,7 +910,7 @@ ym,department,subagency,reason,declined
 2006-12,ALL,ALL,Insufficient Evidence,606
 2007-01,ALL,ALL,Insufficient Evidence,719
 2007-02,ALL,ALL,Insufficient Evidence,675
-2007-03,ALL,ALL,Insufficient Evidence,1175
+2007-03,ALL,ALL,Insufficient Evidence,1174
 2007-04,ALL,ALL,Insufficient Evidence,902
 2007-05,ALL,ALL,Insufficient Evidence,892
 2007-06,ALL,ALL,Insufficient Evidence,813
@@ -962,9 +964,9 @@ ym,department,subagency,reason,declined
 2011-06,ALL,ALL,Insufficient Evidence,689
 2011-07,ALL,ALL,Insufficient Evidence,642
 2011-08,ALL,ALL,Insufficient Evidence,934
-2011-09,ALL,ALL,Insufficient Evidence,1310
+2011-09,ALL,ALL,Insufficient Evidence,1311
 2011-10,ALL,ALL,Insufficient Evidence,854
-2011-11,ALL,ALL,Insufficient Evidence,578
+2011-11,ALL,ALL,Insufficient Evidence,579
 2011-12,ALL,ALL,Insufficient Evidence,569
 2012-01,ALL,ALL,Insufficient Evidence,817
 2012-02,ALL,ALL,Insufficient Evidence,780
@@ -974,7 +976,7 @@ ym,department,subagency,reason,declined
 2012-06,ALL,ALL,Insufficient Evidence,633
 2012-07,ALL,ALL,Insufficient Evidence,695
 2012-08,ALL,ALL,Insufficient Evidence,789
-2012-09,ALL,ALL,Insufficient Evidence,1182
+2012-09,ALL,ALL,Insufficient Evidence,1181
 2012-10,ALL,ALL,Insufficient Evidence,864
 2012-11,ALL,ALL,Insufficient Evidence,603
 2012-12,ALL,ALL,Insufficient Evidence,591
@@ -996,11 +998,11 @@ ym,department,subagency,reason,declined
 2014-04,ALL,ALL,Insufficient Evidence,917
 2014-05,ALL,ALL,Insufficient Evidence,910
 2014-06,ALL,ALL,Insufficient Evidence,858
-2014-07,ALL,ALL,Insufficient Evidence,963
+2014-07,ALL,ALL,Insufficient Evidence,964
 2014-08,ALL,ALL,Insufficient Evidence,966
 2014-09,ALL,ALL,Insufficient Evidence,1944
 2014-10,ALL,ALL,Insufficient Evidence,955
-2014-11,ALL,ALL,Insufficient Evidence,694
+2014-11,ALL,ALL,Insufficient Evidence,695
 2014-12,ALL,ALL,Insufficient Evidence,756
 2015-01,ALL,ALL,Insufficient Evidence,1012
 2015-02,ALL,ALL,Insufficient Evidence,862
@@ -1018,14 +1020,14 @@ ym,department,subagency,reason,declined
 2016-02,ALL,ALL,Insufficient Evidence,893
 2016-03,ALL,ALL,Insufficient Evidence,2020
 2016-04,ALL,ALL,Insufficient Evidence,750
-2016-05,ALL,ALL,Insufficient Evidence,673
+2016-05,ALL,ALL,Insufficient Evidence,674
 2016-06,ALL,ALL,Insufficient Evidence,758
 2016-07,ALL,ALL,Insufficient Evidence,680
 2016-08,ALL,ALL,Insufficient Evidence,947
 2016-09,ALL,ALL,Insufficient Evidence,1444
 2016-10,ALL,ALL,Insufficient Evidence,739
 2016-11,ALL,ALL,Insufficient Evidence,618
-2016-12,ALL,ALL,Insufficient Evidence,851
+2016-12,ALL,ALL,Insufficient Evidence,852
 2017-01,ALL,ALL,Insufficient Evidence,774
 2017-02,ALL,ALL,Insufficient Evidence,873
 2017-03,ALL,ALL,Insufficient Evidence,1713
@@ -1033,7 +1035,7 @@ ym,department,subagency,reason,declined
 2017-05,ALL,ALL,Insufficient Evidence,746
 2017-06,ALL,ALL,Insufficient Evidence,929
 2017-07,ALL,ALL,Insufficient Evidence,776
-2017-08,ALL,ALL,Insufficient Evidence,1103
+2017-08,ALL,ALL,Insufficient Evidence,1104
 2017-09,ALL,ALL,Insufficient Evidence,1438
 2017-10,ALL,ALL,Insufficient Evidence,810
 2017-11,ALL,ALL,Insufficient Evidence,625
@@ -1053,21 +1055,21 @@ ym,department,subagency,reason,declined
 2019-01,ALL,ALL,Insufficient Evidence,645
 2019-02,ALL,ALL,Insufficient Evidence,1379
 2019-03,ALL,ALL,Insufficient Evidence,1793
-2019-04,ALL,ALL,Insufficient Evidence,1224
+2019-04,ALL,ALL,Insufficient Evidence,1225
 2019-05,ALL,ALL,Insufficient Evidence,827
 2019-06,ALL,ALL,Insufficient Evidence,790
-2019-07,ALL,ALL,Insufficient Evidence,997
+2019-07,ALL,ALL,Insufficient Evidence,996
 2019-08,ALL,ALL,Insufficient Evidence,1014
 2019-09,ALL,ALL,Insufficient Evidence,3522
-2019-10,ALL,ALL,Insufficient Evidence,1071
+2019-10,ALL,ALL,Insufficient Evidence,1072
 2019-11,ALL,ALL,Insufficient Evidence,649
 2019-12,ALL,ALL,Insufficient Evidence,787
 2020-01,ALL,ALL,Insufficient Evidence,851
 2020-02,ALL,ALL,Insufficient Evidence,1068
-2020-03,ALL,ALL,Insufficient Evidence,1414
+2020-03,ALL,ALL,Insufficient Evidence,1415
 2020-04,ALL,ALL,Insufficient Evidence,720
 2020-05,ALL,ALL,Insufficient Evidence,417
-2020-06,ALL,ALL,Insufficient Evidence,503
+2020-06,ALL,ALL,Insufficient Evidence,504
 2020-07,ALL,ALL,Insufficient Evidence,762
 2020-08,ALL,ALL,Insufficient Evidence,873
 2020-09,ALL,ALL,Insufficient Evidence,2627
@@ -1076,17 +1078,17 @@ ym,department,subagency,reason,declined
 2020-12,ALL,ALL,Insufficient Evidence,564
 2021-01,ALL,ALL,Insufficient Evidence,675
 2021-02,ALL,ALL,Insufficient Evidence,939
-2021-03,ALL,ALL,Insufficient Evidence,1952
+2021-03,ALL,ALL,Insufficient Evidence,1953
 2021-04,ALL,ALL,Insufficient Evidence,838
-2021-05,ALL,ALL,Insufficient Evidence,722
+2021-05,ALL,ALL,Insufficient Evidence,723
 2021-06,ALL,ALL,Insufficient Evidence,682
 2021-07,ALL,ALL,Insufficient Evidence,981
 2021-08,ALL,ALL,Insufficient Evidence,1288
-2021-09,ALL,ALL,Insufficient Evidence,2312
+2021-09,ALL,ALL,Insufficient Evidence,2313
 2021-10,ALL,ALL,Insufficient Evidence,864
 2021-11,ALL,ALL,Insufficient Evidence,660
 2021-12,ALL,ALL,Insufficient Evidence,634
-2022-01,ALL,ALL,Insufficient Evidence,824
+2022-01,ALL,ALL,Insufficient Evidence,825
 2022-02,ALL,ALL,Insufficient Evidence,1379
 2022-03,ALL,ALL,Insufficient Evidence,2365
 2022-04,ALL,ALL,Insufficient Evidence,884
@@ -1096,16 +1098,16 @@ ym,department,subagency,reason,declined
 2022-08,ALL,ALL,Insufficient Evidence,1236
 2022-09,ALL,ALL,Insufficient Evidence,2555
 2022-10,ALL,ALL,Insufficient Evidence,811
-2022-11,ALL,ALL,Insufficient Evidence,731
+2022-11,ALL,ALL,Insufficient Evidence,733
 2022-12,ALL,ALL,Insufficient Evidence,853
 2023-01,ALL,ALL,Insufficient Evidence,898
-2023-02,ALL,ALL,Insufficient Evidence,1112
-2023-03,ALL,ALL,Insufficient Evidence,2376
+2023-02,ALL,ALL,Insufficient Evidence,1113
+2023-03,ALL,ALL,Insufficient Evidence,2377
 2023-04,ALL,ALL,Insufficient Evidence,845
 2023-05,ALL,ALL,Insufficient Evidence,874
 2023-06,ALL,ALL,Insufficient Evidence,845
 2023-07,ALL,ALL,Insufficient Evidence,815
-2023-08,ALL,ALL,Insufficient Evidence,1109
+2023-08,ALL,ALL,Insufficient Evidence,1111
 2023-09,ALL,ALL,Insufficient Evidence,2518
 2023-10,ALL,ALL,Insufficient Evidence,876
 2023-11,ALL,ALL,Insufficient Evidence,561
@@ -1115,30 +1117,31 @@ ym,department,subagency,reason,declined
 2024-03,ALL,ALL,Insufficient Evidence,2164
 2024-04,ALL,ALL,Insufficient Evidence,981
 2024-05,ALL,ALL,Insufficient Evidence,911
-2024-06,ALL,ALL,Insufficient Evidence,742
+2024-06,ALL,ALL,Insufficient Evidence,743
 2024-07,ALL,ALL,Insufficient Evidence,998
 2024-08,ALL,ALL,Insufficient Evidence,1204
-2024-09,ALL,ALL,Insufficient Evidence,2391
+2024-09,ALL,ALL,Insufficient Evidence,2390
 2024-10,ALL,ALL,Insufficient Evidence,976
 2024-11,ALL,ALL,Insufficient Evidence,539
 2024-12,ALL,ALL,Insufficient Evidence,645
-2025-01,ALL,ALL,Insufficient Evidence,841
+2025-01,ALL,ALL,Insufficient Evidence,842
 2025-02,ALL,ALL,Insufficient Evidence,5701
 2025-03,ALL,ALL,Insufficient Evidence,2106
-2025-04,ALL,ALL,Insufficient Evidence,859
-2025-05,ALL,ALL,Insufficient Evidence,734
-2025-06,ALL,ALL,Insufficient Evidence,757
-2025-07,ALL,ALL,Insufficient Evidence,863
+2025-04,ALL,ALL,Insufficient Evidence,862
+2025-05,ALL,ALL,Insufficient Evidence,735
+2025-06,ALL,ALL,Insufficient Evidence,759
+2025-07,ALL,ALL,Insufficient Evidence,868
 2025-08,ALL,ALL,Insufficient Evidence,1025
-2025-09,ALL,ALL,Insufficient Evidence,2116
-2025-10,ALL,ALL,Insufficient Evidence,836
-2025-11,ALL,ALL,Insufficient Evidence,620
-2025-12,ALL,ALL,Insufficient Evidence,698
-2026-01,ALL,ALL,Insufficient Evidence,733
-2026-02,ALL,ALL,Insufficient Evidence,960
-2026-03,ALL,ALL,Insufficient Evidence,2105
-2026-04,ALL,ALL,Insufficient Evidence,895
-2026-05,ALL,ALL,Insufficient Evidence,631
+2025-09,ALL,ALL,Insufficient Evidence,2117
+2025-10,ALL,ALL,Insufficient Evidence,837
+2025-11,ALL,ALL,Insufficient Evidence,616
+2025-12,ALL,ALL,Insufficient Evidence,700
+2026-01,ALL,ALL,Insufficient Evidence,731
+2026-02,ALL,ALL,Insufficient Evidence,970
+2026-03,ALL,ALL,Insufficient Evidence,2110
+2026-04,ALL,ALL,Insufficient Evidence,920
+2026-05,ALL,ALL,Insufficient Evidence,703
+2026-06,ALL,ALL,Insufficient Evidence,544
 1994-10,ALL,ALL,Legally Barred,32
 1994-11,ALL,ALL,Legally Barred,169
 1994-12,ALL,ALL,Legally Barred,23
@@ -1368,7 +1371,7 @@ ym,department,subagency,reason,declined
 2013-08,ALL,ALL,Legally Barred,33
 2013-09,ALL,ALL,Legally Barred,127
 2013-10,ALL,ALL,Legally Barred,100
-2013-11,ALL,ALL,Legally Barred,92
+2013-11,ALL,ALL,Legally Barred,91
 2013-12,ALL,ALL,Legally Barred,99
 2014-01,ALL,ALL,Legally Barred,112
 2014-02,ALL,ALL,Legally Barred,511
@@ -1516,9 +1519,10 @@ ym,department,subagency,reason,declined
 2025-12,ALL,ALL,Legally Barred,19
 2026-01,ALL,ALL,Legally Barred,20
 2026-02,ALL,ALL,Legally Barred,27
-2026-03,ALL,ALL,Legally Barred,43
+2026-03,ALL,ALL,Legally Barred,44
 2026-04,ALL,ALL,Legally Barred,20
-2026-05,ALL,ALL,Legally Barred,12
+2026-05,ALL,ALL,Legally Barred,13
+2026-06,ALL,ALL,Legally Barred,12
 1994-10,ALL,ALL,Matter Referred to Other Jurisdiction,303
 1994-11,ALL,ALL,Matter Referred to Other Jurisdiction,57
 1994-12,ALL,ALL,Matter Referred to Other Jurisdiction,39
@@ -1536,11 +1540,11 @@ ym,department,subagency,reason,declined
 1995-12,ALL,ALL,Matter Referred to Other Jurisdiction,45
 1996-01,ALL,ALL,Matter Referred to Other Jurisdiction,43
 1996-02,ALL,ALL,Matter Referred to Other Jurisdiction,36
-1996-03,ALL,ALL,Matter Referred to Other Jurisdiction,60
+1996-03,ALL,ALL,Matter Referred to Other Jurisdiction,59
 1996-04,ALL,ALL,Matter Referred to Other Jurisdiction,51
 1996-05,ALL,ALL,Matter Referred to Other Jurisdiction,31
 1996-06,ALL,ALL,Matter Referred to Other Jurisdiction,72
-1996-07,ALL,ALL,Matter Referred to Other Jurisdiction,46
+1996-07,ALL,ALL,Matter Referred to Other Jurisdiction,45
 1996-08,ALL,ALL,Matter Referred to Other Jurisdiction,35
 1996-09,ALL,ALL,Matter Referred to Other Jurisdiction,58
 1996-10,ALL,ALL,Matter Referred to Other Jurisdiction,38
@@ -1575,14 +1579,14 @@ ym,department,subagency,reason,declined
 1999-03,ALL,ALL,Matter Referred to Other Jurisdiction,320
 1999-04,ALL,ALL,Matter Referred to Other Jurisdiction,49
 1999-05,ALL,ALL,Matter Referred to Other Jurisdiction,45
-1999-06,ALL,ALL,Matter Referred to Other Jurisdiction,64
+1999-06,ALL,ALL,Matter Referred to Other Jurisdiction,63
 1999-07,ALL,ALL,Matter Referred to Other Jurisdiction,78
 1999-08,ALL,ALL,Matter Referred to Other Jurisdiction,142
 1999-09,ALL,ALL,Matter Referred to Other Jurisdiction,48
 1999-10,ALL,ALL,Matter Referred to Other Jurisdiction,84
 1999-11,ALL,ALL,Matter Referred to Other Jurisdiction,50
 1999-12,ALL,ALL,Matter Referred to Other Jurisdiction,50
-2000-01,ALL,ALL,Matter Referred to Other Jurisdiction,88
+2000-01,ALL,ALL,Matter Referred to Other Jurisdiction,87
 2000-02,ALL,ALL,Matter Referred to Other Jurisdiction,94
 2000-03,ALL,ALL,Matter Referred to Other Jurisdiction,118
 2000-04,ALL,ALL,Matter Referred to Other Jurisdiction,91
@@ -1700,7 +1704,7 @@ ym,department,subagency,reason,declined
 2009-08,ALL,ALL,Matter Referred to Other Jurisdiction,54
 2009-09,ALL,ALL,Matter Referred to Other Jurisdiction,75
 2009-10,ALL,ALL,Matter Referred to Other Jurisdiction,28
-2009-11,ALL,ALL,Matter Referred to Other Jurisdiction,22
+2009-11,ALL,ALL,Matter Referred to Other Jurisdiction,23
 2009-12,ALL,ALL,Matter Referred to Other Jurisdiction,42
 2010-01,ALL,ALL,Matter Referred to Other Jurisdiction,32
 2010-02,ALL,ALL,Matter Referred to Other Jurisdiction,26
@@ -1748,15 +1752,15 @@ ym,department,subagency,reason,declined
 2013-08,ALL,ALL,Matter Referred to Other Jurisdiction,97
 2013-09,ALL,ALL,Matter Referred to Other Jurisdiction,127
 2013-10,ALL,ALL,Matter Referred to Other Jurisdiction,193
-2013-11,ALL,ALL,Matter Referred to Other Jurisdiction,143
+2013-11,ALL,ALL,Matter Referred to Other Jurisdiction,142
 2013-12,ALL,ALL,Matter Referred to Other Jurisdiction,162
 2014-01,ALL,ALL,Matter Referred to Other Jurisdiction,198
 2014-02,ALL,ALL,Matter Referred to Other Jurisdiction,180
 2014-03,ALL,ALL,Matter Referred to Other Jurisdiction,331
 2014-04,ALL,ALL,Matter Referred to Other Jurisdiction,177
-2014-05,ALL,ALL,Matter Referred to Other Jurisdiction,175
+2014-05,ALL,ALL,Matter Referred to Other Jurisdiction,176
 2014-06,ALL,ALL,Matter Referred to Other Jurisdiction,177
-2014-07,ALL,ALL,Matter Referred to Other Jurisdiction,173
+2014-07,ALL,ALL,Matter Referred to Other Jurisdiction,172
 2014-08,ALL,ALL,Matter Referred to Other Jurisdiction,220
 2014-09,ALL,ALL,Matter Referred to Other Jurisdiction,305
 2014-10,ALL,ALL,Matter Referred to Other Jurisdiction,175
@@ -1785,7 +1789,7 @@ ym,department,subagency,reason,declined
 2016-09,ALL,ALL,Matter Referred to Other Jurisdiction,249
 2016-10,ALL,ALL,Matter Referred to Other Jurisdiction,146
 2016-11,ALL,ALL,Matter Referred to Other Jurisdiction,124
-2016-12,ALL,ALL,Matter Referred to Other Jurisdiction,121
+2016-12,ALL,ALL,Matter Referred to Other Jurisdiction,120
 2017-01,ALL,ALL,Matter Referred to Other Jurisdiction,163
 2017-02,ALL,ALL,Matter Referred to Other Jurisdiction,142
 2017-03,ALL,ALL,Matter Referred to Other Jurisdiction,263
@@ -1799,7 +1803,7 @@ ym,department,subagency,reason,declined
 2017-11,ALL,ALL,Matter Referred to Other Jurisdiction,89
 2017-12,ALL,ALL,Matter Referred to Other Jurisdiction,113
 2018-01,ALL,ALL,Matter Referred to Other Jurisdiction,162
-2018-02,ALL,ALL,Matter Referred to Other Jurisdiction,142
+2018-02,ALL,ALL,Matter Referred to Other Jurisdiction,141
 2018-03,ALL,ALL,Matter Referred to Other Jurisdiction,289
 2018-04,ALL,ALL,Matter Referred to Other Jurisdiction,125
 2018-05,ALL,ALL,Matter Referred to Other Jurisdiction,131
@@ -1819,7 +1823,7 @@ ym,department,subagency,reason,declined
 2019-07,ALL,ALL,Matter Referred to Other Jurisdiction,145
 2019-08,ALL,ALL,Matter Referred to Other Jurisdiction,154
 2019-09,ALL,ALL,Matter Referred to Other Jurisdiction,363
-2019-10,ALL,ALL,Matter Referred to Other Jurisdiction,175
+2019-10,ALL,ALL,Matter Referred to Other Jurisdiction,174
 2019-11,ALL,ALL,Matter Referred to Other Jurisdiction,113
 2019-12,ALL,ALL,Matter Referred to Other Jurisdiction,112
 2020-01,ALL,ALL,Matter Referred to Other Jurisdiction,134
@@ -1836,7 +1840,7 @@ ym,department,subagency,reason,declined
 2020-12,ALL,ALL,Matter Referred to Other Jurisdiction,113
 2021-01,ALL,ALL,Matter Referred to Other Jurisdiction,122
 2021-02,ALL,ALL,Matter Referred to Other Jurisdiction,162
-2021-03,ALL,ALL,Matter Referred to Other Jurisdiction,346
+2021-03,ALL,ALL,Matter Referred to Other Jurisdiction,345
 2021-04,ALL,ALL,Matter Referred to Other Jurisdiction,168
 2021-05,ALL,ALL,Matter Referred to Other Jurisdiction,142
 2021-06,ALL,ALL,Matter Referred to Other Jurisdiction,132
@@ -1875,10 +1879,10 @@ ym,department,subagency,reason,declined
 2024-03,ALL,ALL,Matter Referred to Other Jurisdiction,347
 2024-04,ALL,ALL,Matter Referred to Other Jurisdiction,186
 2024-05,ALL,ALL,Matter Referred to Other Jurisdiction,167
-2024-06,ALL,ALL,Matter Referred to Other Jurisdiction,134
+2024-06,ALL,ALL,Matter Referred to Other Jurisdiction,135
 2024-07,ALL,ALL,Matter Referred to Other Jurisdiction,167
-2024-08,ALL,ALL,Matter Referred to Other Jurisdiction,255
-2024-09,ALL,ALL,Matter Referred to Other Jurisdiction,311
+2024-08,ALL,ALL,Matter Referred to Other Jurisdiction,254
+2024-09,ALL,ALL,Matter Referred to Other Jurisdiction,312
 2024-10,ALL,ALL,Matter Referred to Other Jurisdiction,154
 2024-11,ALL,ALL,Matter Referred to Other Jurisdiction,77
 2024-12,ALL,ALL,Matter Referred to Other Jurisdiction,118
@@ -1890,15 +1894,16 @@ ym,department,subagency,reason,declined
 2025-06,ALL,ALL,Matter Referred to Other Jurisdiction,163
 2025-07,ALL,ALL,Matter Referred to Other Jurisdiction,197
 2025-08,ALL,ALL,Matter Referred to Other Jurisdiction,177
-2025-09,ALL,ALL,Matter Referred to Other Jurisdiction,326
+2025-09,ALL,ALL,Matter Referred to Other Jurisdiction,327
 2025-10,ALL,ALL,Matter Referred to Other Jurisdiction,142
 2025-11,ALL,ALL,Matter Referred to Other Jurisdiction,101
-2025-12,ALL,ALL,Matter Referred to Other Jurisdiction,125
+2025-12,ALL,ALL,Matter Referred to Other Jurisdiction,127
 2026-01,ALL,ALL,Matter Referred to Other Jurisdiction,131
-2026-02,ALL,ALL,Matter Referred to Other Jurisdiction,160
+2026-02,ALL,ALL,Matter Referred to Other Jurisdiction,161
 2026-03,ALL,ALL,Matter Referred to Other Jurisdiction,329
 2026-04,ALL,ALL,Matter Referred to Other Jurisdiction,150
-2026-05,ALL,ALL,Matter Referred to Other Jurisdiction,114
+2026-05,ALL,ALL,Matter Referred to Other Jurisdiction,127
+2026-06,ALL,ALL,Matter Referred to Other Jurisdiction,93
 1994-10,ALL,ALL,Non-Prosecution Agreement,102
 1994-11,ALL,ALL,Non-Prosecution Agreement,95
 1994-12,ALL,ALL,Non-Prosecution Agreement,109
@@ -2078,7 +2083,7 @@ ym,department,subagency,reason,declined
 2009-06,ALL,ALL,Non-Prosecution Agreement,182
 2009-07,ALL,ALL,Non-Prosecution Agreement,236
 2009-08,ALL,ALL,Non-Prosecution Agreement,178
-2009-09,ALL,ALL,Non-Prosecution Agreement,338
+2009-09,ALL,ALL,Non-Prosecution Agreement,337
 2009-10,ALL,ALL,Non-Prosecution Agreement,214
 2009-11,ALL,ALL,Non-Prosecution Agreement,94
 2009-12,ALL,ALL,Non-Prosecution Agreement,150
@@ -2108,7 +2113,7 @@ ym,department,subagency,reason,declined
 2011-12,ALL,ALL,Non-Prosecution Agreement,150
 2012-01,ALL,ALL,Non-Prosecution Agreement,239
 2012-02,ALL,ALL,Non-Prosecution Agreement,300
-2012-03,ALL,ALL,Non-Prosecution Agreement,456
+2012-03,ALL,ALL,Non-Prosecution Agreement,457
 2012-04,ALL,ALL,Non-Prosecution Agreement,402
 2012-05,ALL,ALL,Non-Prosecution Agreement,291
 2012-06,ALL,ALL,Non-Prosecution Agreement,243
@@ -2129,6 +2134,7 @@ ym,department,subagency,reason,declined
 2013-09,ALL,ALL,Non-Prosecution Agreement,344
 2013-10,ALL,ALL,Non-Prosecution Agreement,3
 2014-01,ALL,ALL,Non-Prosecution Agreement,1
+2014-02,ALL,ALL,Non-Prosecution Agreement,1
 2021-01,ALL,ALL,Non-Prosecution Agreement,1
 2021-10,ALL,ALL,Non-Prosecution Agreement,1
 2022-10,ALL,ALL,Non-Prosecution Agreement,1
@@ -2156,7 +2162,7 @@ ym,department,subagency,reason,declined
 1995-02,ALL,ALL,Other,389
 1995-03,ALL,ALL,Other,419
 1995-04,ALL,ALL,Other,265
-1995-05,ALL,ALL,Other,221
+1995-05,ALL,ALL,Other,219
 1995-06,ALL,ALL,Other,341
 1995-07,ALL,ALL,Other,285
 1995-08,ALL,ALL,Other,399
@@ -2167,7 +2173,7 @@ ym,department,subagency,reason,declined
 1996-01,ALL,ALL,Other,249
 1996-02,ALL,ALL,Other,264
 1996-03,ALL,ALL,Other,388
-1996-04,ALL,ALL,Other,325
+1996-04,ALL,ALL,Other,326
 1996-05,ALL,ALL,Other,272
 1996-06,ALL,ALL,Other,457
 1996-07,ALL,ALL,Other,259
@@ -2177,7 +2183,7 @@ ym,department,subagency,reason,declined
 1996-11,ALL,ALL,Other,216
 1996-12,ALL,ALL,Other,257
 1997-01,ALL,ALL,Other,329
-1997-02,ALL,ALL,Other,263
+1997-02,ALL,ALL,Other,262
 1997-03,ALL,ALL,Other,217
 1997-04,ALL,ALL,Other,256
 1997-05,ALL,ALL,Other,289
@@ -2277,7 +2283,7 @@ ym,department,subagency,reason,declined
 2005-03,ALL,ALL,Other,196
 2005-04,ALL,ALL,Other,123
 2005-05,ALL,ALL,Other,127
-2005-06,ALL,ALL,Other,151
+2005-06,ALL,ALL,Other,152
 2005-07,ALL,ALL,Other,136
 2005-08,ALL,ALL,Other,144
 2005-09,ALL,ALL,Other,213
@@ -2298,18 +2304,18 @@ ym,department,subagency,reason,declined
 2006-12,ALL,ALL,Other,63
 2007-01,ALL,ALL,Other,117
 2007-02,ALL,ALL,Other,105
-2007-03,ALL,ALL,Other,191
+2007-03,ALL,ALL,Other,192
 2007-04,ALL,ALL,Other,133
 2007-05,ALL,ALL,Other,171
 2007-06,ALL,ALL,Other,108
-2007-07,ALL,ALL,Other,111
+2007-07,ALL,ALL,Other,112
 2007-08,ALL,ALL,Other,114
 2007-09,ALL,ALL,Other,176
 2007-10,ALL,ALL,Other,146
 2007-11,ALL,ALL,Other,89
 2007-12,ALL,ALL,Other,84
 2008-01,ALL,ALL,Other,120
-2008-02,ALL,ALL,Other,114
+2008-02,ALL,ALL,Other,115
 2008-03,ALL,ALL,Other,167
 2008-04,ALL,ALL,Other,151
 2008-05,ALL,ALL,Other,102
@@ -2352,19 +2358,19 @@ ym,department,subagency,reason,declined
 2011-06,ALL,ALL,Other,86
 2011-07,ALL,ALL,Other,92
 2011-08,ALL,ALL,Other,104
-2011-09,ALL,ALL,Other,165
+2011-09,ALL,ALL,Other,162
 2011-10,ALL,ALL,Other,101
-2011-11,ALL,ALL,Other,123
+2011-11,ALL,ALL,Other,122
 2011-12,ALL,ALL,Other,108
 2012-01,ALL,ALL,Other,252
 2012-02,ALL,ALL,Other,270
-2012-03,ALL,ALL,Other,530
+2012-03,ALL,ALL,Other,529
 2012-04,ALL,ALL,Other,269
 2012-05,ALL,ALL,Other,257
 2012-06,ALL,ALL,Other,239
 2012-07,ALL,ALL,Other,284
 2012-08,ALL,ALL,Other,260
-2012-09,ALL,ALL,Other,417
+2012-09,ALL,ALL,Other,418
 2012-10,ALL,ALL,Other,237
 2012-11,ALL,ALL,Other,207
 2012-12,ALL,ALL,Other,190
@@ -2376,9 +2382,9 @@ ym,department,subagency,reason,declined
 2013-06,ALL,ALL,Other,217
 2013-07,ALL,ALL,Other,270
 2013-08,ALL,ALL,Other,219
-2013-09,ALL,ALL,Other,326
+2013-09,ALL,ALL,Other,327
 2013-10,ALL,ALL,Other,16
-2013-11,ALL,ALL,Other,21
+2013-11,ALL,ALL,Other,22
 2013-12,ALL,ALL,Other,18
 2014-01,ALL,ALL,Other,24
 2014-02,ALL,ALL,Other,24
@@ -2495,7 +2501,7 @@ ym,department,subagency,reason,declined
 2023-05,ALL,ALL,Other,28
 2023-06,ALL,ALL,Other,11
 2023-07,ALL,ALL,Other,11
-2023-08,ALL,ALL,Other,21
+2023-08,ALL,ALL,Other,20
 2023-09,ALL,ALL,Other,40
 2023-10,ALL,ALL,Other,11
 2023-11,ALL,ALL,Other,12
@@ -2522,18 +2528,19 @@ ym,department,subagency,reason,declined
 2025-08,ALL,ALL,Other,13
 2025-09,ALL,ALL,Other,48
 2025-10,ALL,ALL,Other,19
-2025-11,ALL,ALL,Other,8
+2025-11,ALL,ALL,Other,9
 2025-12,ALL,ALL,Other,8
 2026-01,ALL,ALL,Other,19
 2026-02,ALL,ALL,Other,16
 2026-03,ALL,ALL,Other,27
 2026-04,ALL,ALL,Other,10
-2026-05,ALL,ALL,Other,15
+2026-05,ALL,ALL,Other,16
+2026-06,ALL,ALL,Other,10
 1994-10,ALL,ALL,Prioritization of Federal Resources and Interests,151
 1994-11,ALL,ALL,Prioritization of Federal Resources and Interests,90
 1994-12,ALL,ALL,Prioritization of Federal Resources and Interests,158
 1995-01,ALL,ALL,Prioritization of Federal Resources and Interests,247
-1995-02,ALL,ALL,Prioritization of Federal Resources and Interests,92
+1995-02,ALL,ALL,Prioritization of Federal Resources and Interests,93
 1995-03,ALL,ALL,Prioritization of Federal Resources and Interests,161
 1995-04,ALL,ALL,Prioritization of Federal Resources and Interests,238
 1995-05,ALL,ALL,Prioritization of Federal Resources and Interests,254
@@ -2605,7 +2612,7 @@ ym,department,subagency,reason,declined
 2000-11,ALL,ALL,Prioritization of Federal Resources and Interests,203
 2000-12,ALL,ALL,Prioritization of Federal Resources and Interests,179
 2001-01,ALL,ALL,Prioritization of Federal Resources and Interests,212
-2001-02,ALL,ALL,Prioritization of Federal Resources and Interests,252
+2001-02,ALL,ALL,Prioritization of Federal Resources and Interests,253
 2001-03,ALL,ALL,Prioritization of Federal Resources and Interests,272
 2001-04,ALL,ALL,Prioritization of Federal Resources and Interests,270
 2001-05,ALL,ALL,Prioritization of Federal Resources and Interests,133
@@ -2761,7 +2768,7 @@ ym,department,subagency,reason,declined
 2013-11,ALL,ALL,Prioritization of Federal Resources and Interests,224
 2013-12,ALL,ALL,Prioritization of Federal Resources and Interests,297
 2014-01,ALL,ALL,Prioritization of Federal Resources and Interests,364
-2014-02,ALL,ALL,Prioritization of Federal Resources and Interests,324
+2014-02,ALL,ALL,Prioritization of Federal Resources and Interests,323
 2014-03,ALL,ALL,Prioritization of Federal Resources and Interests,397
 2014-04,ALL,ALL,Prioritization of Federal Resources and Interests,239
 2014-05,ALL,ALL,Prioritization of Federal Resources and Interests,191
@@ -2845,7 +2852,7 @@ ym,department,subagency,reason,declined
 2020-11,ALL,ALL,Prioritization of Federal Resources and Interests,68
 2020-12,ALL,ALL,Prioritization of Federal Resources and Interests,160
 2021-01,ALL,ALL,Prioritization of Federal Resources and Interests,143
-2021-02,ALL,ALL,Prioritization of Federal Resources and Interests,153
+2021-02,ALL,ALL,Prioritization of Federal Resources and Interests,154
 2021-03,ALL,ALL,Prioritization of Federal Resources and Interests,359
 2021-04,ALL,ALL,Prioritization of Federal Resources and Interests,138
 2021-05,ALL,ALL,Prioritization of Federal Resources and Interests,109
@@ -2857,7 +2864,7 @@ ym,department,subagency,reason,declined
 2021-11,ALL,ALL,Prioritization of Federal Resources and Interests,116
 2021-12,ALL,ALL,Prioritization of Federal Resources and Interests,127
 2022-01,ALL,ALL,Prioritization of Federal Resources and Interests,193
-2022-02,ALL,ALL,Prioritization of Federal Resources and Interests,210
+2022-02,ALL,ALL,Prioritization of Federal Resources and Interests,211
 2022-03,ALL,ALL,Prioritization of Federal Resources and Interests,355
 2022-04,ALL,ALL,Prioritization of Federal Resources and Interests,116
 2022-05,ALL,ALL,Prioritization of Federal Resources and Interests,151
@@ -2888,7 +2895,7 @@ ym,department,subagency,reason,declined
 2024-06,ALL,ALL,Prioritization of Federal Resources and Interests,131
 2024-07,ALL,ALL,Prioritization of Federal Resources and Interests,161
 2024-08,ALL,ALL,Prioritization of Federal Resources and Interests,169
-2024-09,ALL,ALL,Prioritization of Federal Resources and Interests,303
+2024-09,ALL,ALL,Prioritization of Federal Resources and Interests,302
 2024-10,ALL,ALL,Prioritization of Federal Resources and Interests,132
 2024-11,ALL,ALL,Prioritization of Federal Resources and Interests,64
 2024-12,ALL,ALL,Prioritization of Federal Resources and Interests,96
@@ -2898,17 +2905,18 @@ ym,department,subagency,reason,declined
 2025-04,ALL,ALL,Prioritization of Federal Resources and Interests,176
 2025-05,ALL,ALL,Prioritization of Federal Resources and Interests,130
 2025-06,ALL,ALL,Prioritization of Federal Resources and Interests,145
-2025-07,ALL,ALL,Prioritization of Federal Resources and Interests,204
+2025-07,ALL,ALL,Prioritization of Federal Resources and Interests,205
 2025-08,ALL,ALL,Prioritization of Federal Resources and Interests,198
 2025-09,ALL,ALL,Prioritization of Federal Resources and Interests,295
-2025-10,ALL,ALL,Prioritization of Federal Resources and Interests,109
+2025-10,ALL,ALL,Prioritization of Federal Resources and Interests,110
 2025-11,ALL,ALL,Prioritization of Federal Resources and Interests,83
-2025-12,ALL,ALL,Prioritization of Federal Resources and Interests,97
+2025-12,ALL,ALL,Prioritization of Federal Resources and Interests,98
 2026-01,ALL,ALL,Prioritization of Federal Resources and Interests,139
 2026-02,ALL,ALL,Prioritization of Federal Resources and Interests,187
-2026-03,ALL,ALL,Prioritization of Federal Resources and Interests,254
-2026-04,ALL,ALL,Prioritization of Federal Resources and Interests,113
-2026-05,ALL,ALL,Prioritization of Federal Resources and Interests,151
+2026-03,ALL,ALL,Prioritization of Federal Resources and Interests,257
+2026-04,ALL,ALL,Prioritization of Federal Resources and Interests,116
+2026-05,ALL,ALL,Prioritization of Federal Resources and Interests,167
+2026-06,ALL,ALL,Prioritization of Federal Resources and Interests,79
 1994-10,Agriculture,Forest Service,Alternative to Federal Prosecution,1
 1994-12,Agriculture,Forest Service,Alternative to Federal Prosecution,1
 1995-02,Agriculture,Forest Service,Alternative to Federal Prosecution,1
@@ -4535,6 +4543,7 @@ ym,department,subagency,reason,declined
 2026-03,Agriculture,Other Agriculture,Insufficient Evidence,1
 2026-04,Agriculture,Other Agriculture,Insufficient Evidence,3
 2026-05,Agriculture,Other Agriculture,Insufficient Evidence,1
+2026-06,Agriculture,Other Agriculture,Insufficient Evidence,2
 1994-11,Agriculture,Other Agriculture,Legally Barred,1
 1995-02,Agriculture,Other Agriculture,Legally Barred,1
 1995-06,Agriculture,Other Agriculture,Legally Barred,2
@@ -5395,6 +5404,7 @@ ym,department,subagency,reason,declined
 2026-03,Commerce,Other Commerce,Insufficient Evidence,6
 2026-04,Commerce,Other Commerce,Insufficient Evidence,3
 2026-05,Commerce,Other Commerce,Insufficient Evidence,1
+2026-06,Commerce,Other Commerce,Insufficient Evidence,2
 1995-06,Commerce,Other Commerce,Legally Barred,1
 1998-03,Commerce,Other Commerce,Legally Barred,1
 2001-08,Commerce,Other Commerce,Legally Barred,3
@@ -5813,6 +5823,7 @@ ym,department,subagency,reason,declined
 2026-02,DHS,CBP,Alternative to Federal Prosecution,1
 2026-03,DHS,CBP,Alternative to Federal Prosecution,3
 2026-04,DHS,CBP,Alternative to Federal Prosecution,1
+2026-06,DHS,CBP,Alternative to Federal Prosecution,1
 1994-10,DHS,CBP,Defendant Unavailable,7
 1994-11,DHS,CBP,Defendant Unavailable,4
 1994-12,DHS,CBP,Defendant Unavailable,2
@@ -6073,8 +6084,8 @@ ym,department,subagency,reason,declined
 2026-01,DHS,CBP,Defendant Unavailable,1
 2026-02,DHS,CBP,Defendant Unavailable,1
 2026-03,DHS,CBP,Defendant Unavailable,5
-2026-04,DHS,CBP,Defendant Unavailable,2
-2026-05,DHS,CBP,Defendant Unavailable,1
+2026-04,DHS,CBP,Defendant Unavailable,3
+2026-05,DHS,CBP,Defendant Unavailable,2
 1994-10,DHS,CBP,Insufficient Evidence,34
 1994-11,DHS,CBP,Insufficient Evidence,19
 1994-12,DHS,CBP,Insufficient Evidence,20
@@ -6182,7 +6193,7 @@ ym,department,subagency,reason,declined
 2003-06,DHS,CBP,Insufficient Evidence,29
 2003-07,DHS,CBP,Insufficient Evidence,24
 2003-08,DHS,CBP,Insufficient Evidence,22
-2003-09,DHS,CBP,Insufficient Evidence,35
+2003-09,DHS,CBP,Insufficient Evidence,36
 2003-10,DHS,CBP,Insufficient Evidence,44
 2003-11,DHS,CBP,Insufficient Evidence,29
 2003-12,DHS,CBP,Insufficient Evidence,22
@@ -6455,6 +6466,7 @@ ym,department,subagency,reason,declined
 2026-03,DHS,CBP,Insufficient Evidence,14
 2026-04,DHS,CBP,Insufficient Evidence,9
 2026-05,DHS,CBP,Insufficient Evidence,3
+2026-06,DHS,CBP,Insufficient Evidence,2
 1994-10,DHS,CBP,Legally Barred,2
 1994-11,DHS,CBP,Legally Barred,2
 1994-12,DHS,CBP,Legally Barred,1
@@ -7577,6 +7589,7 @@ ym,department,subagency,reason,declined
 2026-02,DHS,CBP,Prioritization of Federal Resources and Interests,4
 2026-03,DHS,CBP,Prioritization of Federal Resources and Interests,2
 2026-04,DHS,CBP,Prioritization of Federal Resources and Interests,2
+2026-06,DHS,CBP,Prioritization of Federal Resources and Interests,1
 2008-03,DHS,Coast Guard,Alternative to Federal Prosecution,1
 2009-10,DHS,Coast Guard,Alternative to Federal Prosecution,1
 2011-03,DHS,Coast Guard,Alternative to Federal Prosecution,1
@@ -7838,6 +7851,7 @@ ym,department,subagency,reason,declined
 2024-11,DHS,Coast Guard,Matter Referred to Other Jurisdiction,1
 2025-02,DHS,Coast Guard,Matter Referred to Other Jurisdiction,1
 2026-01,DHS,Coast Guard,Matter Referred to Other Jurisdiction,1
+2026-06,DHS,Coast Guard,Matter Referred to Other Jurisdiction,2
 2004-09,DHS,Coast Guard,Non-Prosecution Agreement,1
 2005-03,DHS,Coast Guard,Non-Prosecution Agreement,1
 2005-08,DHS,Coast Guard,Non-Prosecution Agreement,1
@@ -7989,6 +8003,7 @@ ym,department,subagency,reason,declined
 2025-10,DHS,DHS-OIG,Alternative to Federal Prosecution,1
 2026-01,DHS,DHS-OIG,Alternative to Federal Prosecution,2
 2026-03,DHS,DHS-OIG,Alternative to Federal Prosecution,1
+2026-06,DHS,DHS-OIG,Alternative to Federal Prosecution,1
 2010-07,DHS,DHS-OIG,Defendant Unavailable,1
 2011-08,DHS,DHS-OIG,Defendant Unavailable,1
 2012-08,DHS,DHS-OIG,Defendant Unavailable,1
@@ -8197,10 +8212,11 @@ ym,department,subagency,reason,declined
 2025-11,DHS,DHS-OIG,Insufficient Evidence,4
 2025-12,DHS,DHS-OIG,Insufficient Evidence,3
 2026-01,DHS,DHS-OIG,Insufficient Evidence,5
-2026-02,DHS,DHS-OIG,Insufficient Evidence,6
+2026-02,DHS,DHS-OIG,Insufficient Evidence,7
 2026-03,DHS,DHS-OIG,Insufficient Evidence,17
-2026-04,DHS,DHS-OIG,Insufficient Evidence,8
+2026-04,DHS,DHS-OIG,Insufficient Evidence,9
 2026-05,DHS,DHS-OIG,Insufficient Evidence,2
+2026-06,DHS,DHS-OIG,Insufficient Evidence,2
 2010-06,DHS,DHS-OIG,Legally Barred,1
 2012-06,DHS,DHS-OIG,Legally Barred,1
 2013-11,DHS,DHS-OIG,Legally Barred,1
@@ -8494,6 +8510,7 @@ ym,department,subagency,reason,declined
 2026-03,DHS,HSI,Alternative to Federal Prosecution,4
 2026-04,DHS,HSI,Alternative to Federal Prosecution,1
 2026-05,DHS,HSI,Alternative to Federal Prosecution,1
+2026-06,DHS,HSI,Alternative to Federal Prosecution,1
 1999-10,DHS,HSI,Defendant Unavailable,1
 2002-01,DHS,HSI,Defendant Unavailable,1
 2002-09,DHS,HSI,Defendant Unavailable,6
@@ -8593,6 +8610,7 @@ ym,department,subagency,reason,declined
 2026-02,DHS,HSI,Defendant Unavailable,1
 2026-04,DHS,HSI,Defendant Unavailable,1
 2026-05,DHS,HSI,Defendant Unavailable,2
+2026-06,DHS,HSI,Defendant Unavailable,2
 1995-02,DHS,HSI,Insufficient Evidence,1
 1998-03,DHS,HSI,Insufficient Evidence,1
 2001-03,DHS,HSI,Insufficient Evidence,1
@@ -8850,9 +8868,10 @@ ym,department,subagency,reason,declined
 2025-12,DHS,HSI,Insufficient Evidence,15
 2026-01,DHS,HSI,Insufficient Evidence,16
 2026-02,DHS,HSI,Insufficient Evidence,19
-2026-03,DHS,HSI,Insufficient Evidence,31
+2026-03,DHS,HSI,Insufficient Evidence,30
 2026-04,DHS,HSI,Insufficient Evidence,22
 2026-05,DHS,HSI,Insufficient Evidence,8
+2026-06,DHS,HSI,Insufficient Evidence,17
 1994-11,DHS,HSI,Legally Barred,1
 1996-10,DHS,HSI,Legally Barred,1
 2003-03,DHS,HSI,Legally Barred,1
@@ -9031,6 +9050,7 @@ ym,department,subagency,reason,declined
 2026-03,DHS,HSI,Matter Referred to Other Jurisdiction,4
 2026-04,DHS,HSI,Matter Referred to Other Jurisdiction,2
 2026-05,DHS,HSI,Matter Referred to Other Jurisdiction,5
+2026-06,DHS,HSI,Matter Referred to Other Jurisdiction,1
 1995-01,DHS,HSI,Non-Prosecution Agreement,1
 2002-04,DHS,HSI,Non-Prosecution Agreement,1
 2004-03,DHS,HSI,Non-Prosecution Agreement,1
@@ -9333,6 +9353,7 @@ ym,department,subagency,reason,declined
 2026-03,DHS,HSI,Prioritization of Federal Resources and Interests,4
 2026-04,DHS,HSI,Prioritization of Federal Resources and Interests,3
 2026-05,DHS,HSI,Prioritization of Federal Resources and Interests,5
+2026-06,DHS,HSI,Prioritization of Federal Resources and Interests,1
 2005-12,DHS,ICE,Alternative to Federal Prosecution,1
 2006-01,DHS,ICE,Alternative to Federal Prosecution,1
 2006-03,DHS,ICE,Alternative to Federal Prosecution,1
@@ -9526,7 +9547,8 @@ ym,department,subagency,reason,declined
 2026-02,DHS,ICE,Alternative to Federal Prosecution,7
 2026-03,DHS,ICE,Alternative to Federal Prosecution,8
 2026-04,DHS,ICE,Alternative to Federal Prosecution,3
-2026-05,DHS,ICE,Alternative to Federal Prosecution,4
+2026-05,DHS,ICE,Alternative to Federal Prosecution,5
+2026-06,DHS,ICE,Alternative to Federal Prosecution,1
 2005-01,DHS,ICE,Defendant Unavailable,1
 2005-02,DHS,ICE,Defendant Unavailable,2
 2005-05,DHS,ICE,Defendant Unavailable,1
@@ -9582,7 +9604,7 @@ ym,department,subagency,reason,declined
 2009-08,DHS,ICE,Defendant Unavailable,17
 2009-09,DHS,ICE,Defendant Unavailable,27
 2009-10,DHS,ICE,Defendant Unavailable,16
-2009-11,DHS,ICE,Defendant Unavailable,16
+2009-11,DHS,ICE,Defendant Unavailable,15
 2009-12,DHS,ICE,Defendant Unavailable,9
 2010-01,DHS,ICE,Defendant Unavailable,14
 2010-02,DHS,ICE,Defendant Unavailable,12
@@ -9770,6 +9792,7 @@ ym,department,subagency,reason,declined
 2026-03,DHS,ICE,Defendant Unavailable,9
 2026-04,DHS,ICE,Defendant Unavailable,3
 2026-05,DHS,ICE,Defendant Unavailable,5
+2026-06,DHS,ICE,Defendant Unavailable,3
 1997-01,DHS,ICE,Insufficient Evidence,1
 2004-02,DHS,ICE,Insufficient Evidence,1
 2004-03,DHS,ICE,Insufficient Evidence,1
@@ -10025,8 +10048,9 @@ ym,department,subagency,reason,declined
 2026-01,DHS,ICE,Insufficient Evidence,36
 2026-02,DHS,ICE,Insufficient Evidence,39
 2026-03,DHS,ICE,Insufficient Evidence,110
-2026-04,DHS,ICE,Insufficient Evidence,54
-2026-05,DHS,ICE,Insufficient Evidence,16
+2026-04,DHS,ICE,Insufficient Evidence,57
+2026-05,DHS,ICE,Insufficient Evidence,22
+2026-06,DHS,ICE,Insufficient Evidence,21
 2004-11,DHS,ICE,Legally Barred,1
 2005-03,DHS,ICE,Legally Barred,1
 2005-07,DHS,ICE,Legally Barred,1
@@ -10268,7 +10292,7 @@ ym,department,subagency,reason,declined
 2009-08,DHS,ICE,Matter Referred to Other Jurisdiction,4
 2009-09,DHS,ICE,Matter Referred to Other Jurisdiction,8
 2009-10,DHS,ICE,Matter Referred to Other Jurisdiction,2
-2009-11,DHS,ICE,Matter Referred to Other Jurisdiction,3
+2009-11,DHS,ICE,Matter Referred to Other Jurisdiction,4
 2009-12,DHS,ICE,Matter Referred to Other Jurisdiction,2
 2010-01,DHS,ICE,Matter Referred to Other Jurisdiction,3
 2010-02,DHS,ICE,Matter Referred to Other Jurisdiction,2
@@ -10461,7 +10485,8 @@ ym,department,subagency,reason,declined
 2026-02,DHS,ICE,Matter Referred to Other Jurisdiction,5
 2026-03,DHS,ICE,Matter Referred to Other Jurisdiction,7
 2026-04,DHS,ICE,Matter Referred to Other Jurisdiction,5
-2026-05,DHS,ICE,Matter Referred to Other Jurisdiction,1
+2026-05,DHS,ICE,Matter Referred to Other Jurisdiction,2
+2026-06,DHS,ICE,Matter Referred to Other Jurisdiction,3
 2004-03,DHS,ICE,Non-Prosecution Agreement,1
 2004-10,DHS,ICE,Non-Prosecution Agreement,2
 2005-03,DHS,ICE,Non-Prosecution Agreement,1
@@ -11027,9 +11052,10 @@ ym,department,subagency,reason,declined
 2025-12,DHS,ICE,Prioritization of Federal Resources and Interests,4
 2026-01,DHS,ICE,Prioritization of Federal Resources and Interests,6
 2026-02,DHS,ICE,Prioritization of Federal Resources and Interests,7
-2026-03,DHS,ICE,Prioritization of Federal Resources and Interests,17
+2026-03,DHS,ICE,Prioritization of Federal Resources and Interests,18
 2026-04,DHS,ICE,Prioritization of Federal Resources and Interests,3
 2026-05,DHS,ICE,Prioritization of Federal Resources and Interests,4
+2026-06,DHS,ICE,Prioritization of Federal Resources and Interests,5
 1995-12,DHS,Other DHS,Alternative to Federal Prosecution,1
 2005-01,DHS,Other DHS,Alternative to Federal Prosecution,4
 2005-03,DHS,Other DHS,Alternative to Federal Prosecution,2
@@ -11190,6 +11216,7 @@ ym,department,subagency,reason,declined
 2026-02,DHS,Other DHS,Alternative to Federal Prosecution,7
 2026-03,DHS,Other DHS,Alternative to Federal Prosecution,9
 2026-05,DHS,Other DHS,Alternative to Federal Prosecution,4
+2026-06,DHS,Other DHS,Alternative to Federal Prosecution,5
 2004-09,DHS,Other DHS,Defendant Unavailable,1
 2004-10,DHS,Other DHS,Defendant Unavailable,2
 2005-01,DHS,Other DHS,Defendant Unavailable,1
@@ -11349,6 +11376,7 @@ ym,department,subagency,reason,declined
 2026-02,DHS,Other DHS,Defendant Unavailable,2
 2026-03,DHS,Other DHS,Defendant Unavailable,3
 2026-04,DHS,Other DHS,Defendant Unavailable,2
+2026-06,DHS,Other DHS,Defendant Unavailable,1
 2004-09,DHS,Other DHS,Insufficient Evidence,2
 2004-10,DHS,Other DHS,Insufficient Evidence,2
 2004-11,DHS,Other DHS,Insufficient Evidence,2
@@ -11490,7 +11518,7 @@ ym,department,subagency,reason,declined
 2016-09,DHS,Other DHS,Insufficient Evidence,37
 2016-10,DHS,Other DHS,Insufficient Evidence,20
 2016-11,DHS,Other DHS,Insufficient Evidence,14
-2016-12,DHS,Other DHS,Insufficient Evidence,15
+2016-12,DHS,Other DHS,Insufficient Evidence,16
 2017-01,DHS,Other DHS,Insufficient Evidence,26
 2017-02,DHS,Other DHS,Insufficient Evidence,20
 2017-03,DHS,Other DHS,Insufficient Evidence,44
@@ -11561,7 +11589,7 @@ ym,department,subagency,reason,declined
 2022-08,DHS,Other DHS,Insufficient Evidence,51
 2022-09,DHS,Other DHS,Insufficient Evidence,106
 2022-10,DHS,Other DHS,Insufficient Evidence,31
-2022-11,DHS,Other DHS,Insufficient Evidence,23
+2022-11,DHS,Other DHS,Insufficient Evidence,24
 2022-12,DHS,Other DHS,Insufficient Evidence,28
 2023-01,DHS,Other DHS,Insufficient Evidence,35
 2023-02,DHS,Other DHS,Insufficient Evidence,39
@@ -11593,7 +11621,7 @@ ym,department,subagency,reason,declined
 2025-04,DHS,Other DHS,Insufficient Evidence,31
 2025-05,DHS,Other DHS,Insufficient Evidence,23
 2025-06,DHS,Other DHS,Insufficient Evidence,48
-2025-07,DHS,Other DHS,Insufficient Evidence,40
+2025-07,DHS,Other DHS,Insufficient Evidence,41
 2025-08,DHS,Other DHS,Insufficient Evidence,51
 2025-09,DHS,Other DHS,Insufficient Evidence,117
 2025-10,DHS,Other DHS,Insufficient Evidence,37
@@ -11601,9 +11629,10 @@ ym,department,subagency,reason,declined
 2025-12,DHS,Other DHS,Insufficient Evidence,34
 2026-01,DHS,Other DHS,Insufficient Evidence,32
 2026-02,DHS,Other DHS,Insufficient Evidence,40
-2026-03,DHS,Other DHS,Insufficient Evidence,110
+2026-03,DHS,Other DHS,Insufficient Evidence,112
 2026-04,DHS,Other DHS,Insufficient Evidence,37
-2026-05,DHS,Other DHS,Insufficient Evidence,27
+2026-05,DHS,Other DHS,Insufficient Evidence,28
+2026-06,DHS,Other DHS,Insufficient Evidence,14
 2005-05,DHS,Other DHS,Legally Barred,1
 2006-01,DHS,Other DHS,Legally Barred,1
 2006-03,DHS,Other DHS,Legally Barred,1
@@ -11778,7 +11807,7 @@ ym,department,subagency,reason,declined
 2016-09,DHS,Other DHS,Matter Referred to Other Jurisdiction,6
 2016-10,DHS,Other DHS,Matter Referred to Other Jurisdiction,2
 2016-11,DHS,Other DHS,Matter Referred to Other Jurisdiction,3
-2016-12,DHS,Other DHS,Matter Referred to Other Jurisdiction,3
+2016-12,DHS,Other DHS,Matter Referred to Other Jurisdiction,2
 2017-01,DHS,Other DHS,Matter Referred to Other Jurisdiction,4
 2017-02,DHS,Other DHS,Matter Referred to Other Jurisdiction,7
 2017-03,DHS,Other DHS,Matter Referred to Other Jurisdiction,15
@@ -11869,7 +11898,7 @@ ym,department,subagency,reason,declined
 2024-05,DHS,Other DHS,Matter Referred to Other Jurisdiction,4
 2024-06,DHS,Other DHS,Matter Referred to Other Jurisdiction,5
 2024-07,DHS,Other DHS,Matter Referred to Other Jurisdiction,10
-2024-08,DHS,Other DHS,Matter Referred to Other Jurisdiction,15
+2024-08,DHS,Other DHS,Matter Referred to Other Jurisdiction,14
 2024-09,DHS,Other DHS,Matter Referred to Other Jurisdiction,17
 2024-10,DHS,Other DHS,Matter Referred to Other Jurisdiction,8
 2024-11,DHS,Other DHS,Matter Referred to Other Jurisdiction,3
@@ -11891,6 +11920,7 @@ ym,department,subagency,reason,declined
 2026-03,DHS,Other DHS,Matter Referred to Other Jurisdiction,10
 2026-04,DHS,Other DHS,Matter Referred to Other Jurisdiction,3
 2026-05,DHS,Other DHS,Matter Referred to Other Jurisdiction,4
+2026-06,DHS,Other DHS,Matter Referred to Other Jurisdiction,4
 2004-10,DHS,Other DHS,Non-Prosecution Agreement,1
 2004-11,DHS,Other DHS,Non-Prosecution Agreement,1
 2005-02,DHS,Other DHS,Non-Prosecution Agreement,1
@@ -12086,7 +12116,7 @@ ym,department,subagency,reason,declined
 2022-06,DHS,Other DHS,Other,1
 2022-09,DHS,Other DHS,Other,2
 2023-01,DHS,Other DHS,Other,1
-2023-02,DHS,Other DHS,Other,2
+2023-02,DHS,Other DHS,Other,3
 2023-03,DHS,Other DHS,Other,4
 2023-05,DHS,Other DHS,Other,5
 2023-06,DHS,Other DHS,Other,1
@@ -12302,9 +12332,10 @@ ym,department,subagency,reason,declined
 2025-12,DHS,Other DHS,Prioritization of Federal Resources and Interests,5
 2026-01,DHS,Other DHS,Prioritization of Federal Resources and Interests,5
 2026-02,DHS,Other DHS,Prioritization of Federal Resources and Interests,8
-2026-03,DHS,Other DHS,Prioritization of Federal Resources and Interests,10
+2026-03,DHS,Other DHS,Prioritization of Federal Resources and Interests,11
 2026-04,DHS,Other DHS,Prioritization of Federal Resources and Interests,5
-2026-05,DHS,Other DHS,Prioritization of Federal Resources and Interests,3
+2026-05,DHS,Other DHS,Prioritization of Federal Resources and Interests,4
+2026-06,DHS,Other DHS,Prioritization of Federal Resources and Interests,2
 1994-10,DHS,Secret Service,Alternative to Federal Prosecution,6
 1994-11,DHS,Secret Service,Alternative to Federal Prosecution,10
 1994-12,DHS,Secret Service,Alternative to Federal Prosecution,13
@@ -12646,6 +12677,7 @@ ym,department,subagency,reason,declined
 2026-03,DHS,Secret Service,Alternative to Federal Prosecution,5
 2026-04,DHS,Secret Service,Alternative to Federal Prosecution,3
 2026-05,DHS,Secret Service,Alternative to Federal Prosecution,1
+2026-06,DHS,Secret Service,Alternative to Federal Prosecution,2
 1994-10,DHS,Secret Service,Defendant Unavailable,19
 1994-11,DHS,Secret Service,Defendant Unavailable,19
 1994-12,DHS,Secret Service,Defendant Unavailable,14
@@ -12959,6 +12991,7 @@ ym,department,subagency,reason,declined
 2025-09,DHS,Secret Service,Defendant Unavailable,3
 2025-10,DHS,Secret Service,Defendant Unavailable,1
 2026-01,DHS,Secret Service,Defendant Unavailable,1
+2026-06,DHS,Secret Service,Defendant Unavailable,1
 1994-10,DHS,Secret Service,Insufficient Evidence,32
 1994-11,DHS,Secret Service,Insufficient Evidence,32
 1994-12,DHS,Secret Service,Insufficient Evidence,34
@@ -13194,7 +13227,7 @@ ym,department,subagency,reason,declined
 2014-02,DHS,Secret Service,Insufficient Evidence,29
 2014-03,DHS,Secret Service,Insufficient Evidence,93
 2014-04,DHS,Secret Service,Insufficient Evidence,33
-2014-05,DHS,Secret Service,Insufficient Evidence,40
+2014-05,DHS,Secret Service,Insufficient Evidence,41
 2014-06,DHS,Secret Service,Insufficient Evidence,55
 2014-07,DHS,Secret Service,Insufficient Evidence,65
 2014-08,DHS,Secret Service,Insufficient Evidence,41
@@ -13339,6 +13372,7 @@ ym,department,subagency,reason,declined
 2026-03,DHS,Secret Service,Insufficient Evidence,64
 2026-04,DHS,Secret Service,Insufficient Evidence,19
 2026-05,DHS,Secret Service,Insufficient Evidence,9
+2026-06,DHS,Secret Service,Insufficient Evidence,9
 1994-12,DHS,Secret Service,Legally Barred,1
 1995-01,DHS,Secret Service,Legally Barred,1
 1995-02,DHS,Secret Service,Legally Barred,2
@@ -13924,6 +13958,7 @@ ym,department,subagency,reason,declined
 2026-03,DHS,Secret Service,Matter Referred to Other Jurisdiction,6
 2026-04,DHS,Secret Service,Matter Referred to Other Jurisdiction,2
 2026-05,DHS,Secret Service,Matter Referred to Other Jurisdiction,3
+2026-06,DHS,Secret Service,Matter Referred to Other Jurisdiction,1
 1994-10,DHS,Secret Service,Non-Prosecution Agreement,4
 1994-11,DHS,Secret Service,Non-Prosecution Agreement,5
 1994-12,DHS,Secret Service,Non-Prosecution Agreement,4
@@ -15281,7 +15316,7 @@ ym,department,subagency,reason,declined
 2022-01,DOJ,ATF,Alternative to Federal Prosecution,25
 2022-02,DOJ,ATF,Alternative to Federal Prosecution,18
 2022-03,DOJ,ATF,Alternative to Federal Prosecution,51
-2022-04,DOJ,ATF,Alternative to Federal Prosecution,20
+2022-04,DOJ,ATF,Alternative to Federal Prosecution,21
 2022-05,DOJ,ATF,Alternative to Federal Prosecution,22
 2022-06,DOJ,ATF,Alternative to Federal Prosecution,21
 2022-07,DOJ,ATF,Alternative to Federal Prosecution,20
@@ -15307,7 +15342,7 @@ ym,department,subagency,reason,declined
 2024-03,DOJ,ATF,Alternative to Federal Prosecution,50
 2024-04,DOJ,ATF,Alternative to Federal Prosecution,26
 2024-05,DOJ,ATF,Alternative to Federal Prosecution,22
-2024-06,DOJ,ATF,Alternative to Federal Prosecution,25
+2024-06,DOJ,ATF,Alternative to Federal Prosecution,26
 2024-07,DOJ,ATF,Alternative to Federal Prosecution,24
 2024-08,DOJ,ATF,Alternative to Federal Prosecution,30
 2024-09,DOJ,ATF,Alternative to Federal Prosecution,51
@@ -15327,10 +15362,11 @@ ym,department,subagency,reason,declined
 2025-11,DOJ,ATF,Alternative to Federal Prosecution,8
 2025-12,DOJ,ATF,Alternative to Federal Prosecution,25
 2026-01,DOJ,ATF,Alternative to Federal Prosecution,24
-2026-02,DOJ,ATF,Alternative to Federal Prosecution,42
-2026-03,DOJ,ATF,Alternative to Federal Prosecution,49
-2026-04,DOJ,ATF,Alternative to Federal Prosecution,28
-2026-05,DOJ,ATF,Alternative to Federal Prosecution,23
+2026-02,DOJ,ATF,Alternative to Federal Prosecution,43
+2026-03,DOJ,ATF,Alternative to Federal Prosecution,48
+2026-04,DOJ,ATF,Alternative to Federal Prosecution,29
+2026-05,DOJ,ATF,Alternative to Federal Prosecution,26
+2026-06,DOJ,ATF,Alternative to Federal Prosecution,18
 1994-10,DOJ,ATF,Defendant Unavailable,31
 1994-11,DOJ,ATF,Defendant Unavailable,35
 1994-12,DOJ,ATF,Defendant Unavailable,34
@@ -15359,7 +15395,7 @@ ym,department,subagency,reason,declined
 1996-11,DOJ,ATF,Defendant Unavailable,16
 1996-12,DOJ,ATF,Defendant Unavailable,23
 1997-01,DOJ,ATF,Defendant Unavailable,38
-1997-02,DOJ,ATF,Defendant Unavailable,14
+1997-02,DOJ,ATF,Defendant Unavailable,15
 1997-03,DOJ,ATF,Defendant Unavailable,24
 1997-04,DOJ,ATF,Defendant Unavailable,23
 1997-05,DOJ,ATF,Defendant Unavailable,30
@@ -15907,7 +15943,7 @@ ym,department,subagency,reason,declined
 2012-06,DOJ,ATF,Insufficient Evidence,79
 2012-07,DOJ,ATF,Insufficient Evidence,83
 2012-08,DOJ,ATF,Insufficient Evidence,95
-2012-09,DOJ,ATF,Insufficient Evidence,108
+2012-09,DOJ,ATF,Insufficient Evidence,107
 2012-10,DOJ,ATF,Insufficient Evidence,92
 2012-11,DOJ,ATF,Insufficient Evidence,53
 2012-12,DOJ,ATF,Insufficient Evidence,53
@@ -16009,7 +16045,7 @@ ym,department,subagency,reason,declined
 2020-12,DOJ,ATF,Insufficient Evidence,66
 2021-01,DOJ,ATF,Insufficient Evidence,76
 2021-02,DOJ,ATF,Insufficient Evidence,115
-2021-03,DOJ,ATF,Insufficient Evidence,237
+2021-03,DOJ,ATF,Insufficient Evidence,238
 2021-04,DOJ,ATF,Insufficient Evidence,92
 2021-05,DOJ,ATF,Insufficient Evidence,82
 2021-06,DOJ,ATF,Insufficient Evidence,95
@@ -16061,17 +16097,18 @@ ym,department,subagency,reason,declined
 2025-04,DOJ,ATF,Insufficient Evidence,98
 2025-05,DOJ,ATF,Insufficient Evidence,76
 2025-06,DOJ,ATF,Insufficient Evidence,82
-2025-07,DOJ,ATF,Insufficient Evidence,109
+2025-07,DOJ,ATF,Insufficient Evidence,110
 2025-08,DOJ,ATF,Insufficient Evidence,109
 2025-09,DOJ,ATF,Insufficient Evidence,229
 2025-10,DOJ,ATF,Insufficient Evidence,67
-2025-11,DOJ,ATF,Insufficient Evidence,69
+2025-11,DOJ,ATF,Insufficient Evidence,70
 2025-12,DOJ,ATF,Insufficient Evidence,76
 2026-01,DOJ,ATF,Insufficient Evidence,98
 2026-02,DOJ,ATF,Insufficient Evidence,135
-2026-03,DOJ,ATF,Insufficient Evidence,236
-2026-04,DOJ,ATF,Insufficient Evidence,115
-2026-05,DOJ,ATF,Insufficient Evidence,89
+2026-03,DOJ,ATF,Insufficient Evidence,237
+2026-04,DOJ,ATF,Insufficient Evidence,116
+2026-05,DOJ,ATF,Insufficient Evidence,104
+2026-06,DOJ,ATF,Insufficient Evidence,65
 1994-10,DOJ,ATF,Legally Barred,1
 1994-11,DOJ,ATF,Legally Barred,3
 1994-12,DOJ,ATF,Legally Barred,3
@@ -16405,6 +16442,7 @@ ym,department,subagency,reason,declined
 2026-03,DOJ,ATF,Legally Barred,3
 2026-04,DOJ,ATF,Legally Barred,1
 2026-05,DOJ,ATF,Legally Barred,3
+2026-06,DOJ,ATF,Legally Barred,3
 1994-10,DOJ,ATF,Matter Referred to Other Jurisdiction,5
 1994-11,DOJ,ATF,Matter Referred to Other Jurisdiction,6
 1994-12,DOJ,ATF,Matter Referred to Other Jurisdiction,2
@@ -16713,7 +16751,7 @@ ym,department,subagency,reason,declined
 2020-12,DOJ,ATF,Matter Referred to Other Jurisdiction,23
 2021-01,DOJ,ATF,Matter Referred to Other Jurisdiction,25
 2021-02,DOJ,ATF,Matter Referred to Other Jurisdiction,40
-2021-03,DOJ,ATF,Matter Referred to Other Jurisdiction,49
+2021-03,DOJ,ATF,Matter Referred to Other Jurisdiction,48
 2021-04,DOJ,ATF,Matter Referred to Other Jurisdiction,21
 2021-05,DOJ,ATF,Matter Referred to Other Jurisdiction,16
 2021-06,DOJ,ATF,Matter Referred to Other Jurisdiction,21
@@ -16755,7 +16793,7 @@ ym,department,subagency,reason,declined
 2024-06,DOJ,ATF,Matter Referred to Other Jurisdiction,29
 2024-07,DOJ,ATF,Matter Referred to Other Jurisdiction,20
 2024-08,DOJ,ATF,Matter Referred to Other Jurisdiction,54
-2024-09,DOJ,ATF,Matter Referred to Other Jurisdiction,39
+2024-09,DOJ,ATF,Matter Referred to Other Jurisdiction,40
 2024-10,DOJ,ATF,Matter Referred to Other Jurisdiction,25
 2024-11,DOJ,ATF,Matter Referred to Other Jurisdiction,13
 2024-12,DOJ,ATF,Matter Referred to Other Jurisdiction,20
@@ -16775,7 +16813,8 @@ ym,department,subagency,reason,declined
 2026-02,DOJ,ATF,Matter Referred to Other Jurisdiction,32
 2026-03,DOJ,ATF,Matter Referred to Other Jurisdiction,56
 2026-04,DOJ,ATF,Matter Referred to Other Jurisdiction,23
-2026-05,DOJ,ATF,Matter Referred to Other Jurisdiction,28
+2026-05,DOJ,ATF,Matter Referred to Other Jurisdiction,29
+2026-06,DOJ,ATF,Matter Referred to Other Jurisdiction,17
 1994-10,DOJ,ATF,Non-Prosecution Agreement,7
 1994-11,DOJ,ATF,Non-Prosecution Agreement,12
 1994-12,DOJ,ATF,Non-Prosecution Agreement,9
@@ -17036,7 +17075,7 @@ ym,department,subagency,reason,declined
 1996-11,DOJ,ATF,Other,5
 1996-12,DOJ,ATF,Other,8
 1997-01,DOJ,ATF,Other,13
-1997-02,DOJ,ATF,Other,11
+1997-02,DOJ,ATF,Other,10
 1997-03,DOJ,ATF,Other,11
 1997-04,DOJ,ATF,Other,12
 1997-05,DOJ,ATF,Other,16
@@ -17223,7 +17262,7 @@ ym,department,subagency,reason,declined
 2012-06,DOJ,ATF,Other,37
 2012-07,DOJ,ATF,Other,45
 2012-08,DOJ,ATF,Other,47
-2012-09,DOJ,ATF,Other,86
+2012-09,DOJ,ATF,Other,87
 2012-10,DOJ,ATF,Other,28
 2012-11,DOJ,ATF,Other,30
 2012-12,DOJ,ATF,Other,33
@@ -17377,6 +17416,7 @@ ym,department,subagency,reason,declined
 2026-03,DOJ,ATF,Other,7
 2026-04,DOJ,ATF,Other,2
 2026-05,DOJ,ATF,Other,3
+2026-06,DOJ,ATF,Other,4
 1994-10,DOJ,ATF,Prioritization of Federal Resources and Interests,8
 1994-11,DOJ,ATF,Prioritization of Federal Resources and Interests,7
 1994-12,DOJ,ATF,Prioritization of Federal Resources and Interests,6
@@ -17736,7 +17776,7 @@ ym,department,subagency,reason,declined
 2024-06,DOJ,ATF,Prioritization of Federal Resources and Interests,17
 2024-07,DOJ,ATF,Prioritization of Federal Resources and Interests,12
 2024-08,DOJ,ATF,Prioritization of Federal Resources and Interests,19
-2024-09,DOJ,ATF,Prioritization of Federal Resources and Interests,31
+2024-09,DOJ,ATF,Prioritization of Federal Resources and Interests,30
 2024-10,DOJ,ATF,Prioritization of Federal Resources and Interests,22
 2024-11,DOJ,ATF,Prioritization of Federal Resources and Interests,8
 2024-12,DOJ,ATF,Prioritization of Federal Resources and Interests,11
@@ -17748,7 +17788,7 @@ ym,department,subagency,reason,declined
 2025-06,DOJ,ATF,Prioritization of Federal Resources and Interests,17
 2025-07,DOJ,ATF,Prioritization of Federal Resources and Interests,29
 2025-08,DOJ,ATF,Prioritization of Federal Resources and Interests,27
-2025-09,DOJ,ATF,Prioritization of Federal Resources and Interests,32
+2025-09,DOJ,ATF,Prioritization of Federal Resources and Interests,33
 2025-10,DOJ,ATF,Prioritization of Federal Resources and Interests,10
 2025-11,DOJ,ATF,Prioritization of Federal Resources and Interests,8
 2025-12,DOJ,ATF,Prioritization of Federal Resources and Interests,12
@@ -17756,7 +17796,8 @@ ym,department,subagency,reason,declined
 2026-02,DOJ,ATF,Prioritization of Federal Resources and Interests,30
 2026-03,DOJ,ATF,Prioritization of Federal Resources and Interests,40
 2026-04,DOJ,ATF,Prioritization of Federal Resources and Interests,16
-2026-05,DOJ,ATF,Prioritization of Federal Resources and Interests,15
+2026-05,DOJ,ATF,Prioritization of Federal Resources and Interests,18
+2026-06,DOJ,ATF,Prioritization of Federal Resources and Interests,6
 1994-11,DOJ,DEA,Alternative to Federal Prosecution,1
 1994-12,DOJ,DEA,Alternative to Federal Prosecution,1
 1995-01,DOJ,DEA,Alternative to Federal Prosecution,2
@@ -18053,7 +18094,8 @@ ym,department,subagency,reason,declined
 2026-02,DOJ,DEA,Alternative to Federal Prosecution,18
 2026-03,DOJ,DEA,Alternative to Federal Prosecution,20
 2026-04,DOJ,DEA,Alternative to Federal Prosecution,16
-2026-05,DOJ,DEA,Alternative to Federal Prosecution,6
+2026-05,DOJ,DEA,Alternative to Federal Prosecution,8
+2026-06,DOJ,DEA,Alternative to Federal Prosecution,5
 1994-10,DOJ,DEA,Defendant Unavailable,21
 1994-11,DOJ,DEA,Defendant Unavailable,20
 1994-12,DOJ,DEA,Defendant Unavailable,30
@@ -18416,6 +18458,7 @@ ym,department,subagency,reason,declined
 2026-03,DOJ,DEA,Defendant Unavailable,5
 2026-04,DOJ,DEA,Defendant Unavailable,3
 2026-05,DOJ,DEA,Defendant Unavailable,2
+2026-06,DOJ,DEA,Defendant Unavailable,4
 1994-10,DOJ,DEA,Insufficient Evidence,57
 1994-11,DOJ,DEA,Insufficient Evidence,41
 1994-12,DOJ,DEA,Insufficient Evidence,30
@@ -18423,7 +18466,7 @@ ym,department,subagency,reason,declined
 1995-02,DOJ,DEA,Insufficient Evidence,64
 1995-03,DOJ,DEA,Insufficient Evidence,59
 1995-04,DOJ,DEA,Insufficient Evidence,89
-1995-05,DOJ,DEA,Insufficient Evidence,64
+1995-05,DOJ,DEA,Insufficient Evidence,65
 1995-06,DOJ,DEA,Insufficient Evidence,70
 1995-07,DOJ,DEA,Insufficient Evidence,51
 1995-08,DOJ,DEA,Insufficient Evidence,52
@@ -18757,7 +18800,7 @@ ym,department,subagency,reason,declined
 2022-12,DOJ,DEA,Insufficient Evidence,85
 2023-01,DOJ,DEA,Insufficient Evidence,93
 2023-02,DOJ,DEA,Insufficient Evidence,106
-2023-03,DOJ,DEA,Insufficient Evidence,243
+2023-03,DOJ,DEA,Insufficient Evidence,244
 2023-04,DOJ,DEA,Insufficient Evidence,81
 2023-05,DOJ,DEA,Insufficient Evidence,79
 2023-06,DOJ,DEA,Insufficient Evidence,63
@@ -18787,15 +18830,16 @@ ym,department,subagency,reason,declined
 2025-06,DOJ,DEA,Insufficient Evidence,48
 2025-07,DOJ,DEA,Insufficient Evidence,59
 2025-08,DOJ,DEA,Insufficient Evidence,98
-2025-09,DOJ,DEA,Insufficient Evidence,167
+2025-09,DOJ,DEA,Insufficient Evidence,166
 2025-10,DOJ,DEA,Insufficient Evidence,63
-2025-11,DOJ,DEA,Insufficient Evidence,56
-2025-12,DOJ,DEA,Insufficient Evidence,44
+2025-11,DOJ,DEA,Insufficient Evidence,55
+2025-12,DOJ,DEA,Insufficient Evidence,45
 2026-01,DOJ,DEA,Insufficient Evidence,41
 2026-02,DOJ,DEA,Insufficient Evidence,92
 2026-03,DOJ,DEA,Insufficient Evidence,205
 2026-04,DOJ,DEA,Insufficient Evidence,72
-2026-05,DOJ,DEA,Insufficient Evidence,60
+2026-05,DOJ,DEA,Insufficient Evidence,65
+2026-06,DOJ,DEA,Insufficient Evidence,34
 1994-12,DOJ,DEA,Legally Barred,1
 1995-01,DOJ,DEA,Legally Barred,2
 1995-03,DOJ,DEA,Legally Barred,3
@@ -19049,7 +19093,7 @@ ym,department,subagency,reason,declined
 2020-04,DOJ,DEA,Legally Barred,1
 2020-05,DOJ,DEA,Legally Barred,1
 2020-08,DOJ,DEA,Legally Barred,4
-2020-09,DOJ,DEA,Legally Barred,5
+2020-09,DOJ,DEA,Legally Barred,6
 2020-11,DOJ,DEA,Legally Barred,2
 2021-01,DOJ,DEA,Legally Barred,3
 2021-02,DOJ,DEA,Legally Barred,5
@@ -19450,12 +19494,13 @@ ym,department,subagency,reason,declined
 2025-09,DOJ,DEA,Matter Referred to Other Jurisdiction,26
 2025-10,DOJ,DEA,Matter Referred to Other Jurisdiction,7
 2025-11,DOJ,DEA,Matter Referred to Other Jurisdiction,6
-2025-12,DOJ,DEA,Matter Referred to Other Jurisdiction,11
+2025-12,DOJ,DEA,Matter Referred to Other Jurisdiction,12
 2026-01,DOJ,DEA,Matter Referred to Other Jurisdiction,8
 2026-02,DOJ,DEA,Matter Referred to Other Jurisdiction,23
 2026-03,DOJ,DEA,Matter Referred to Other Jurisdiction,31
 2026-04,DOJ,DEA,Matter Referred to Other Jurisdiction,6
-2026-05,DOJ,DEA,Matter Referred to Other Jurisdiction,7
+2026-05,DOJ,DEA,Matter Referred to Other Jurisdiction,9
+2026-06,DOJ,DEA,Matter Referred to Other Jurisdiction,9
 1994-10,DOJ,DEA,Non-Prosecution Agreement,7
 1994-11,DOJ,DEA,Non-Prosecution Agreement,6
 1994-12,DOJ,DEA,Non-Prosecution Agreement,9
@@ -19695,7 +19740,7 @@ ym,department,subagency,reason,declined
 1995-02,DOJ,DEA,Other,16
 1995-03,DOJ,DEA,Other,22
 1995-04,DOJ,DEA,Other,29
-1995-05,DOJ,DEA,Other,17
+1995-05,DOJ,DEA,Other,16
 1995-06,DOJ,DEA,Other,16
 1995-07,DOJ,DEA,Other,10
 1995-08,DOJ,DEA,Other,24
@@ -20049,7 +20094,8 @@ ym,department,subagency,reason,declined
 2025-11,DOJ,DEA,Other,2
 2026-01,DOJ,DEA,Other,1
 2026-02,DOJ,DEA,Other,1
-2026-05,DOJ,DEA,Other,1
+2026-05,DOJ,DEA,Other,2
+2026-06,DOJ,DEA,Other,1
 1994-10,DOJ,DEA,Prioritization of Federal Resources and Interests,5
 1994-11,DOJ,DEA,Prioritization of Federal Resources and Interests,5
 1994-12,DOJ,DEA,Prioritization of Federal Resources and Interests,1
@@ -20420,15 +20466,16 @@ ym,department,subagency,reason,declined
 2025-06,DOJ,DEA,Prioritization of Federal Resources and Interests,13
 2025-07,DOJ,DEA,Prioritization of Federal Resources and Interests,16
 2025-08,DOJ,DEA,Prioritization of Federal Resources and Interests,15
-2025-09,DOJ,DEA,Prioritization of Federal Resources and Interests,26
-2025-10,DOJ,DEA,Prioritization of Federal Resources and Interests,9
+2025-09,DOJ,DEA,Prioritization of Federal Resources and Interests,25
+2025-10,DOJ,DEA,Prioritization of Federal Resources and Interests,10
 2025-11,DOJ,DEA,Prioritization of Federal Resources and Interests,14
-2025-12,DOJ,DEA,Prioritization of Federal Resources and Interests,9
+2025-12,DOJ,DEA,Prioritization of Federal Resources and Interests,10
 2026-01,DOJ,DEA,Prioritization of Federal Resources and Interests,9
 2026-02,DOJ,DEA,Prioritization of Federal Resources and Interests,13
-2026-03,DOJ,DEA,Prioritization of Federal Resources and Interests,26
+2026-03,DOJ,DEA,Prioritization of Federal Resources and Interests,27
 2026-04,DOJ,DEA,Prioritization of Federal Resources and Interests,6
 2026-05,DOJ,DEA,Prioritization of Federal Resources and Interests,8
+2026-06,DOJ,DEA,Prioritization of Federal Resources and Interests,8
 1994-10,DOJ,FBI,Alternative to Federal Prosecution,24
 1994-11,DOJ,FBI,Alternative to Federal Prosecution,23
 1994-12,DOJ,FBI,Alternative to Federal Prosecution,35
@@ -20439,7 +20486,7 @@ ym,department,subagency,reason,declined
 1995-05,DOJ,FBI,Alternative to Federal Prosecution,31
 1995-06,DOJ,FBI,Alternative to Federal Prosecution,23
 1995-07,DOJ,FBI,Alternative to Federal Prosecution,22
-1995-08,DOJ,FBI,Alternative to Federal Prosecution,37
+1995-08,DOJ,FBI,Alternative to Federal Prosecution,38
 1995-09,DOJ,FBI,Alternative to Federal Prosecution,33
 1995-10,DOJ,FBI,Alternative to Federal Prosecution,31
 1995-11,DOJ,FBI,Alternative to Federal Prosecution,22
@@ -20804,22 +20851,23 @@ ym,department,subagency,reason,declined
 2025-10,DOJ,FBI,Alternative to Federal Prosecution,19
 2025-11,DOJ,FBI,Alternative to Federal Prosecution,24
 2025-12,DOJ,FBI,Alternative to Federal Prosecution,18
-2026-01,DOJ,FBI,Alternative to Federal Prosecution,27
+2026-01,DOJ,FBI,Alternative to Federal Prosecution,29
 2026-02,DOJ,FBI,Alternative to Federal Prosecution,37
 2026-03,DOJ,FBI,Alternative to Federal Prosecution,68
 2026-04,DOJ,FBI,Alternative to Federal Prosecution,22
-2026-05,DOJ,FBI,Alternative to Federal Prosecution,21
+2026-05,DOJ,FBI,Alternative to Federal Prosecution,23
+2026-06,DOJ,FBI,Alternative to Federal Prosecution,20
 1994-10,DOJ,FBI,Defendant Unavailable,125
 1994-11,DOJ,FBI,Defendant Unavailable,109
 1994-12,DOJ,FBI,Defendant Unavailable,89
 1995-01,DOJ,FBI,Defendant Unavailable,101
 1995-02,DOJ,FBI,Defendant Unavailable,136
-1995-03,DOJ,FBI,Defendant Unavailable,141
+1995-03,DOJ,FBI,Defendant Unavailable,142
 1995-04,DOJ,FBI,Defendant Unavailable,119
 1995-05,DOJ,FBI,Defendant Unavailable,86
 1995-06,DOJ,FBI,Defendant Unavailable,135
 1995-07,DOJ,FBI,Defendant Unavailable,103
-1995-08,DOJ,FBI,Defendant Unavailable,134
+1995-08,DOJ,FBI,Defendant Unavailable,133
 1995-09,DOJ,FBI,Defendant Unavailable,155
 1995-10,DOJ,FBI,Defendant Unavailable,145
 1995-11,DOJ,FBI,Defendant Unavailable,84
@@ -20865,7 +20913,7 @@ ym,department,subagency,reason,declined
 1999-03,DOJ,FBI,Defendant Unavailable,137
 1999-04,DOJ,FBI,Defendant Unavailable,116
 1999-05,DOJ,FBI,Defendant Unavailable,114
-1999-06,DOJ,FBI,Defendant Unavailable,146
+1999-06,DOJ,FBI,Defendant Unavailable,147
 1999-07,DOJ,FBI,Defendant Unavailable,184
 1999-08,DOJ,FBI,Defendant Unavailable,141
 1999-09,DOJ,FBI,Defendant Unavailable,113
@@ -20903,7 +20951,7 @@ ym,department,subagency,reason,declined
 2002-05,DOJ,FBI,Defendant Unavailable,157
 2002-06,DOJ,FBI,Defendant Unavailable,87
 2002-07,DOJ,FBI,Defendant Unavailable,121
-2002-08,DOJ,FBI,Defendant Unavailable,138
+2002-08,DOJ,FBI,Defendant Unavailable,139
 2002-09,DOJ,FBI,Defendant Unavailable,128
 2002-10,DOJ,FBI,Defendant Unavailable,116
 2002-11,DOJ,FBI,Defendant Unavailable,98
@@ -20928,12 +20976,12 @@ ym,department,subagency,reason,declined
 2004-06,DOJ,FBI,Defendant Unavailable,81
 2004-07,DOJ,FBI,Defendant Unavailable,76
 2004-08,DOJ,FBI,Defendant Unavailable,81
-2004-09,DOJ,FBI,Defendant Unavailable,150
+2004-09,DOJ,FBI,Defendant Unavailable,149
 2004-10,DOJ,FBI,Defendant Unavailable,57
 2004-11,DOJ,FBI,Defendant Unavailable,65
 2004-12,DOJ,FBI,Defendant Unavailable,61
 2005-01,DOJ,FBI,Defendant Unavailable,99
-2005-02,DOJ,FBI,Defendant Unavailable,69
+2005-02,DOJ,FBI,Defendant Unavailable,70
 2005-03,DOJ,FBI,Defendant Unavailable,135
 2005-04,DOJ,FBI,Defendant Unavailable,79
 2005-05,DOJ,FBI,Defendant Unavailable,82
@@ -21183,18 +21231,19 @@ ym,department,subagency,reason,declined
 2025-09,DOJ,FBI,Defendant Unavailable,27
 2025-10,DOJ,FBI,Defendant Unavailable,11
 2025-11,DOJ,FBI,Defendant Unavailable,10
-2025-12,DOJ,FBI,Defendant Unavailable,8
+2025-12,DOJ,FBI,Defendant Unavailable,9
 2026-01,DOJ,FBI,Defendant Unavailable,11
 2026-02,DOJ,FBI,Defendant Unavailable,11
 2026-03,DOJ,FBI,Defendant Unavailable,35
 2026-04,DOJ,FBI,Defendant Unavailable,6
-2026-05,DOJ,FBI,Defendant Unavailable,8
+2026-05,DOJ,FBI,Defendant Unavailable,9
+2026-06,DOJ,FBI,Defendant Unavailable,10
 1994-10,DOJ,FBI,Insufficient Evidence,332
 1994-11,DOJ,FBI,Insufficient Evidence,273
 1994-12,DOJ,FBI,Insufficient Evidence,297
 1995-01,DOJ,FBI,Insufficient Evidence,394
 1995-02,DOJ,FBI,Insufficient Evidence,338
-1995-03,DOJ,FBI,Insufficient Evidence,458
+1995-03,DOJ,FBI,Insufficient Evidence,457
 1995-04,DOJ,FBI,Insufficient Evidence,325
 1995-05,DOJ,FBI,Insufficient Evidence,342
 1995-06,DOJ,FBI,Insufficient Evidence,393
@@ -21283,7 +21332,7 @@ ym,department,subagency,reason,declined
 2002-05,DOJ,FBI,Insufficient Evidence,445
 2002-06,DOJ,FBI,Insufficient Evidence,290
 2002-07,DOJ,FBI,Insufficient Evidence,451
-2002-08,DOJ,FBI,Insufficient Evidence,334
+2002-08,DOJ,FBI,Insufficient Evidence,333
 2002-09,DOJ,FBI,Insufficient Evidence,405
 2002-10,DOJ,FBI,Insufficient Evidence,371
 2002-11,DOJ,FBI,Insufficient Evidence,351
@@ -21308,7 +21357,7 @@ ym,department,subagency,reason,declined
 2004-06,DOJ,FBI,Insufficient Evidence,309
 2004-07,DOJ,FBI,Insufficient Evidence,283
 2004-08,DOJ,FBI,Insufficient Evidence,369
-2004-09,DOJ,FBI,Insufficient Evidence,575
+2004-09,DOJ,FBI,Insufficient Evidence,576
 2004-10,DOJ,FBI,Insufficient Evidence,243
 2004-11,DOJ,FBI,Insufficient Evidence,217
 2004-12,DOJ,FBI,Insufficient Evidence,234
@@ -21317,10 +21366,10 @@ ym,department,subagency,reason,declined
 2005-03,DOJ,FBI,Insufficient Evidence,502
 2005-04,DOJ,FBI,Insufficient Evidence,287
 2005-05,DOJ,FBI,Insufficient Evidence,228
-2005-06,DOJ,FBI,Insufficient Evidence,339
+2005-06,DOJ,FBI,Insufficient Evidence,338
 2005-07,DOJ,FBI,Insufficient Evidence,219
 2005-08,DOJ,FBI,Insufficient Evidence,310
-2005-09,DOJ,FBI,Insufficient Evidence,509
+2005-09,DOJ,FBI,Insufficient Evidence,510
 2005-10,DOJ,FBI,Insufficient Evidence,316
 2005-11,DOJ,FBI,Insufficient Evidence,305
 2005-12,DOJ,FBI,Insufficient Evidence,263
@@ -21338,7 +21387,7 @@ ym,department,subagency,reason,declined
 2006-12,DOJ,FBI,Insufficient Evidence,204
 2007-01,DOJ,FBI,Insufficient Evidence,239
 2007-02,DOJ,FBI,Insufficient Evidence,266
-2007-03,DOJ,FBI,Insufficient Evidence,418
+2007-03,DOJ,FBI,Insufficient Evidence,417
 2007-04,DOJ,FBI,Insufficient Evidence,366
 2007-05,DOJ,FBI,Insufficient Evidence,360
 2007-06,DOJ,FBI,Insufficient Evidence,333
@@ -21430,7 +21479,7 @@ ym,department,subagency,reason,declined
 2014-08,DOJ,FBI,Insufficient Evidence,349
 2014-09,DOJ,FBI,Insufficient Evidence,716
 2014-10,DOJ,FBI,Insufficient Evidence,331
-2014-11,DOJ,FBI,Insufficient Evidence,227
+2014-11,DOJ,FBI,Insufficient Evidence,228
 2014-12,DOJ,FBI,Insufficient Evidence,233
 2015-01,DOJ,FBI,Insufficient Evidence,337
 2015-02,DOJ,FBI,Insufficient Evidence,282
@@ -21448,7 +21497,7 @@ ym,department,subagency,reason,declined
 2016-02,DOJ,FBI,Insufficient Evidence,341
 2016-03,DOJ,FBI,Insufficient Evidence,774
 2016-04,DOJ,FBI,Insufficient Evidence,261
-2016-05,DOJ,FBI,Insufficient Evidence,227
+2016-05,DOJ,FBI,Insufficient Evidence,228
 2016-06,DOJ,FBI,Insufficient Evidence,272
 2016-07,DOJ,FBI,Insufficient Evidence,281
 2016-08,DOJ,FBI,Insufficient Evidence,362
@@ -21463,7 +21512,7 @@ ym,department,subagency,reason,declined
 2017-05,DOJ,FBI,Insufficient Evidence,290
 2017-06,DOJ,FBI,Insufficient Evidence,349
 2017-07,DOJ,FBI,Insufficient Evidence,301
-2017-08,DOJ,FBI,Insufficient Evidence,378
+2017-08,DOJ,FBI,Insufficient Evidence,379
 2017-09,DOJ,FBI,Insufficient Evidence,606
 2017-10,DOJ,FBI,Insufficient Evidence,271
 2017-11,DOJ,FBI,Insufficient Evidence,216
@@ -21483,13 +21532,13 @@ ym,department,subagency,reason,declined
 2019-01,DOJ,FBI,Insufficient Evidence,244
 2019-02,DOJ,FBI,Insufficient Evidence,494
 2019-03,DOJ,FBI,Insufficient Evidence,696
-2019-04,DOJ,FBI,Insufficient Evidence,457
+2019-04,DOJ,FBI,Insufficient Evidence,458
 2019-05,DOJ,FBI,Insufficient Evidence,310
 2019-06,DOJ,FBI,Insufficient Evidence,273
-2019-07,DOJ,FBI,Insufficient Evidence,384
+2019-07,DOJ,FBI,Insufficient Evidence,383
 2019-08,DOJ,FBI,Insufficient Evidence,418
 2019-09,DOJ,FBI,Insufficient Evidence,1370
-2019-10,DOJ,FBI,Insufficient Evidence,441
+2019-10,DOJ,FBI,Insufficient Evidence,442
 2019-11,DOJ,FBI,Insufficient Evidence,232
 2019-12,DOJ,FBI,Insufficient Evidence,222
 2020-01,DOJ,FBI,Insufficient Evidence,310
@@ -21508,11 +21557,11 @@ ym,department,subagency,reason,declined
 2021-02,DOJ,FBI,Insufficient Evidence,333
 2021-03,DOJ,FBI,Insufficient Evidence,815
 2021-04,DOJ,FBI,Insufficient Evidence,327
-2021-05,DOJ,FBI,Insufficient Evidence,296
+2021-05,DOJ,FBI,Insufficient Evidence,297
 2021-06,DOJ,FBI,Insufficient Evidence,277
 2021-07,DOJ,FBI,Insufficient Evidence,399
 2021-08,DOJ,FBI,Insufficient Evidence,507
-2021-09,DOJ,FBI,Insufficient Evidence,917
+2021-09,DOJ,FBI,Insufficient Evidence,918
 2021-10,DOJ,FBI,Insufficient Evidence,359
 2021-11,DOJ,FBI,Insufficient Evidence,281
 2021-12,DOJ,FBI,Insufficient Evidence,264
@@ -21525,8 +21574,8 @@ ym,department,subagency,reason,declined
 2022-07,DOJ,FBI,Insufficient Evidence,382
 2022-08,DOJ,FBI,Insufficient Evidence,560
 2022-09,DOJ,FBI,Insufficient Evidence,1184
-2022-10,DOJ,FBI,Insufficient Evidence,352
-2022-11,DOJ,FBI,Insufficient Evidence,307
+2022-10,DOJ,FBI,Insufficient Evidence,351
+2022-11,DOJ,FBI,Insufficient Evidence,308
 2022-12,DOJ,FBI,Insufficient Evidence,350
 2023-01,DOJ,FBI,Insufficient Evidence,350
 2023-02,DOJ,FBI,Insufficient Evidence,464
@@ -21545,30 +21594,31 @@ ym,department,subagency,reason,declined
 2024-03,DOJ,FBI,Insufficient Evidence,921
 2024-04,DOJ,FBI,Insufficient Evidence,373
 2024-05,DOJ,FBI,Insufficient Evidence,407
-2024-06,DOJ,FBI,Insufficient Evidence,295
+2024-06,DOJ,FBI,Insufficient Evidence,296
 2024-07,DOJ,FBI,Insufficient Evidence,421
 2024-08,DOJ,FBI,Insufficient Evidence,495
-2024-09,DOJ,FBI,Insufficient Evidence,1007
+2024-09,DOJ,FBI,Insufficient Evidence,1006
 2024-10,DOJ,FBI,Insufficient Evidence,445
 2024-11,DOJ,FBI,Insufficient Evidence,225
 2024-12,DOJ,FBI,Insufficient Evidence,264
 2025-01,DOJ,FBI,Insufficient Evidence,370
-2025-02,DOJ,FBI,Insufficient Evidence,2513
+2025-02,DOJ,FBI,Insufficient Evidence,2514
 2025-03,DOJ,FBI,Insufficient Evidence,898
-2025-04,DOJ,FBI,Insufficient Evidence,355
-2025-05,DOJ,FBI,Insufficient Evidence,360
-2025-06,DOJ,FBI,Insufficient Evidence,310
-2025-07,DOJ,FBI,Insufficient Evidence,385
+2025-04,DOJ,FBI,Insufficient Evidence,357
+2025-05,DOJ,FBI,Insufficient Evidence,361
+2025-06,DOJ,FBI,Insufficient Evidence,312
+2025-07,DOJ,FBI,Insufficient Evidence,387
 2025-08,DOJ,FBI,Insufficient Evidence,412
-2025-09,DOJ,FBI,Insufficient Evidence,948
+2025-09,DOJ,FBI,Insufficient Evidence,949
 2025-10,DOJ,FBI,Insufficient Evidence,377
 2025-11,DOJ,FBI,Insufficient Evidence,283
-2025-12,DOJ,FBI,Insufficient Evidence,339
-2026-01,DOJ,FBI,Insufficient Evidence,312
-2026-02,DOJ,FBI,Insufficient Evidence,411
-2026-03,DOJ,FBI,Insufficient Evidence,847
-2026-04,DOJ,FBI,Insufficient Evidence,361
-2026-05,DOJ,FBI,Insufficient Evidence,268
+2025-12,DOJ,FBI,Insufficient Evidence,340
+2026-01,DOJ,FBI,Insufficient Evidence,313
+2026-02,DOJ,FBI,Insufficient Evidence,416
+2026-03,DOJ,FBI,Insufficient Evidence,849
+2026-04,DOJ,FBI,Insufficient Evidence,376
+2026-05,DOJ,FBI,Insufficient Evidence,297
+2026-06,DOJ,FBI,Insufficient Evidence,245
 1994-10,DOJ,FBI,Legally Barred,15
 1994-11,DOJ,FBI,Legally Barred,15
 1994-12,DOJ,FBI,Legally Barred,9
@@ -21948,7 +21998,8 @@ ym,department,subagency,reason,declined
 2026-02,DOJ,FBI,Legally Barred,10
 2026-03,DOJ,FBI,Legally Barred,16
 2026-04,DOJ,FBI,Legally Barred,8
-2026-05,DOJ,FBI,Legally Barred,3
+2026-05,DOJ,FBI,Legally Barred,4
+2026-06,DOJ,FBI,Legally Barred,4
 1994-10,DOJ,FBI,Matter Referred to Other Jurisdiction,194
 1994-11,DOJ,FBI,Matter Referred to Other Jurisdiction,23
 1994-12,DOJ,FBI,Matter Referred to Other Jurisdiction,17
@@ -22005,7 +22056,7 @@ ym,department,subagency,reason,declined
 1999-03,DOJ,FBI,Matter Referred to Other Jurisdiction,122
 1999-04,DOJ,FBI,Matter Referred to Other Jurisdiction,17
 1999-05,DOJ,FBI,Matter Referred to Other Jurisdiction,8
-1999-06,DOJ,FBI,Matter Referred to Other Jurisdiction,27
+1999-06,DOJ,FBI,Matter Referred to Other Jurisdiction,26
 1999-07,DOJ,FBI,Matter Referred to Other Jurisdiction,37
 1999-08,DOJ,FBI,Matter Referred to Other Jurisdiction,58
 1999-09,DOJ,FBI,Matter Referred to Other Jurisdiction,13
@@ -22249,7 +22300,7 @@ ym,department,subagency,reason,declined
 2019-07,DOJ,FBI,Matter Referred to Other Jurisdiction,51
 2019-08,DOJ,FBI,Matter Referred to Other Jurisdiction,54
 2019-09,DOJ,FBI,Matter Referred to Other Jurisdiction,139
-2019-10,DOJ,FBI,Matter Referred to Other Jurisdiction,47
+2019-10,DOJ,FBI,Matter Referred to Other Jurisdiction,46
 2019-11,DOJ,FBI,Matter Referred to Other Jurisdiction,28
 2019-12,DOJ,FBI,Matter Referred to Other Jurisdiction,31
 2020-01,DOJ,FBI,Matter Referred to Other Jurisdiction,46
@@ -22320,15 +22371,16 @@ ym,department,subagency,reason,declined
 2025-06,DOJ,FBI,Matter Referred to Other Jurisdiction,64
 2025-07,DOJ,FBI,Matter Referred to Other Jurisdiction,84
 2025-08,DOJ,FBI,Matter Referred to Other Jurisdiction,67
-2025-09,DOJ,FBI,Matter Referred to Other Jurisdiction,144
+2025-09,DOJ,FBI,Matter Referred to Other Jurisdiction,145
 2025-10,DOJ,FBI,Matter Referred to Other Jurisdiction,62
 2025-11,DOJ,FBI,Matter Referred to Other Jurisdiction,45
-2025-12,DOJ,FBI,Matter Referred to Other Jurisdiction,59
+2025-12,DOJ,FBI,Matter Referred to Other Jurisdiction,60
 2026-01,DOJ,FBI,Matter Referred to Other Jurisdiction,53
-2026-02,DOJ,FBI,Matter Referred to Other Jurisdiction,55
+2026-02,DOJ,FBI,Matter Referred to Other Jurisdiction,56
 2026-03,DOJ,FBI,Matter Referred to Other Jurisdiction,151
 2026-04,DOJ,FBI,Matter Referred to Other Jurisdiction,75
-2026-05,DOJ,FBI,Matter Referred to Other Jurisdiction,46
+2026-05,DOJ,FBI,Matter Referred to Other Jurisdiction,54
+2026-06,DOJ,FBI,Matter Referred to Other Jurisdiction,38
 1994-10,DOJ,FBI,Non-Prosecution Agreement,49
 1994-11,DOJ,FBI,Non-Prosecution Agreement,37
 1994-12,DOJ,FBI,Non-Prosecution Agreement,26
@@ -22698,7 +22750,7 @@ ym,department,subagency,reason,declined
 2005-03,DOJ,FBI,Other,67
 2005-04,DOJ,FBI,Other,47
 2005-05,DOJ,FBI,Other,49
-2005-06,DOJ,FBI,Other,76
+2005-06,DOJ,FBI,Other,77
 2005-07,DOJ,FBI,Other,52
 2005-08,DOJ,FBI,Other,44
 2005-09,DOJ,FBI,Other,79
@@ -22719,7 +22771,7 @@ ym,department,subagency,reason,declined
 2006-12,DOJ,FBI,Other,20
 2007-01,DOJ,FBI,Other,24
 2007-02,DOJ,FBI,Other,16
-2007-03,DOJ,FBI,Other,52
+2007-03,DOJ,FBI,Other,53
 2007-04,DOJ,FBI,Other,47
 2007-05,DOJ,FBI,Other,54
 2007-06,DOJ,FBI,Other,32
@@ -22797,7 +22849,7 @@ ym,department,subagency,reason,declined
 2013-06,DOJ,FBI,Other,45
 2013-07,DOJ,FBI,Other,70
 2013-08,DOJ,FBI,Other,47
-2013-09,DOJ,FBI,Other,94
+2013-09,DOJ,FBI,Other,95
 2013-10,DOJ,FBI,Other,2
 2013-11,DOJ,FBI,Other,7
 2013-12,DOJ,FBI,Other,6
@@ -22943,13 +22995,14 @@ ym,department,subagency,reason,declined
 2025-08,DOJ,FBI,Other,6
 2025-09,DOJ,FBI,Other,21
 2025-10,DOJ,FBI,Other,7
-2025-11,DOJ,FBI,Other,1
+2025-11,DOJ,FBI,Other,2
 2025-12,DOJ,FBI,Other,3
 2026-01,DOJ,FBI,Other,8
 2026-02,DOJ,FBI,Other,6
 2026-03,DOJ,FBI,Other,6
 2026-04,DOJ,FBI,Other,5
 2026-05,DOJ,FBI,Other,4
+2026-06,DOJ,FBI,Other,2
 1994-10,DOJ,FBI,Prioritization of Federal Resources and Interests,102
 1994-11,DOJ,FBI,Prioritization of Federal Resources and Interests,47
 1994-12,DOJ,FBI,Prioritization of Federal Resources and Interests,110
@@ -23026,7 +23079,7 @@ ym,department,subagency,reason,declined
 2000-11,DOJ,FBI,Prioritization of Federal Resources and Interests,50
 2000-12,DOJ,FBI,Prioritization of Federal Resources and Interests,49
 2001-01,DOJ,FBI,Prioritization of Federal Resources and Interests,72
-2001-02,DOJ,FBI,Prioritization of Federal Resources and Interests,57
+2001-02,DOJ,FBI,Prioritization of Federal Resources and Interests,58
 2001-03,DOJ,FBI,Prioritization of Federal Resources and Interests,84
 2001-04,DOJ,FBI,Prioritization of Federal Resources and Interests,61
 2001-05,DOJ,FBI,Prioritization of Federal Resources and Interests,36
@@ -23266,7 +23319,7 @@ ym,department,subagency,reason,declined
 2020-11,DOJ,FBI,Prioritization of Federal Resources and Interests,18
 2020-12,DOJ,FBI,Prioritization of Federal Resources and Interests,89
 2021-01,DOJ,FBI,Prioritization of Federal Resources and Interests,34
-2021-02,DOJ,FBI,Prioritization of Federal Resources and Interests,54
+2021-02,DOJ,FBI,Prioritization of Federal Resources and Interests,55
 2021-03,DOJ,FBI,Prioritization of Federal Resources and Interests,125
 2021-04,DOJ,FBI,Prioritization of Federal Resources and Interests,42
 2021-05,DOJ,FBI,Prioritization of Federal Resources and Interests,46
@@ -23319,7 +23372,7 @@ ym,department,subagency,reason,declined
 2025-04,DOJ,FBI,Prioritization of Federal Resources and Interests,52
 2025-05,DOJ,FBI,Prioritization of Federal Resources and Interests,54
 2025-06,DOJ,FBI,Prioritization of Federal Resources and Interests,47
-2025-07,DOJ,FBI,Prioritization of Federal Resources and Interests,70
+2025-07,DOJ,FBI,Prioritization of Federal Resources and Interests,71
 2025-08,DOJ,FBI,Prioritization of Federal Resources and Interests,71
 2025-09,DOJ,FBI,Prioritization of Federal Resources and Interests,103
 2025-10,DOJ,FBI,Prioritization of Federal Resources and Interests,45
@@ -23328,8 +23381,9 @@ ym,department,subagency,reason,declined
 2026-01,DOJ,FBI,Prioritization of Federal Resources and Interests,51
 2026-02,DOJ,FBI,Prioritization of Federal Resources and Interests,61
 2026-03,DOJ,FBI,Prioritization of Federal Resources and Interests,85
-2026-04,DOJ,FBI,Prioritization of Federal Resources and Interests,26
-2026-05,DOJ,FBI,Prioritization of Federal Resources and Interests,70
+2026-04,DOJ,FBI,Prioritization of Federal Resources and Interests,28
+2026-05,DOJ,FBI,Prioritization of Federal Resources and Interests,76
+2026-06,DOJ,FBI,Prioritization of Federal Resources and Interests,32
 1995-01,DOJ,INS (legacy),Alternative to Federal Prosecution,2
 1995-03,DOJ,INS (legacy),Alternative to Federal Prosecution,1
 1995-10,DOJ,INS (legacy),Alternative to Federal Prosecution,1
@@ -24287,6 +24341,7 @@ ym,department,subagency,reason,declined
 2026-02,DOJ,Other DOJ,Alternative to Federal Prosecution,2
 2026-03,DOJ,Other DOJ,Alternative to Federal Prosecution,1
 2026-04,DOJ,Other DOJ,Alternative to Federal Prosecution,1
+2026-06,DOJ,Other DOJ,Alternative to Federal Prosecution,1
 1994-10,DOJ,Other DOJ,Defendant Unavailable,4
 1994-12,DOJ,Other DOJ,Defendant Unavailable,12
 1995-01,DOJ,Other DOJ,Defendant Unavailable,3
@@ -24917,6 +24972,7 @@ ym,department,subagency,reason,declined
 2026-03,DOJ,Other DOJ,Insufficient Evidence,21
 2026-04,DOJ,Other DOJ,Insufficient Evidence,5
 2026-05,DOJ,Other DOJ,Insufficient Evidence,1
+2026-06,DOJ,Other DOJ,Insufficient Evidence,4
 1995-01,DOJ,Other DOJ,Legally Barred,1
 1995-03,DOJ,Other DOJ,Legally Barred,1
 1995-04,DOJ,Other DOJ,Legally Barred,3
@@ -26029,7 +26085,6 @@ ym,department,subagency,reason,declined
 1995-03,DOJ,USMS,Alternative to Federal Prosecution,1
 1995-04,DOJ,USMS,Alternative to Federal Prosecution,1
 1995-11,DOJ,USMS,Alternative to Federal Prosecution,1
-1996-03,DOJ,USMS,Alternative to Federal Prosecution,1
 1996-06,DOJ,USMS,Alternative to Federal Prosecution,2
 1996-07,DOJ,USMS,Alternative to Federal Prosecution,13
 1996-08,DOJ,USMS,Alternative to Federal Prosecution,1
@@ -26231,9 +26286,10 @@ ym,department,subagency,reason,declined
 2025-11,DOJ,USMS,Alternative to Federal Prosecution,2
 2026-01,DOJ,USMS,Alternative to Federal Prosecution,2
 2026-02,DOJ,USMS,Alternative to Federal Prosecution,2
-2026-03,DOJ,USMS,Alternative to Federal Prosecution,8
+2026-03,DOJ,USMS,Alternative to Federal Prosecution,9
 2026-04,DOJ,USMS,Alternative to Federal Prosecution,1
 2026-05,DOJ,USMS,Alternative to Federal Prosecution,4
+2026-06,DOJ,USMS,Alternative to Federal Prosecution,1
 1994-10,DOJ,USMS,Defendant Unavailable,3
 1994-11,DOJ,USMS,Defendant Unavailable,5
 1994-12,DOJ,USMS,Defendant Unavailable,8
@@ -26455,7 +26511,7 @@ ym,department,subagency,reason,declined
 2013-02,DOJ,USMS,Defendant Unavailable,2
 2013-03,DOJ,USMS,Defendant Unavailable,1
 2013-04,DOJ,USMS,Defendant Unavailable,6
-2013-07,DOJ,USMS,Defendant Unavailable,2
+2013-07,DOJ,USMS,Defendant Unavailable,1
 2013-08,DOJ,USMS,Defendant Unavailable,2
 2013-10,DOJ,USMS,Defendant Unavailable,1
 2013-11,DOJ,USMS,Defendant Unavailable,1
@@ -26533,6 +26589,7 @@ ym,department,subagency,reason,declined
 2026-03,DOJ,USMS,Defendant Unavailable,2
 2026-04,DOJ,USMS,Defendant Unavailable,1
 2026-05,DOJ,USMS,Defendant Unavailable,1
+2026-06,DOJ,USMS,Defendant Unavailable,1
 1994-10,DOJ,USMS,Insufficient Evidence,3
 1994-11,DOJ,USMS,Insufficient Evidence,3
 1994-12,DOJ,USMS,Insufficient Evidence,7
@@ -26550,7 +26607,7 @@ ym,department,subagency,reason,declined
 1995-12,DOJ,USMS,Insufficient Evidence,6
 1996-01,DOJ,USMS,Insufficient Evidence,9
 1996-02,DOJ,USMS,Insufficient Evidence,5
-1996-03,DOJ,USMS,Insufficient Evidence,10
+1996-03,DOJ,USMS,Insufficient Evidence,11
 1996-04,DOJ,USMS,Insufficient Evidence,3
 1996-05,DOJ,USMS,Insufficient Evidence,4
 1996-06,DOJ,USMS,Insufficient Evidence,15
@@ -26910,8 +26967,9 @@ ym,department,subagency,reason,declined
 2026-01,DOJ,USMS,Insufficient Evidence,8
 2026-02,DOJ,USMS,Insufficient Evidence,6
 2026-03,DOJ,USMS,Insufficient Evidence,23
-2026-04,DOJ,USMS,Insufficient Evidence,13
+2026-04,DOJ,USMS,Insufficient Evidence,14
 2026-05,DOJ,USMS,Insufficient Evidence,5
+2026-06,DOJ,USMS,Insufficient Evidence,7
 1995-06,DOJ,USMS,Legally Barred,1
 1995-08,DOJ,USMS,Legally Barred,1
 1995-12,DOJ,USMS,Legally Barred,1
@@ -27047,8 +27105,9 @@ ym,department,subagency,reason,declined
 2025-09,DOJ,USMS,Legally Barred,2
 2025-10,DOJ,USMS,Legally Barred,2
 2026-02,DOJ,USMS,Legally Barred,2
-2026-03,DOJ,USMS,Legally Barred,1
+2026-03,DOJ,USMS,Legally Barred,2
 2026-04,DOJ,USMS,Legally Barred,1
+2026-06,DOJ,USMS,Legally Barred,1
 1995-02,DOJ,USMS,Matter Referred to Other Jurisdiction,1
 1995-05,DOJ,USMS,Matter Referred to Other Jurisdiction,1
 1995-07,DOJ,USMS,Matter Referred to Other Jurisdiction,1
@@ -28047,6 +28106,7 @@ ym,department,subagency,reason,declined
 2026-03,DOJ,USMS,Prioritization of Federal Resources and Interests,2
 2026-04,DOJ,USMS,Prioritization of Federal Resources and Interests,2
 2026-05,DOJ,USMS,Prioritization of Federal Resources and Interests,1
+2026-06,DOJ,USMS,Prioritization of Federal Resources and Interests,2
 1994-10,Defense,Air Force OSI,Alternative to Federal Prosecution,1
 1994-11,Defense,Air Force OSI,Alternative to Federal Prosecution,2
 1994-12,Defense,Air Force OSI,Alternative to Federal Prosecution,3
@@ -28218,6 +28278,7 @@ ym,department,subagency,reason,declined
 2025-02,Defense,Air Force OSI,Alternative to Federal Prosecution,1
 2025-07,Defense,Air Force OSI,Alternative to Federal Prosecution,1
 2026-03,Defense,Air Force OSI,Alternative to Federal Prosecution,1
+2026-06,Defense,Air Force OSI,Alternative to Federal Prosecution,1
 1994-10,Defense,Air Force OSI,Defendant Unavailable,1
 1994-11,Defense,Air Force OSI,Defendant Unavailable,3
 1994-12,Defense,Air Force OSI,Defendant Unavailable,1
@@ -28708,6 +28769,7 @@ ym,department,subagency,reason,declined
 2026-03,Defense,Air Force OSI,Insufficient Evidence,6
 2026-04,Defense,Air Force OSI,Insufficient Evidence,3
 2026-05,Defense,Air Force OSI,Insufficient Evidence,2
+2026-06,Defense,Air Force OSI,Insufficient Evidence,1
 1995-10,Defense,Air Force OSI,Legally Barred,9
 1996-01,Defense,Air Force OSI,Legally Barred,6
 1996-05,Defense,Air Force OSI,Legally Barred,1
@@ -28858,6 +28920,7 @@ ym,department,subagency,reason,declined
 2025-08,Defense,Air Force OSI,Matter Referred to Other Jurisdiction,1
 2025-09,Defense,Air Force OSI,Matter Referred to Other Jurisdiction,1
 2026-05,Defense,Air Force OSI,Matter Referred to Other Jurisdiction,1
+2026-06,Defense,Air Force OSI,Matter Referred to Other Jurisdiction,1
 1994-12,Defense,Air Force OSI,Non-Prosecution Agreement,2
 1995-02,Defense,Air Force OSI,Non-Prosecution Agreement,4
 1995-04,Defense,Air Force OSI,Non-Prosecution Agreement,2
@@ -29448,6 +29511,7 @@ ym,department,subagency,reason,declined
 2025-06,Defense,Army CID,Alternative to Federal Prosecution,1
 2026-02,Defense,Army CID,Alternative to Federal Prosecution,1
 2026-03,Defense,Army CID,Alternative to Federal Prosecution,1
+2026-06,Defense,Army CID,Alternative to Federal Prosecution,1
 1994-10,Defense,Army CID,Defendant Unavailable,2
 1994-11,Defense,Army CID,Defendant Unavailable,3
 1995-01,Defense,Army CID,Defendant Unavailable,3
@@ -29964,9 +30028,10 @@ ym,department,subagency,reason,declined
 2025-12,Defense,Army CID,Insufficient Evidence,12
 2026-01,Defense,Army CID,Insufficient Evidence,5
 2026-02,Defense,Army CID,Insufficient Evidence,7
-2026-03,Defense,Army CID,Insufficient Evidence,5
+2026-03,Defense,Army CID,Insufficient Evidence,6
 2026-04,Defense,Army CID,Insufficient Evidence,4
-2026-05,Defense,Army CID,Insufficient Evidence,2
+2026-05,Defense,Army CID,Insufficient Evidence,3
+2026-06,Defense,Army CID,Insufficient Evidence,3
 1994-10,Defense,Army CID,Legally Barred,1
 1994-12,Defense,Army CID,Legally Barred,1
 1995-01,Defense,Army CID,Legally Barred,1
@@ -30190,6 +30255,7 @@ ym,department,subagency,reason,declined
 2025-10,Defense,Army CID,Matter Referred to Other Jurisdiction,1
 2025-11,Defense,Army CID,Matter Referred to Other Jurisdiction,1
 2026-03,Defense,Army CID,Matter Referred to Other Jurisdiction,4
+2026-06,Defense,Army CID,Matter Referred to Other Jurisdiction,1
 1994-12,Defense,Army CID,Non-Prosecution Agreement,1
 1995-05,Defense,Army CID,Non-Prosecution Agreement,2
 1995-07,Defense,Army CID,Non-Prosecution Agreement,2
@@ -31265,7 +31331,7 @@ ym,department,subagency,reason,declined
 2023-04,Defense,DCIS/DoD,Insufficient Evidence,7
 2023-06,Defense,DCIS/DoD,Insufficient Evidence,5
 2023-07,Defense,DCIS/DoD,Insufficient Evidence,2
-2023-08,Defense,DCIS/DoD,Insufficient Evidence,4
+2023-08,Defense,DCIS/DoD,Insufficient Evidence,5
 2023-09,Defense,DCIS/DoD,Insufficient Evidence,10
 2023-10,Defense,DCIS/DoD,Insufficient Evidence,5
 2023-11,Defense,DCIS/DoD,Insufficient Evidence,3
@@ -31299,6 +31365,7 @@ ym,department,subagency,reason,declined
 2026-03,Defense,DCIS/DoD,Insufficient Evidence,3
 2026-04,Defense,DCIS/DoD,Insufficient Evidence,5
 2026-05,Defense,DCIS/DoD,Insufficient Evidence,2
+2026-06,Defense,DCIS/DoD,Insufficient Evidence,2
 1994-10,Defense,DCIS/DoD,Legally Barred,1
 1995-03,Defense,DCIS/DoD,Legally Barred,1
 1995-06,Defense,DCIS/DoD,Legally Barred,1
@@ -31759,7 +31826,7 @@ ym,department,subagency,reason,declined
 2021-09,Defense,DCIS/DoD,Other,1
 2022-06,Defense,DCIS/DoD,Other,1
 2023-02,Defense,DCIS/DoD,Other,1
-2023-08,Defense,DCIS/DoD,Other,2
+2023-08,Defense,DCIS/DoD,Other,1
 2024-07,Defense,DCIS/DoD,Other,1
 1994-10,Defense,DCIS/DoD,Prioritization of Federal Resources and Interests,1
 1995-02,Defense,DCIS/DoD,Prioritization of Federal Resources and Interests,1
@@ -32036,8 +32103,9 @@ ym,department,subagency,reason,declined
 2024-08,Defense,Marine Corps,Insufficient Evidence,1
 2025-03,Defense,Marine Corps,Insufficient Evidence,1
 2025-07,Defense,Marine Corps,Insufficient Evidence,1
-2025-11,Defense,Marine Corps,Insufficient Evidence,5
-2026-01,Defense,Marine Corps,Insufficient Evidence,4
+2025-11,Defense,Marine Corps,Insufficient Evidence,1
+2026-01,Defense,Marine Corps,Insufficient Evidence,1
+2026-06,Defense,Marine Corps,Insufficient Evidence,1
 2005-08,Defense,Marine Corps,Legally Barred,1
 2006-08,Defense,Marine Corps,Legally Barred,1
 2006-09,Defense,Marine Corps,Legally Barred,1
@@ -32257,6 +32325,7 @@ ym,department,subagency,reason,declined
 2025-06,Defense,Navy NCIS,Alternative to Federal Prosecution,2
 2025-08,Defense,Navy NCIS,Alternative to Federal Prosecution,1
 2025-12,Defense,Navy NCIS,Alternative to Federal Prosecution,1
+2026-06,Defense,Navy NCIS,Alternative to Federal Prosecution,1
 1994-10,Defense,Navy NCIS,Defendant Unavailable,2
 1994-11,Defense,Navy NCIS,Defendant Unavailable,2
 1995-01,Defense,Navy NCIS,Defendant Unavailable,1
@@ -32752,6 +32821,7 @@ ym,department,subagency,reason,declined
 2026-03,Defense,Navy NCIS,Insufficient Evidence,2
 2026-04,Defense,Navy NCIS,Insufficient Evidence,1
 2026-05,Defense,Navy NCIS,Insufficient Evidence,2
+2026-06,Defense,Navy NCIS,Insufficient Evidence,4
 1995-02,Defense,Navy NCIS,Legally Barred,1
 1995-03,Defense,Navy NCIS,Legally Barred,1
 1995-06,Defense,Navy NCIS,Legally Barred,3
@@ -33305,6 +33375,7 @@ ym,department,subagency,reason,declined
 2025-05,Defense,Navy NCIS,Prioritization of Federal Resources and Interests,3
 2025-09,Defense,Navy NCIS,Prioritization of Federal Resources and Interests,1
 2026-03,Defense,Navy NCIS,Prioritization of Federal Resources and Interests,1
+2026-06,Defense,Navy NCIS,Prioritization of Federal Resources and Interests,1
 2010-06,Defense,Other Defense,Insufficient Evidence,1
 2010-07,Defense,Other Defense,Insufficient Evidence,1
 2010-12,Defense,Other Defense,Insufficient Evidence,1
@@ -33755,6 +33826,7 @@ ym,department,subagency,reason,declined
 2026-02,Education,Other Education,Insufficient Evidence,3
 2026-03,Education,Other Education,Insufficient Evidence,2
 2026-04,Education,Other Education,Insufficient Evidence,1
+2026-06,Education,Other Education,Insufficient Evidence,1
 1995-05,Education,Other Education,Legally Barred,1
 1995-08,Education,Other Education,Legally Barred,3
 1995-09,Education,Other Education,Legally Barred,1
@@ -34234,6 +34306,7 @@ ym,department,subagency,reason,declined
 2025-09,Energy/Environment,Other Energy/Environment,Insufficient Evidence,2
 2026-03,Energy/Environment,Other Energy/Environment,Insufficient Evidence,2
 2026-04,Energy/Environment,Other Energy/Environment,Insufficient Evidence,2
+2026-06,Energy/Environment,Other Energy/Environment,Insufficient Evidence,2
 2001-03,Energy/Environment,Other Energy/Environment,Legally Barred,1
 2003-09,Energy/Environment,Other Energy/Environment,Legally Barred,1
 2004-11,Energy/Environment,Other Energy/Environment,Legally Barred,1
@@ -36000,6 +36073,7 @@ ym,department,subagency,reason,declined
 2026-03,HHS,HHS-OIG,Insufficient Evidence,17
 2026-04,HHS,HHS-OIG,Insufficient Evidence,10
 2026-05,HHS,HHS-OIG,Insufficient Evidence,6
+2026-06,HHS,HHS-OIG,Insufficient Evidence,3
 1997-03,HHS,HHS-OIG,Legally Barred,1
 1999-09,HHS,HHS-OIG,Legally Barred,1
 2001-03,HHS,HHS-OIG,Legally Barred,2
@@ -36174,6 +36248,7 @@ ym,department,subagency,reason,declined
 2025-09,HHS,HHS-OIG,Matter Referred to Other Jurisdiction,1
 2025-10,HHS,HHS-OIG,Matter Referred to Other Jurisdiction,1
 2026-04,HHS,HHS-OIG,Matter Referred to Other Jurisdiction,1
+2026-06,HHS,HHS-OIG,Matter Referred to Other Jurisdiction,1
 1995-04,HHS,HHS-OIG,Non-Prosecution Agreement,1
 1995-05,HHS,HHS-OIG,Non-Prosecution Agreement,1
 1996-02,HHS,HHS-OIG,Non-Prosecution Agreement,1
@@ -36651,6 +36726,7 @@ ym,department,subagency,reason,declined
 2026-03,HHS,HHS-OIG,Prioritization of Federal Resources and Interests,4
 2026-04,HHS,HHS-OIG,Prioritization of Federal Resources and Interests,1
 2026-05,HHS,HHS-OIG,Prioritization of Federal Resources and Interests,1
+2026-06,HHS,HHS-OIG,Prioritization of Federal Resources and Interests,4
 1994-10,HHS,Other HHS,Alternative to Federal Prosecution,1
 1994-11,HHS,Other HHS,Alternative to Federal Prosecution,6
 1994-12,HHS,Other HHS,Alternative to Federal Prosecution,3
@@ -37374,7 +37450,8 @@ ym,department,subagency,reason,declined
 2026-02,HHS,Other HHS,Insufficient Evidence,5
 2026-03,HHS,Other HHS,Insufficient Evidence,5
 2026-04,HHS,Other HHS,Insufficient Evidence,5
-2026-05,HHS,Other HHS,Insufficient Evidence,1
+2026-05,HHS,Other HHS,Insufficient Evidence,3
+2026-06,HHS,Other HHS,Insufficient Evidence,1
 1994-10,HHS,Other HHS,Legally Barred,2
 1995-01,HHS,Other HHS,Legally Barred,1
 1995-09,HHS,Other HHS,Legally Barred,1
@@ -38769,6 +38846,7 @@ ym,department,subagency,reason,declined
 2026-02,HUD,Other HUD,Insufficient Evidence,1
 2026-04,HUD,Other HUD,Insufficient Evidence,3
 2026-05,HUD,Other HUD,Insufficient Evidence,2
+2026-06,HUD,Other HUD,Insufficient Evidence,1
 1994-10,HUD,Other HUD,Legally Barred,1
 1995-07,HUD,Other HUD,Legally Barred,1
 1995-11,HUD,Other HUD,Legally Barred,1
@@ -39938,7 +40016,7 @@ ym,department,subagency,reason,declined
 2025-04,Interior,BIA,Insufficient Evidence,23
 2025-05,Interior,BIA,Insufficient Evidence,3
 2025-06,Interior,BIA,Insufficient Evidence,6
-2025-07,Interior,BIA,Insufficient Evidence,12
+2025-07,Interior,BIA,Insufficient Evidence,13
 2025-08,Interior,BIA,Insufficient Evidence,8
 2025-09,Interior,BIA,Insufficient Evidence,5
 2025-10,Interior,BIA,Insufficient Evidence,12
@@ -39947,8 +40025,9 @@ ym,department,subagency,reason,declined
 2026-01,Interior,BIA,Insufficient Evidence,8
 2026-02,Interior,BIA,Insufficient Evidence,6
 2026-03,Interior,BIA,Insufficient Evidence,8
-2026-04,Interior,BIA,Insufficient Evidence,3
+2026-04,Interior,BIA,Insufficient Evidence,5
 2026-05,Interior,BIA,Insufficient Evidence,2
+2026-06,Interior,BIA,Insufficient Evidence,7
 1994-10,Interior,BIA,Legally Barred,2
 1994-12,Interior,BIA,Legally Barred,1
 1995-01,Interior,BIA,Legally Barred,3
@@ -40253,6 +40332,7 @@ ym,department,subagency,reason,declined
 2026-03,Interior,BIA,Matter Referred to Other Jurisdiction,4
 2026-04,Interior,BIA,Matter Referred to Other Jurisdiction,1
 2026-05,Interior,BIA,Matter Referred to Other Jurisdiction,1
+2026-06,Interior,BIA,Matter Referred to Other Jurisdiction,1
 1994-10,Interior,BIA,Non-Prosecution Agreement,1
 1994-11,Interior,BIA,Non-Prosecution Agreement,1
 1994-12,Interior,BIA,Non-Prosecution Agreement,1
@@ -41566,7 +41646,7 @@ ym,department,subagency,reason,declined
 1999-09,Interior,Fish & Wildlife,Insufficient Evidence,3
 1999-10,Interior,Fish & Wildlife,Insufficient Evidence,1
 1999-12,Interior,Fish & Wildlife,Insufficient Evidence,1
-2000-01,Interior,Fish & Wildlife,Insufficient Evidence,3
+2000-01,Interior,Fish & Wildlife,Insufficient Evidence,4
 2000-02,Interior,Fish & Wildlife,Insufficient Evidence,2
 2000-03,Interior,Fish & Wildlife,Insufficient Evidence,12
 2000-05,Interior,Fish & Wildlife,Insufficient Evidence,3
@@ -41897,7 +41977,7 @@ ym,department,subagency,reason,declined
 1997-03,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,1
 1998-09,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,1
 1999-11,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,1
-2000-01,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,2
+2000-01,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,1
 2000-08,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,1
 2001-11,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,1
 2002-02,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,1
@@ -41995,6 +42075,7 @@ ym,department,subagency,reason,declined
 2025-10,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,1
 2026-03,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,2
 2026-04,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,2
+2026-06,Interior,Fish & Wildlife,Matter Referred to Other Jurisdiction,1
 1995-02,Interior,Fish & Wildlife,Non-Prosecution Agreement,1
 1995-04,Interior,Fish & Wildlife,Non-Prosecution Agreement,1
 1995-05,Interior,Fish & Wildlife,Non-Prosecution Agreement,2
@@ -43151,12 +43232,12 @@ ym,department,subagency,reason,declined
 2025-07,Interior,NPS,Insufficient Evidence,2
 2025-09,Interior,NPS,Insufficient Evidence,3
 2025-11,Interior,NPS,Insufficient Evidence,6
-2025-12,Interior,NPS,Insufficient Evidence,3
+2025-12,Interior,NPS,Insufficient Evidence,4
 2026-01,Interior,NPS,Insufficient Evidence,2
 2026-02,Interior,NPS,Insufficient Evidence,1
 2026-03,Interior,NPS,Insufficient Evidence,2
 2026-04,Interior,NPS,Insufficient Evidence,1
-2026-05,Interior,NPS,Insufficient Evidence,1
+2026-05,Interior,NPS,Insufficient Evidence,2
 1994-11,Interior,NPS,Legally Barred,81
 1995-03,Interior,NPS,Legally Barred,1
 1997-02,Interior,NPS,Legally Barred,1
@@ -44928,7 +45009,7 @@ ym,department,subagency,reason,declined
 2024-11,Labor,Other Labor,Insufficient Evidence,4
 2024-12,Labor,Other Labor,Insufficient Evidence,1
 2025-01,Labor,Other Labor,Insufficient Evidence,6
-2025-02,Labor,Other Labor,Insufficient Evidence,65
+2025-02,Labor,Other Labor,Insufficient Evidence,64
 2025-03,Labor,Other Labor,Insufficient Evidence,9
 2025-04,Labor,Other Labor,Insufficient Evidence,11
 2025-05,Labor,Other Labor,Insufficient Evidence,1
@@ -44943,7 +45024,7 @@ ym,department,subagency,reason,declined
 2026-02,Labor,Other Labor,Insufficient Evidence,5
 2026-03,Labor,Other Labor,Insufficient Evidence,10
 2026-04,Labor,Other Labor,Insufficient Evidence,2
-2026-05,Labor,Other Labor,Insufficient Evidence,1
+2026-05,Labor,Other Labor,Insufficient Evidence,2
 1995-02,Labor,Other Labor,Legally Barred,1
 1995-04,Labor,Other Labor,Legally Barred,1
 1995-10,Labor,Other Labor,Legally Barred,1
@@ -45021,6 +45102,7 @@ ym,department,subagency,reason,declined
 2025-01,Labor,Other Labor,Legally Barred,1
 2025-03,Labor,Other Labor,Legally Barred,1
 2025-08,Labor,Other Labor,Legally Barred,1
+2026-06,Labor,Other Labor,Legally Barred,1
 1994-10,Labor,Other Labor,Matter Referred to Other Jurisdiction,1
 1995-03,Labor,Other Labor,Matter Referred to Other Jurisdiction,1
 1995-04,Labor,Other Labor,Matter Referred to Other Jurisdiction,1
@@ -45765,6 +45847,7 @@ ym,department,subagency,reason,declined
 2025-12,State,Diplomatic Security,Alternative to Federal Prosecution,2
 2026-02,State,Diplomatic Security,Alternative to Federal Prosecution,1
 2026-04,State,Diplomatic Security,Alternative to Federal Prosecution,1
+2026-06,State,Diplomatic Security,Alternative to Federal Prosecution,1
 1994-10,State,Diplomatic Security,Defendant Unavailable,3
 1994-11,State,Diplomatic Security,Defendant Unavailable,3
 1994-12,State,Diplomatic Security,Defendant Unavailable,4
@@ -45782,7 +45865,7 @@ ym,department,subagency,reason,declined
 1996-03,State,Diplomatic Security,Defendant Unavailable,6
 1996-04,State,Diplomatic Security,Defendant Unavailable,2
 1996-05,State,Diplomatic Security,Defendant Unavailable,4
-1996-07,State,Diplomatic Security,Defendant Unavailable,1
+1996-07,State,Diplomatic Security,Defendant Unavailable,2
 1996-08,State,Diplomatic Security,Defendant Unavailable,2
 1996-09,State,Diplomatic Security,Defendant Unavailable,1
 1996-10,State,Diplomatic Security,Defendant Unavailable,1
@@ -46344,7 +46427,7 @@ ym,department,subagency,reason,declined
 2025-06,State,Diplomatic Security,Insufficient Evidence,3
 2025-07,State,Diplomatic Security,Insufficient Evidence,6
 2025-08,State,Diplomatic Security,Insufficient Evidence,4
-2025-09,State,Diplomatic Security,Insufficient Evidence,6
+2025-09,State,Diplomatic Security,Insufficient Evidence,7
 2025-10,State,Diplomatic Security,Insufficient Evidence,3
 2025-11,State,Diplomatic Security,Insufficient Evidence,2
 2025-12,State,Diplomatic Security,Insufficient Evidence,1
@@ -46439,7 +46522,7 @@ ym,department,subagency,reason,declined
 1995-07,State,Diplomatic Security,Matter Referred to Other Jurisdiction,1
 1995-09,State,Diplomatic Security,Matter Referred to Other Jurisdiction,2
 1996-02,State,Diplomatic Security,Matter Referred to Other Jurisdiction,1
-1996-07,State,Diplomatic Security,Matter Referred to Other Jurisdiction,2
+1996-07,State,Diplomatic Security,Matter Referred to Other Jurisdiction,1
 1996-10,State,Diplomatic Security,Matter Referred to Other Jurisdiction,1
 1997-01,State,Diplomatic Security,Matter Referred to Other Jurisdiction,1
 1997-08,State,Diplomatic Security,Matter Referred to Other Jurisdiction,1
@@ -47450,6 +47533,7 @@ ym,department,subagency,reason,declined
 2026-03,State/Local & Other,State/Local & Other,Alternative to Federal Prosecution,29
 2026-04,State/Local & Other,State/Local & Other,Alternative to Federal Prosecution,17
 2026-05,State/Local & Other,State/Local & Other,Alternative to Federal Prosecution,16
+2026-06,State/Local & Other,State/Local & Other,Alternative to Federal Prosecution,6
 1994-10,State/Local & Other,State/Local & Other,Defendant Unavailable,10
 1994-11,State/Local & Other,State/Local & Other,Defendant Unavailable,23
 1994-12,State/Local & Other,State/Local & Other,Defendant Unavailable,22
@@ -47678,7 +47762,7 @@ ym,department,subagency,reason,declined
 2013-08,State/Local & Other,State/Local & Other,Defendant Unavailable,7
 2013-09,State/Local & Other,State/Local & Other,Defendant Unavailable,15
 2013-10,State/Local & Other,State/Local & Other,Defendant Unavailable,2
-2013-11,State/Local & Other,State/Local & Other,Defendant Unavailable,1
+2013-11,State/Local & Other,State/Local & Other,Defendant Unavailable,2
 2013-12,State/Local & Other,State/Local & Other,Defendant Unavailable,2
 2014-01,State/Local & Other,State/Local & Other,Defendant Unavailable,3
 2014-03,State/Local & Other,State/Local & Other,Defendant Unavailable,10
@@ -47748,7 +47832,7 @@ ym,department,subagency,reason,declined
 2019-12,State/Local & Other,State/Local & Other,Defendant Unavailable,1
 2020-01,State/Local & Other,State/Local & Other,Defendant Unavailable,6
 2020-02,State/Local & Other,State/Local & Other,Defendant Unavailable,7
-2020-03,State/Local & Other,State/Local & Other,Defendant Unavailable,6
+2020-03,State/Local & Other,State/Local & Other,Defendant Unavailable,5
 2020-04,State/Local & Other,State/Local & Other,Defendant Unavailable,3
 2020-05,State/Local & Other,State/Local & Other,Defendant Unavailable,3
 2020-06,State/Local & Other,State/Local & Other,Defendant Unavailable,3
@@ -47807,7 +47891,7 @@ ym,department,subagency,reason,declined
 2024-11,State/Local & Other,State/Local & Other,Defendant Unavailable,3
 2025-01,State/Local & Other,State/Local & Other,Defendant Unavailable,8
 2025-02,State/Local & Other,State/Local & Other,Defendant Unavailable,13
-2025-03,State/Local & Other,State/Local & Other,Defendant Unavailable,7
+2025-03,State/Local & Other,State/Local & Other,Defendant Unavailable,8
 2025-04,State/Local & Other,State/Local & Other,Defendant Unavailable,7
 2025-05,State/Local & Other,State/Local & Other,Defendant Unavailable,5
 2025-06,State/Local & Other,State/Local & Other,Defendant Unavailable,2
@@ -47821,6 +47905,7 @@ ym,department,subagency,reason,declined
 2026-03,State/Local & Other,State/Local & Other,Defendant Unavailable,4
 2026-04,State/Local & Other,State/Local & Other,Defendant Unavailable,2
 2026-05,State/Local & Other,State/Local & Other,Defendant Unavailable,4
+2026-06,State/Local & Other,State/Local & Other,Defendant Unavailable,4
 1994-10,State/Local & Other,State/Local & Other,Insufficient Evidence,58
 1994-11,State/Local & Other,State/Local & Other,Insufficient Evidence,47
 1994-12,State/Local & Other,State/Local & Other,Insufficient Evidence,43
@@ -47828,7 +47913,7 @@ ym,department,subagency,reason,declined
 1995-02,State/Local & Other,State/Local & Other,Insufficient Evidence,46
 1995-03,State/Local & Other,State/Local & Other,Insufficient Evidence,77
 1995-04,State/Local & Other,State/Local & Other,Insufficient Evidence,56
-1995-05,State/Local & Other,State/Local & Other,Insufficient Evidence,45
+1995-05,State/Local & Other,State/Local & Other,Insufficient Evidence,46
 1995-06,State/Local & Other,State/Local & Other,Insufficient Evidence,67
 1995-07,State/Local & Other,State/Local & Other,Insufficient Evidence,45
 1995-08,State/Local & Other,State/Local & Other,Insufficient Evidence,65
@@ -48126,7 +48211,7 @@ ym,department,subagency,reason,declined
 2019-12,State/Local & Other,State/Local & Other,Insufficient Evidence,240
 2020-01,State/Local & Other,State/Local & Other,Insufficient Evidence,88
 2020-02,State/Local & Other,State/Local & Other,Insufficient Evidence,94
-2020-03,State/Local & Other,State/Local & Other,Insufficient Evidence,145
+2020-03,State/Local & Other,State/Local & Other,Insufficient Evidence,146
 2020-04,State/Local & Other,State/Local & Other,Insufficient Evidence,75
 2020-05,State/Local & Other,State/Local & Other,Insufficient Evidence,37
 2020-06,State/Local & Other,State/Local & Other,Insufficient Evidence,58
@@ -48148,7 +48233,7 @@ ym,department,subagency,reason,declined
 2021-10,State/Local & Other,State/Local & Other,Insufficient Evidence,102
 2021-11,State/Local & Other,State/Local & Other,Insufficient Evidence,63
 2021-12,State/Local & Other,State/Local & Other,Insufficient Evidence,61
-2022-01,State/Local & Other,State/Local & Other,Insufficient Evidence,55
+2022-01,State/Local & Other,State/Local & Other,Insufficient Evidence,56
 2022-02,State/Local & Other,State/Local & Other,Insufficient Evidence,146
 2022-03,State/Local & Other,State/Local & Other,Insufficient Evidence,206
 2022-04,State/Local & Other,State/Local & Other,Insufficient Evidence,91
@@ -48157,11 +48242,11 @@ ym,department,subagency,reason,declined
 2022-07,State/Local & Other,State/Local & Other,Insufficient Evidence,72
 2022-08,State/Local & Other,State/Local & Other,Insufficient Evidence,107
 2022-09,State/Local & Other,State/Local & Other,Insufficient Evidence,180
-2022-10,State/Local & Other,State/Local & Other,Insufficient Evidence,61
+2022-10,State/Local & Other,State/Local & Other,Insufficient Evidence,62
 2022-11,State/Local & Other,State/Local & Other,Insufficient Evidence,73
 2022-12,State/Local & Other,State/Local & Other,Insufficient Evidence,72
 2023-01,State/Local & Other,State/Local & Other,Insufficient Evidence,72
-2023-02,State/Local & Other,State/Local & Other,Insufficient Evidence,97
+2023-02,State/Local & Other,State/Local & Other,Insufficient Evidence,98
 2023-03,State/Local & Other,State/Local & Other,Insufficient Evidence,243
 2023-04,State/Local & Other,State/Local & Other,Insufficient Evidence,59
 2023-05,State/Local & Other,State/Local & Other,Insufficient Evidence,93
@@ -48184,23 +48269,24 @@ ym,department,subagency,reason,declined
 2024-10,State/Local & Other,State/Local & Other,Insufficient Evidence,81
 2024-11,State/Local & Other,State/Local & Other,Insufficient Evidence,61
 2024-12,State/Local & Other,State/Local & Other,Insufficient Evidence,55
-2025-01,State/Local & Other,State/Local & Other,Insufficient Evidence,71
+2025-01,State/Local & Other,State/Local & Other,Insufficient Evidence,72
 2025-02,State/Local & Other,State/Local & Other,Insufficient Evidence,396
 2025-03,State/Local & Other,State/Local & Other,Insufficient Evidence,167
-2025-04,State/Local & Other,State/Local & Other,Insufficient Evidence,74
+2025-04,State/Local & Other,State/Local & Other,Insufficient Evidence,75
 2025-05,State/Local & Other,State/Local & Other,Insufficient Evidence,58
 2025-06,State/Local & Other,State/Local & Other,Insufficient Evidence,66
 2025-07,State/Local & Other,State/Local & Other,Insufficient Evidence,68
 2025-08,State/Local & Other,State/Local & Other,Insufficient Evidence,103
 2025-09,State/Local & Other,State/Local & Other,Insufficient Evidence,152
-2025-10,State/Local & Other,State/Local & Other,Insufficient Evidence,56
+2025-10,State/Local & Other,State/Local & Other,Insufficient Evidence,57
 2025-11,State/Local & Other,State/Local & Other,Insufficient Evidence,49
-2025-12,State/Local & Other,State/Local & Other,Insufficient Evidence,39
+2025-12,State/Local & Other,State/Local & Other,Insufficient Evidence,38
 2026-01,State/Local & Other,State/Local & Other,Insufficient Evidence,53
-2026-02,State/Local & Other,State/Local & Other,Insufficient Evidence,57
+2026-02,State/Local & Other,State/Local & Other,Insufficient Evidence,58
 2026-03,State/Local & Other,State/Local & Other,Insufficient Evidence,169
-2026-04,State/Local & Other,State/Local & Other,Insufficient Evidence,75
-2026-05,State/Local & Other,State/Local & Other,Insufficient Evidence,52
+2026-04,State/Local & Other,State/Local & Other,Insufficient Evidence,78
+2026-05,State/Local & Other,State/Local & Other,Insufficient Evidence,59
+2026-06,State/Local & Other,State/Local & Other,Insufficient Evidence,44
 1994-11,State/Local & Other,State/Local & Other,Legally Barred,55
 1994-12,State/Local & Other,State/Local & Other,Legally Barred,2
 1995-01,State/Local & Other,State/Local & Other,Legally Barred,4
@@ -48419,7 +48505,7 @@ ym,department,subagency,reason,declined
 2013-08,State/Local & Other,State/Local & Other,Legally Barred,3
 2013-09,State/Local & Other,State/Local & Other,Legally Barred,11
 2013-10,State/Local & Other,State/Local & Other,Legally Barred,7
-2013-11,State/Local & Other,State/Local & Other,Legally Barred,5
+2013-11,State/Local & Other,State/Local & Other,Legally Barred,4
 2013-12,State/Local & Other,State/Local & Other,Legally Barred,4
 2014-01,State/Local & Other,State/Local & Other,Legally Barred,21
 2014-02,State/Local & Other,State/Local & Other,Legally Barred,10
@@ -48495,7 +48581,7 @@ ym,department,subagency,reason,declined
 2020-06,State/Local & Other,State/Local & Other,Legally Barred,1
 2020-07,State/Local & Other,State/Local & Other,Legally Barred,3
 2020-08,State/Local & Other,State/Local & Other,Legally Barred,3
-2020-09,State/Local & Other,State/Local & Other,Legally Barred,5
+2020-09,State/Local & Other,State/Local & Other,Legally Barred,4
 2020-10,State/Local & Other,State/Local & Other,Legally Barred,3
 2020-12,State/Local & Other,State/Local & Other,Legally Barred,1
 2021-01,State/Local & Other,State/Local & Other,Legally Barred,2
@@ -48549,6 +48635,7 @@ ym,department,subagency,reason,declined
 2026-01,State/Local & Other,State/Local & Other,Legally Barred,2
 2026-02,State/Local & Other,State/Local & Other,Legally Barred,2
 2026-03,State/Local & Other,State/Local & Other,Legally Barred,4
+2026-06,State/Local & Other,State/Local & Other,Legally Barred,1
 1994-10,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,1
 1994-11,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,4
 1994-12,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,1
@@ -48773,7 +48860,7 @@ ym,department,subagency,reason,declined
 2013-08,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,7
 2013-09,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,9
 2013-10,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,16
-2013-11,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,18
+2013-11,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,17
 2013-12,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,16
 2014-01,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,36
 2014-02,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,35
@@ -48923,7 +49010,8 @@ ym,department,subagency,reason,declined
 2026-02,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,23
 2026-03,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,16
 2026-04,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,13
-2026-05,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,8
+2026-05,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,9
+2026-06,State/Local & Other,State/Local & Other,Matter Referred to Other Jurisdiction,7
 1994-10,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,5
 1994-11,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,8
 1994-12,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,3
@@ -49103,7 +49191,7 @@ ym,department,subagency,reason,declined
 2009-06,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,15
 2009-07,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,17
 2009-08,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,18
-2009-09,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,48
+2009-09,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,47
 2009-10,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,32
 2009-11,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,17
 2009-12,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,36
@@ -49152,6 +49240,7 @@ ym,department,subagency,reason,declined
 2013-07,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,21
 2013-08,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,15
 2013-09,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,34
+2014-02,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,1
 2022-10,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,1
 2025-03,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,3
 2025-07,State/Local & Other,State/Local & Other,Non-Prosecution Agreement,1
@@ -49162,7 +49251,7 @@ ym,department,subagency,reason,declined
 1995-02,State/Local & Other,State/Local & Other,Other,52
 1995-03,State/Local & Other,State/Local & Other,Other,25
 1995-04,State/Local & Other,State/Local & Other,Other,16
-1995-05,State/Local & Other,State/Local & Other,Other,11
+1995-05,State/Local & Other,State/Local & Other,Other,10
 1995-06,State/Local & Other,State/Local & Other,Other,13
 1995-07,State/Local & Other,State/Local & Other,Other,16
 1995-08,State/Local & Other,State/Local & Other,Other,17
@@ -49308,7 +49397,7 @@ ym,department,subagency,reason,declined
 2007-04,State/Local & Other,State/Local & Other,Other,14
 2007-05,State/Local & Other,State/Local & Other,Other,21
 2007-06,State/Local & Other,State/Local & Other,Other,21
-2007-07,State/Local & Other,State/Local & Other,Other,10
+2007-07,State/Local & Other,State/Local & Other,Other,11
 2007-08,State/Local & Other,State/Local & Other,Other,12
 2007-09,State/Local & Other,State/Local & Other,Other,20
 2007-10,State/Local & Other,State/Local & Other,Other,14
@@ -49384,7 +49473,7 @@ ym,department,subagency,reason,declined
 2013-08,State/Local & Other,State/Local & Other,Other,23
 2013-09,State/Local & Other,State/Local & Other,Other,33
 2013-10,State/Local & Other,State/Local & Other,Other,1
-2013-11,State/Local & Other,State/Local & Other,Other,2
+2013-11,State/Local & Other,State/Local & Other,Other,3
 2013-12,State/Local & Other,State/Local & Other,Other,3
 2014-01,State/Local & Other,State/Local & Other,Other,1
 2014-02,State/Local & Other,State/Local & Other,Other,5
@@ -49476,7 +49565,7 @@ ym,department,subagency,reason,declined
 2022-09,State/Local & Other,State/Local & Other,Other,2
 2022-12,State/Local & Other,State/Local & Other,Other,2
 2023-01,State/Local & Other,State/Local & Other,Other,1
-2023-02,State/Local & Other,State/Local & Other,Other,4
+2023-02,State/Local & Other,State/Local & Other,Other,3
 2023-03,State/Local & Other,State/Local & Other,Other,1
 2023-04,State/Local & Other,State/Local & Other,Other,2
 2023-05,State/Local & Other,State/Local & Other,Other,1
@@ -49506,6 +49595,7 @@ ym,department,subagency,reason,declined
 2026-01,State/Local & Other,State/Local & Other,Other,3
 2026-02,State/Local & Other,State/Local & Other,Other,2
 2026-05,State/Local & Other,State/Local & Other,Other,1
+2026-06,State/Local & Other,State/Local & Other,Other,2
 1994-10,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,4
 1994-11,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,6
 1994-12,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,5
@@ -49738,7 +49828,7 @@ ym,department,subagency,reason,declined
 2013-11,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,17
 2013-12,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,27
 2014-01,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,43
-2014-02,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,30
+2014-02,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,29
 2014-03,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,35
 2014-04,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,17
 2014-05,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,16
@@ -49834,7 +49924,7 @@ ym,department,subagency,reason,declined
 2021-11,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,19
 2021-12,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,12
 2022-01,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,28
-2022-02,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,28
+2022-02,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,29
 2022-03,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,25
 2022-04,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,16
 2022-05,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,17
@@ -49885,7 +49975,8 @@ ym,department,subagency,reason,declined
 2026-02,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,18
 2026-03,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,26
 2026-04,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,15
-2026-05,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,11
+2026-05,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,15
+2026-06,State/Local & Other,State/Local & Other,Prioritization of Federal Resources and Interests,7
 1994-10,Treasury,IRS-CI,Alternative to Federal Prosecution,1
 1994-11,Treasury,IRS-CI,Alternative to Federal Prosecution,1
 1995-01,Treasury,IRS-CI,Alternative to Federal Prosecution,2
@@ -50125,6 +50216,7 @@ ym,department,subagency,reason,declined
 2026-01,Treasury,IRS-CI,Alternative to Federal Prosecution,1
 2026-02,Treasury,IRS-CI,Alternative to Federal Prosecution,1
 2026-03,Treasury,IRS-CI,Alternative to Federal Prosecution,2
+2026-06,Treasury,IRS-CI,Alternative to Federal Prosecution,2
 1994-10,Treasury,IRS-CI,Defendant Unavailable,5
 1994-11,Treasury,IRS-CI,Defendant Unavailable,9
 1994-12,Treasury,IRS-CI,Defendant Unavailable,7
@@ -50819,10 +50911,11 @@ ym,department,subagency,reason,declined
 2025-11,Treasury,IRS-CI,Insufficient Evidence,13
 2025-12,Treasury,IRS-CI,Insufficient Evidence,14
 2026-01,Treasury,IRS-CI,Insufficient Evidence,18
-2026-02,Treasury,IRS-CI,Insufficient Evidence,25
+2026-02,Treasury,IRS-CI,Insufficient Evidence,26
 2026-03,Treasury,IRS-CI,Insufficient Evidence,48
 2026-04,Treasury,IRS-CI,Insufficient Evidence,15
-2026-05,Treasury,IRS-CI,Insufficient Evidence,13
+2026-05,Treasury,IRS-CI,Insufficient Evidence,14
+2026-06,Treasury,IRS-CI,Insufficient Evidence,13
 1994-10,Treasury,IRS-CI,Legally Barred,1
 1994-12,Treasury,IRS-CI,Legally Barred,1
 1995-02,Treasury,IRS-CI,Legally Barred,1
@@ -51050,6 +51143,7 @@ ym,department,subagency,reason,declined
 2025-09,Treasury,IRS-CI,Legally Barred,2
 2025-10,Treasury,IRS-CI,Legally Barred,1
 2026-04,Treasury,IRS-CI,Legally Barred,1
+2026-06,Treasury,IRS-CI,Legally Barred,1
 1994-10,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,61
 1995-01,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,8
 1995-02,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,7
@@ -51341,7 +51435,7 @@ ym,department,subagency,reason,declined
 2024-02,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,3
 2024-03,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,4
 2024-05,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,1
-2024-06,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,1
+2024-06,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,2
 2024-07,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,2
 2024-08,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,4
 2024-09,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,2
@@ -51363,6 +51457,7 @@ ym,department,subagency,reason,declined
 2026-03,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,7
 2026-04,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,1
 2026-05,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,1
+2026-06,Treasury,IRS-CI,Matter Referred to Other Jurisdiction,3
 1994-10,Treasury,IRS-CI,Non-Prosecution Agreement,6
 1994-11,Treasury,IRS-CI,Non-Prosecution Agreement,6
 1994-12,Treasury,IRS-CI,Non-Prosecution Agreement,6
@@ -51896,7 +51991,7 @@ ym,department,subagency,reason,declined
 1994-11,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,2
 1994-12,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,3
 1995-01,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,3
-1995-02,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,4
+1995-02,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,5
 1995-03,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,13
 1995-04,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,6
 1995-05,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,2
@@ -52258,8 +52353,9 @@ ym,department,subagency,reason,declined
 2026-01,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,5
 2026-02,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,8
 2026-03,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,6
-2026-04,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,5
+2026-04,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,6
 2026-05,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,5
+2026-06,Treasury,IRS-CI,Prioritization of Federal Resources and Interests,2
 1995-05,Treasury,Other Treasury,Alternative to Federal Prosecution,1
 1995-09,Treasury,Other Treasury,Alternative to Federal Prosecution,1
 1995-11,Treasury,Other Treasury,Alternative to Federal Prosecution,1
@@ -53407,7 +53503,7 @@ ym,department,subagency,reason,declined
 2017-11,USPS,Postal Inspection,Alternative to Federal Prosecution,4
 2017-12,USPS,Postal Inspection,Alternative to Federal Prosecution,1
 2018-01,USPS,Postal Inspection,Alternative to Federal Prosecution,1
-2018-02,USPS,Postal Inspection,Alternative to Federal Prosecution,5
+2018-02,USPS,Postal Inspection,Alternative to Federal Prosecution,6
 2018-03,USPS,Postal Inspection,Alternative to Federal Prosecution,12
 2018-04,USPS,Postal Inspection,Alternative to Federal Prosecution,3
 2018-05,USPS,Postal Inspection,Alternative to Federal Prosecution,5
@@ -53501,6 +53597,7 @@ ym,department,subagency,reason,declined
 2026-03,USPS,Postal Inspection,Alternative to Federal Prosecution,8
 2026-04,USPS,Postal Inspection,Alternative to Federal Prosecution,5
 2026-05,USPS,Postal Inspection,Alternative to Federal Prosecution,3
+2026-06,USPS,Postal Inspection,Alternative to Federal Prosecution,5
 1994-10,USPS,Postal Inspection,Defendant Unavailable,17
 1994-11,USPS,Postal Inspection,Defendant Unavailable,20
 1994-12,USPS,Postal Inspection,Defendant Unavailable,12
@@ -53518,7 +53615,7 @@ ym,department,subagency,reason,declined
 1995-12,USPS,Postal Inspection,Defendant Unavailable,11
 1996-01,USPS,Postal Inspection,Defendant Unavailable,26
 1996-02,USPS,Postal Inspection,Defendant Unavailable,24
-1996-03,USPS,Postal Inspection,Defendant Unavailable,26
+1996-03,USPS,Postal Inspection,Defendant Unavailable,27
 1996-04,USPS,Postal Inspection,Defendant Unavailable,27
 1996-05,USPS,Postal Inspection,Defendant Unavailable,23
 1996-06,USPS,Postal Inspection,Defendant Unavailable,39
@@ -53661,7 +53758,7 @@ ym,department,subagency,reason,declined
 2007-11,USPS,Postal Inspection,Defendant Unavailable,8
 2007-12,USPS,Postal Inspection,Defendant Unavailable,19
 2008-01,USPS,Postal Inspection,Defendant Unavailable,13
-2008-02,USPS,Postal Inspection,Defendant Unavailable,13
+2008-02,USPS,Postal Inspection,Defendant Unavailable,12
 2008-03,USPS,Postal Inspection,Defendant Unavailable,21
 2008-04,USPS,Postal Inspection,Defendant Unavailable,34
 2008-05,USPS,Postal Inspection,Defendant Unavailable,16
@@ -53704,7 +53801,7 @@ ym,department,subagency,reason,declined
 2011-06,USPS,Postal Inspection,Defendant Unavailable,20
 2011-07,USPS,Postal Inspection,Defendant Unavailable,18
 2011-08,USPS,Postal Inspection,Defendant Unavailable,27
-2011-09,USPS,Postal Inspection,Defendant Unavailable,56
+2011-09,USPS,Postal Inspection,Defendant Unavailable,58
 2011-10,USPS,Postal Inspection,Defendant Unavailable,19
 2011-11,USPS,Postal Inspection,Defendant Unavailable,17
 2011-12,USPS,Postal Inspection,Defendant Unavailable,20
@@ -53823,7 +53920,7 @@ ym,department,subagency,reason,declined
 1996-01,USPS,Postal Inspection,Insufficient Evidence,43
 1996-02,USPS,Postal Inspection,Insufficient Evidence,46
 1996-03,USPS,Postal Inspection,Insufficient Evidence,47
-1996-04,USPS,Postal Inspection,Insufficient Evidence,56
+1996-04,USPS,Postal Inspection,Insufficient Evidence,55
 1996-05,USPS,Postal Inspection,Insufficient Evidence,56
 1996-06,USPS,Postal Inspection,Insufficient Evidence,112
 1996-07,USPS,Postal Inspection,Insufficient Evidence,48
@@ -54008,7 +54105,7 @@ ym,department,subagency,reason,declined
 2011-06,USPS,Postal Inspection,Insufficient Evidence,37
 2011-07,USPS,Postal Inspection,Insufficient Evidence,28
 2011-08,USPS,Postal Inspection,Insufficient Evidence,40
-2011-09,USPS,Postal Inspection,Insufficient Evidence,69
+2011-09,USPS,Postal Inspection,Insufficient Evidence,70
 2011-10,USPS,Postal Inspection,Insufficient Evidence,25
 2011-11,USPS,Postal Inspection,Insufficient Evidence,21
 2011-12,USPS,Postal Inspection,Insufficient Evidence,32
@@ -54040,9 +54137,9 @@ ym,department,subagency,reason,declined
 2014-02,USPS,Postal Inspection,Insufficient Evidence,32
 2014-03,USPS,Postal Inspection,Insufficient Evidence,97
 2014-04,USPS,Postal Inspection,Insufficient Evidence,55
-2014-05,USPS,Postal Inspection,Insufficient Evidence,53
+2014-05,USPS,Postal Inspection,Insufficient Evidence,52
 2014-06,USPS,Postal Inspection,Insufficient Evidence,27
-2014-07,USPS,Postal Inspection,Insufficient Evidence,40
+2014-07,USPS,Postal Inspection,Insufficient Evidence,41
 2014-08,USPS,Postal Inspection,Insufficient Evidence,61
 2014-09,USPS,Postal Inspection,Insufficient Evidence,60
 2014-10,USPS,Postal Inspection,Insufficient Evidence,59
@@ -54113,7 +54210,7 @@ ym,department,subagency,reason,declined
 2020-03,USPS,Postal Inspection,Insufficient Evidence,84
 2020-04,USPS,Postal Inspection,Insufficient Evidence,19
 2020-05,USPS,Postal Inspection,Insufficient Evidence,28
-2020-06,USPS,Postal Inspection,Insufficient Evidence,19
+2020-06,USPS,Postal Inspection,Insufficient Evidence,20
 2020-07,USPS,Postal Inspection,Insufficient Evidence,51
 2020-08,USPS,Postal Inspection,Insufficient Evidence,70
 2020-09,USPS,Postal Inspection,Insufficient Evidence,108
@@ -54151,7 +54248,7 @@ ym,department,subagency,reason,declined
 2023-05,USPS,Postal Inspection,Insufficient Evidence,38
 2023-06,USPS,Postal Inspection,Insufficient Evidence,34
 2023-07,USPS,Postal Inspection,Insufficient Evidence,41
-2023-08,USPS,Postal Inspection,Insufficient Evidence,41
+2023-08,USPS,Postal Inspection,Insufficient Evidence,42
 2023-09,USPS,Postal Inspection,Insufficient Evidence,119
 2023-10,USPS,Postal Inspection,Insufficient Evidence,25
 2023-11,USPS,Postal Inspection,Insufficient Evidence,23
@@ -54183,8 +54280,9 @@ ym,department,subagency,reason,declined
 2026-01,USPS,Postal Inspection,Insufficient Evidence,32
 2026-02,USPS,Postal Inspection,Insufficient Evidence,30
 2026-03,USPS,Postal Inspection,Insufficient Evidence,81
-2026-04,USPS,Postal Inspection,Insufficient Evidence,23
-2026-05,USPS,Postal Inspection,Insufficient Evidence,36
+2026-04,USPS,Postal Inspection,Insufficient Evidence,22
+2026-05,USPS,Postal Inspection,Insufficient Evidence,37
+2026-06,USPS,Postal Inspection,Insufficient Evidence,28
 1994-12,USPS,Postal Inspection,Legally Barred,2
 1995-01,USPS,Postal Inspection,Legally Barred,2
 1995-02,USPS,Postal Inspection,Legally Barred,2
@@ -54482,7 +54580,7 @@ ym,department,subagency,reason,declined
 1995-11,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,2
 1996-01,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,10
 1996-02,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,4
-1996-03,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,6
+1996-03,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,5
 1996-04,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,6
 1996-05,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,2
 1996-06,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,7
@@ -54683,9 +54781,9 @@ ym,department,subagency,reason,declined
 2014-02,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,8
 2014-03,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,25
 2014-04,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,8
-2014-05,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,3
+2014-05,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,4
 2014-06,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,12
-2014-07,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,6
+2014-07,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,5
 2014-08,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,6
 2014-09,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,12
 2014-10,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,8
@@ -54727,7 +54825,7 @@ ym,department,subagency,reason,declined
 2017-10,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,2
 2017-12,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,4
 2018-01,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,3
-2018-02,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,5
+2018-02,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,4
 2018-03,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,8
 2018-04,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,7
 2018-05,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,2
@@ -54823,6 +54921,7 @@ ym,department,subagency,reason,declined
 2026-03,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,12
 2026-04,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,5
 2026-05,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,2
+2026-06,USPS,Postal Inspection,Matter Referred to Other Jurisdiction,2
 1994-10,USPS,Postal Inspection,Non-Prosecution Agreement,4
 1994-11,USPS,Postal Inspection,Non-Prosecution Agreement,7
 1994-12,USPS,Postal Inspection,Non-Prosecution Agreement,9
@@ -55032,7 +55131,7 @@ ym,department,subagency,reason,declined
 2011-12,USPS,Postal Inspection,Non-Prosecution Agreement,11
 2012-01,USPS,Postal Inspection,Non-Prosecution Agreement,2
 2012-02,USPS,Postal Inspection,Non-Prosecution Agreement,27
-2012-03,USPS,Postal Inspection,Non-Prosecution Agreement,24
+2012-03,USPS,Postal Inspection,Non-Prosecution Agreement,25
 2012-04,USPS,Postal Inspection,Non-Prosecution Agreement,68
 2012-05,USPS,Postal Inspection,Non-Prosecution Agreement,6
 2012-06,USPS,Postal Inspection,Non-Prosecution Agreement,35
@@ -55072,7 +55171,7 @@ ym,department,subagency,reason,declined
 1996-01,USPS,Postal Inspection,Other,14
 1996-02,USPS,Postal Inspection,Other,13
 1996-03,USPS,Postal Inspection,Other,24
-1996-04,USPS,Postal Inspection,Other,19
+1996-04,USPS,Postal Inspection,Other,20
 1996-05,USPS,Postal Inspection,Other,23
 1996-06,USPS,Postal Inspection,Other,15
 1996-07,USPS,Postal Inspection,Other,11
@@ -55213,7 +55312,7 @@ ym,department,subagency,reason,declined
 2007-11,USPS,Postal Inspection,Other,1
 2007-12,USPS,Postal Inspection,Other,3
 2008-01,USPS,Postal Inspection,Other,7
-2008-02,USPS,Postal Inspection,Other,3
+2008-02,USPS,Postal Inspection,Other,4
 2008-03,USPS,Postal Inspection,Other,7
 2008-04,USPS,Postal Inspection,Other,6
 2008-05,USPS,Postal Inspection,Other,6
@@ -55255,13 +55354,13 @@ ym,department,subagency,reason,declined
 2011-06,USPS,Postal Inspection,Other,2
 2011-07,USPS,Postal Inspection,Other,3
 2011-08,USPS,Postal Inspection,Other,1
-2011-09,USPS,Postal Inspection,Other,15
+2011-09,USPS,Postal Inspection,Other,12
 2011-10,USPS,Postal Inspection,Other,6
 2011-11,USPS,Postal Inspection,Other,14
 2011-12,USPS,Postal Inspection,Other,4
 2012-01,USPS,Postal Inspection,Other,8
 2012-02,USPS,Postal Inspection,Other,11
-2012-03,USPS,Postal Inspection,Other,22
+2012-03,USPS,Postal Inspection,Other,21
 2012-04,USPS,Postal Inspection,Other,11
 2012-05,USPS,Postal Inspection,Other,14
 2012-06,USPS,Postal Inspection,Other,7
@@ -55359,6 +55458,7 @@ ym,department,subagency,reason,declined
 2026-01,USPS,Postal Inspection,Other,1
 2026-03,USPS,Postal Inspection,Other,1
 2026-05,USPS,Postal Inspection,Other,2
+2026-06,USPS,Postal Inspection,Other,1
 1994-10,USPS,Postal Inspection,Prioritization of Federal Resources and Interests,4
 1994-11,USPS,Postal Inspection,Prioritization of Federal Resources and Interests,9
 1994-12,USPS,Postal Inspection,Prioritization of Federal Resources and Interests,9
@@ -55736,7 +55836,8 @@ ym,department,subagency,reason,declined
 2026-02,USPS,Postal Inspection,Prioritization of Federal Resources and Interests,3
 2026-03,USPS,Postal Inspection,Prioritization of Federal Resources and Interests,6
 2026-04,USPS,Postal Inspection,Prioritization of Federal Resources and Interests,6
-2026-05,USPS,Postal Inspection,Prioritization of Federal Resources and Interests,8
+2026-05,USPS,Postal Inspection,Prioritization of Federal Resources and Interests,9
+2026-06,USPS,Postal Inspection,Prioritization of Federal Resources and Interests,6
 2008-08,USPS,USPS-OIG,Alternative to Federal Prosecution,1
 2008-09,USPS,USPS-OIG,Alternative to Federal Prosecution,1
 2008-10,USPS,USPS-OIG,Alternative to Federal Prosecution,1
@@ -55936,7 +56037,7 @@ ym,department,subagency,reason,declined
 2011-08,USPS,USPS-OIG,Insufficient Evidence,1
 2011-09,USPS,USPS-OIG,Insufficient Evidence,8
 2011-10,USPS,USPS-OIG,Insufficient Evidence,3
-2011-11,USPS,USPS-OIG,Insufficient Evidence,6
+2011-11,USPS,USPS-OIG,Insufficient Evidence,7
 2011-12,USPS,USPS-OIG,Insufficient Evidence,1
 2012-01,USPS,USPS-OIG,Insufficient Evidence,1
 2012-02,USPS,USPS-OIG,Insufficient Evidence,2
@@ -56101,10 +56202,11 @@ ym,department,subagency,reason,declined
 2025-11,USPS,USPS-OIG,Insufficient Evidence,4
 2025-12,USPS,USPS-OIG,Insufficient Evidence,6
 2026-01,USPS,USPS-OIG,Insufficient Evidence,2
-2026-02,USPS,USPS-OIG,Insufficient Evidence,2
+2026-02,USPS,USPS-OIG,Insufficient Evidence,3
 2026-03,USPS,USPS-OIG,Insufficient Evidence,10
 2026-04,USPS,USPS-OIG,Insufficient Evidence,6
-2026-05,USPS,USPS-OIG,Insufficient Evidence,3
+2026-05,USPS,USPS-OIG,Insufficient Evidence,4
+2026-06,USPS,USPS-OIG,Insufficient Evidence,4
 2008-02,USPS,USPS-OIG,Legally Barred,1
 2010-03,USPS,USPS-OIG,Legally Barred,1
 2014-01,USPS,USPS-OIG,Legally Barred,2
@@ -56207,6 +56309,7 @@ ym,department,subagency,reason,declined
 2025-08,USPS,USPS-OIG,Matter Referred to Other Jurisdiction,1
 2026-04,USPS,USPS-OIG,Matter Referred to Other Jurisdiction,1
 2026-05,USPS,USPS-OIG,Matter Referred to Other Jurisdiction,1
+2026-06,USPS,USPS-OIG,Matter Referred to Other Jurisdiction,1
 2007-06,USPS,USPS-OIG,Non-Prosecution Agreement,1
 2007-07,USPS,USPS-OIG,Non-Prosecution Agreement,1
 2008-01,USPS,USPS-OIG,Non-Prosecution Agreement,1
@@ -56262,7 +56365,7 @@ ym,department,subagency,reason,declined
 2011-03,USPS,USPS-OIG,Other,3
 2011-06,USPS,USPS-OIG,Other,1
 2011-08,USPS,USPS-OIG,Other,1
-2011-11,USPS,USPS-OIG,Other,2
+2011-11,USPS,USPS-OIG,Other,1
 2011-12,USPS,USPS-OIG,Other,2
 2012-05,USPS,USPS-OIG,Other,2
 2012-06,USPS,USPS-OIG,Other,1
@@ -56394,6 +56497,8 @@ ym,department,subagency,reason,declined
 2026-01,USPS,USPS-OIG,Prioritization of Federal Resources and Interests,1
 2026-02,USPS,USPS-OIG,Prioritization of Federal Resources and Interests,1
 2026-04,USPS,USPS-OIG,Prioritization of Federal Resources and Interests,5
+2026-05,USPS,USPS-OIG,Prioritization of Federal Resources and Interests,1
+2026-06,USPS,USPS-OIG,Prioritization of Federal Resources and Interests,2
 1994-10,Veterans Affairs,Other Veterans Affairs,Alternative to Federal Prosecution,1
 1995-01,Veterans Affairs,Other Veterans Affairs,Alternative to Federal Prosecution,1
 1995-03,Veterans Affairs,Other Veterans Affairs,Alternative to Federal Prosecution,2
@@ -57125,10 +57230,11 @@ ym,department,subagency,reason,declined
 2025-11,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,3
 2025-12,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,4
 2026-01,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,1
-2026-02,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,13
+2026-02,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,14
 2026-03,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,13
 2026-04,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,2
-2026-05,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,5
+2026-05,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,6
+2026-06,Veterans Affairs,Other Veterans Affairs,Insufficient Evidence,5
 1994-11,Veterans Affairs,Other Veterans Affairs,Legally Barred,3
 1998-03,Veterans Affairs,Other Veterans Affairs,Legally Barred,2
 1998-08,Veterans Affairs,Other Veterans Affairs,Legally Barred,1
@@ -57199,6 +57305,7 @@ ym,department,subagency,reason,declined
 2024-09,Veterans Affairs,Other Veterans Affairs,Legally Barred,1
 2024-10,Veterans Affairs,Other Veterans Affairs,Legally Barred,1
 2025-11,Veterans Affairs,Other Veterans Affairs,Legally Barred,1
+2026-06,Veterans Affairs,Other Veterans Affairs,Legally Barred,1
 1994-10,Veterans Affairs,Other Veterans Affairs,Matter Referred to Other Jurisdiction,2
 1994-12,Veterans Affairs,Other Veterans Affairs,Matter Referred to Other Jurisdiction,1
 1995-01,Veterans Affairs,Other Veterans Affairs,Matter Referred to Other Jurisdiction,1

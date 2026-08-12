@@ -1,0 +1,502 @@
+code,department,subagency
+PSUS,USPS,Postal Inspection
+ZTAT,State/Local & Other,State/Local & Other
+HSSS,DHS,Secret Service
+HSZZ,DHS,Other DHS
+HSCI,DHS,HSI
+ZSSA,State/Local & Other,State/Local & Other
+DEFZ,Defense,DCIS/DoD
+HHS,HHS,Other HHS
+JUST,DOJ,Other DOJ
+CDOA,Commerce,Other Commerce
+LABZ,Labor,Other Labor
+DEFE,Defense,DCIS/DoD
+NCM,State/Local & Other,State/Local & Other
+HUD,HUD,Other HUD
+WDCS,State/Local & Other,State/Local & Other
+IGTA,State/Local & Other,State/Local & Other
+VAE,Veterans Affairs,Other Veterans Affairs
+MA,State/Local & Other,State/Local & Other
+FBI,DOJ,FBI
+ACE,State/Local & Other,State/Local & Other
+ARMY,Defense,Army CID
+JUIN,DOJ,INS (legacy)
+BLBS,State/Local & Other,State/Local & Other
+ZFCC,State/Local & Other,State/Local & Other
+SBA,State/Local & Other,State/Local & Other
+EPA,State/Local & Other,State/Local & Other
+SEC,State/Local & Other,State/Local & Other
+INLM,Interior,BLM
+SD,State,Other State
+HSEM,DHS,Other DHS
+TXN,State/Local & Other,State/Local & Other
+CAS,State/Local & Other,State/Local & Other
+INN,Interior,BIA
+VRAZ,State/Local & Other,State/Local & Other
+IAN,State/Local & Other,State/Local & Other
+ID,State/Local & Other,State/Local & Other
+WIW,State/Local & Other,State/Local & Other
+WY,State/Local & Other,State/Local & Other
+TRAZ,DOJ,ATF
+HHRS,HHS,Other HHS
+INFZ,Interior,Fish & Wildlife
+WDMP,State/Local & Other,State/Local & Other
+LAOS,Labor,Other Labor
+JUIZ,DOJ,INS (legacy)
+TRSZ,DHS,Secret Service
+VAZZ,Veterans Affairs,Other Veterans Affairs
+VAW,Veterans Affairs,Other Veterans Affairs
+ZNAL,State/Local & Other,State/Local & Other
+ZOPM,State/Local & Other,State/Local & Other
+AGSC,Agriculture,Other Agriculture
+UNKN,State/Local & Other,State/Local & Other
+TRCC,DHS,CBP
+AGFM,Agriculture,Forest Service
+TNM,State/Local & Other,State/Local & Other
+VRCH,State/Local & Other,State/Local & Other
+ZAID,State/Local & Other,State/Local & Other
+AGRE,Agriculture,Other Agriculture
+VRFL,State/Local & Other,State/Local & Other
+????,State/Local & Other,State/Local & Other
+TRSB,DHS,Secret Service
+FLN,State/Local & Other,State/Local & Other
+NYW,State/Local & Other,State/Local & Other
+ZLRB,State/Local & Other,State/Local & Other
+DEIA,Defense,DCIS/DoD
+ZUSC,State/Local & Other,State/Local & Other
+NMI,State/Local & Other,State/Local & Other
+WDOS,State/Local & Other,State/Local & Other
+HHHP,HHS,Other HHS
+TDOZ,State/Local & Other,State/Local & Other
+DOED,State/Local & Other,State/Local & Other
+ZCFB,State/Local & Other,State/Local & Other
+AGMC,Agriculture,Other Agriculture
+ZTVA,State/Local & Other,State/Local & Other
+CAN,State/Local & Other,State/Local & Other
+MSN,State/Local & Other,State/Local & Other
+NCW,State/Local & Other,State/Local & Other
+WVS,State/Local & Other,State/Local & Other
+CDIE,Commerce,Other Commerce
+ZFHL,State/Local & Other,State/Local & Other
+ZNTX,State/Local & Other,State/Local & Other
+ILS,State/Local & Other,State/Local & Other
+OKE,State/Local & Other,State/Local & Other
+HHPI,HHS,Other HHS
+VROR,State/Local & Other,State/Local & Other
+VRKS,State/Local & Other,State/Local & Other
+DE,Defense,Other Defense
+ZICC,State/Local & Other,State/Local & Other
+VRMA,State/Local & Other,State/Local & Other
+VRIA,State/Local & Other,State/Local & Other
+VRSD,State/Local & Other,State/Local & Other
+RI,State/Local & Other,State/Local & Other
+AK,State/Local & Other,State/Local & Other
+MSS,State/Local & Other,State/Local & Other
+XXX,State/Local & Other,State/Local & Other
+HHNI,HHS,Other HHS
+NH,State/Local & Other,State/Local & Other
+VRMD,State/Local & Other,State/Local & Other
+JUCM,DOJ,Other DOJ
+ENBP,DHS,CBP
+HHAA,HHS,Other HHS
+AGFC,Agriculture,Forest Service
+EXWH,State/Local & Other,State/Local & Other
+VRLA,State/Local & Other,State/Local & Other
+VRNE,State/Local & Other,State/Local & Other
+VRSC,State/Local & Other,State/Local & Other
+HSFF,DHS,Other DHS
+MPD2,State/Local & Other,State/Local & Other
+AGSF,Agriculture,Other Agriculture
+GBI,State/Local & Other,State/Local & Other
+ZSEN,State/Local & Other,State/Local & Other
+RPD,State/Local & Other,State/Local & Other
+ABI,State/Local & Other,State/Local & Other
+ZABL,State/Local & Other,State/Local & Other
+VROK,State/Local & Other,State/Local & Other
+ZACH,State/Local & Other,State/Local & Other
+ZACV,State/Local & Other,State/Local & Other
+VRKY,State/Local & Other,State/Local & Other
+VRAK,State/Local & Other,State/Local & Other
+ZACG,State/Local & Other,State/Local & Other
+JUAT,DOJ,Other DOJ
+VRAL,State/Local & Other,State/Local & Other
+RRB,State/Local & Other,State/Local & Other
+FPRI,State/Local & Other,State/Local & Other
+TAXD,State/Local & Other,State/Local & Other
+JUAF,DOJ,ATF
+JUBP,DHS,CBP
+JUFZ,DOJ,FBI
+HSOT,DHS,Other DHS
+SDOS,State,Diplomatic Security
+DENV,Defense,Navy NCIS
+LABO,Labor,Other Labor
+ZEPA,State/Local & Other,State/Local & Other
+HHIG,HHS,HHS-OIG
+AGTA,Agriculture,Other Agriculture
+TDOT,State/Local & Other,State/Local & Other
+EDIG,Education,Other Education
+LALS,Labor,Other Labor
+JUIG,DOJ,Other DOJ
+VRNH,State/Local & Other,State/Local & Other
+PSIG,USPS,USPS-OIG
+AGFS,Agriculture,Forest Service
+DOL,State/Local & Other,State/Local & Other
+CUS,DHS,CBP
+DOS,State,Diplomatic Security
+TRAT,DOJ,ATF
+ZRRB,State/Local & Other,State/Local & Other
+ZSEC,State/Local & Other,State/Local & Other
+ZSSS,State/Local & Other,State/Local & Other
+FDIC,State/Local & Other,State/Local & Other
+JUPI,DOJ,Other DOJ
+AZ,State/Local & Other,State/Local & Other
+LAPB,Labor,Other Labor
+KS,State/Local & Other,State/Local & Other
+JUTR,DOJ,Other DOJ
+ARE,State/Local & Other,State/Local & Other
+MT,State/Local & Other,State/Local & Other
+MIW,State/Local & Other,State/Local & Other
+PAM,State/Local & Other,State/Local & Other
+NYE,State/Local & Other,State/Local & Other
+TRCZ,DHS,CBP
+MPD1,State/Local & Other,State/Local & Other
+INBM,Interior,BIA
+HUFH,HUD,Other HUD
+JUOJ,DOJ,Other DOJ
+TRJF,Treasury,Other Treasury
+PR,State/Local & Other,State/Local & Other
+ALS,State/Local & Other,State/Local & Other
+TDMA,State/Local & Other,State/Local & Other
+CDIT,Commerce,Other Commerce
+HSTS,DHS,TSA
+ZCAP,State/Local & Other,State/Local & Other
+VRNB,State/Local & Other,State/Local & Other
+DCIS,Defense,DCIS/DoD
+TDFV,State/Local & Other,State/Local & Other
+OHN,State/Local & Other,State/Local & Other
+ZCUA,State/Local & Other,State/Local & Other
+LAVR,Labor,Other Labor
+TRST,Treasury,Other Treasury
+HHAC,HHS,Other HHS
+HHPH,HHS,Other HHS
+PAE,State/Local & Other,State/Local & Other
+ZEPZ,State/Local & Other,State/Local & Other
+ZEIB,State/Local & Other,State/Local & Other
+LAMS,Labor,Other Labor
+HHSS,HHS,Other HHS
+TXE,State/Local & Other,State/Local & Other
+SC,State/Local & Other,State/Local & Other
+MOW,State/Local & Other,State/Local & Other
+MOE,State/Local & Other,State/Local & Other
+INLZ,Interior,BLM
+HUDZ,HUD,Other HUD
+VRDC,State/Local & Other,State/Local & Other
+ODNI,State/Local & Other,State/Local & Other
+OIA,State/Local & Other,State/Local & Other
+VRVT,State/Local & Other,State/Local & Other
+INGS,Interior,Other Interior
+TRDC,Treasury,Other Treasury
+VRIL,State/Local & Other,State/Local & Other
+VRLS,State/Local & Other,State/Local & Other
+VRNV,State/Local & Other,State/Local & Other
+VRIN,State/Local & Other,State/Local & Other
+AGER,Agriculture,Other Agriculture
+VRGA,State/Local & Other,State/Local & Other
+VRMT,State/Local & Other,State/Local & Other
+MPD4,State/Local & Other,State/Local & Other
+MPD5,State/Local & Other,State/Local & Other
+VRRI,State/Local & Other,State/Local & Other
+ZCSB,State/Local & Other,State/Local & Other
+YYYY,State/Local & Other,State/Local & Other
+YYY,State/Local & Other,State/Local & Other
+ZACS,State/Local & Other,State/Local & Other
+VRAR,State/Local & Other,State/Local & Other
+ASCS,State/Local & Other,State/Local & Other
+DEFB,Defense,DCIS/DoD
+VRWY,State/Local & Other,State/Local & Other
+CITA,State/Local & Other,State/Local & Other
+ZACC,State/Local & Other,State/Local & Other
+CDNT,Commerce,Other Commerce
+ZACA,State/Local & Other,State/Local & Other
+FCC,State/Local & Other,State/Local & Other
+NAVY,Defense,Navy NCIS
+FEMA,DHS,Other DHS
+ZNRO,State/Local & Other,State/Local & Other
+VRDE,State/Local & Other,State/Local & Other
+ZTDA,State/Local & Other,State/Local & Other
+ICC,State/Local & Other,State/Local & Other
+ATU,State/Local & Other,State/Local & Other
+FPS,DHS,Other DHS
+CFT,State/Local & Other,State/Local & Other
+JUFB,DOJ,FBI
+DEAR,Defense,Army CID
+OTHR,State/Local & Other,State/Local & Other
+ZTAZ,State/Local & Other,State/Local & Other
+DEIG,Defense,DCIS/DoD
+DEMC,Defense,Marine Corps
+ZCTS,State/Local & Other,State/Local & Other
+JUAZ,DOJ,ATF
+HSCG,DHS,Coast Guard
+IRSZ,Treasury,IRS-CI
+EDUC,Education,Other Education
+HHFD,HHS,FDA
+PSUZ,USPS,Postal Inspection
+AGRI,Agriculture,Other Agriculture
+TRFM,Treasury,Other Treasury
+HSIG,DHS,DHS-OIG
+HSCB,DHS,CBP
+INS,DOJ,INS (legacy)
+USPS,USPS,Postal Inspection
+USMS,DOJ,USMS
+DOD,Defense,DCIS/DoD
+MCS,State/Local & Other,State/Local & Other
+TRCB,DHS,CBP
+ZGSP,State/Local & Other,State/Local & Other
+ZSBA,State/Local & Other,State/Local & Other
+NIS,Defense,Navy NCIS
+ZRTC,State/Local & Other,State/Local & Other
+FDA,HHS,FDA
+HHCF,HHS,Other HHS
+ZGSA,State/Local & Other,State/Local & Other
+ZNRC,State/Local & Other,State/Local & Other
+ENER,Energy/Environment,Other Energy/Environment
+INTE,Interior,Other Interior
+CO,State/Local & Other,State/Local & Other
+MIE,State/Local & Other,State/Local & Other
+NJ,State/Local & Other,State/Local & Other
+ND,State/Local & Other,State/Local & Other
+TXS,State/Local & Other,State/Local & Other
+VRNM,State/Local & Other,State/Local & Other
+OKW,State/Local & Other,State/Local & Other
+NE,State/Local & Other,State/Local & Other
+HI,State/Local & Other,State/Local & Other
+KYW,State/Local & Other,State/Local & Other
+NYS,State/Local & Other,State/Local & Other
+ILN,State/Local & Other,State/Local & Other
+ILC,State/Local & Other,State/Local & Other
+CDEA,Commerce,Other Commerce
+GAS,State/Local & Other,State/Local & Other
+ZATK,State/Local & Other,State/Local & Other
+HUHA,HUD,Other HUD
+GSA,State/Local & Other,State/Local & Other
+ZSMI,State/Local & Other,State/Local & Other
+AGCC,Agriculture,Other Agriculture
+DESA,Defense,DCIS/DoD
+DEDS,Defense,DCIS/DoD
+VRWI,State/Local & Other,State/Local & Other
+LAWP,Labor,Other Labor
+ZCPS,State/Local & Other,State/Local & Other
+ZPBG,State/Local & Other,State/Local & Other
+CT,State/Local & Other,State/Local & Other
+AGHM,Agriculture,Other Agriculture
+ZFHF,State/Local & Other,State/Local & Other
+CD,Commerce,Other Commerce
+MN,State/Local & Other,State/Local & Other
+ZGPS,State/Local & Other,State/Local & Other
+DEOC,Defense,DCIS/DoD
+ZACD,State/Local & Other,State/Local & Other
+ALN,State/Local & Other,State/Local & Other
+WAW,State/Local & Other,State/Local & Other
+ZCIA,State/Local & Other,State/Local & Other
+GU,State/Local & Other,State/Local & Other
+VRPR,State/Local & Other,State/Local & Other
+ZFTC,State/Local & Other,State/Local & Other
+ZHOR,State/Local & Other,State/Local & Other
+CAE,State/Local & Other,State/Local & Other
+PAW,State/Local & Other,State/Local & Other
+ARW,State/Local & Other,State/Local & Other
+ZPPC,State/Local & Other,State/Local & Other
+ZPEA,State/Local & Other,State/Local & Other
+ZACJ,State/Local & Other,State/Local & Other
+DEFA,Defense,DCIS/DoD
+LAM,Labor,Other Labor
+ZCTA,State/Local & Other,State/Local & Other
+VRTH,State/Local & Other,State/Local & Other
+VRUT,State/Local & Other,State/Local & Other
+NV,State/Local & Other,State/Local & Other
+ZACQ,State/Local & Other,State/Local & Other
+HHCA,HHS,Other HHS
+KYE,State/Local & Other,State/Local & Other
+ALM,State/Local & Other,State/Local & Other
+VRWA,State/Local & Other,State/Local & Other
+VRID,State/Local & Other,State/Local & Other
+ZGPO,State/Local & Other,State/Local & Other
+HUSF,HUD,Other HUD
+ZACP,State/Local & Other,State/Local & Other
+ZCTB,State/Local & Other,State/Local & Other
+VRPP,State/Local & Other,State/Local & Other
+VRNJ,State/Local & Other,State/Local & Other
+CDPT,Commerce,Other Commerce
+ZCFT,State/Local & Other,State/Local & Other
+ZNOH,State/Local & Other,State/Local & Other
+PROB,State/Local & Other,State/Local & Other
+INNH,Interior,Other Interior
+VRSF,State/Local & Other,State/Local & Other
+ENID,Energy/Environment,Other Energy/Environment
+ZLOC,State/Local & Other,State/Local & Other
+CDBC,Commerce,Other Commerce
+ZNMD,State/Local & Other,State/Local & Other
+LAET,Labor,Other Labor
+MPD6,State/Local & Other,State/Local & Other
+VROH,State/Local & Other,State/Local & Other
+ZACO,State/Local & Other,State/Local & Other
+ENOR,Energy/Environment,Other Energy/Environment
+INBR,Interior,BIA
+ZINA,State/Local & Other,State/Local & Other
+ZFIB,State/Local & Other,State/Local & Other
+ENFP,Energy/Environment,Other Energy/Environment
+DCMS,State/Local & Other,State/Local & Other
+ZACR,State/Local & Other,State/Local & Other
+VRME,State/Local & Other,State/Local & Other
+USCG,DHS,Coast Guard
+VRNC,State/Local & Other,State/Local & Other
+ZGSF,State/Local & Other,State/Local & Other
+ZACT,State/Local & Other,State/Local & Other
+ZACF,State/Local & Other,State/Local & Other
+SSS,State/Local & Other,State/Local & Other
+STAT,State,Diplomatic Security
+AID,State/Local & Other,State/Local & Other
+ICE,DHS,ICE
+HHIP,HHS,Other HHS
+JUMS,DOJ,USMS
+IRS,Treasury,IRS-CI
+HSCE,DHS,ICE
+JUDZ,DOJ,DEA
+JUDE,DOJ,DEA
+DEAF,Defense,Air Force OSI
+NCE,State/Local & Other,State/Local & Other
+INNP,Interior,NPS
+INFW,Interior,Fish & Wildlife
+VA,Veterans Affairs,Other Veterans Affairs
+TREA,Treasury,Other Treasury
+HSFP,DHS,Other DHS
+CDOS,Commerce,Other Commerce
+AGRS,Agriculture,Other Agriculture
+HHSZ,HHS,Other HHS
+TNE,State/Local & Other,State/Local & Other
+VT,State/Local & Other,State/Local & Other
+HSI,DHS,HSI
+ATF,DOJ,ATF
+SSVC,DHS,Secret Service
+DEA,DOJ,DEA
+DOJ,DOJ,Other DOJ
+NTF,State/Local & Other,State/Local & Other
+DAGR,State/Local & Other,State/Local & Other
+TRSS,DHS,Secret Service
+AGFO,Agriculture,Forest Service
+TDCG,State/Local & Other,State/Local & Other
+SDIB,State,Other State
+ZFDI,State/Local & Other,State/Local & Other
+DOT,State/Local & Other,State/Local & Other
+INIA,Interior,BIA
+TXW,State/Local & Other,State/Local & Other
+DC,State/Local & Other,State/Local & Other
+WAE,State/Local & Other,State/Local & Other
+UT,State/Local & Other,State/Local & Other
+NM,State/Local & Other,State/Local & Other
+JUMZ,DOJ,USMS
+FLM,State/Local & Other,State/Local & Other
+WIE,State/Local & Other,State/Local & Other
+OR,State/Local & Other,State/Local & Other
+IAS,State/Local & Other,State/Local & Other
+CAC,State/Local & Other,State/Local & Other
+OHS,State/Local & Other,State/Local & Other
+NYN,State/Local & Other,State/Local & Other
+ZFRB,State/Local & Other,State/Local & Other
+ME,State/Local & Other,State/Local & Other
+VRVA,State/Local & Other,State/Local & Other
+TDFR,State/Local & Other,State/Local & Other
+HHCS,HHS,Other HHS
+VASP,Veterans Affairs,Other Veterans Affairs
+ZNAS,State/Local & Other,State/Local & Other
+JUPC,DOJ,Other DOJ
+ZEEO,State/Local & Other,State/Local & Other
+TDFH,State/Local & Other,State/Local & Other
+ZNSA,State/Local & Other,State/Local & Other
+WDC,State/Local & Other,State/Local & Other
+ZNFL,State/Local & Other,State/Local & Other
+ZFEM,State/Local & Other,State/Local & Other
+AGFL,Agriculture,Forest Service
+FLS,State/Local & Other,State/Local & Other
+ZACE,State/Local & Other,State/Local & Other
+GAM,State/Local & Other,State/Local & Other
+ZACL,State/Local & Other,State/Local & Other
+ZFDT,State/Local & Other,State/Local & Other
+ZCAC,State/Local & Other,State/Local & Other
+VRCD,State/Local & Other,State/Local & Other
+VI,State/Local & Other,State/Local & Other
+HIDT,State/Local & Other,State/Local & Other
+INMM,Interior,Other Interior
+DEAX,Defense,DCIS/DoD
+GAN,State/Local & Other,State/Local & Other
+OKN,State/Local & Other,State/Local & Other
+ZNSF,State/Local & Other,State/Local & Other
+CDES,Commerce,Other Commerce
+VRCS,State/Local & Other,State/Local & Other
+HHCD,HHS,Other HHS
+VRTW,State/Local & Other,State/Local & Other
+VRMO,State/Local & Other,State/Local & Other
+VATX,Veterans Affairs,Other Veterans Affairs
+WDPW,State/Local & Other,State/Local & Other
+DESC,Defense,DCIS/DoD
+ZNTS,State/Local & Other,State/Local & Other
+ZACK,State/Local & Other,State/Local & Other
+LABL,Labor,Other Labor
+TNW,State/Local & Other,State/Local & Other
+ZFCA,State/Local & Other,State/Local & Other
+LAW,Labor,Other Labor
+SSA,State/Local & Other,State/Local & Other
+USAF,Defense,Air Force OSI
+FAA,State/Local & Other,State/Local & Other
+MD,State/Local & Other,State/Local & Other
+WVN,State/Local & Other,State/Local & Other
+VRWV,State/Local & Other,State/Local & Other
+VRMI,State/Local & Other,State/Local & Other
+LAE,Labor,Other Labor
+IGIR,Treasury,IRS-CI
+ZNVA,State/Local & Other,State/Local & Other
+HUGM,HUD,Other HUD
+VRNY,State/Local & Other,State/Local & Other
+JUCR,DOJ,Other DOJ
+ZNCA,State/Local & Other,State/Local & Other
+ZNMS,State/Local & Other,State/Local & Other
+INMR,Interior,Other Interior
+ZFEC,State/Local & Other,State/Local & Other
+ZACB,State/Local & Other,State/Local & Other
+MPD3,State/Local & Other,State/Local & Other
+MPD7,State/Local & Other,State/Local & Other
+ZGSN,State/Local & Other,State/Local & Other
+ZGAO,State/Local & Other,State/Local & Other
+IRSB,Treasury,IRS-CI
+VRPH,State/Local & Other,State/Local & Other
+VRTN,State/Local & Other,State/Local & Other
+ZFMC,State/Local & Other,State/Local & Other
+ZACI,State/Local & Other,State/Local & Other
+ZMSP,State/Local & Other,State/Local & Other
+VRMS,State/Local & Other,State/Local & Other
+DOI,State/Local & Other,State/Local & Other
+INSM,Interior,Other Interior
+HHDS,HHS,Other HHS
+ZFSL,State/Local & Other,State/Local & Other
+LAEC,Labor,Other Labor
+WDUC,State/Local & Other,State/Local & Other
+ANTI,State/Local & Other,State/Local & Other
+CDED,Commerce,Other Commerce
+EXOM,State/Local & Other,State/Local & Other
+VRND,State/Local & Other,State/Local & Other
+ACOE,State/Local & Other,State/Local & Other
+FPO,State/Local & Other,State/Local & Other
+CDMB,Commerce,Other Commerce
+FWLS,Interior,Fish & Wildlife
+DOE,State/Local & Other,State/Local & Other
+DOC,State/Local & Other,State/Local & Other
+FRRA,State/Local & Other,State/Local & Other
+CDBS,Commerce,Other Commerce
+ZNTF,State/Local & Other,State/Local & Other
+CDTT,Commerce,Other Commerce
+ZARC,State/Local & Other,State/Local & Other
+VRHI,State/Local & Other,State/Local & Other
+ARS,State/Local & Other,State/Local & Other
+NPS,Interior,NPS
+VAHQ,Veterans Affairs,Other Veterans Affairs
+ZNMB,State/Local & Other,State/Local & Other
