@@ -302,7 +302,7 @@ function renderChart(){
     datasets.push({label:metricLabel(m2)+' (R)',data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col}); });
   const showPred=hasPred(state.metric);
   if(showPred){ left.forEach((s,ai)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats,state.role),state.metric); const parr=predOf(arr,state.metric); const col=PALETTE[ai%PALETTE.length];
-    datasets.push({label:s.label+' (est. final)',data:idxs.map(i=>parr[i]),borderColor:col,backgroundColor:col+'22',borderDash:[2,3],borderWidth:1.5,pointRadius:0,spanGaps:true,tension:.25,yAxisID:'y',fill:{target:ai,above:col+'22',below:'transparent'},_col:col,_pred:true}); }); }
+    datasets.push({label:s.label+' (est. final)',data:idxs.map(i=>parr[i]),borderColor:col,backgroundColor:col+'40',borderDash:[3,3],borderWidth:2,pointRadius:idxs.map(i=>((SPINE.length-1-i)<8)?2.4:0),pointBackgroundColor:col,pointBorderColor:col,spanGaps:true,tension:.25,yAxisID:'y',fill:{target:ai,above:col+'40',below:'transparent'},_col:col,_pred:true}); }); }
   const anyR=right.length>0||rMetrics.length>0;
   const rTitle=metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):rightLabelText();
   document.getElementById("legend").innerHTML=datasets.filter(ds=>!ds._pred).map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
