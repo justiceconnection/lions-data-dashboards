@@ -19,6 +19,7 @@
   .ctl{display:flex;flex-direction:column;gap:5px}
   .ctl label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);white-space:nowrap;height:14px;line-height:14px}
   input[type=month],select,button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+  select,input[type=month],.ms-btn{font-size:15px;padding:8px 12px}
   button{cursor:pointer}
   .seg{display:flex;gap:6px}
   .seg button:hover{border-color:var(--accent)}
@@ -70,7 +71,7 @@
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
   <h1>Criminal Matter Declinations</h1>
-  <div class="sub">DOJ U.S. Attorneys (LIONS), declinations by reason. <span id="status">loading…</span></div>
+  <div class="sub">All data is from publicly released DOJ data collected from Legal Information Office Network System (LIONS). <span id="status" hidden></span></div>
 
   <div class="master"><span class="ml">Break down by</span>
     <span class="seg" id="dimSeg"><button data-v="category" class="on">Program category</button><button data-v="agency">Referring agency</button></span>

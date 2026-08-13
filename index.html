@@ -26,6 +26,7 @@
   .ctl{display:flex;flex-direction:column;gap:5px}
   .ctl label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);white-space:nowrap;height:14px;line-height:14px}
   input[type=month],select,button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+  select,input[type=month],.ms-btn{font-size:15px;padding:8px 12px}
   button{cursor:pointer}
   .chk{display:flex;align-items:center;gap:7px;padding-bottom:7px}
   .chk label{text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--ink)}
@@ -47,6 +48,7 @@
   .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
   .card h3{margin:0 0 6px;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
   .card h3 .seg{font-size:12px}
+  .subhead{color:var(--mut);font-size:12px;margin:-4px 0 9px}
   #legend,#legend2{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;font-size:12px;color:var(--mut)}
   .lg{display:flex;align-items:center;gap:5px}
   .sw{width:11px;height:11px;border-radius:2px;display:inline-block}
@@ -80,7 +82,7 @@
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
   <h1>Criminal Cases</h1>
-  <div class="sub">DOJ U.S. Attorneys (LIONS). <span id="status">loading…</span></div>
+  <div class="sub">All data is from publicly released DOJ data collected from Legal Information Office Network System (LIONS). <span id="status" hidden></span></div>
 
   <div class="occbar">Program-category basis:
     <span class="seg" id="occ"><button data-v="all" class="on">All occurrences</button><button data-v="primary">Primary only</button></span>
@@ -108,7 +110,7 @@
       <div class="ax2row"><div class="seg" id="ax2by"><button data-v="series" class="on">Series</button><button data-v="metric">Metric</button></div><div id="ax2sel"></div></div></div>
   </div>
 
-  <div class="kpihdr" id="kpihdr">Topline — <b id="kpiMetric">Cases filed</b> · <span id="kpiScope"></span></div>
+  <div class="kpihdr" id="kpihdr" hidden>Topline — <b id="kpiMetric">Cases filed</b> · <span id="kpiScope"></span></div>
   <div class="kpis">
     <div class="kpi"><div class="v" id="kpi1">—</div><div class="l">Avg, last 3 months <span id="kpi1ym" style="opacity:.7"></span></div></div>
     <div class="kpi"><div class="v" id="kpi2">—</div><div class="l">Avg, same 3 months a year earlier <span id="kpi2ym" style="opacity:.7"></span></div></div>
@@ -123,8 +125,9 @@
   </div>
 
   <div class="card">
-    <h3><span id="chart2Title">Program category mix — % of cases filed</span>
+    <h3><span id="chart2Title">Program Category Distribution</span>
       <span class="seg" id="mixMode"><button data-v="sum">Sum</button><button data-v="stacked" class="on">Stacked</button></span></h3>
+    <div class="subhead">Share of cases filed</div>
     <div id="legend2"></div>
     <div class="chartbox sm"><canvas id="chart2"></canvas></div>
   </div>
@@ -272,7 +275,7 @@ function renderTable(){
     return `<tr${cls}><td>${r.ym}</td><td>${rint(r.filed)}</td><td>${rint(r.filedP)}</td><td>${r1(r.filed3)}</td><td>${rint(r.term)}</td><td>${rint(r.termP)}</td><td>${r1(r.term3)}</td><td>${p1(r.clr)}</td><td>${p1(r.clr3)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
   }).join("");
   const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"—";
-  document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b> · clearance <b>${ocl}</b>`;
+  document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b>`;
   const multiCat=state.occ==='all'&&!(state.cats.has('ALL')||state.cats.size===0)&&state.cats.size>1;
   document.getElementById("note").textContent=multiCat?"Note: multiple categories are summed (all-occurrences) — a case in several selected categories is counted more than once.":"";
 }
@@ -353,7 +356,7 @@ function renderChart2(){
     datasets=cats.map(c=>{ const col=catColor(c); return {label:c,data:idxs.map(i=>{const t=tot[i];return t?100*cA[c][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
   }
   document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("");
-  document.getElementById("chart2Title").textContent="Program category mix — % of cases filed"+(state.mixMode==='stacked'?" (stacked)":" (combined)");
+  document.getElementById("chart2Title").textContent="Program Category Distribution";
   if(typeof window==='undefined'||!window.Chart){ return; }
   const stacked=state.mixMode==='stacked';
   const cfg={type:'line',data:{labels,datasets},

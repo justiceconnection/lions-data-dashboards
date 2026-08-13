@@ -26,6 +26,7 @@
   .ctl{display:flex;flex-direction:column;gap:5px}
   .ctl label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);white-space:nowrap;height:14px;line-height:14px}
   input[type=month],select,button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+  select,input[type=month],.ms-btn{font-size:15px;padding:8px 12px}
   button{cursor:pointer}
   .chk{display:flex;align-items:center;gap:7px;padding-bottom:7px}
   .chk label{text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--ink)}
@@ -72,7 +73,7 @@
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
   <h1>Civil Matters and Cases</h1>
-  <div class="sub">DOJ U.S. Attorneys (LIONS). <span id="status">loading…</span></div>
+  <div class="sub">All data is from publicly released DOJ data collected from Legal Information Office Network System (LIONS). <span id="status" hidden></span></div>
 
   <div class="masters">
     <div class="master"><span class="ml">United States as</span><div class="seg" id="role">
@@ -101,7 +102,7 @@
       <div class="ax2row"><div class="seg" id="ax2by"><button data-v="series" class="on">Series</button><button data-v="metric">Metric</button></div><div id="ax2sel"></div></div></div>
   </div>
 
-  <div class="kpihdr" id="kpihdr">Topline — <b id="kpiMetric">Cases filed</b> · <span id="kpiScope"></span></div>
+  <div class="kpihdr" id="kpihdr" hidden>Topline — <b id="kpiMetric">Cases filed</b> · <span id="kpiScope"></span></div>
   <div class="kpis">
     <div class="kpi"><div class="v" id="kpi1">—</div><div class="l">Avg, last 3 months <span id="kpi1ym" style="opacity:.7"></span></div></div>
     <div class="kpi"><div class="v" id="kpi2">—</div><div class="l">Avg, same 3 months a year earlier <span id="kpi2ym" style="opacity:.7"></span></div></div>
