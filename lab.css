@@ -1,0 +1,15 @@
+/* Cross-cutting prototype tweaks applied to all 12 pages (all designs). */
+/* item 6 — default graph height (main graphs 420px across all designs) */
+.chartbox{height:420px!important}
+.chartbox.sm{height:330px!important}
+/* item 1 — folded dashboard nav (accordion), used by all three designs */
+.nv-acc{border:1px solid var(--line);border-radius:12px;background:var(--panel);margin:0 0 12px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.nv-head{width:100%;display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--panel);border:0;cursor:pointer;font:inherit;text-align:left}
+.nv-head:hover{background:var(--panel2)}
+.nv-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);font-weight:700;flex:none}
+.nv-cur{flex:1;font-weight:700;color:var(--ink);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nv-chev{color:var(--mut);transition:transform .2s;flex:none}
+.nv-acc.open .nv-chev{transform:rotate(180deg)}
+.nv-body{display:none;padding:10px 14px 12px;border-top:1px solid var(--line)}
+.nv-acc.open .nv-body{display:block}
+.nv-body .dashnav{margin:0}

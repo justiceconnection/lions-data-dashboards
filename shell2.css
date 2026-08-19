@@ -1,0 +1,54 @@
+/* Design B — Filters as a top-dropdown (drops from the top; frees vertical space).
+   Neutral scheme. A sticky wrapper keeps the bar AND the expanded panel pinned while
+   you scroll, like the dashboard accordion. */
+.dw-stick{position:sticky;top:0;z-index:40;background:var(--bg);margin:0 0 12px}
+.dw-bar{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;padding:8px 0 10px;margin:0;border-bottom:1px solid var(--line)}
+.dw-bar .nv-acc{flex:1;min-width:220px;margin:0}
+
+/* ── item 2: the Filters button — wider, gear icon, yellow-highlighter when active ── */
+.dw-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:160px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap;flex:none;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:background .15s ease,color .15s ease,border-color .15s ease}
+.dw-btn .dw-gear{width:16px;height:16px;flex:none}
+.dw-btn:hover{background:var(--panel2);border-color:#d7d7d3}
+.dw-btn.on{background:var(--accent);color:#000;border-color:var(--accent)}   /* yellow highlighter, black text when selected */
+.dw-chev{font-weight:800}
+
+/* ── note 2: slightly darker plot background so the yellow highlighter pops ── */
+.chartbox{background:#e9ebee;border-radius:10px;overflow:hidden}
+
+/* ── note 4: hover tooltip — dark gray instead of black, so series colors (incl. black) pop ── */
+#chtt{background:rgba(56,60,66,0.97)!important}
+
+/* ── note 1: collapse toggles for the KPI row and each graph card ── */
+.d2-sechd{display:flex;align-items:center;gap:10px;margin:2px 0 8px;cursor:pointer;user-select:none}
+.d2-secttl{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);font-weight:700}
+.d2-caret{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;padding:0;background:var(--panel);border:1px solid var(--line);border-radius:7px;color:var(--mut);cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.d2-sechd .d2-caret{margin-left:0}
+.d2-caret:hover{background:var(--accent);border-color:var(--accent);color:#000}
+.d2-cv{display:inline-block;font-size:11px;line-height:1;transition:transform .2s ease}
+.d2-sechd.d2-collapsed .d2-cv,.card.d2-collapsed .d2-cv{transform:rotate(180deg)}
+.kpis.d2-hide{display:none}
+/* graph card: caret sits at the right of the title; collapsing hides everything below the h3 */
+.card h3{display:flex;align-items:center;gap:10px}
+.card h3 .d2-caret-h{margin-left:auto}
+.card.d2-collapsed>*:not(h3){display:none}
+
+/* ── item 3: panel does NOT clip — picker popovers escape the filter window ── */
+.dw-panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:10px 0 0;box-shadow:0 10px 26px rgba(0,0,0,.12);overflow:visible}
+.dw-panel.open{display:block}
+/* note 1: in-panel collapse header */
+.dw-phead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 0;padding:12px 0 0;border-top:1px solid var(--line)}
+.dw-ptitle{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:14px;color:var(--ink)}
+.dw-ptitle .dw-gear{width:16px;height:16px;flex:none}
+.dw-close{display:inline-flex;align-items:center;gap:6px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font:inherit;font-weight:700;font-size:12.5px;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.dw-close:hover{background:var(--accent);border-color:var(--accent);color:#000}
+.dw-panel .controls{background:transparent;border:0;padding:0;margin:0 0 8px}
+.dw-panel .occbar,.dw-panel .masters,.dw-panel .master{margin:0 0 12px}
+
+/* ── item 1: dashboard nav — flat chips with an animated accent underline (no pills) ── */
+.dw-bar .nv-body .dashnav{gap:6px}
+.dw-bar .nv-body .dashnav a{position:relative;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-weight:600;padding:8px 14px;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease,background .15s ease}
+.dw-bar .nv-body .dashnav a::after{content:"";position:absolute;left:10px;right:10px;bottom:6px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .22s ease}
+.dw-bar .nv-body .dashnav a:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.10);border-color:#d7d7d3;background:var(--panel2);opacity:1}
+.dw-bar .nv-body .dashnav a:hover::after{transform:scaleX(1)}
+.dw-bar .nv-body .dashnav a.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.dw-bar .nv-body .dashnav a.on::after{transform:scaleX(1);background:var(--accent)}

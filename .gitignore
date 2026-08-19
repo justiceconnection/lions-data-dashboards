@@ -1,0 +1,3 @@
+# Ignore OS junk. Do NOT ignore the *_cube*.csv / *.gz files —
+# GitHub Pages serves them to the dashboards.
+.DS_Store

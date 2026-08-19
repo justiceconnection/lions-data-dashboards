@@ -4,82 +4,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cases by Referring Agency — LIONS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="shared/shared.css?v=20260818i">
+<link rel="stylesheet" href="lab.css?v=20260818i">
+<link rel="stylesheet" href="shell2.css?v=20260818i">
 <style>
-  :root{--bg:#fbfbfb;--panel:#ffffff;--panel2:#ffffff;--ink:#212123;--mut:#6b6c68;--line:#e4e4e1;--accent:#eaf54c;--accent-ink:#212123}
-  *{box-sizing:border-box}
-  [hidden]{display:none!important}
-  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:1120px;margin:0 auto;padding:18px 16px 44px}
-  h1{font-size:23px;font-weight:700;letter-spacing:-.01em;margin:0 0 3px}
-  .sub{color:var(--mut);font-size:12.5px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}
-  .master{margin:0 0 12px}
-  .master .seg button{padding:8px 16px;font-size:13.5px}
-  .masters{display:flex;flex-wrap:wrap;gap:22px;margin-bottom:12px}
-  .mgroup{display:flex;flex-direction:column;gap:6px}
-  .mgroup .ml{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
-  .occbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;font-size:12.5px;color:var(--mut)}
-  .occhint{font-size:11.5px;color:var(--mut);opacity:.8}
-  .kpihdr{font-size:12.5px;color:var(--mut);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-  .kpi .v{font-size:25px;font-weight:700;color:var(--ink)}
-  .kpi .l{color:var(--mut);font-size:12px;margin-top:3px}
-  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
-  .ctl{display:flex;flex-direction:column;gap:5px}
-  .ctl label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);white-space:nowrap;height:14px;line-height:14px}
-  input[type=month],select,button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
-  select,input[type=month],.ms-btn{font-size:15px;padding:8px 12px}
-  button{cursor:pointer}
-  .seg{display:flex;gap:6px}
-  .seg button:hover{border-color:var(--accent)}
-  .seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-  .seg button.on:hover{border-color:var(--accent)}
-  #presets button{padding:6px 9px;font-size:12.5px}
-  .ms{position:relative}
-  .ms-btn{min-width:190px;text-align:left}
-  .ms-panel{position:absolute;z-index:30;top:calc(100% + 4px);left:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;min-width:260px;max-height:360px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.14)}
-  .ms-bar{display:flex;gap:14px;padding:2px 4px 6px;border-bottom:1px solid var(--line);margin-bottom:4px}
-  .ms-bar a{color:#3a3b37;font-size:11.5px;text-decoration:none}
-  .ms-bar a:hover{text-decoration:underline}
-  .ms-search{width:100%;margin-bottom:6px;font:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:6px 8px;color:var(--ink)}
-  .ms-list label{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:6px;font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer;white-space:nowrap}
-  .ms-list label:hover{background:var(--panel2)}
-  .ms-list input{accent-color:#212123}
-  .ms-dept{font-weight:600;margin-top:4px}
-  .ms-sub label{padding-left:22px;font-size:12.5px;color:#333}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-  .card h3{margin:0 0 6px;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-  .card h3 .seg{font-size:12px}
-  #legend,#legend2,#legend3{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;font-size:12px;color:var(--mut)}
-  .lg{display:flex;align-items:center;gap:5px}
-  .sw{width:11px;height:11px;border-radius:2px;display:inline-block}
-  .chartbox{position:relative;width:100%;height:340px}
-  .chartbox.sm{height:280px}
-  #summary{color:var(--mut);font-size:12.5px;margin:2px 2px}
-  #summary b{color:var(--ink);font-weight:600}
-  #note{color:#8a6d1f;font-size:12px;margin:2px 2px 8px;min-height:14px}
-  .tblwrap{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:12px}
-  table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
-  th,td{padding:6px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid #ececea}
-  th:first-child,td:first-child{text-align:left}
-  thead th{position:sticky;top:0;background:var(--panel);color:var(--mut);font-size:11px;text-transform:uppercase;z-index:1}
-  tbody tr:hover{background:#f5f5f3}
-  tr.edge td{color:#b0b1ac} tr.recent td{color:#9a7b2e}
-  .bottombar{display:flex;justify-content:flex-end;margin-top:10px}
-  .tabletoggle{margin:8px 0}
-  .disc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
-  .disc:hover{border-color:var(--accent)}
-  #dl{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-  .foot{color:var(--mut);font-size:11.5px;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
-  #status{color:var(--mut);font-size:12px}
-  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
-  .dashnav{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 16px}
-  .dashnav a{font-size:14.5px;padding:9px 18px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--accent);text-decoration:none;font-weight:600}
-  .dashnav a:hover{opacity:.88}
-  .dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-  .dashsel{display:none;font:inherit;font-size:14.5px;font-weight:600;color:var(--accent);background:var(--ink);border:1px solid var(--ink);border-radius:8px;padding:9px 12px;margin:2px 0 16px;width:100%;max-width:360px}
-  @media(max-width:600px){.dashnav{display:none}.dashsel{display:block}}
-</style></head><body><div class="wrap">
+.master{margin:0 0 12px}
+.master .seg button{padding:8px 16px;font-size:13.5px}
+.masters{display:flex;flex-wrap:wrap;gap:22px;margin-bottom:12px}
+.mgroup{display:flex;flex-direction:column;gap:6px}
+.mgroup .ml{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
+.occbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;font-size:12.5px;color:var(--mut)}
+.occhint{font-size:11.5px;color:var(--mut);opacity:.8}
+.kpihdr{font-size:12.5px;color:var(--mut);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.kpi .v{font-size:25px;font-weight:700;color:var(--ink)}
+.kpi .l{color:var(--mut);font-size:12px;margin-top:3px}
+.seg button.on:hover{border-color:var(--accent)}
+.ms-btn{min-width:190px;text-align:left}
+.ms-panel{position:absolute;z-index:30;top:calc(100% + 4px);left:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;min-width:260px;max-height:360px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.ms-bar a:hover{text-decoration:underline}
+.ms-list label{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:6px;font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer;white-space:nowrap}
+.ms-dept{font-weight:600;margin-top:4px}
+.ms-sub label{padding-left:22px;font-size:12.5px;color:#333}
+.card h3 .seg{font-size:12px}
+#legend,#legend2,#legend3{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;font-size:12px;color:var(--mut)}
+.chartbox{position:relative;width:100%;height:340px}
+.chartbox.sm{height:280px}
+#summary{color:var(--mut);font-size:12.5px;margin:2px 2px}
+#note{color:#8a6d1f;font-size:12px;margin:2px 2px 8px;min-height:14px}
+.tblwrap{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:12px}
+@media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style><script>window.LIONS_PAL=["#EAF54C","#231820","#6B6C68","#193B79","#53A33B","#B197DA","#DA7921","#f1f889","#6e676c","#9d9e9b","#677ea7","#8dc27e","#ccbae7","#e7a76c","#a4ac35","#181116","#4b4c49","#122955","#3a7229","#7c6a99","#995517","#f7fbb7","#a7a3a6","#c4c4c3","#a3b1c9","#badab1","#e0d5f0","#f0c9a6"];</script>
+<script>window.LIONS_CHART_TWEAK=function(cfg){if(!cfg||!cfg.options||!cfg.options.scales)return;var sc=cfg.options.scales;if(sc.y){sc.y.grid=sc.y.grid||{};sc.y.grid.color='rgba(33,33,35,0.10)';sc.y.grid.drawTicks=false;sc.y.border=sc.y.border||{};sc.y.border.display=false;}if(sc.y1){sc.y1.grid=sc.y1.grid||{};sc.y1.grid.drawOnChartArea=false;}if(sc.x){sc.x.grid=sc.x.grid||{};sc.x.grid.display=true;sc.x.grid.drawOnChartArea=false;sc.x.grid.drawTicks=true;sc.x.grid.tickLength=6;sc.x.grid.tickWidth=1;var labels=(cfg.data&&cfg.data.labels)||[];sc.x.grid.tickColor=function(c){var L=String(labels[c.index]||'');return(/-01$/.test(L)||c.index===0)?'rgba(33,33,35,0.45)':'rgba(0,0,0,0)';};sc.x.border=sc.x.border||{};sc.x.border.display=true;sc.x.border.color='rgba(33,33,35,0.22)';}};</script>
+</head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
   <h1>Cases by Referring Agency</h1>
@@ -102,12 +60,12 @@
   </div>
 
   <div class="controls">
+    <div class="ctl"><label>From</label><input type="month" id="from"></div>
+    <div class="ctl"><label>To</label><input type="month" id="to"></div>
     <div class="ctl"><label>Administration (multi)</label><div class="seg" id="presets">
       <button data-p="obama2">Obama II</button><button data-p="trump1">Trump I</button>
       <button data-p="biden">Biden</button><button data-p="trump2">Trump II</button>
       <button data-p="all">All</button></div></div>
-    <div class="ctl"><label>From</label><input type="month" id="from"></div>
-    <div class="ctl"><label>To</label><input type="month" id="to"></div>
   </div>
   <div class="controls">
     <div class="ctl"><label>District (multi)</label><div id="district"></div></div>
@@ -117,8 +75,8 @@
 
   <div class="kpihdr" id="kpihdr" hidden>Topline — <b id="kpiMetric">Cases filed</b> · <span id="kpiScope"></span></div>
   <div class="kpis">
-    <div class="kpi"><div class="v" id="kpi1">—</div><div class="l">Avg, last 3 months <span id="kpi1ym" style="opacity:.7"></span></div></div>
-    <div class="kpi"><div class="v" id="kpi2">—</div><div class="l">Avg, same 3 months a year earlier <span id="kpi2ym" style="opacity:.7"></span></div></div>
+    <div class="kpi"><div class="v" id="kpi1">—</div><div class="l"><span id="kpi1lab">Total, selected range</span> <span id="kpi1ym" style="opacity:.7"></span></div></div>
+    <div class="kpi"><div class="v" id="kpi2">—</div><div class="l"><span id="kpi2lab">Total, last 12 months</span> <span id="kpi2ym" style="opacity:.7"></span></div></div>
     <div class="kpi"><div class="v" id="kpi3">—</div><div class="l">Year-over-year change</div></div>
     <div class="kpi"><div class="v" id="kpi4">—</div><div class="l">Agency share change vs last year</div></div>
   </div>
@@ -150,8 +108,9 @@
 
   <div class="foot" id="foot"></div>
 </div>
-<script>
-const FOOT_R='[ Footnote area — reserved for notes, sources, or disclaimers. ]';
+<script src="shared/config.js?v=20260818i"></script>
+<script src="shared/shared.js?v=20260818i"></script>
+<script>const FOOT_R='[ Footnote area — reserved for notes, sources, or disclaimers. ]';
 const FOOT_V='[ Footnote area — reserved for notes, sources, or disclaimers. ]';
 
 const DEFAULT_AGS_R=['CBP','ICE','HSI','Secret Service','Coast Guard','FBI','DEA','ATF','USMS','Other DOJ'];
@@ -159,34 +118,24 @@ const DEFAULT_AGS_V=['SSA','HUD','IRS','Bureau of Prisons','ICE','HSI','FBI','DE
 const state={cls:'R',dists:new Set(['National']),
   ags:new Set(DEFAULT_AGS_R),occ:'lead',metric:'cases_filed',
   agsC:new Set(DEFAULT_AGS_V),role:'Defendant',basis:'cases',metricC:'cases_filed',
-  mixMode:'stacked',admins:new Set(),from:'2012-10',to:'2026-06'};
+  mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06'};
 let NAT=null,FULL=null,CNAT=null,CFULL=null,SPINE=[],fullLoading=false,cfullLoading=false,civilLoading=false;
 let dMS=null,chart=null,chart2=null,chart3=null;
 let AGLIST_R=[],AGLIST_V=[],DEPTS_R=[],DEPTS_V=[];
 const NUM_R=["cases_filed","defendants_filed","cases_terminated","defendants_terminated","guilty","not_guilty","dismissed","rule_20_21","other"];
 const NUM_C=["matters_received","cases_filed","matters_terminated","cases_terminated","d_judg_us","d_settle","d_against","d_dismissed","d_other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
+const CATPAL=(window.LIONS_PAL||PALETTE);
 const DISP=[["ju","Judgment For U.S.","#1d9e75"],["st","Settlements","#2a78d6"],["ag","Judgment Against U.S.","#d9622b"],["dm","Dismissed","#7a4fc0"],["ot","Other","#8a8b86"]];
-const METRICS_R=[["cases_filed","Cases filed"],["cases_filed_3mo","Cases filed (3-mo avg)"],["cases_terminated","Cases terminated"],["cases_terminated_3mo","Cases terminated (3-mo avg)"],["clearance","Clearance %"],["clearance_3mo","Clearance % (3-mo)"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
-const METRICS_CASES=[["cases_filed","Cases filed"],["cases_filed_3mo","Cases filed (3-mo avg)"],["cases_pending","Cases pending"],["cases_pending_3mo","Cases pending (3-mo avg)"],["cases_terminated","Cases terminated"],["cases_terminated_3mo","Cases terminated (3-mo avg)"]];
-const METRICS_MATTERS=[["matters_received","Matters received"],["matters_received_3mo","Matters received (3-mo avg)"],["matters_pending","Matters pending"],["matters_pending_3mo","Matters pending (3-mo avg)"],["matters_terminated","Matters terminated"],["matters_terminated_3mo","Matters terminated (3-mo avg)"]];
-const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.035)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.06)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.035)"},{name:"Trump II",a:"2025-01",b:"2026-07",c:"rgba(33,33,35,0.06)"}];
-const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2012-10","2026-06"]};
+const METRICS_R=[["cases_filed","Cases filed"],["cases_terminated","Cases terminated"],["clearance","Clearance %"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
+const METRICS_CASES=[["cases_filed","Cases filed"],["cases_pending","Cases pending"],["cases_terminated","Cases terminated"]];
+const METRICS_MATTERS=[["matters_received","Matters received"],["matters_pending","Matters pending"],["matters_terminated","Matters terminated"]];
+const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const DEPT_ORDER_R=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER_R={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const DEPT_ORDER_V=["Social Security Admin","DOJ","DHS","Treasury","HUD","HHS","Education","Veterans Affairs","Small Business Admin","Agriculture","Defense","Labor","Interior","State","EPA","OPM","Energy","Commerce","USPS","Other"];
 const SUB_ORDER_V={"DOJ":["Bureau of Prisons","FBI","DEA","ATF","USMS","Other DOJ"],"DHS":["ICE","HSI","CBP","Secret Service","Other DHS"],"Treasury":["IRS","Other Treasury"],"Defense":["Army","Navy","Air Force","Army Corps of Engineers","Other Defense"],"HHS":["FDA","HHS-OIG","Other HHS"]};
-const DASHBOARDS=[{name:"Criminal Cases",file:"index.html"},{name:"Civil Matters and Cases",file:"civil.html"},{name:"Cases by Referring Agency",file:"agency.html"},{name:"Criminal Matter Declinations",file:"declinations.html"}];
 const CURRENT="agency.html";
-const ADMIN_SEQ=['obama2','trump1','biden','trump2'];
-function applyAdmins(){ const idx=[...state.admins].map(k=>ADMIN_SEQ.indexOf(k)).sort((a,b)=>a-b);
-  document.querySelectorAll('#presets button').forEach(x=>x.classList.toggle('on', state.admins.has(x.dataset.p)));
-  if(idx.length){ state.from=PRESETS[ADMIN_SEQ[idx[0]]][0]; state.to=PRESETS[ADMIN_SEQ[idx[idx.length-1]]][1]; }
-  else { state.from=PRESETS.all[0]; state.to=PRESETS.all[1]; }
-  const f=document.getElementById('from'),t=document.getElementById('to'); if(f)f.value=state.from; if(t)t.value=state.to; }
-function renderNav(){ const nav=document.getElementById('dashnav'), sel=document.getElementById('dashsel');
-  if(nav) nav.innerHTML=DASHBOARDS.map(d=>`<a href="./${d.file}"${d.file===CURRENT?' class="on"':''}>${d.name}</a>`).join("");
-  if(sel){ sel.innerHTML=DASHBOARDS.map(d=>`<option value="${d.file}"${d.file===CURRENT?' selected':''}>${d.name}</option>`).join(""); sel.onchange=()=>{ if(sel.value!==CURRENT) location.href='./'+sel.value; }; } }
 
 // mode helpers
 const isCiv=()=>state.cls==='V';
@@ -212,8 +161,6 @@ function parseCSV_C(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Ob
   for(let i=1;i<L.length;i++){ const c=L[i].split(",");
     const o={ym:c[I.ym],grp:c[I.subagency],dept:c[I.department],role:c[I.role],district:I.district!==undefined?c[I.district]:"National"};
     for(const k of NUM_C) o[k]=+c[I[k]]||0; out[i-1]=o; } return out; }
-function months(a,b){ const r=[]; let [y,m]=a.split("-").map(Number); const [Y,M]=b.split("-").map(Number);
-  while(y<Y||(y===Y&&m<=M)){ r.push(y+"-"+String(m).padStart(2,"0")); m++; if(m>12){m=1;y++;} } return r; }
 
 // ---- criminal aggregation ----
 function aggR(dists, ags){
@@ -275,8 +222,7 @@ function aggregate(dists,ags){ return isCiv()?aggC(dists,ags,state.role):aggR(di
 function metricArray(R,m){ return isCiv()?metricArrC(R,m):metricArrR(R,m); }
 function shareFlow(R){ return isCiv()?R[primaryFlow()]:R.filed; }
 
-function agColor(ag){ const i=curAglist().indexOf(ag); return PALETTE[(i<0?0:i)%PALETTE.length]; }
-function visIdx(){ const r=[]; for(let i=0;i<SPINE.length;i++){ const ym=SPINE[i]; if(ym>=state.from&&ym<=state.to) r.push(i);} return r; }
+function agColor(ag){ const i=curAglist().indexOf(ag); return CATPAL[(i<0?0:i)%CATPAL.length]; }
 function selAgs(){ return [...curAgs()]; }
 const r1=x=>x==null?"—":x.toLocaleString(undefined,{maximumFractionDigits:1});
 const rint=x=>x==null?"—":Math.round(x).toLocaleString();
@@ -286,23 +232,36 @@ let lastRows=[], lastCols=[];
 function renderKPIs(){
   const R=aggregate(state.dists,curAgs());
   const arr=metricArray(R,curMetric()); const idxs=visIdx(); if(!idxs.length) return;
-  const pct=isPct();
-  const fmtInt=v=> v==null?'—':(pct?Math.round(v)+'%':Math.round(v).toLocaleString());
+  const pct=isPct(); const isLevel=curMetric().includes('pending');
+  const set=(id,v)=>document.getElementById(id).textContent=v;
+  const fmtVal=v=> v==null?'—':(pct?v.toFixed(1)+'%':Math.round(v).toLocaleString());
+  const S=(a,ix)=>{ let s=0,any=false; for(const i of ix){ const v=a[i]; if(v!=null){s+=v;any=true;} } return any?s:null; };
+  const avgOver=(ix)=>{ let s=0,n=0; for(const i of ix){ const v=arr[i]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
+  const rateOver=(ix)=>{ const m=curMetric();
+    if(m==='clearance'){ const f=S(R.filed,ix),t=S(R.term,ix); return (f&&f>0)?100*t/f:null; }
+    if(m==='guilty_pct'){ const d=S(R.dt,ix),g=S(R.guilty,ix); return (d&&d>0)?100*g/d:null; }
+    if(m==='dismissed_pct'){ const d=S(R.dt,ix),x=S(R.dismissed,ix); return (d&&d>0)?100*x/d:null; }
+    return null; };
+  const e=idxs[idxs.length-1]; const last12=idxs.slice(-12);
+  // KPI 1 & 2: totals (flows) / blended rate (%) / ending level & recent avg (pending)
+  set('kpi1', fmtVal(pct?rateOver(idxs):(isLevel?arr[e]:S(arr,idxs))));
+  set('kpi2', fmtVal(pct?rateOver(last12):(isLevel?avgOver(last12):S(arr,last12))));
+  // KPI 3: year-over-year change (kept)
   const avg3at=(i)=>{ if(i<2) return null; let s=0,n=0; for(let k=0;k<3;k++){ const v=arr[i-k]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
   const chg=(a,b)=> (a==null||b==null||b===0)?null:100*(a-b)/Math.abs(b);
-  const sc=v=> v==null?'—':(v>=0?'+':'')+v.toFixed(1)+'%';
+  const yoy=chg(avg3at(e),avg3at(e-12));
+  set('kpi3', yoy==null?'—':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
+  // KPI 4: agency share change (kept)
   const sel=shareFlow(R), tot=shareFlow(aggregate(state.dists,new Set(['ALL'])));
   const sum3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2]);
   const shr=(i)=>{ const su=sum3(sel,i),t=sum3(tot,i); return (su!=null&&t)?100*su/t:null; };
-  const e=idxs[idxs.length-1];
-  const now=avg3at(e), yoy=avg3at(e-12);
   const comp=(shr(e)!=null&&shr(e-12)!=null)?shr(e)-shr(e-12):null;
-  const set=(id,v)=>document.getElementById(id).textContent=v;
-  set('kpi1',fmtInt(now)); set('kpi2',fmtInt(yoy)); set('kpi3',sc(chg(now,yoy)));
   set('kpi4',comp==null?'—':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
   document.getElementById('kpiMetric').textContent=metricLabel(curMetric());
-  document.getElementById('kpi1ym').textContent=e>=0?'(ending '+SPINE[e]+')':'';
-  document.getElementById('kpi2ym').textContent=(e-12>=0)?'(ending '+SPINE[e-12]+')':'';
+  document.getElementById('kpi1lab').textContent=pct?'Overall rate, selected range':(isLevel?'Latest (end of range)':'Total, selected range');
+  document.getElementById('kpi2lab').textContent=pct?'Overall rate, last 12 mo':(isLevel?'Avg, last 12 months':'Total, last 12 months');
+  document.getElementById('kpi1ym').textContent=idxs.length?('('+SPINE[idxs[0]]+' – '+SPINE[e]+')'):'';
+  document.getElementById('kpi2ym').textContent=last12.length?('(ending '+SPINE[e]+')'):'';
   const dtxt=(state.dists.has('National')||state.dists.size===0?'National':state.dists.size+' districts');
   document.getElementById('kpiScope').textContent=(isCiv()?'U.S. as '+state.role+' · ':'')+dtxt+' · '+curAgs().size+' agenc'+(curAgs().size===1?'y':'ies');
 }
@@ -316,22 +275,6 @@ const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!la
     if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
 }};
 
-function fmtMMYYYY(x){ const p=(x||'').split('-'); return p.length===2?p[1]+'-'+p[0]:x; }
-function extTooltip(context){ const {chart,tooltip}=context; let el=document.getElementById('chtt');
-  if(!el){ el=document.createElement('div'); el.id='chtt'; document.body.appendChild(el);
-    el.style.cssText='position:fixed;pointer-events:none;z-index:9999;background:rgba(20,20,22,.95);color:#fff;font:11px/1.45 -apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;padding:8px 10px;border-radius:8px;max-width:340px;box-shadow:0 6px 20px rgba(0,0,0,.32);opacity:0;transition:opacity .08s'; }
-  if(!tooltip||tooltip.opacity===0){ el.style.opacity='0'; return; }
-  const title=tooltip.title&&tooltip.title.length?fmtMMYYYY(tooltip.title[0]):'';
-  let h=title?`<div style="font-weight:600;margin-bottom:4px">${title}</div>`:'';
-  (tooltip.dataPoints||[]).forEach(dp=>{ const ds=dp.dataset; const c=ds._col||ds.borderColor||'#fff';
-    const y=dp.parsed.y; const val=y==null?'—':(ds._pct?(+y).toFixed(1)+'%':Math.round(y).toLocaleString());
-    h+=`<div style="display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;flex:none"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${ds.label}</span><span style="font-variant-numeric:tabular-nums;padding-left:8px">${val}</span></div>`; });
-  el.innerHTML=h; el.style.opacity='1';
-  const r=chart.canvas.getBoundingClientRect(), w=el.offsetWidth, ht=el.offsetHeight;
-  let x=r.left+tooltip.caretX+14, y=r.top+tooltip.caretY-ht/2;
-  if(x+w>window.innerWidth-8) x=r.left+tooltip.caretX-w-14;
-  if(x<8)x=8; if(y<8)y=8; if(y+ht>window.innerHeight-8)y=window.innerHeight-ht-8;
-  el.style.left=x+'px'; el.style.top=y+'px'; }
 const TT={enabled:false,external:extTooltip};
 function renderChart(){
   const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const pct=isPct();
@@ -343,7 +286,7 @@ function renderChart(){
   if(typeof window==='undefined'||!window.Chart){ return; }
   const yfmt=pct?(v=>v+'%'):(v=>v.toLocaleString());
   if(chart) chart.destroy();
-  chart=new window.Chart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets},
+  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
       scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
@@ -367,8 +310,9 @@ function renderChart2(){
   const denom=isCiv()?primaryLabel():'referred cases filed';
   document.getElementById("chart2Title").textContent="Share of "+denom+" — % of total"+(state.mixMode==='stacked'?" (stacked)":" (combined)");
   if(typeof window==='undefined'||!window.Chart){ return; }
+  datasets=datasets.slice().reverse();
   if(chart2) chart2.destroy();
-  chart2=new window.Chart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets},
+  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
       scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
@@ -389,7 +333,7 @@ function renderChart3(){
   document.getElementById("legend3").innerHTML=DISP.map(([k,name,col])=>`<span class="lg"><span class="sw" style="background:${col}"></span>${name}</span>`).join("");
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart3) chart3.destroy();
-  chart3=new window.Chart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets},
+  chart3=mkChart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse()},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:TT},
       scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
 }
@@ -405,9 +349,9 @@ function renderTable(){
         tag:ym<="1996-09"?"edge":(ym>="2026-03"?"recent":"")};
       rows.push(row); sf+=filed; stt+=term; }
     lastRows=rows; lastCols=null;
-    document.getElementById("thead").innerHTML="<tr><th>Month</th><th>Cases filed</th><th>Filed 3-mo</th><th>Cases term.</th><th>Term. 3-mo</th><th>Clearance %</th><th>Clr % 3-mo</th><th>Def. filed</th><th>Def. term.</th><th>Guilty %</th><th>Dismissed %</th></tr>";
+    document.getElementById("thead").innerHTML="<tr><th>Month</th><th>Cases filed</th><th>Cases term.</th><th>Clearance %</th><th>Def. filed</th><th>Def. term.</th><th>Guilty %</th><th>Dismissed %</th></tr>";
     document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-      return `<tr${cls}><td>${r.ym}</td><td>${rint(r.filed)}</td><td>${r1(r.filed3)}</td><td>${rint(r.term)}</td><td>${r1(r.term3)}</td><td>${p1(r.clr)}</td><td>${p1(r.clr3)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
+      return `<tr${cls}><td>${r.ym}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
     }).join("");
     const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"—";
     document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b> · clearance <b>${ocl}</b>`;
@@ -431,8 +375,8 @@ function renderTable(){
 function buildCSV(){
   const L=[];
   if(!isCiv()){
-    L.push(["month","cases_filed","cases_filed_3mo","cases_terminated","cases_terminated_3mo","clearance_pct","clearance_pct_3mo","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"].join(","));
-    for(const r of lastRows) L.push([r.ym,r.filed,r.filed3==null?"":r.filed3.toFixed(2),r.term,r.term3==null?"":r.term3.toFixed(2),r.clr==null?"":r.clr.toFixed(2),r.clr3==null?"":r.clr3.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2)].join(","));
+    L.push(["month","cases_filed","cases_terminated","clearance_pct","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"].join(","));
+    for(const r of lastRows) L.push([r.ym,r.filed,r.term,r.clr==null?"":r.clr.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2)].join(","));
   } else {
     L.push(["month",...lastCols].join(","));
     for(const r of lastRows) L.push([r.ym,...r.vals.map(v=>v==null?"":(Number.isInteger(v)?v:v.toFixed(2)))].join(","));
@@ -443,7 +387,6 @@ function buildCSV(){
 }
 
 // flat multi-select (districts)
-function fmtDist(c){ return (c&&c.length===3 && 'NSEWMC'.includes(c[2])) ? c.slice(0,2)+'-'+c[2] : c; }
 function multiSelect(mountId,opts){
   const wrap=document.getElementById(mountId); wrap.classList.add('ms'); wrap.innerHTML='';
   const btn=document.createElement('button'); btn.type='button'; btn.className='ms-btn';
@@ -579,32 +522,8 @@ async function init(){ renderNav();
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();
-if(typeof module!=='undefined') module.exports={aggR,aggC,metricArrR,metricArrC,buildDepts};
-</script><!-- LIONS auto-height reporter (for Framer embed) -->
-<script>
-(function () {
-  var last = 0;
-  function measure() {
-    var b = document.body, d = document.documentElement;
-    return Math.max(b ? b.scrollHeight : 0, b ? b.offsetHeight : 0, d.scrollHeight, d.offsetHeight);
-  }
-  function postHeight() {
-    var h = measure();
-    if (h && h !== last) { last = h; parent.postMessage({ type: "lions-dashboard-height", height: h }, "*"); }
-  }
-  var scheduled = false;
-  function schedule() {
-    if (scheduled) return;
-    scheduled = true;
-    requestAnimationFrame(function () { scheduled = false; postHeight(); });
-  }
-  window.addEventListener("load", schedule);
-  window.addEventListener("resize", schedule);
-  document.addEventListener("DOMContentLoaded", schedule);
-  if (window.ResizeObserver) { var ro = new ResizeObserver(schedule); ro.observe(document.documentElement); if (document.body) ro.observe(document.body); }
-  if (window.MutationObserver) { new MutationObserver(schedule).observe(document.documentElement, { subtree: true, childList: true, attributes: true }); }
-  setInterval(schedule, 1000);
-  schedule();
-})();
-</script>
+if(typeof module!=='undefined') module.exports={aggR,aggC,metricArrR,metricArrC,buildDepts};</script><!-- LIONS auto-height reporter (for Framer embed) -->
+<script src="shared/height-reporter.js?v=20260818i"></script>
+<script src="lab.js?v=20260818i"></script>
+<script src="shell2.js?v=20260818i"></script>
 </body></html>
