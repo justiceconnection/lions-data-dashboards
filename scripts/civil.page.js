@@ -103,8 +103,8 @@ function renderKPIs(){
   document.getElementById('kpiMetric').textContent=metricLabel(state.metric);
   document.getElementById('kpi1lab').textContent=isLevel?'Latest (end of range)':'Total, selected range';
   document.getElementById('kpi2lab').textContent=isLevel?'Avg, last 12 months':'Total, last 12 months';
-  document.getElementById('kpi1ym').textContent=idxs.length?('('+SPINE[idxs[0]]+' – '+SPINE[e]+')'):'';
-  document.getElementById('kpi2ym').textContent=last12.length?('(ending '+SPINE[e]+')'):'';
+  document.getElementById('kpi1ym').textContent = idxs.length ? ('(' + fmtMMYYYY(SPINE[idxs[0]]) + ' – ' + fmtMMYYYY(SPINE[e]) + ')') : '';
+  document.getElementById('kpi2ym').textContent = last12.length ? ('(ending ' + fmtMMYYYY(SPINE[e]) + ')') : '';
   document.getElementById('kpiScope').textContent='U.S. as '+state.role+' · '+(state.dists.has('National')||state.dists.size===0?'National':state.dists.size+' districts')+' · '+(state.cats.has('ALL')||state.cats.size===0?'all causes':state.cats.size+' selected');
 }
 

@@ -148,8 +148,8 @@ function renderKPIs(){
   document.getElementById('kpiMetric').textContent=metricLabel(curMetric());
   document.getElementById('kpi1lab').textContent=pct?'Overall rate, selected range':(isLevel?'Latest (end of range)':'Total, selected range');
   document.getElementById('kpi2lab').textContent=pct?'Overall rate, last 12 mo':(isLevel?'Avg, last 12 months':'Total, last 12 months');
-  document.getElementById('kpi1ym').textContent=idxs.length?('('+SPINE[idxs[0]]+' – '+SPINE[e]+')'):'';
-  document.getElementById('kpi2ym').textContent=last12.length?('(ending '+SPINE[e]+')'):'';
+  document.getElementById('kpi1ym').textContent = idxs.length ? ('(' + fmtMMYYYY(SPINE[idxs[0]]) + ' – ' + fmtMMYYYY(SPINE[e]) + ')') : '';
+  document.getElementById('kpi2ym').textContent = last12.length ? ('(ending ' + fmtMMYYYY(SPINE[e]) + ')') : '';
   const dtxt=(state.dists.has('National')||state.dists.size===0?'National':state.dists.size+' districts');
   document.getElementById('kpiScope').textContent=(isCiv()?'U.S. as '+state.role+' · ':'')+dtxt+' · '+curAgs().size+' agenc'+(curAgs().size===1?'y':'ies');
 }

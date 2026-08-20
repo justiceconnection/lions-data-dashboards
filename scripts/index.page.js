@@ -113,8 +113,8 @@ function renderKPIs(){
   document.getElementById('kpiMetric').textContent=metricLabel(state.metric);
   document.getElementById('kpi1lab').textContent=pct?'Overall rate, selected range':'Total, selected range';
   document.getElementById('kpi2lab').textContent=pct?'Overall rate, last 12 mo':'Total, last 12 months';
-  document.getElementById('kpi1ym').textContent=idxs.length?('('+SPINE[idxs[0]]+' – '+SPINE[e]+')'):'';
-  document.getElementById('kpi2ym').textContent=last12.length?('(ending '+SPINE[e]+')'):'';
+  document.getElementById('kpi1ym').textContent = idxs.length ? ('(' + fmtMMYYYY(SPINE[idxs[0]]) + ' – ' + fmtMMYYYY(SPINE[e]) + ')') : '';
+  document.getElementById('kpi2ym').textContent = last12.length ? ('(ending ' + fmtMMYYYY(SPINE[e]) + ')') : '';
   document.getElementById('kpiScope').textContent=(state.dists.has('National')||state.dists.size===0?'National':state.dists.size+' districts')+' · '+(state.cats.has('ALL')||state.cats.size===0?'all categories':state.cats.size+' selected');
 }
 
