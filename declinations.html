@@ -3,10 +3,11 @@
 <meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Criminal Matter Declinations — LIONS</title>
+<link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link rel="stylesheet" href="shared/shared.css?v=20260818j">
 <link rel="stylesheet" href="lab.css?v=20260818j">
-<link rel="stylesheet" href="shell2.css?v=20260818j">
+<link rel="stylesheet" href="styles/shell2.css?v=20260818j">
 <style>
 .master{margin:0 0 12px;display:flex;flex-direction:column;gap:6px}
 .master .ml{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
@@ -29,7 +30,7 @@
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
   <h1>Criminal Matter Declinations</h1>
-  <div class="sub">All data is from publicly released DOJ data collected from Legal Information Office Network System (LIONS). <span id="status" hidden></span></div>
+  <div class="sub">All data is from publicly released DOJ data collected from Legal Information Office Network System (LIONS). <span id="status" aria-live="polite" hidden></span></div>
 
   <div class="master"><span class="ml">Break down by</span>
     <span class="seg" id="dimSeg"><button data-v="category" class="on">Program category</button><button data-v="agency">Referring agency</button></span>
@@ -52,12 +53,12 @@
   <div class="card">
     <h3><span id="chart1Title">Matters declined by reason (stacked)</span></h3>
     <div id="legend"></div>
-    <div class="chartbox"><canvas id="chart"></canvas></div>
+    <div class="chartbox"><canvas id="chart" role="img" aria-label="Declinations by reason chart, stacked share over time.">Declinations by reason chart, stacked share over time.</canvas></div>
   </div>
   <div class="card">
     <h3><span id="chart2Title">Matters declined — selected reasons over time</span></h3>
     <div id="legend2"></div>
-    <div class="chartbox sm"><canvas id="chart2"></canvas></div>
+    <div class="chartbox sm"><canvas id="chart2" role="img" aria-label="Declinations total over time for selected reasons.">Declinations total over time for selected reasons.</canvas></div>
   </div>
 
   <div id="summary"></div>
@@ -186,6 +187,30 @@ function renderTable(){
   document.getElementById("note").textContent=rs.length===0?"Select at least one declination reason.":"";
 }
 
+function updateChartAccessibility(){
+  const chartEl=document.getElementById('chart');
+  const chart2El=document.getElementById('chart2');
+  if(!chartEl||!chart2El) return;
+
+  const distText=(state.dists.has('National')||state.dists.size===0)
+    ?'National'
+    :[...state.dists].map(fmtDist).join(', ');
+  const dimText=isAg()?'referring agency':'program category';
+  const groupText=isAg()
+    ?((state.ags&&state.ags.size===AGLIST.length)?'all agencies':(state.ags?state.ags.size:0)+' selected agencies')
+    :((state.cats.has('ALL')||state.cats.size===0)?'all categories':[...state.cats].join(', '));
+  const reasonText=state.reasons.size===REASON_ORDER.length
+    ?'all declination reasons'
+    :[...state.reasons].join(', ');
+
+  chartEl.setAttribute('aria-label',
+    `Declinations by reason over time as stacked percent share. Breakdown mode: ${dimText}. Filters: ${distText}; ${groupText}; reasons: ${reasonText}; ${state.from} to ${state.to}.`
+  );
+  chart2El.setAttribute('aria-label',
+    `Total declined matters over time for selected declination reasons. Breakdown mode: ${dimText}. Filters: ${distText}; ${groupText}; reasons: ${reasonText}; ${state.from} to ${state.to}.`
+  );
+}
+
 async function render(){ const st=document.getElementById("status");
   document.getElementById('dimLabel').textContent=isAg()?'Referring agency (multi)':'Program category (multi)';
   const needFull=!(state.dists.has('National')||state.dists.size===0);
@@ -193,7 +218,7 @@ async function render(){ const st=document.getElementById("status");
   else if(needFull){ await ensureCatFull(); }
   SER=seriesByReason();
   st.textContent=(isAg()?'By referring agency · ':'By program category · ')+scopeText();
-  renderChart(); renderChart2(); renderTable();
+  renderChart(); renderChart2(); updateChartAccessibility(); renderTable();
 }
 
 function buildCSV(){
@@ -277,11 +302,11 @@ function buildDepts(rows){
 }
 function districtList(){ const src=CAT_FULL||AG_FULL; return src?[...new Set(src.map(r=>r.district))].sort():[]; }
 async function ensureCatFull(){ if(CAT_FULL||catFullLoading) return; catFullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./decl_cat_cube.csv",{cache:"reload"}); CAT_FULL=parseCat(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } catFullLoading=false; }
+  try{ const r=await fetch("./data/decl_cat_cube.csv",{cache:"reload"}); CAT_FULL=parseCat(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } catFullLoading=false; }
 async function ensureAgency(){ if(AG_NAT||agLoading) return; agLoading=true; document.getElementById("status").textContent="loading agency data…";
-  try{ const r=await fetch("./decl_agency_cube_national.csv",{cache:"reload"}); AG_NAT=parseAg(await r.text()); buildDepts(AG_NAT); if(!state.ags) state.ags=new Set(AGLIST); }catch(e){ console.error(e); } agLoading=false; }
+  try{ const r=await fetch("./data/decl_agency_cube_national.csv",{cache:"reload"}); AG_NAT=parseAg(await r.text()); buildDepts(AG_NAT); if(!state.ags) state.ags=new Set(AGLIST); }catch(e){ console.error(e); } agLoading=false; }
 async function ensureAgFull(){ if(AG_FULL||agFullLoading) return; agFullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./decl_agency_cube.csv",{cache:"reload"}); AG_FULL=parseAg(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } agFullLoading=false; }
+  try{ const r=await fetch("./data/decl_agency_cube.csv",{cache:"reload"}); AG_FULL=parseAg(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } agFullLoading=false; }
 
 function buildDimPicker(){
   if(!isAg()){ multiSelect("dimpick",{items:CATLIST,allValue:"ALL",allLabel:"All categories",initial:state.cats,searchable:false,
@@ -290,7 +315,7 @@ function buildDimPicker(){
 }
 
 async function init(){ renderNav();
-  try{ const r=await fetch("./decl_cat_cube_national.csv",{cache:"reload"}); CAT_NAT=parseCat(await r.text()); }
+  try{ const r=await fetch("./data/decl_cat_cube_national.csv",{cache:"reload"}); CAT_NAT=parseCat(await r.text()); }
   catch(e){ document.getElementById("status").textContent="could not load decl_cat_cube_national.csv — serve this folder over http"; return; }
   const ms=[...new Set(CAT_NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   CATLIST=[...new Set(CAT_NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();
