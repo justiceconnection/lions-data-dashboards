@@ -33,3 +33,28 @@ function visIdx(){ const r=[]; for(let i=0;i<SPINE.length;i++){ const ym=SPINE[i
 // config just before render (used by the Design-2 lab via window.LIONS_CHART_TWEAK).
 // With no tweak installed it is a passthrough — identical to `new window.Chart(ctx,cfg)`.
 function mkChart(ctx,cfg){ if(window.LIONS_CHART_TWEAK){ try{ window.LIONS_CHART_TWEAK(cfg); }catch(e){} } return new window.Chart(ctx,cfg); }
+
+// ── Time-grain grouping: Month (default) / Calendar Quarter / Fiscal Quarter / Fiscal Year ──
+// Purely a re-bucketing of the monthly data — no new cubes. Counts SUM within a bucket;
+// percentages are recomputed by summing the component counts first (ratio-of-sums), so callers
+// bucket the component arrays (bucketComp) and then run their existing metric formula on them.
+// FY convention: FY2025 = Oct 2024 .. Sep 2025 (labeled by the year it ENDS).
+// grain: 'month' | 'cq' (calendar qtr) | 'fq' (fiscal qtr) | 'fy' (fiscal year).
+function grainBuckets(spine, idxs, grain){
+  if(!grain || grain==='month') return idxs.map(i=>({label:spine[i],idxs:[i],size:1,months:1,partial:false}));
+  const info=(ym)=>{ const p=ym.split('-'); const y=+p[0], m=+p[1];
+    if(grain==='cq'){ const q=Math.floor((m-1)/3)+1; return {k:y*10+q, label:'Q'+q+' '+y, size:3}; }
+    if(grain==='fq'){ const fy=(m>=10)?y+1:y, fm=(m>=10)?m-9:m+3, q=Math.floor((fm-1)/3)+1; return {k:fy*10+q, label:'FY'+fy+' Q'+q, size:3}; }
+    const fy=(m>=10)?y+1:y; return {k:fy, label:'FY'+fy, size:12}; };   // fiscal year
+  const map=new Map(), out=[];
+  for(const i of idxs){ const d=info(spine[i]); let b=map.get(d.k); if(!b){ b={label:d.label,idxs:[],size:d.size}; map.set(d.k,b); out.push(b); } b.idxs.push(i); }
+  for(const b of out){ b.months=b.idxs.length; b.partial=b.months<b.size; }   // fewer months than the period holds
+  return out;
+}
+function bucketSum(arr,B){ return B.map(b=>{ let s=0; for(const i of b.idxs){ const v=arr&&arr[i]; if(v!=null) s+=v; } return s; }); }
+function bucketComp(R,B){ const o={}; for(const k in R){ if(Array.isArray(R[k])) o[k]=bucketSum(R[k],B); } return o; }
+function grainLabels(B){ return B.map(b=>b.label+(b.partial?'*':'')); }   // "*" flags an incomplete period
+function grainAnyPartial(B){ return B.some(b=>b.partial); }
+// grain-aware x-axis tick label: month keeps the "year at January" behavior; coarser grains show every label.
+function grainTick(grain){ return function(v,index){ const l=this.getLabelForValue(v); if(!l) return '';
+  if(grain && grain!=='month') return l; const s=String(l).split('-'); return (s[1]==='01'||index===0)?s[0]:''; }; }

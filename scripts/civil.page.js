@@ -1,4 +1,4 @@
-const state={dists:new Set(['National']),cats:new Set(['ALL']),role:'Defendant',basis:'cases',metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06'};
+const state={dists:new Set(['National']),cats:new Set(['ALL']),role:'Defendant',basis:'cases',metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06',grain:'month'};
 let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=null, chart=null, chart2=null, chart3=null, CATLIST=[];
 const NUM=["matters_received","cases_filed","matters_terminated","cases_terminated","d_judg_us","d_settle","d_against","d_dismissed","d_other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
@@ -110,12 +110,12 @@ function renderKPIs(){
 
 function renderTable(){
   const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role);
-  const cols=[]; for(const [k,lbl] of metricsList()){ cols.push({key:k,label:lbl,pred:false}); if(hasPred(k)) cols.push({key:k,label:lbl+' (pred)',pred:true}); }
-  const arrs=cols.map(c=>{ const a=metricArray(R,c.key); return c.pred?predOf(a,c.key).map(v=>v==null?null:Math.round(v)):a; });
+  const cols=metricsList().map(([k,lbl])=>({key:k,label:lbl}));
+  const arrs=cols.map(c=>metricArray(R,c.key));
   const rows=[];
   for(const i of visIdx()){ const ym=SPINE[i];
     rows.push({ym, vals:arrs.map(a=>a[i]), tag:ym<="1996-09"?"edge":(ym>="2026-03"?"recent":"")}); }
-  lastRows={head:cols.map(c=>c.pred?c.key+'_pred':c.key),rows};
+  lastRows={head:cols.map(c=>c.key),rows};
   document.getElementById("thead").innerHTML="<tr><th>Month</th>"+cols.map(c=>`<th>${c.label}</th>`).join("")+"</tr>";
   document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
     return `<tr${cls}><td>${r.ym}</td>`+r.vals.map(v=>`<td>${v==null?"—":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
@@ -125,7 +125,7 @@ function renderTable(){
   document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · ${primaryLabel()} <b>${Math.round(s).toLocaleString()}</b> · ${state.role} · ${state.cats.has('ALL')||state.cats.size===0?'all causes':[...state.cats].join(', ')}`;
 }
 
-const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!labels||!labels.length)return;
+const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
   const x=ch.scales.x,area=ch.chartArea,ctx=ch.ctx; const half=labels.length>1?Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))/2:10;
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
@@ -133,73 +133,76 @@ const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!la
     ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
     if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
 }};
-function baseScales(pct,rightTitle,anyR){ return {x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+function baseScales(pct,rightTitle,anyR){ return {x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
   y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(state.metric),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{color:'#e6e6e3'}},
   y1:{position:'right',display:anyR,beginAtZero:!pct,title:{display:anyR,text:rightTitle,color:'#212123',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{drawOnChartArea:false}}}; }
 
 const TT={enabled:false,external:extTooltip};
 function renderChart(){
-  const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const pct=false;
+  const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
+  const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]), pr=B.map(b=>b.partial?3.2:0), anyPartial=grainAnyPartial(B);
+  const pct=false;
   const left=buildSeries(leftItems(),'y');
   const metricMode=state.ax2by==='metric' && state.ax2sel.size>0;
   const right=(state.ax2by!=='metric' && state.ax2sel.size)?buildSeries([...state.ax2sel],'y1'):[];
-  const mk=(s,j,pal,dash)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats,state.role),state.metric); const col=pal[j%pal.length];
-    return {label:s.label+(s.axis==='y1'?' (R)':''),data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:dash?[5,4]:[],yAxisID:s.axis,_col:col}; };
+  const mk=(s,j,pal,dash)=>{ const arr=metricArray(bucketComp(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats,state.role),B),state.metric); const col=pal[j%pal.length];
+    return {label:s.label+(s.axis==='y1'?' (R)':''),data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,borderDash:dash?[5,4]:[],yAxisID:s.axis,_col:col}; };
   const leftDs=left.map((s,j)=>mk(s,j,PALETTE,false));
   const datasets=[...leftDs, ...right.map((s,j)=>mk(s,j,RPAL,true))];
   const rMetrics=metricMode?[...state.ax2sel]:[];
-  rMetrics.forEach((m2,j)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role),m2); const col=RPAL[j%RPAL.length];
-    datasets.push({label:metricLabel(m2)+' (R)',data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col}); });
-  const showPred=hasPred(state.metric);
-  if(showPred){ left.forEach((s,ai)=>{ const arr=metricArray(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats,state.role),state.metric); const parr=predOf(arr,state.metric); const col=PALETTE[ai%PALETTE.length];
-    datasets.push({label:s.label+' (est. final)',data:idxs.map(i=>parr[i]),borderColor:col,backgroundColor:col+'40',borderDash:[3,3],borderWidth:2,pointRadius:idxs.map(i=>((SPINE.length-1-i)<8)?2.4:0),pointBackgroundColor:col,pointBorderColor:col,spanGaps:true,tension:.25,yAxisID:'y',fill:{target:ai,above:col+'40',below:'transparent'},_col:col,_pred:true}); }); }
+  rMetrics.forEach((m2,j)=>{ const arr=metricArray(bucketComp(aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role),B),m2); const col=RPAL[j%RPAL.length];
+    datasets.push({label:metricLabel(m2)+' (R)',data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col}); });
   const anyR=right.length>0||rMetrics.length>0;
   const rAxisTitle=(metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):metricLabel(state.metric))+' (Right)';
-  document.getElementById("legend").innerHTML=datasets.filter(ds=>!ds._pred).map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
+  document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
      + (anyR?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'')
-     + (showPred?'<span class="lg" style="color:var(--mut)">┈ dotted = estimated final (reporting-lag adjusted)</span>':'');
+     + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'');
   document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" — "+state.role+" — by "+(state.seriesBy==='category'?'cause of action':'district');
   if(typeof window==='undefined'||!window.Chart){ return; }
   if(chart) chart.destroy();
-  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets},
+  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
       scales:baseScales(false,rAxisTitle,anyR)},plugins:[adminBands]});
 }
 
 function renderChart2(){
-  const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const pf=primaryFlow();
+  const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
+  const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]); const pf=primaryFlow();
   const allSel=(state.cats.has('ALL')||state.cats.size===0); const cats=allSel?CATLIST:[...state.cats];
-  const tot=aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL']),state.role)[pf];
-  const cA={}; for(const c2 of cats) cA[c2]=aggregateRaw(NAT,FULL,SPINE,state.dists,new Set([c2]),state.role)[pf];
+  const totB=bucketSum(aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL']),state.role)[pf],B);
+  const cAB={}; for(const c2 of cats) cAB[c2]=bucketSum(aggregateRaw(NAT,FULL,SPINE,state.dists,new Set([c2]),state.role)[pf],B);
   let datasets;
-  if(state.mixMode==='sum'){ const data=idxs.map(i=>{const t=tot[i];if(!t)return null;let s=0;for(const c2 of cats)s+=cA[c2][i];return 100*s/t;});
+  if(state.mixMode==='sum'){ const data=totB.map((t,bi)=>{if(!t)return null;let s=0;for(const c2 of cats)s+=cAB[c2][bi];return 100*s/t;});
     datasets=[{label:(allSel?'All causes':cats.join(', ')),data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,_pct:true,_col:'#212123'}];
-  } else { datasets=cats.map((c2,j)=>{const col=CATPAL[(CATLIST.indexOf(c2)+1)%CATPAL.length];return {label:c2,data:idxs.map(i=>{const t=tot[i];return t?100*cA[c2][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col};}); }
+  } else { datasets=cats.map((c2,j)=>{const col=CATPAL[(CATLIST.indexOf(c2)+1)%CATPAL.length];return {label:c2,data:totB.map((t,bi)=>t?100*cAB[c2][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col};}); }
   document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("");
   document.getElementById("chart2Title").textContent="Cause of action mix — % of "+primaryLabel()+(state.mixMode==='stacked'?" (stacked)":" (combined)");
   if(typeof window==='undefined'||!window.Chart) return;
   datasets=datasets.slice().reverse();
   if(chart2) chart2.destroy();
-  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets},
+  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},y:{stacked:state.mixMode==='stacked',beginAtZero:true,title:{display:true,text:'% of '+primaryLabel(),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},y:{stacked:state.mixMode==='stacked',beginAtZero:true,title:{display:true,text:'% of '+primaryLabel(),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
 }
 
 function renderChart3(){
   const box=document.getElementById('chart3box'), msg=document.getElementById('chart3msg');
   if(state.basis!=='cases'){ box.style.display='none'; msg.style.display='block'; msg.textContent='No disposition data for Matters — court dispositions apply to Cases only. Switch the basis toggle to Cases.'; document.getElementById('legend3').innerHTML=''; if(chart3){chart3.destroy();chart3=null;} return; }
   box.style.display=''; msg.style.display='none';
-  const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]);
+  const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
+  const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
   const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role);
+  const ctB=bucketSum(R.ct,B);
   const datasets=DISP.map(([k,name,col],j)=>{ const key={d_judg_us:'ju',d_settle:'st',d_against:'ag',d_dismissed:'dm',d_other:'ot'}[k];
-    return {label:name,data:idxs.map(i=>{const t=R.ct[i];return t?100*R[key][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
+    const numB=bucketSum(R[key],B);
+    return {label:name,data:ctB.map((t,bi)=>t?100*numB[bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
   document.getElementById("legend3").innerHTML=DISP.map(([k,name,col])=>`<span class="lg"><span class="sw" style="background:${col}"></span>${name}</span>`).join("");
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart3) chart3.destroy();
-  chart3=mkChart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse()},
+  chart3=mkChart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse(),_ym:ymAxis},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
 }
 
 function updateChartAccessibility(){
@@ -299,6 +302,7 @@ async function init(){ renderNav();
   document.querySelectorAll('#basis button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.basis=b.dataset.v; populateMetric(); if(state.ax2&&state.ax2by==='metric') buildAx2Picker(); render(); }));
   document.querySelectorAll('#seriesBy button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#seriesBy button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.seriesBy=b.dataset.v; if(state.seriesBy==='district') await ensureFull(); if(state.ax2by==='series') buildAx2Picker(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); updateChartAccessibility(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); renderChart3(); }));
   document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); buildAx2Picker(); renderChart(); }));
   document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }

@@ -6,7 +6,7 @@ const DEFAULT_AGS_V=['SSA','HUD','IRS','Bureau of Prisons','ICE','HSI','FBI','DE
 const state={cls:'R',dists:new Set(['National']),
   ags:new Set(DEFAULT_AGS_R),occ:'lead',metric:'cases_filed',
   agsC:new Set(DEFAULT_AGS_V),role:'Defendant',basis:'cases',metricC:'cases_filed',
-  mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06'};
+  mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06',grain:'month'};
 let NAT=null,FULL=null,CNAT=null,CFULL=null,SPINE=[],fullLoading=false,cfullLoading=false,civilLoading=false;
 let dMS=null,chart=null,chart2=null,chart3=null;
 let AGLIST_R=[],AGLIST_V=[],DEPTS_R=[],DEPTS_V=[];
@@ -154,7 +154,7 @@ function renderKPIs(){
   document.getElementById('kpiScope').textContent=(isCiv()?'U.S. as '+state.role+' · ':'')+dtxt+' · '+curAgs().size+' agenc'+(curAgs().size===1?'y':'ies');
 }
 
-const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!labels||!labels.length)return;
+const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
   const x=ch.scales.x,area=ch.chartArea,ctx=ch.ctx; const half=labels.length>1?Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))/2:10;
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
@@ -165,34 +165,39 @@ const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!la
 
 const TT={enabled:false,external:extTooltip};
 function renderChart(){
-  const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const pct=isPct();
+  const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
+  const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
+  const pr=B.map(b=>b.partial?3.2:0), anyPartial=grainAnyPartial(B);
+  const pct=isPct();
   const ags=selAgs();
-  const datasets=ags.map((ag)=>{ const arr=metricArray(aggregate(state.dists,new Set([ag])),curMetric()); const col=agColor(ag);
-    return {label:ag,data:idxs.map(i=>arr[i]),borderColor:col,backgroundColor:col,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,_col:col,_pct:pct}; });
-  document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("");
+  const datasets=ags.map((ag)=>{ const arr=metricArray(bucketComp(aggregate(state.dists,new Set([ag])),B),curMetric()); const col=agColor(ag);
+    return {label:ag,data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:col,_pct:pct}; });
+  document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
+     + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'');
   document.getElementById("chartTitle").textContent=metricLabel(curMetric())+(isCiv()?" — "+state.role:"")+" — by "+(isCiv()?"client":"referring")+" agency";
   if(typeof window==='undefined'||!window.Chart){ return; }
   const yfmt=pct?(v=>v+'%'):(v=>v.toLocaleString());
   if(chart) chart.destroy();
-  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets},
+  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
         y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(curMetric()),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:yfmt},grid:{color:'#e6e6e3'}}}},
     plugins:[adminBands]});
 }
 
 function renderChart2(){
-  const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]);
+  const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
+  const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
   const ags=selAgs();
-  const tot=shareFlow(aggregate(state.dists,new Set(['ALL'])));
-  const aA={}; for(const a of ags) aA[a]=shareFlow(aggregate(state.dists,new Set([a])));
+  const totB=bucketSum(shareFlow(aggregate(state.dists,new Set(['ALL']))),B);
+  const aB={}; for(const a of ags) aB[a]=bucketSum(shareFlow(aggregate(state.dists,new Set([a]))),B);
   let datasets;
   if(state.mixMode==='sum'){
-    const data=idxs.map(i=>{ const t=tot[i]; if(!t)return null; let s=0; for(const a of ags) s+=aA[a][i]; return 100*s/t; });
+    const data=totB.map((t,bi)=>{ if(!t)return null; let s=0; for(const a of ags) s+=aB[a][bi]; return 100*s/t; });
     datasets=[{label:ags.length+' agenc'+(ags.length===1?'y':'ies')+' share',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,_pct:true,_col:'#212123'}];
   } else {
-    datasets=ags.map(a=>{ const col=agColor(a); return {label:a,data:idxs.map(i=>{const t=tot[i];return t?100*aA[a][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
+    datasets=ags.map(a=>{ const col=agColor(a); return {label:a,data:totB.map((t,bi)=>t?100*aB[a][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
   }
   document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("");
   const denom=isCiv()?primaryLabel():'referred cases filed';
@@ -200,10 +205,10 @@ function renderChart2(){
   if(typeof window==='undefined'||!window.Chart){ return; }
   datasets=datasets.slice().reverse();
   if(chart2) chart2.destroy();
-  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets},
+  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
         y:{stacked:state.mixMode==='stacked',beginAtZero:true,title:{display:true,text:'% of '+denom,color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
     plugins:[adminBands]});
 }
@@ -215,15 +220,17 @@ function renderChart3(){
   const box=document.getElementById('chart3box'), msg=document.getElementById('chart3msg');
   if(state.basis!=='cases'){ box.style.display='none'; msg.style.display='block'; msg.textContent='No disposition data for Matters — court dispositions apply to Cases only. Switch the basis toggle to Cases.'; document.getElementById('legend3').innerHTML=''; if(chart3){chart3.destroy();chart3=null;} return; }
   box.style.display=''; msg.style.display='none';
-  const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]);
+  const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
+  const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
   const R=aggregate(state.dists,curAgs());
-  const datasets=DISP.map(([key,name,col])=>({label:name,data:idxs.map(i=>{const t=R.ct[i];return t?100*R[key][i]/t:null;}),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}));
+  const ctB=bucketSum(R.ct,B);
+  const datasets=DISP.map(([key,name,col])=>{ const kB=bucketSum(R[key],B); return {label:name,data:ctB.map((t,bi)=>t?100*kB[bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
   document.getElementById("legend3").innerHTML=DISP.map(([k,name,col])=>`<span class="lg"><span class="sw" style="background:${col}"></span>${name}</span>`).join("");
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart3) chart3.destroy();
-  chart3=mkChart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse()},
+  chart3=mkChart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse(),_ym:ymAxis},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
 }
 
 function updateChartAccessibility(){
@@ -430,6 +437,7 @@ async function init(){ renderNav();
   document.querySelectorAll('#role button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#role button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.role=x.dataset.v; render(); }));
   document.querySelectorAll('#basis button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.basis=x.dataset.v; populateMetric(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.mixMode=x.dataset.v; renderChart2(); updateChartAccessibility(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); renderChart3(); }));
   document.querySelectorAll('#presets button').forEach(btn=>btn.addEventListener('click',()=>{ const k=btn.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
     const ns=new Set(state.admins); ns.has(k)?ns.delete(k):ns.add(k);

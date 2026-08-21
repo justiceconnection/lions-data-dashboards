@@ -55,12 +55,8 @@
    function isOpen(){ return panel.classList.contains('open'); }
    btn.addEventListener('click',function(){ setOpen(!isOpen()); });
    phead.querySelector('.dw-close').addEventListener('click',function(){ setOpen(false); });
-   document.addEventListener('click',function(e){                                                // click-outside collapses (ignores pickers)
-     if(!isOpen()) return; var t=e.target;
-     if(t && t.closest && t.closest('.dw-stick, .ms-panel, .ms, .dw-btn')) return;
-     if(stick.contains(t)) return;
-     setOpen(false);
-   });
+   // (click-outside-to-collapse removed by request — the "Filters" button and the in-panel
+   //  "Collapse" button are the only ways to open/close the panel.)
    setOpen(window.matchMedia? window.matchMedia('(min-width:760px)').matches : true);            // open desktop, collapsed mobile
    } }
    collapsibles(wrap);                                                                           // note 1

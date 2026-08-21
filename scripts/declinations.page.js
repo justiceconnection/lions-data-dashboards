@@ -12,7 +12,7 @@ const REASON_ORDER=REASONS.map(r=>r[0]);
 const RCOLOR=Object.fromEntries(REASONS);
 const DEFAULT_REASONS=REASON_ORDER.filter(r=>r!=="Other"); // the 7
 const state={dim:'category',dists:new Set(['National']),cats:new Set(['ALL']),ags:null,
-  reasons:new Set(DEFAULT_REASONS),admins:new Set(),from:'2014-10',to:'2026-06'};
+  reasons:new Set(DEFAULT_REASONS),admins:new Set(),from:'2014-10',to:'2026-06',grain:'month'};
 let CAT_NAT=null,CAT_FULL=null,AG_NAT=null,AG_FULL=null,SPINE=[],
   catFullLoading=false,agLoading=false,agFullLoading=false,dMS=null,chart=null,chart2=null;
 let CATLIST=[],DEPTS_AG=[],AGLIST=[];
@@ -54,7 +54,7 @@ function seriesByReason(){
 }
 function selReasons(){ return REASON_ORDER.filter(r=>state.reasons.has(r)); }
 
-const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data.labels; if(!labels||!labels.length)return;
+const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
   const x=ch.scales.x,area=ch.chartArea,ctx=ch.ctx; const half=labels.length>1?Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))/2:10;
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
@@ -71,32 +71,39 @@ function scopeText(){ const dt=(state.dists.has('National')||state.dists.size===
 
 const TT={enabled:false,external:extTooltip};
 function renderChart(){
-  const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const rs=selReasons();
-  const totals=idxs.map(i=>rs.reduce((a,r)=>a+SER[r][i],0));   // 100%-stacked: normalize to selected reasons
-  const datasets=rs.map(r=>{ const col=RCOLOR[r]; return {label:r,data:idxs.map((i,j)=>{ const t=totals[j]; return t?100*SER[r][i]/t:null; }),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
+  const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
+  const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
+  const rs=selReasons();
+  // ratio-of-sums: bucket each reason's monthly series, then normalize by the bucketed total of selected reasons
+  const rB={}; for(const r of rs) rB[r]=bucketSum(SER[r],B);
+  const totals=B.map((b,bi)=>rs.reduce((a,r)=>a+rB[r][bi],0));   // 100%-stacked: normalize to selected reasons
+  const datasets=rs.map(r=>{ const col=RCOLOR[r]; return {label:r,data:totals.map((t,bi)=>t?100*rB[r][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
   document.getElementById("legend").innerHTML=rs.map(r=>`<span class="lg"><span class="sw" style="background:${RCOLOR[r]}"></span>${r}</span>`).join("");
   document.getElementById("chart1Title").textContent="Matters declined by reason — % share (stacked) — "+scopeText();
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart) chart.destroy();
-  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse()},
+  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse(),_ym:ymAxis},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
         y:{stacked:true,beginAtZero:true,max:100,title:{display:true,text:'% of declined matters (selected reasons)',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
     plugins:[adminBands]});
 }
 function renderChart2(){
-  const idxs=visIdx(), labels=idxs.map(i=>SPINE[i]); const rs=selReasons();
-  const data=idxs.map(i=>rs.reduce((a,r)=>a+SER[r][i],0));
-  const datasets=[{label:'Total declined (selected reasons)',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,spanGaps:true,_col:'#212123'}];
-  document.getElementById("legend2").innerHTML=`<span class="lg"><span class="sw" style="background:#212123"></span>Total of selected reasons</span>`;
+  const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
+  const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]), pr=B.map(b=>b.partial?3.2:0), anyPartial=grainAnyPartial(B);
+  const rs=selReasons();
+  const totalArr=SPINE.map((_,i)=>rs.reduce((a,r)=>a+SER[r][i],0));
+  const data=bucketSum(totalArr,B);
+  const datasets=[{label:'Total declined (selected reasons)',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:'#212123',pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:'#212123'}];
+  document.getElementById("legend2").innerHTML=`<span class="lg"><span class="sw" style="background:#212123"></span>Total of selected reasons</span>`+(anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'');
   document.getElementById("chart2Title").textContent="Matters declined — total of selected reasons";
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart2) chart2.destroy();
-  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets},
+  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:false,maxRotation:0,callback:function(v,index){const l=this.getLabelForValue(v);if(!l)return '';const s=String(l).split('-');return (s[1]==='01'||index===0)?s[0]:'';}}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
         y:{beginAtZero:true,title:{display:true,text:'Matters declined',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v.toLocaleString()},grid:{color:'#e6e6e3'}}}},
     plugins:[adminBands]});
 }
@@ -253,6 +260,7 @@ async function init(){ renderNav();
     onChange:v=>{ state.reasons=new Set(v); render(); }});
   document.querySelectorAll('#dimSeg button').forEach(x=>x.addEventListener('click',async()=>{ document.querySelectorAll('#dimSeg button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.dim=x.dataset.v;
     if(isAg()) await ensureAgency(); buildDimPicker(); render(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); }));
   document.querySelectorAll('#presets button').forEach(btn=>btn.addEventListener('click',()=>{ const k=btn.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
     const ns=new Set(state.admins); ns.has(k)?ns.delete(k):ns.add(k);
