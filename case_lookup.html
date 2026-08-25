@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Look-Up Tool</title>
+<link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
+<style>
+  :root{ --bg:#fbfbfb; --ink:#212123; --accent:#eaf54c; --accent-ink:#212123; --muted:#6b6b70; --line:#dcdce0; --card:#fff; --err:#b00020; --ctl:38px; }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{padding:16px 20px;max-width:1440px;margin:0 auto}
+  h1{font-size:20px;margin:6px 0 2px}
+  .sub{font-size:12px;color:var(--muted);margin-bottom:12px}
+  /* shared dashboard nav (matches the other LIONS dashboards) */
+  .dashnav{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 16px}
+  .dashnav a{font-size:14.5px;padding:9px 18px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--accent);text-decoration:none;font-weight:600}
+  .dashnav a:hover{opacity:.88}
+  .dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+  .filters{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px 16px;align-items:end}
+  .fld{display:flex;flex-direction:column;justify-content:flex-end}
+  .fld label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:5px;font-weight:600}
+  select,.ms-btn{height:var(--ctl);width:100%;padding:0 26px 0 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;color:var(--ink);appearance:none;text-align:left;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b6b70'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 10px center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  select:focus,.ms-btn:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:#bfc300}
+  .ms{position:relative}
+  .ms-panel{position:absolute;z-index:30;top:calc(100% + 4px);left:0;right:0;min-width:260px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:8px;max-height:320px;overflow:auto}
+  .ms-search{height:32px;width:100%;margin-bottom:6px;padding:0 10px;border:1px solid var(--line);border-radius:7px;font:inherit}
+  .ms-tools{display:flex;gap:14px;font-size:12px;margin:2px 4px 8px}
+  .ms-tools a{color:#2b56c6;cursor:pointer}
+  .ms-list label{display:flex;gap:9px;align-items:center;padding:5px 7px;border-radius:6px;font-size:13px;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--ink);font-weight:400;margin:0}
+  .ms-list label.grp{font-weight:600;background:#f7f7f4;margin-top:2px}
+  .ms-list label:hover{background:#f0f0f0}
+  .ms-list input{width:16px;height:16px;accent-color:#111;flex:none}
+  .drow{display:flex;gap:6px}
+  .drow select.y{flex:1.25}.drow select.m{flex:1.9}.drow select.d{flex:1}
+  .datebar{display:flex;flex-wrap:wrap;gap:16px;align-items:end;margin-top:14px}
+  .datebar .fld{flex:1 1 300px}.datebar .fld.basis{flex:0 1 210px}
+  .actions{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
+  button.go{height:var(--ctl);background:var(--ink);color:#fff;border:0;border-radius:8px;padding:0 18px;font:inherit;font-weight:600;cursor:pointer}
+  button.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  #count{font-weight:600}
+  #filterErr{color:var(--err);font-size:13px;margin-top:8px}
+  details.cols{margin-top:12px}
+  details.cols summary{cursor:pointer;color:var(--muted);font-size:12px}
+  .colgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px;margin-top:10px}
+  .colgrid label{display:flex;gap:9px;align-items:center;color:var(--ink);font-size:13px;border:1px solid var(--line);border-radius:8px;padding:8px 11px;cursor:pointer}
+  .colgrid label:hover{border-color:#cdd400}
+  .colgrid label:has(input:checked){background:var(--accent);border-color:#c3cc00;font-weight:600}
+  .colgrid input[type=checkbox]{appearance:auto;width:18px;height:18px;accent-color:#111;flex:none;margin:0}
+  .tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff;max-height:64vh}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{position:sticky;top:0;background:#f4f4f5;cursor:pointer;user-select:none}
+  tbody tr:hover{background:#fafafa}
+  .banner{padding:9px 12px;border-radius:8px;background:#fff9c4;border:1px solid #ece29a;font-size:13px;margin-bottom:10px}
+  #status{font-size:13px;color:var(--muted)}
+  dialog{border:1px solid var(--line);border-radius:12px;padding:20px;max-width:460px}
+  dialog h3{margin:0 0 8px}dialog p{margin:0 0 14px}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:6px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="dashnav" id="dashnav"></nav>
+  <h1 id="hdrTitle">Case Look-Up Tool</h1>
+  <div class="sub">Search individual DOJ / U.S. Attorney case records (civil &amp; criminal). Data is public LIONS caseload; no fields beyond what DOJ released.</div>
+
+  <div id="status" class="panel"><span class="spinner"></span>Loading search engine…</div>
+
+  <div class="panel" id="filterPanel" style="display:none">
+    <div class="filters">
+      <div class="fld"><label>District</label><div id="ms_dist"></div></div>
+      <div class="fld"><label>Case type</label><select id="f_type"><option value="">All</option><option>Civil</option><option>Criminal</option></select></div>
+      <div class="fld"><label>Record type</label><select id="f_record"><option value="">All</option><option>Matter</option><option>Case</option></select></div>
+      <div class="fld"><label>Category</label><div id="ms_cat"></div></div>
+      <div class="fld"><label>U.S. role</label><div id="ms_role"></div></div>
+      <div class="fld"><label>Status</label><select id="f_status"><option value="">All</option></select></div>
+      <div class="fld"><label>Court type</label><div id="ms_court"></div></div>
+      <div class="fld"><label>Disposition</label><div id="ms_disp"></div></div>
+    </div>
+    <div class="datebar">
+      <div class="fld basis"><label>Date range applies to</label>
+        <select id="f_basis"><option value="received_date">Received date</option><option value="filed_date">Filed date</option><option value="terminated_date">Terminated date</option></select></div>
+      <div class="fld"><label>From date (year · month · day)</label>
+        <div class="drow"><select id="from_y" class="y"></select><select id="from_m" class="m"></select><select id="from_d" class="d"></select></div></div>
+      <div class="fld"><label>To date (year · month · day)</label>
+        <div class="drow"><select id="to_y" class="y"></select><select id="to_m" class="m"></select><select id="to_d" class="d"></select></div></div>
+    </div>
+    <details class="cols"><summary>Choose columns</summary><div class="colgrid" id="colChooser"></div></details>
+    <div class="actions">
+      <button class="go" id="searchBtn">Search</button>
+      <button class="go secondary" id="csvBtn" disabled>Download CSV</button>
+      <span id="count" class="muted"></span>
+    </div>
+    <div id="filterErr"></div>
+  </div>
+
+  <div id="resultArea" style="display:none">
+    <div class="banner">Showing the first <b>100</b> matching cases. Use <b>Download CSV</b> for the full result. Recent months are still being reported and may be incomplete.</div>
+    <div class="tablewrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
+  </div>
+</div>
+
+<dialog id="capDialog"><h3>Too many rows to download here</h3><p id="capMsg"></p><div style="text-align:right"><button class="go" id="capClose">OK</button></div></dialog>
+
+<!-- shared nav config (same source of truth as the dashboards) -->
+<script src="shared/config.js?v=20260818j"></script>
+<script>
+(function(){ try{ var nav=document.getElementById('dashnav'), CUR='case_lookup.html';
+  if(nav && typeof DASHBOARDS!=='undefined') nav.innerHTML=DASHBOARDS.map(function(d){return '<a href="./'+d.file+'"'+(d.file===CUR?' class="on"':'')+'>'+d.name+'</a>';}).join('');
+}catch(e){} })();
+</script>
+
+<script type="module">
+let duckdb; const BUILD='prod2';
+const ASSET='case-lookup/';
+const SHARDS=[ASSET+'cases_a_m.parquet', ASSET+'cases_n_z.parquet'];
+const SRC="read_parquet(['"+SHARDS.join("','")+"'])";
+const EXPORT_CAP=500000;
+const DATE_COLS=new Set(['received_date','filed_date','terminated_date']);
+
+const COLUMNS=[
+  ['district','District',true],['district_code','District code',false],
+  ['case_id','Case ID',true],['case_name','Case name',false],
+  ['case_type','Case type',true],['record_type','Record type',false],
+  ['category_primary','Category',true],['category_all','All categories',false],['sub_category','Sub-category code',false],
+  ['us_role','U.S. role',true],['received_date','Received',false],['filed_date','Filed',true],['terminated_date','Terminated',true],
+  ['court_type','Court type',false],['disposition','Disposition',true],
+  ['lead_agency','Lead agency',false],['all_agencies','All agencies',false],
+  ['litigating_responsibility','Litigating responsibility',false],['lead_charge','Lead charge (criminal)',false],
+  ['national_priority','National priority',false],['victim_witness','Victim/witness',false],
+  ['drug_related','Drug-related',false],['drug_top_type','Top drug type',false],['collections','Collections',false],
+  ['qui_tam','Qui tam',false],['doj_division','DOJ division',false],['special_project','Special project',false],
+  ['domestic_terrorism','Domestic terrorism',false],['num_defendants','# Defendants',false],['num_charges','# Charges',false],
+  ['status','Status',false],['fiscal_year','Fiscal year',false],
+];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const $=id=>document.getElementById(id);
+let db, conn, sortState={col:null,dir:1}, facets={};
+let msDist, msCat, msRole, msCourt, msDisp;
+function sqlLit(s){ return "'"+String(s).replaceAll("'","''")+"'"; }
+function log(m){ const s=$('status'); s.style.display=''; s.insertAdjacentHTML('beforeend','<div>'+m+'</div>'); }
+window.addEventListener('error', e=> log('⚠️ error: '+(e.message||e.filename||e)));
+window.addEventListener('unhandledrejection', e=> log('⚠️ '+((e.reason&&e.reason.message)||e.reason||e)));
+async function qy(sql){ return (await conn.query(sql)).toArray().map(r=>r.toJSON()); }
+
+class MS{
+  constructor(mount){
+    this.m=mount; this.sel=new Set(); this.opts=[]; this.hier=null;
+    mount.classList.add('ms');
+    mount.innerHTML='<button type="button" class="ms-btn">All</button><div class="ms-panel" hidden><input class="ms-search" placeholder="Filter…"><div class="ms-tools"><a data-a="all">Select all</a><a data-a="clear">Clear</a></div><div class="ms-list"></div></div>';
+    this.btn=mount.querySelector('.ms-btn'); this.panel=mount.querySelector('.ms-panel');
+    this.list=mount.querySelector('.ms-list'); this.search=mount.querySelector('.ms-search');
+    this.btn.onclick=e=>{ e.stopPropagation(); const open=!this.panel.hidden; document.querySelectorAll('.ms-panel').forEach(p=>p.hidden=true); this.panel.hidden=open; if(!open) this.search.focus(); };
+    this.panel.onclick=e=>e.stopPropagation();
+    this.search.oninput=()=>this.render();
+    this.panel.querySelectorAll('[data-a]').forEach(a=>a.onclick=()=>{ if(a.dataset.a==='all') this.opts.forEach(o=>this.sel.add(o)); else this.sel.clear(); this.render(); this.updateBtn(); });
+  }
+  setOptions(arr,{keep=false}={}){ this.hier=null; this.opts=arr; if(!keep) this.sel.clear(); else [...this.sel].forEach(v=>{ if(!arr.includes(v)) this.sel.delete(v); }); this.render(); this.updateBtn(); }
+  setHierarchy(groups){ this.hier=groups; this.opts=groups.flatMap(g=>g.items); this.sel.clear(); this.render(); this.updateBtn(); }
+  render(){ this.hier ? this.renderHier() : this.renderFlat(); }
+  renderFlat(){
+    const f=this.search.value.toLowerCase(); this.list.innerHTML='';
+    this.opts.filter(o=>o.toLowerCase().includes(f)).forEach(o=>this.list.appendChild(this.leaf(o,0)));
+  }
+  renderHier(){
+    const f=this.search.value.toLowerCase(); this.list.innerHTML='';
+    this.hier.forEach(g=>{
+      const items=g.items.filter(o=>o.toLowerCase().includes(f)||g.group.toLowerCase().includes(f));
+      if(!items.length) return;
+      const grow=document.createElement('label'); grow.className='grp';
+      const gcb=document.createElement('input'); gcb.type='checkbox';
+      const all=items.every(o=>this.sel.has(o)), some=items.some(o=>this.sel.has(o));
+      gcb.checked=all; gcb.indeterminate=some&&!all;
+      gcb.onchange=()=>{ if(gcb.checked) items.forEach(o=>this.sel.add(o)); else items.forEach(o=>this.sel.delete(o)); this.render(); this.updateBtn(); };
+      grow.appendChild(gcb); grow.appendChild(document.createTextNode(' '+g.group+' ('+g.items.length+')'));
+      this.list.appendChild(grow);
+      items.forEach(o=>this.list.appendChild(this.leaf(o,24)));
+    });
+  }
+  leaf(o,pad){
+    const lab=document.createElement('label'); if(pad) lab.style.paddingLeft=pad+'px';
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=this.sel.has(o);
+    cb.onchange=()=>{ cb.checked?this.sel.add(o):this.sel.delete(o); this.updateBtn(); if(this.hier) this.render(); };
+    lab.appendChild(cb); lab.appendChild(document.createTextNode(' '+o)); return lab;
+  }
+  updateBtn(){ const n=this.sel.size; this.btn.textContent = n===0?'All' : n===1?[...this.sel][0] : n+' selected'; }
+  values(){ return [...this.sel]; }
+}
+document.addEventListener('click',()=>document.querySelectorAll('.ms-panel').forEach(p=>p.hidden=true));
+
+async function init(){
+  const base=location.href.replace(/[^/]*$/,'');
+  log('Starting…');
+  try{
+    duckdb=await import(base+ASSET+'duckdb-wasm/duckdb-bundled.js?'+BUILD);
+    const worker=new Worker(base+ASSET+'duckdb-wasm/duckdb-browser-eh.worker.js');
+    db=new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
+    log('Loading search engine (~36 MB, first load takes a few seconds)…');
+    await db.instantiate(base+ASSET+'duckdb-wasm/duckdb-eh.wasm');
+    for(const sh of SHARDS){ await db.registerFileURL(sh, new URL(sh, base).href, duckdb.DuckDBDataProtocol.HTTP, false); }
+    conn=await db.connect();
+    facets=await (await fetch(base+ASSET+'facets.json?'+BUILD)).json();
+  }catch(e){ log('❌ FAILED to load: '+(e&&(e.message||e.name||String(e)))); log(String(e&&e.stack||e).slice(0,300)); throw e; }
+
+  // dynamic header: "Case Look-Up Tool - 7.5M cases (from 1994 to 2026)"
+  const m=(facets.nCases/1e6).toFixed(1);
+  $('hdrTitle').textContent=`Case Look-Up Tool — ${m}M cases (from ${facets.yrFrom} to ${facets.yrTo})`;
+
+  msDist=new MS($('ms_dist')); msCat=new MS($('ms_cat')); msRole=new MS($('ms_role')); msCourt=new MS($('ms_court')); msDisp=new MS($('ms_disp'));
+  msDist.setOptions(facets.districts||[]);
+  refreshCategory();
+  msRole.setOptions(facets.roles||[]); msCourt.setOptions(facets.courts||[]); msDisp.setOptions(facets.disps||[]);
+  (facets.statuses||[]).forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; $('f_status').appendChild(o); });
+  buildDatePickers(Math.max(1994, facets.yrFrom||1994), facets.yrTo||2026);
+
+  const cc=$('colChooser');
+  COLUMNS.forEach(([k,lab,def])=> cc.insertAdjacentHTML('beforeend', `<label><input type="checkbox" id="col_${k}" ${def?'checked':''}> ${lab}</label>`));
+  $('f_type').onchange=refreshCategory;
+  $('searchBtn').onclick=runSearch; $('csvBtn').onclick=downloadCSV; $('capClose').onclick=()=>$('capDialog').close();
+  $('status').style.display='none'; $('filterPanel').style.display='';
+}
+
+function refreshCategory(){
+  const t=$('f_type').value;
+  if(t==='Criminal') msCat.setHierarchy(facets.crimHier||[]);
+  else if(t==='Civil') msCat.setOptions(facets.catCivil||[]);
+  else msCat.setOptions(Array.from(new Set([...(facets.catCivil||[]),...(facets.catCriminal||[])])).sort());
+}
+
+const opt=(v,l)=>`<option value="${v}">${l}</option>`;
+function buildDatePickers(minY,maxY){
+  const years=[]; for(let y=maxY;y>=minY;y--) years.push(y);
+  const yOpts='<option value="">Year</option>'+years.map(y=>opt(y,y)).join('');
+  const mOpts='<option value="">Month</option>'+MONTHS.map((m,i)=>opt(String(i+1).padStart(2,'0'),m)).join('');
+  ['from','to'].forEach(p=>{ $(p+'_y').innerHTML=yOpts; $(p+'_m').innerHTML=mOpts; updateDays(p); $(p+'_y').onchange=()=>updateDays(p); $(p+'_m').onchange=()=>updateDays(p); });
+}
+function daysInMonth(y,m){ if(!m) return 31; return new Date(y?Number(y):2000, Number(m), 0).getDate(); }
+function updateDays(p){
+  const y=$(p+'_y').value, m=$(p+'_m').value, prev=$(p+'_d').value; const n=daysInMonth(y,m);
+  $(p+'_d').innerHTML='<option value="">Day</option>'+Array.from({length:n},(_,i)=>opt(String(i+1).padStart(2,'0'),i+1)).join('');
+  if(prev && Number(prev)<=n) $(p+'_d').value=prev;
+}
+function readBound(p,name){
+  const y=$(p+'_y').value, m=$(p+'_m').value, d=$(p+'_d').value;
+  if(!y && !m && !d) return {date:null,dt:null,error:null};
+  if(!y || !m || !d) return {error:'Please fully specify the '+name+' date (year, month, and day).'};
+  const dt=new Date(Number(y),Number(m)-1,Number(d));
+  if(dt.getFullYear()!=Number(y)||dt.getMonth()!=Number(m)-1||dt.getDate()!=Number(d)) return {error:'The '+name+' date is not a real calendar date.'};
+  return {date:`${y}-${m}-${d}`, dt, error:null};
+}
+function inList(col, vals){ return vals.length? col+' IN ('+vals.map(sqlLit).join(',')+')' : null; }
+
+function currentFilter(){
+  const c=[];
+  const dist=inList('district', msDist.values()); if(dist) c.push(dist);
+  const t=$('f_type').value; if(t) c.push('case_type='+sqlLit(t));
+  const rec=$('f_record').value; if(rec) c.push('record_type='+sqlLit(rec));
+  const cats=msCat.values();
+  if(cats.length) c.push('('+cats.map(x=>'(category_primary='+sqlLit(x)+' OR category_all LIKE '+sqlLit('%'+x+'%')+')').join(' OR ')+')');
+  const r=inList('us_role', msRole.values()); if(r) c.push(r);
+  const ct=inList('court_type', msCourt.values()); if(ct) c.push(ct);
+  const dp=inList('disposition', msDisp.values()); if(dp) c.push(dp);
+  const st=$('f_status').value; if(st) c.push('status='+sqlLit(st));
+  const fb=readBound('from','From'), tb=readBound('to','To');
+  if(fb.error) return {error:fb.error};
+  if(tb.error) return {error:tb.error};
+  const today=new Date(); today.setHours(0,0,0,0);
+  if(fb.dt && fb.dt>today) return {error:'The From date cannot be in the future.'};
+  if(tb.dt && tb.dt>today) return {error:'The To date cannot be in the future.'};
+  if(fb.dt && tb.dt && fb.dt>tb.dt) return {error:'The From date must be on or before the To date.'};
+  const basis=$('f_basis').value;
+  if(fb.date) c.push(basis+' >= DATE '+sqlLit(fb.date));
+  if(tb.date) c.push(basis+' <= DATE '+sqlLit(tb.date));
+  return {where: c.length?' WHERE '+c.join(' AND '):''};
+}
+function selectedCols(){ const cs=COLUMNS.filter(([k])=>$('col_'+k).checked).map(([k])=>k); return cs.length?cs:['case_id']; }
+
+async function runSearch(){
+  $('filterErr').textContent='';
+  const f=currentFilter(); if(f.error){ $('filterErr').textContent=f.error; return; }
+  $('searchBtn').disabled=true; $('count').textContent='Searching…';
+  try{
+    const n=Number((await qy("SELECT count(*) n FROM "+SRC+f.where))[0].n);
+    $('count').textContent=n.toLocaleString()+' cases matched'; $('csvBtn').disabled=n===0;
+    const cols=selectedCols();
+    let order=''; if(sortState.col && cols.includes(sortState.col)) order=' ORDER BY '+sortState.col+(sortState.dir<0?' DESC':'');
+    const rows=await qy("SELECT "+cols.join(',')+" FROM "+SRC+f.where+order+" LIMIT 100");
+    renderTable(cols, rows); $('resultArea').style.display=n?'':'none';
+  }catch(e){ $('count').textContent='Error: '+e.message; console.error(e); }
+  $('searchBtn').disabled=false;
+}
+function toDate(v){ if(v instanceof Date) return v; const n=typeof v==='bigint'?Number(v):v; if(typeof n==='number'&&isFinite(n)) return new Date(n); return null; }
+function fmtCell(v,key){
+  if(v==null||v==='') return '';
+  if(DATE_COLS.has(key)){ const d=toDate(v); if(d&&!isNaN(d)){ const p=x=>String(x).padStart(2,'0'); return `${p(d.getUTCMonth()+1)}/${p(d.getUTCDate())}/${d.getUTCFullYear()}`; } }
+  if(typeof v==='bigint') return v.toString();
+  return String(v);
+}
+function renderTable(cols, rows){
+  const labels=Object.fromEntries(COLUMNS.map(([k,l])=>[k,l]));
+  const thead=$('tbl').querySelector('thead'), tbody=$('tbl').querySelector('tbody');
+  thead.innerHTML='<tr>'+cols.map(k=>`<th data-c="${k}">${labels[k]}${sortState.col===k?(sortState.dir<0?' ▼':' ▲'):''}</th>`).join('')+'</tr>';
+  thead.querySelectorAll('th').forEach(th=>th.onclick=()=>{ const c=th.dataset.c; sortState={col:c,dir:sortState.col===c?-sortState.dir:1}; runSearch(); });
+  tbody.innerHTML=rows.map(r=>'<tr>'+cols.map(k=>`<td>${fmtCell(r[k],k)}</td>`).join('')+'</tr>').join('');
+}
+async function downloadCSV(){
+  $('filterErr').textContent='';
+  const f=currentFilter(); if(f.error){ $('filterErr').textContent=f.error; return; }
+  $('csvBtn').disabled=true;
+  try{
+    const n=Number((await qy("SELECT count(*) n FROM "+SRC+f.where))[0].n);
+    if(n>EXPORT_CAP){ $('capMsg').textContent=`Your search matches ${n.toLocaleString()} cases, above the ${EXPORT_CAP.toLocaleString()}-row download limit for this tool. Please narrow your filters, or reach out to Justice Connection for a full file transfer.`; $('capDialog').showModal(); $('csvBtn').disabled=false; return; }
+    const cols=selectedCols();
+    try{ await db.dropFile('export.csv'); }catch(_){}
+    await conn.query("COPY (SELECT "+cols.join(',')+" FROM "+SRC+f.where+") TO 'export.csv' (FORMAT CSV, HEADER)");
+    const buf=await db.copyFileToBuffer('export.csv');
+    const url=URL.createObjectURL(new Blob([buf],{type:'text/csv'}));
+    const a=document.createElement('a'); a.href=url; a.download='case_lookup_export.csv'; a.click(); URL.revokeObjectURL(url);
+  }catch(e){ alert('Export failed: '+e.message); console.error(e); }
+  $('csvBtn').disabled=false;
+}
+init().catch(e=>console.error(e));
+</script>
+</body>
+</html>
