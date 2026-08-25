@@ -16,7 +16,7 @@ ym,category,reason,declined
 1995-12,ALL,Alternative to Federal Prosecution,70
 1996-01,ALL,Alternative to Federal Prosecution,69
 1996-02,ALL,Alternative to Federal Prosecution,72
-1996-03,ALL,Alternative to Federal Prosecution,78
+1996-03,ALL,Alternative to Federal Prosecution,79
 1996-04,ALL,Alternative to Federal Prosecution,93
 1996-05,ALL,Alternative to Federal Prosecution,76
 1996-06,ALL,Alternative to Federal Prosecution,116
@@ -244,7 +244,7 @@ ym,category,reason,declined
 2014-12,ALL,Alternative to Federal Prosecution,93
 2015-01,ALL,Alternative to Federal Prosecution,131
 2015-02,ALL,Alternative to Federal Prosecution,119
-2015-03,ALL,Alternative to Federal Prosecution,196
+2015-03,ALL,Alternative to Federal Prosecution,197
 2015-04,ALL,Alternative to Federal Prosecution,194
 2015-05,ALL,Alternative to Federal Prosecution,83
 2015-06,ALL,Alternative to Federal Prosecution,95
@@ -255,7 +255,7 @@ ym,category,reason,declined
 2015-11,ALL,Alternative to Federal Prosecution,67
 2015-12,ALL,Alternative to Federal Prosecution,69
 2016-01,ALL,Alternative to Federal Prosecution,70
-2016-02,ALL,Alternative to Federal Prosecution,104
+2016-02,ALL,Alternative to Federal Prosecution,105
 2016-03,ALL,Alternative to Federal Prosecution,188
 2016-04,ALL,Alternative to Federal Prosecution,116
 2016-05,ALL,Alternative to Federal Prosecution,56
@@ -279,7 +279,7 @@ ym,category,reason,declined
 2017-11,ALL,Alternative to Federal Prosecution,59
 2017-12,ALL,Alternative to Federal Prosecution,55
 2018-01,ALL,Alternative to Federal Prosecution,77
-2018-02,ALL,Alternative to Federal Prosecution,103
+2018-02,ALL,Alternative to Federal Prosecution,102
 2018-03,ALL,Alternative to Federal Prosecution,220
 2018-04,ALL,Alternative to Federal Prosecution,69
 2018-05,ALL,Alternative to Federal Prosecution,109
@@ -299,7 +299,7 @@ ym,category,reason,declined
 2019-07,ALL,Alternative to Federal Prosecution,127
 2019-08,ALL,Alternative to Federal Prosecution,109
 2019-09,ALL,Alternative to Federal Prosecution,250
-2019-10,ALL,Alternative to Federal Prosecution,141
+2019-10,ALL,Alternative to Federal Prosecution,140
 2019-11,ALL,Alternative to Federal Prosecution,66
 2019-12,ALL,Alternative to Federal Prosecution,73
 2020-01,ALL,Alternative to Federal Prosecution,114
@@ -337,7 +337,7 @@ ym,category,reason,declined
 2022-09,ALL,Alternative to Federal Prosecution,201
 2022-10,ALL,Alternative to Federal Prosecution,117
 2022-11,ALL,Alternative to Federal Prosecution,81
-2022-12,ALL,Alternative to Federal Prosecution,107
+2022-12,ALL,Alternative to Federal Prosecution,108
 2023-01,ALL,Alternative to Federal Prosecution,116
 2023-02,ALL,Alternative to Federal Prosecution,127
 2023-03,ALL,Alternative to Federal Prosecution,217
@@ -349,7 +349,7 @@ ym,category,reason,declined
 2023-09,ALL,Alternative to Federal Prosecution,228
 2023-10,ALL,Alternative to Federal Prosecution,91
 2023-11,ALL,Alternative to Federal Prosecution,76
-2023-12,ALL,Alternative to Federal Prosecution,71
+2023-12,ALL,Alternative to Federal Prosecution,70
 2024-01,ALL,Alternative to Federal Prosecution,87
 2024-02,ALL,Alternative to Federal Prosecution,126
 2024-03,ALL,Alternative to Federal Prosecution,228
@@ -369,23 +369,24 @@ ym,category,reason,declined
 2025-05,ALL,Alternative to Federal Prosecution,84
 2025-06,ALL,Alternative to Federal Prosecution,133
 2025-07,ALL,Alternative to Federal Prosecution,128
-2025-08,ALL,Alternative to Federal Prosecution,145
+2025-08,ALL,Alternative to Federal Prosecution,146
 2025-09,ALL,Alternative to Federal Prosecution,224
 2025-10,ALL,Alternative to Federal Prosecution,80
 2025-11,ALL,Alternative to Federal Prosecution,69
 2025-12,ALL,Alternative to Federal Prosecution,78
-2026-01,ALL,Alternative to Federal Prosecution,99
-2026-02,ALL,Alternative to Federal Prosecution,140
-2026-03,ALL,Alternative to Federal Prosecution,231
-2026-04,ALL,Alternative to Federal Prosecution,101
-2026-05,ALL,Alternative to Federal Prosecution,94
-2026-06,ALL,Alternative to Federal Prosecution,73
+2026-01,ALL,Alternative to Federal Prosecution,100
+2026-02,ALL,Alternative to Federal Prosecution,141
+2026-03,ALL,Alternative to Federal Prosecution,233
+2026-04,ALL,Alternative to Federal Prosecution,103
+2026-05,ALL,Alternative to Federal Prosecution,97
+2026-06,ALL,Alternative to Federal Prosecution,83
+2026-07,ALL,Alternative to Federal Prosecution,101
 1994-10,ALL,Defendant Unavailable,269
 1994-11,ALL,Defendant Unavailable,268
 1994-12,ALL,Defendant Unavailable,251
-1995-01,ALL,Defendant Unavailable,303
+1995-01,ALL,Defendant Unavailable,302
 1995-02,ALL,Defendant Unavailable,309
-1995-03,ALL,Defendant Unavailable,392
+1995-03,ALL,Defendant Unavailable,391
 1995-04,ALL,Defendant Unavailable,307
 1995-05,ALL,Defendant Unavailable,299
 1995-06,ALL,Defendant Unavailable,327
@@ -397,7 +398,7 @@ ym,category,reason,declined
 1995-12,ALL,Defendant Unavailable,221
 1996-01,ALL,Defendant Unavailable,291
 1996-02,ALL,Defendant Unavailable,288
-1996-03,ALL,Defendant Unavailable,333
+1996-03,ALL,Defendant Unavailable,332
 1996-04,ALL,Defendant Unavailable,305
 1996-05,ALL,Defendant Unavailable,359
 1996-06,ALL,Defendant Unavailable,507
@@ -407,8 +408,8 @@ ym,category,reason,declined
 1996-10,ALL,Defendant Unavailable,285
 1996-11,ALL,Defendant Unavailable,235
 1996-12,ALL,Defendant Unavailable,288
-1997-01,ALL,Defendant Unavailable,401
-1997-02,ALL,Defendant Unavailable,235
+1997-01,ALL,Defendant Unavailable,400
+1997-02,ALL,Defendant Unavailable,234
 1997-03,ALL,Defendant Unavailable,264
 1997-04,ALL,Defendant Unavailable,276
 1997-05,ALL,Defendant Unavailable,313
@@ -432,11 +433,11 @@ ym,category,reason,declined
 1998-11,ALL,Defendant Unavailable,215
 1998-12,ALL,Defendant Unavailable,221
 1999-01,ALL,Defendant Unavailable,291
-1999-02,ALL,Defendant Unavailable,254
+1999-02,ALL,Defendant Unavailable,255
 1999-03,ALL,Defendant Unavailable,320
 1999-04,ALL,Defendant Unavailable,304
 1999-05,ALL,Defendant Unavailable,300
-1999-06,ALL,Defendant Unavailable,337
+1999-06,ALL,Defendant Unavailable,336
 1999-07,ALL,Defendant Unavailable,391
 1999-08,ALL,Defendant Unavailable,352
 1999-09,ALL,Defendant Unavailable,272
@@ -467,7 +468,7 @@ ym,category,reason,declined
 2001-10,ALL,Defendant Unavailable,276
 2001-11,ALL,Defendant Unavailable,223
 2001-12,ALL,Defendant Unavailable,261
-2002-01,ALL,Defendant Unavailable,329
+2002-01,ALL,Defendant Unavailable,328
 2002-02,ALL,Defendant Unavailable,280
 2002-03,ALL,Defendant Unavailable,372
 2002-04,ALL,Defendant Unavailable,307
@@ -552,7 +553,7 @@ ym,category,reason,declined
 2008-11,ALL,Defendant Unavailable,175
 2008-12,ALL,Defendant Unavailable,207
 2009-01,ALL,Defendant Unavailable,232
-2009-02,ALL,Defendant Unavailable,291
+2009-02,ALL,Defendant Unavailable,290
 2009-03,ALL,Defendant Unavailable,459
 2009-04,ALL,Defendant Unavailable,316
 2009-05,ALL,Defendant Unavailable,229
@@ -561,7 +562,7 @@ ym,category,reason,declined
 2009-08,ALL,Defendant Unavailable,307
 2009-09,ALL,Defendant Unavailable,513
 2009-10,ALL,Defendant Unavailable,255
-2009-11,ALL,Defendant Unavailable,197
+2009-11,ALL,Defendant Unavailable,198
 2009-12,ALL,Defendant Unavailable,210
 2010-01,ALL,Defendant Unavailable,231
 2010-02,ALL,Defendant Unavailable,269
@@ -578,12 +579,12 @@ ym,category,reason,declined
 2011-01,ALL,Defendant Unavailable,269
 2011-02,ALL,Defendant Unavailable,293
 2011-03,ALL,Defendant Unavailable,594
-2011-04,ALL,Defendant Unavailable,282
+2011-04,ALL,Defendant Unavailable,281
 2011-05,ALL,Defendant Unavailable,208
 2011-06,ALL,Defendant Unavailable,237
 2011-07,ALL,Defendant Unavailable,209
 2011-08,ALL,Defendant Unavailable,312
-2011-09,ALL,Defendant Unavailable,442
+2011-09,ALL,Defendant Unavailable,439
 2011-10,ALL,Defendant Unavailable,232
 2011-11,ALL,Defendant Unavailable,195
 2011-12,ALL,Defendant Unavailable,182
@@ -669,7 +670,7 @@ ym,category,reason,declined
 2018-08,ALL,Defendant Unavailable,25
 2018-09,ALL,Defendant Unavailable,52
 2018-10,ALL,Defendant Unavailable,42
-2018-11,ALL,Defendant Unavailable,24
+2018-11,ALL,Defendant Unavailable,25
 2018-12,ALL,Defendant Unavailable,23
 2019-01,ALL,Defendant Unavailable,19
 2019-02,ALL,Defendant Unavailable,37
@@ -689,7 +690,7 @@ ym,category,reason,declined
 2020-04,ALL,Defendant Unavailable,27
 2020-05,ALL,Defendant Unavailable,13
 2020-06,ALL,Defendant Unavailable,26
-2020-07,ALL,Defendant Unavailable,22
+2020-07,ALL,Defendant Unavailable,21
 2020-08,ALL,Defendant Unavailable,20
 2020-09,ALL,Defendant Unavailable,67
 2020-10,ALL,Defendant Unavailable,21
@@ -721,10 +722,10 @@ ym,category,reason,declined
 2022-12,ALL,Defendant Unavailable,28
 2023-01,ALL,Defendant Unavailable,28
 2023-02,ALL,Defendant Unavailable,52
-2023-03,ALL,Defendant Unavailable,70
+2023-03,ALL,Defendant Unavailable,71
 2023-04,ALL,Defendant Unavailable,34
 2023-05,ALL,Defendant Unavailable,29
-2023-06,ALL,Defendant Unavailable,24
+2023-06,ALL,Defendant Unavailable,25
 2023-07,ALL,Defendant Unavailable,21
 2023-08,ALL,Defendant Unavailable,46
 2023-09,ALL,Defendant Unavailable,66
@@ -743,7 +744,7 @@ ym,category,reason,declined
 2024-10,ALL,Defendant Unavailable,30
 2024-11,ALL,Defendant Unavailable,15
 2024-12,ALL,Defendant Unavailable,32
-2025-01,ALL,Defendant Unavailable,41
+2025-01,ALL,Defendant Unavailable,40
 2025-02,ALL,Defendant Unavailable,137
 2025-03,ALL,Defendant Unavailable,69
 2025-04,ALL,Defendant Unavailable,35
@@ -755,20 +756,21 @@ ym,category,reason,declined
 2025-10,ALL,Defendant Unavailable,27
 2025-11,ALL,Defendant Unavailable,28
 2025-12,ALL,Defendant Unavailable,21
-2026-01,ALL,Defendant Unavailable,29
-2026-02,ALL,Defendant Unavailable,34
+2026-01,ALL,Defendant Unavailable,30
+2026-02,ALL,Defendant Unavailable,38
 2026-03,ALL,Defendant Unavailable,76
-2026-04,ALL,Defendant Unavailable,29
-2026-05,ALL,Defendant Unavailable,32
-2026-06,ALL,Defendant Unavailable,26
+2026-04,ALL,Defendant Unavailable,30
+2026-05,ALL,Defendant Unavailable,33
+2026-06,ALL,Defendant Unavailable,33
+2026-07,ALL,Defendant Unavailable,40
 1994-10,ALL,Insufficient Evidence,709
 1994-11,ALL,Insufficient Evidence,624
 1994-12,ALL,Insufficient Evidence,642
 1995-01,ALL,Insufficient Evidence,833
 1995-02,ALL,Insufficient Evidence,784
-1995-03,ALL,Insufficient Evidence,969
+1995-03,ALL,Insufficient Evidence,970
 1995-04,ALL,Insufficient Evidence,755
-1995-05,ALL,Insufficient Evidence,753
+1995-05,ALL,Insufficient Evidence,752
 1995-06,ALL,Insufficient Evidence,862
 1995-07,ALL,Insufficient Evidence,751
 1995-08,ALL,Insufficient Evidence,846
@@ -778,8 +780,8 @@ ym,category,reason,declined
 1995-12,ALL,Insufficient Evidence,686
 1996-01,ALL,Insufficient Evidence,738
 1996-02,ALL,Insufficient Evidence,707
-1996-03,ALL,Insufficient Evidence,815
-1996-04,ALL,Insufficient Evidence,876
+1996-03,ALL,Insufficient Evidence,814
+1996-04,ALL,Insufficient Evidence,877
 1996-05,ALL,Insufficient Evidence,852
 1996-06,ALL,Insufficient Evidence,1452
 1996-07,ALL,Insufficient Evidence,798
@@ -813,7 +815,7 @@ ym,category,reason,declined
 1998-11,ALL,Insufficient Evidence,569
 1998-12,ALL,Insufficient Evidence,553
 1999-01,ALL,Insufficient Evidence,806
-1999-02,ALL,Insufficient Evidence,724
+1999-02,ALL,Insufficient Evidence,723
 1999-03,ALL,Insufficient Evidence,858
 1999-04,ALL,Insufficient Evidence,825
 1999-05,ALL,Insufficient Evidence,737
@@ -821,10 +823,10 @@ ym,category,reason,declined
 1999-07,ALL,Insufficient Evidence,956
 1999-08,ALL,Insufficient Evidence,899
 1999-09,ALL,Insufficient Evidence,661
-1999-10,ALL,Insufficient Evidence,639
+1999-10,ALL,Insufficient Evidence,640
 1999-11,ALL,Insufficient Evidence,606
 1999-12,ALL,Insufficient Evidence,649
-2000-01,ALL,Insufficient Evidence,649
+2000-01,ALL,Insufficient Evidence,648
 2000-02,ALL,Insufficient Evidence,780
 2000-03,ALL,Insufficient Evidence,1502
 2000-04,ALL,Insufficient Evidence,737
@@ -838,11 +840,11 @@ ym,category,reason,declined
 2000-12,ALL,Insufficient Evidence,639
 2001-01,ALL,Insufficient Evidence,930
 2001-02,ALL,Insufficient Evidence,739
-2001-03,ALL,Insufficient Evidence,1196
+2001-03,ALL,Insufficient Evidence,1197
 2001-04,ALL,Insufficient Evidence,913
 2001-05,ALL,Insufficient Evidence,675
 2001-06,ALL,Insufficient Evidence,737
-2001-07,ALL,Insufficient Evidence,733
+2001-07,ALL,Insufficient Evidence,734
 2001-08,ALL,Insufficient Evidence,889
 2001-09,ALL,Insufficient Evidence,719
 2001-10,ALL,Insufficient Evidence,1061
@@ -889,7 +891,7 @@ ym,category,reason,declined
 2005-03,ALL,Insufficient Evidence,1268
 2005-04,ALL,Insufficient Evidence,711
 2005-05,ALL,Insufficient Evidence,625
-2005-06,ALL,Insufficient Evidence,780
+2005-06,ALL,Insufficient Evidence,781
 2005-07,ALL,Insufficient Evidence,611
 2005-08,ALL,Insufficient Evidence,841
 2005-09,ALL,Insufficient Evidence,1273
@@ -917,7 +919,7 @@ ym,category,reason,declined
 2007-07,ALL,Insufficient Evidence,760
 2007-08,ALL,Insufficient Evidence,727
 2007-09,ALL,Insufficient Evidence,1169
-2007-10,ALL,Insufficient Evidence,819
+2007-10,ALL,Insufficient Evidence,818
 2007-11,ALL,Insufficient Evidence,503
 2007-12,ALL,Insufficient Evidence,476
 2008-01,ALL,Insufficient Evidence,863
@@ -969,14 +971,14 @@ ym,category,reason,declined
 2011-11,ALL,Insufficient Evidence,579
 2011-12,ALL,Insufficient Evidence,569
 2012-01,ALL,Insufficient Evidence,817
-2012-02,ALL,Insufficient Evidence,780
+2012-02,ALL,Insufficient Evidence,781
 2012-03,ALL,Insufficient Evidence,1708
 2012-04,ALL,Insufficient Evidence,773
 2012-05,ALL,Insufficient Evidence,695
 2012-06,ALL,Insufficient Evidence,633
 2012-07,ALL,Insufficient Evidence,695
 2012-08,ALL,Insufficient Evidence,789
-2012-09,ALL,Insufficient Evidence,1181
+2012-09,ALL,Insufficient Evidence,1182
 2012-10,ALL,Insufficient Evidence,864
 2012-11,ALL,Insufficient Evidence,603
 2012-12,ALL,Insufficient Evidence,591
@@ -995,12 +997,12 @@ ym,category,reason,declined
 2014-01,ALL,Insufficient Evidence,689
 2014-02,ALL,Insufficient Evidence,737
 2014-03,ALL,Insufficient Evidence,1913
-2014-04,ALL,Insufficient Evidence,917
-2014-05,ALL,Insufficient Evidence,910
+2014-04,ALL,Insufficient Evidence,918
+2014-05,ALL,Insufficient Evidence,911
 2014-06,ALL,Insufficient Evidence,858
 2014-07,ALL,Insufficient Evidence,964
-2014-08,ALL,Insufficient Evidence,966
-2014-09,ALL,Insufficient Evidence,1944
+2014-08,ALL,Insufficient Evidence,965
+2014-09,ALL,Insufficient Evidence,1945
 2014-10,ALL,Insufficient Evidence,955
 2014-11,ALL,Insufficient Evidence,695
 2014-12,ALL,Insufficient Evidence,756
@@ -1016,10 +1018,10 @@ ym,category,reason,declined
 2015-10,ALL,Insufficient Evidence,1491
 2015-11,ALL,Insufficient Evidence,699
 2015-12,ALL,Insufficient Evidence,620
-2016-01,ALL,Insufficient Evidence,698
+2016-01,ALL,Insufficient Evidence,699
 2016-02,ALL,Insufficient Evidence,893
-2016-03,ALL,Insufficient Evidence,2020
-2016-04,ALL,Insufficient Evidence,750
+2016-03,ALL,Insufficient Evidence,2021
+2016-04,ALL,Insufficient Evidence,751
 2016-05,ALL,Insufficient Evidence,674
 2016-06,ALL,Insufficient Evidence,758
 2016-07,ALL,Insufficient Evidence,680
@@ -1028,7 +1030,7 @@ ym,category,reason,declined
 2016-10,ALL,Insufficient Evidence,739
 2016-11,ALL,Insufficient Evidence,618
 2016-12,ALL,Insufficient Evidence,852
-2017-01,ALL,Insufficient Evidence,774
+2017-01,ALL,Insufficient Evidence,775
 2017-02,ALL,Insufficient Evidence,873
 2017-03,ALL,Insufficient Evidence,1713
 2017-04,ALL,Insufficient Evidence,878
@@ -1046,7 +1048,7 @@ ym,category,reason,declined
 2018-04,ALL,Insufficient Evidence,811
 2018-05,ALL,Insufficient Evidence,817
 2018-06,ALL,Insufficient Evidence,864
-2018-07,ALL,Insufficient Evidence,921
+2018-07,ALL,Insufficient Evidence,923
 2018-08,ALL,Insufficient Evidence,1082
 2018-09,ALL,Insufficient Evidence,2038
 2018-10,ALL,Insufficient Evidence,978
@@ -1062,9 +1064,9 @@ ym,category,reason,declined
 2019-08,ALL,Insufficient Evidence,1014
 2019-09,ALL,Insufficient Evidence,3522
 2019-10,ALL,Insufficient Evidence,1072
-2019-11,ALL,Insufficient Evidence,649
+2019-11,ALL,Insufficient Evidence,650
 2019-12,ALL,Insufficient Evidence,787
-2020-01,ALL,Insufficient Evidence,851
+2020-01,ALL,Insufficient Evidence,852
 2020-02,ALL,Insufficient Evidence,1068
 2020-03,ALL,Insufficient Evidence,1415
 2020-04,ALL,Insufficient Evidence,720
@@ -1082,66 +1084,67 @@ ym,category,reason,declined
 2021-04,ALL,Insufficient Evidence,838
 2021-05,ALL,Insufficient Evidence,723
 2021-06,ALL,Insufficient Evidence,682
-2021-07,ALL,Insufficient Evidence,981
+2021-07,ALL,Insufficient Evidence,982
 2021-08,ALL,Insufficient Evidence,1288
 2021-09,ALL,Insufficient Evidence,2313
 2021-10,ALL,Insufficient Evidence,864
 2021-11,ALL,Insufficient Evidence,660
 2021-12,ALL,Insufficient Evidence,634
 2022-01,ALL,Insufficient Evidence,825
-2022-02,ALL,Insufficient Evidence,1379
-2022-03,ALL,Insufficient Evidence,2365
-2022-04,ALL,Insufficient Evidence,884
+2022-02,ALL,Insufficient Evidence,1380
+2022-03,ALL,Insufficient Evidence,2366
+2022-04,ALL,Insufficient Evidence,885
 2022-05,ALL,Insufficient Evidence,811
-2022-06,ALL,Insufficient Evidence,930
+2022-06,ALL,Insufficient Evidence,931
 2022-07,ALL,Insufficient Evidence,892
 2022-08,ALL,Insufficient Evidence,1236
 2022-09,ALL,Insufficient Evidence,2555
-2022-10,ALL,Insufficient Evidence,811
-2022-11,ALL,Insufficient Evidence,733
-2022-12,ALL,Insufficient Evidence,853
+2022-10,ALL,Insufficient Evidence,812
+2022-11,ALL,Insufficient Evidence,734
+2022-12,ALL,Insufficient Evidence,854
 2023-01,ALL,Insufficient Evidence,898
 2023-02,ALL,Insufficient Evidence,1113
 2023-03,ALL,Insufficient Evidence,2377
 2023-04,ALL,Insufficient Evidence,845
 2023-05,ALL,Insufficient Evidence,874
-2023-06,ALL,Insufficient Evidence,845
+2023-06,ALL,Insufficient Evidence,846
 2023-07,ALL,Insufficient Evidence,815
 2023-08,ALL,Insufficient Evidence,1111
 2023-09,ALL,Insufficient Evidence,2518
 2023-10,ALL,Insufficient Evidence,876
 2023-11,ALL,Insufficient Evidence,561
-2023-12,ALL,Insufficient Evidence,672
-2024-01,ALL,Insufficient Evidence,850
+2023-12,ALL,Insufficient Evidence,673
+2024-01,ALL,Insufficient Evidence,851
 2024-02,ALL,Insufficient Evidence,1266
 2024-03,ALL,Insufficient Evidence,2164
-2024-04,ALL,Insufficient Evidence,981
+2024-04,ALL,Insufficient Evidence,983
 2024-05,ALL,Insufficient Evidence,911
-2024-06,ALL,Insufficient Evidence,743
+2024-06,ALL,Insufficient Evidence,746
 2024-07,ALL,Insufficient Evidence,998
 2024-08,ALL,Insufficient Evidence,1204
-2024-09,ALL,Insufficient Evidence,2390
+2024-09,ALL,Insufficient Evidence,2392
 2024-10,ALL,Insufficient Evidence,976
 2024-11,ALL,Insufficient Evidence,539
-2024-12,ALL,Insufficient Evidence,645
-2025-01,ALL,Insufficient Evidence,842
+2024-12,ALL,Insufficient Evidence,647
+2025-01,ALL,Insufficient Evidence,843
 2025-02,ALL,Insufficient Evidence,5701
-2025-03,ALL,Insufficient Evidence,2106
-2025-04,ALL,Insufficient Evidence,862
-2025-05,ALL,Insufficient Evidence,735
+2025-03,ALL,Insufficient Evidence,2109
+2025-04,ALL,Insufficient Evidence,864
+2025-05,ALL,Insufficient Evidence,739
 2025-06,ALL,Insufficient Evidence,759
-2025-07,ALL,Insufficient Evidence,868
-2025-08,ALL,Insufficient Evidence,1025
-2025-09,ALL,Insufficient Evidence,2117
-2025-10,ALL,Insufficient Evidence,837
-2025-11,ALL,Insufficient Evidence,616
-2025-12,ALL,Insufficient Evidence,700
-2026-01,ALL,Insufficient Evidence,731
-2026-02,ALL,Insufficient Evidence,970
-2026-03,ALL,Insufficient Evidence,2110
-2026-04,ALL,Insufficient Evidence,920
-2026-05,ALL,Insufficient Evidence,703
-2026-06,ALL,Insufficient Evidence,544
+2025-07,ALL,Insufficient Evidence,870
+2025-08,ALL,Insufficient Evidence,1024
+2025-09,ALL,Insufficient Evidence,2123
+2025-10,ALL,Insufficient Evidence,841
+2025-11,ALL,Insufficient Evidence,615
+2025-12,ALL,Insufficient Evidence,708
+2026-01,ALL,Insufficient Evidence,733
+2026-02,ALL,Insufficient Evidence,980
+2026-03,ALL,Insufficient Evidence,2120
+2026-04,ALL,Insufficient Evidence,936
+2026-05,ALL,Insufficient Evidence,758
+2026-06,ALL,Insufficient Evidence,637
+2026-07,ALL,Insufficient Evidence,1098
 1994-10,ALL,Legally Barred,32
 1994-11,ALL,Legally Barred,169
 1994-12,ALL,Legally Barred,23
@@ -1518,11 +1521,12 @@ ym,category,reason,declined
 2025-11,ALL,Legally Barred,18
 2025-12,ALL,Legally Barred,19
 2026-01,ALL,Legally Barred,20
-2026-02,ALL,Legally Barred,27
+2026-02,ALL,Legally Barred,29
 2026-03,ALL,Legally Barred,44
 2026-04,ALL,Legally Barred,20
-2026-05,ALL,Legally Barred,13
-2026-06,ALL,Legally Barred,12
+2026-05,ALL,Legally Barred,18
+2026-06,ALL,Legally Barred,20
+2026-07,ALL,Legally Barred,18
 1994-10,ALL,Matter Referred to Other Jurisdiction,303
 1994-11,ALL,Matter Referred to Other Jurisdiction,57
 1994-12,ALL,Matter Referred to Other Jurisdiction,39
@@ -1540,7 +1544,7 @@ ym,category,reason,declined
 1995-12,ALL,Matter Referred to Other Jurisdiction,45
 1996-01,ALL,Matter Referred to Other Jurisdiction,43
 1996-02,ALL,Matter Referred to Other Jurisdiction,36
-1996-03,ALL,Matter Referred to Other Jurisdiction,59
+1996-03,ALL,Matter Referred to Other Jurisdiction,60
 1996-04,ALL,Matter Referred to Other Jurisdiction,51
 1996-05,ALL,Matter Referred to Other Jurisdiction,31
 1996-06,ALL,Matter Referred to Other Jurisdiction,72
@@ -1550,7 +1554,7 @@ ym,category,reason,declined
 1996-10,ALL,Matter Referred to Other Jurisdiction,38
 1996-11,ALL,Matter Referred to Other Jurisdiction,39
 1996-12,ALL,Matter Referred to Other Jurisdiction,31
-1997-01,ALL,Matter Referred to Other Jurisdiction,112
+1997-01,ALL,Matter Referred to Other Jurisdiction,113
 1997-02,ALL,Matter Referred to Other Jurisdiction,54
 1997-03,ALL,Matter Referred to Other Jurisdiction,59
 1997-04,ALL,Matter Referred to Other Jurisdiction,53
@@ -1579,14 +1583,14 @@ ym,category,reason,declined
 1999-03,ALL,Matter Referred to Other Jurisdiction,320
 1999-04,ALL,Matter Referred to Other Jurisdiction,49
 1999-05,ALL,Matter Referred to Other Jurisdiction,45
-1999-06,ALL,Matter Referred to Other Jurisdiction,63
+1999-06,ALL,Matter Referred to Other Jurisdiction,64
 1999-07,ALL,Matter Referred to Other Jurisdiction,78
 1999-08,ALL,Matter Referred to Other Jurisdiction,142
 1999-09,ALL,Matter Referred to Other Jurisdiction,48
 1999-10,ALL,Matter Referred to Other Jurisdiction,84
 1999-11,ALL,Matter Referred to Other Jurisdiction,50
 1999-12,ALL,Matter Referred to Other Jurisdiction,50
-2000-01,ALL,Matter Referred to Other Jurisdiction,87
+2000-01,ALL,Matter Referred to Other Jurisdiction,88
 2000-02,ALL,Matter Referred to Other Jurisdiction,94
 2000-03,ALL,Matter Referred to Other Jurisdiction,118
 2000-04,ALL,Matter Referred to Other Jurisdiction,91
@@ -1658,7 +1662,7 @@ ym,category,reason,declined
 2005-10,ALL,Matter Referred to Other Jurisdiction,39
 2005-11,ALL,Matter Referred to Other Jurisdiction,29
 2005-12,ALL,Matter Referred to Other Jurisdiction,25
-2006-01,ALL,Matter Referred to Other Jurisdiction,61
+2006-01,ALL,Matter Referred to Other Jurisdiction,60
 2006-02,ALL,Matter Referred to Other Jurisdiction,48
 2006-03,ALL,Matter Referred to Other Jurisdiction,144
 2006-04,ALL,Matter Referred to Other Jurisdiction,28
@@ -1704,7 +1708,7 @@ ym,category,reason,declined
 2009-08,ALL,Matter Referred to Other Jurisdiction,54
 2009-09,ALL,Matter Referred to Other Jurisdiction,75
 2009-10,ALL,Matter Referred to Other Jurisdiction,28
-2009-11,ALL,Matter Referred to Other Jurisdiction,23
+2009-11,ALL,Matter Referred to Other Jurisdiction,22
 2009-12,ALL,Matter Referred to Other Jurisdiction,42
 2010-01,ALL,Matter Referred to Other Jurisdiction,32
 2010-02,ALL,Matter Referred to Other Jurisdiction,26
@@ -1752,16 +1756,16 @@ ym,category,reason,declined
 2013-08,ALL,Matter Referred to Other Jurisdiction,97
 2013-09,ALL,Matter Referred to Other Jurisdiction,127
 2013-10,ALL,Matter Referred to Other Jurisdiction,193
-2013-11,ALL,Matter Referred to Other Jurisdiction,142
+2013-11,ALL,Matter Referred to Other Jurisdiction,143
 2013-12,ALL,Matter Referred to Other Jurisdiction,162
 2014-01,ALL,Matter Referred to Other Jurisdiction,198
 2014-02,ALL,Matter Referred to Other Jurisdiction,180
 2014-03,ALL,Matter Referred to Other Jurisdiction,331
 2014-04,ALL,Matter Referred to Other Jurisdiction,177
-2014-05,ALL,Matter Referred to Other Jurisdiction,176
+2014-05,ALL,Matter Referred to Other Jurisdiction,175
 2014-06,ALL,Matter Referred to Other Jurisdiction,177
 2014-07,ALL,Matter Referred to Other Jurisdiction,172
-2014-08,ALL,Matter Referred to Other Jurisdiction,220
+2014-08,ALL,Matter Referred to Other Jurisdiction,221
 2014-09,ALL,Matter Referred to Other Jurisdiction,305
 2014-10,ALL,Matter Referred to Other Jurisdiction,175
 2014-11,ALL,Matter Referred to Other Jurisdiction,122
@@ -1803,7 +1807,7 @@ ym,category,reason,declined
 2017-11,ALL,Matter Referred to Other Jurisdiction,89
 2017-12,ALL,Matter Referred to Other Jurisdiction,113
 2018-01,ALL,Matter Referred to Other Jurisdiction,162
-2018-02,ALL,Matter Referred to Other Jurisdiction,141
+2018-02,ALL,Matter Referred to Other Jurisdiction,142
 2018-03,ALL,Matter Referred to Other Jurisdiction,289
 2018-04,ALL,Matter Referred to Other Jurisdiction,125
 2018-05,ALL,Matter Referred to Other Jurisdiction,131
@@ -1823,7 +1827,7 @@ ym,category,reason,declined
 2019-07,ALL,Matter Referred to Other Jurisdiction,145
 2019-08,ALL,Matter Referred to Other Jurisdiction,154
 2019-09,ALL,Matter Referred to Other Jurisdiction,363
-2019-10,ALL,Matter Referred to Other Jurisdiction,174
+2019-10,ALL,Matter Referred to Other Jurisdiction,175
 2019-11,ALL,Matter Referred to Other Jurisdiction,113
 2019-12,ALL,Matter Referred to Other Jurisdiction,112
 2020-01,ALL,Matter Referred to Other Jurisdiction,134
@@ -1835,7 +1839,7 @@ ym,category,reason,declined
 2020-07,ALL,Matter Referred to Other Jurisdiction,103
 2020-08,ALL,Matter Referred to Other Jurisdiction,128
 2020-09,ALL,Matter Referred to Other Jurisdiction,274
-2020-10,ALL,Matter Referred to Other Jurisdiction,121
+2020-10,ALL,Matter Referred to Other Jurisdiction,120
 2020-11,ALL,Matter Referred to Other Jurisdiction,119
 2020-12,ALL,Matter Referred to Other Jurisdiction,113
 2021-01,ALL,Matter Referred to Other Jurisdiction,122
@@ -1876,14 +1880,14 @@ ym,category,reason,declined
 2023-12,ALL,Matter Referred to Other Jurisdiction,101
 2024-01,ALL,Matter Referred to Other Jurisdiction,164
 2024-02,ALL,Matter Referred to Other Jurisdiction,215
-2024-03,ALL,Matter Referred to Other Jurisdiction,347
+2024-03,ALL,Matter Referred to Other Jurisdiction,348
 2024-04,ALL,Matter Referred to Other Jurisdiction,186
 2024-05,ALL,Matter Referred to Other Jurisdiction,167
 2024-06,ALL,Matter Referred to Other Jurisdiction,135
 2024-07,ALL,Matter Referred to Other Jurisdiction,167
 2024-08,ALL,Matter Referred to Other Jurisdiction,254
-2024-09,ALL,Matter Referred to Other Jurisdiction,312
-2024-10,ALL,Matter Referred to Other Jurisdiction,154
+2024-09,ALL,Matter Referred to Other Jurisdiction,313
+2024-10,ALL,Matter Referred to Other Jurisdiction,153
 2024-11,ALL,Matter Referred to Other Jurisdiction,77
 2024-12,ALL,Matter Referred to Other Jurisdiction,118
 2025-01,ALL,Matter Referred to Other Jurisdiction,156
@@ -1893,17 +1897,18 @@ ym,category,reason,declined
 2025-05,ALL,Matter Referred to Other Jurisdiction,153
 2025-06,ALL,Matter Referred to Other Jurisdiction,163
 2025-07,ALL,Matter Referred to Other Jurisdiction,197
-2025-08,ALL,Matter Referred to Other Jurisdiction,177
+2025-08,ALL,Matter Referred to Other Jurisdiction,178
 2025-09,ALL,Matter Referred to Other Jurisdiction,327
-2025-10,ALL,Matter Referred to Other Jurisdiction,142
-2025-11,ALL,Matter Referred to Other Jurisdiction,101
+2025-10,ALL,Matter Referred to Other Jurisdiction,143
+2025-11,ALL,Matter Referred to Other Jurisdiction,100
 2025-12,ALL,Matter Referred to Other Jurisdiction,127
-2026-01,ALL,Matter Referred to Other Jurisdiction,131
+2026-01,ALL,Matter Referred to Other Jurisdiction,133
 2026-02,ALL,Matter Referred to Other Jurisdiction,161
 2026-03,ALL,Matter Referred to Other Jurisdiction,329
-2026-04,ALL,Matter Referred to Other Jurisdiction,150
-2026-05,ALL,Matter Referred to Other Jurisdiction,127
-2026-06,ALL,Matter Referred to Other Jurisdiction,93
+2026-04,ALL,Matter Referred to Other Jurisdiction,155
+2026-05,ALL,Matter Referred to Other Jurisdiction,133
+2026-06,ALL,Matter Referred to Other Jurisdiction,109
+2026-07,ALL,Matter Referred to Other Jurisdiction,152
 1994-10,ALL,Non-Prosecution Agreement,102
 1994-11,ALL,Non-Prosecution Agreement,95
 1994-12,ALL,Non-Prosecution Agreement,109
@@ -2048,7 +2053,7 @@ ym,category,reason,declined
 2006-07,ALL,Non-Prosecution Agreement,164
 2006-08,ALL,Non-Prosecution Agreement,155
 2006-09,ALL,Non-Prosecution Agreement,194
-2006-10,ALL,Non-Prosecution Agreement,174
+2006-10,ALL,Non-Prosecution Agreement,173
 2006-11,ALL,Non-Prosecution Agreement,138
 2006-12,ALL,Non-Prosecution Agreement,157
 2007-01,ALL,Non-Prosecution Agreement,198
@@ -2076,7 +2081,7 @@ ym,category,reason,declined
 2008-11,ALL,Non-Prosecution Agreement,126
 2008-12,ALL,Non-Prosecution Agreement,186
 2009-01,ALL,Non-Prosecution Agreement,135
-2009-02,ALL,Non-Prosecution Agreement,310
+2009-02,ALL,Non-Prosecution Agreement,311
 2009-03,ALL,Non-Prosecution Agreement,383
 2009-04,ALL,Non-Prosecution Agreement,218
 2009-05,ALL,Non-Prosecution Agreement,196
@@ -2113,7 +2118,7 @@ ym,category,reason,declined
 2011-12,ALL,Non-Prosecution Agreement,150
 2012-01,ALL,Non-Prosecution Agreement,239
 2012-02,ALL,Non-Prosecution Agreement,300
-2012-03,ALL,Non-Prosecution Agreement,457
+2012-03,ALL,Non-Prosecution Agreement,456
 2012-04,ALL,Non-Prosecution Agreement,402
 2012-05,ALL,Non-Prosecution Agreement,291
 2012-06,ALL,Non-Prosecution Agreement,243
@@ -2155,14 +2160,15 @@ ym,category,reason,declined
 2026-01,ALL,Non-Prosecution Agreement,1
 2026-03,ALL,Non-Prosecution Agreement,7
 2026-04,ALL,Non-Prosecution Agreement,2
+2026-07,ALL,Non-Prosecution Agreement,1
 1994-10,ALL,Other,255
 1994-11,ALL,Other,312
 1994-12,ALL,Other,274
-1995-01,ALL,Other,284
+1995-01,ALL,Other,285
 1995-02,ALL,Other,389
 1995-03,ALL,Other,419
 1995-04,ALL,Other,265
-1995-05,ALL,Other,219
+1995-05,ALL,Other,220
 1995-06,ALL,Other,341
 1995-07,ALL,Other,285
 1995-08,ALL,Other,399
@@ -2170,10 +2176,10 @@ ym,category,reason,declined
 1995-10,ALL,Other,228
 1995-11,ALL,Other,204
 1995-12,ALL,Other,235
-1996-01,ALL,Other,249
+1996-01,ALL,Other,250
 1996-02,ALL,Other,264
 1996-03,ALL,Other,388
-1996-04,ALL,Other,326
+1996-04,ALL,Other,325
 1996-05,ALL,Other,272
 1996-06,ALL,Other,457
 1996-07,ALL,Other,259
@@ -2183,7 +2189,7 @@ ym,category,reason,declined
 1996-11,ALL,Other,216
 1996-12,ALL,Other,257
 1997-01,ALL,Other,329
-1997-02,ALL,Other,262
+1997-02,ALL,Other,263
 1997-03,ALL,Other,217
 1997-04,ALL,Other,256
 1997-05,ALL,Other,289
@@ -2283,7 +2289,7 @@ ym,category,reason,declined
 2005-03,ALL,Other,196
 2005-04,ALL,Other,123
 2005-05,ALL,Other,127
-2005-06,ALL,Other,152
+2005-06,ALL,Other,151
 2005-07,ALL,Other,136
 2005-08,ALL,Other,144
 2005-09,ALL,Other,213
@@ -2358,19 +2364,19 @@ ym,category,reason,declined
 2011-06,ALL,Other,86
 2011-07,ALL,Other,92
 2011-08,ALL,Other,104
-2011-09,ALL,Other,162
+2011-09,ALL,Other,165
 2011-10,ALL,Other,101
 2011-11,ALL,Other,122
 2011-12,ALL,Other,108
 2012-01,ALL,Other,252
 2012-02,ALL,Other,270
-2012-03,ALL,Other,529
+2012-03,ALL,Other,530
 2012-04,ALL,Other,269
 2012-05,ALL,Other,257
 2012-06,ALL,Other,239
 2012-07,ALL,Other,284
 2012-08,ALL,Other,260
-2012-09,ALL,Other,418
+2012-09,ALL,Other,417
 2012-10,ALL,Other,237
 2012-11,ALL,Other,207
 2012-12,ALL,Other,190
@@ -2384,7 +2390,7 @@ ym,category,reason,declined
 2013-08,ALL,Other,219
 2013-09,ALL,Other,327
 2013-10,ALL,Other,16
-2013-11,ALL,Other,22
+2013-11,ALL,Other,21
 2013-12,ALL,Other,18
 2014-01,ALL,Other,24
 2014-02,ALL,Other,24
@@ -2501,7 +2507,7 @@ ym,category,reason,declined
 2023-05,ALL,Other,28
 2023-06,ALL,Other,11
 2023-07,ALL,Other,11
-2023-08,ALL,Other,20
+2023-08,ALL,Other,21
 2023-09,ALL,Other,40
 2023-10,ALL,Other,11
 2023-11,ALL,Other,12
@@ -2514,7 +2520,7 @@ ym,category,reason,declined
 2024-06,ALL,Other,12
 2024-07,ALL,Other,23
 2024-08,ALL,Other,26
-2024-09,ALL,Other,24
+2024-09,ALL,Other,25
 2024-10,ALL,Other,9
 2024-11,ALL,Other,11
 2024-12,ALL,Other,12
@@ -2534,54 +2540,55 @@ ym,category,reason,declined
 2026-02,ALL,Other,16
 2026-03,ALL,Other,27
 2026-04,ALL,Other,10
-2026-05,ALL,Other,16
-2026-06,ALL,Other,10
-1994-10,ALL,Prioritization of Federal Resources and Interests,151
-1994-11,ALL,Prioritization of Federal Resources and Interests,90
-1994-12,ALL,Prioritization of Federal Resources and Interests,158
-1995-01,ALL,Prioritization of Federal Resources and Interests,247
-1995-02,ALL,Prioritization of Federal Resources and Interests,93
-1995-03,ALL,Prioritization of Federal Resources and Interests,161
-1995-04,ALL,Prioritization of Federal Resources and Interests,238
-1995-05,ALL,Prioritization of Federal Resources and Interests,254
-1995-06,ALL,Prioritization of Federal Resources and Interests,156
-1995-07,ALL,Prioritization of Federal Resources and Interests,164
+2026-05,ALL,Other,17
+2026-06,ALL,Other,11
+2026-07,ALL,Other,33
+1994-10,ALL,Prioritization of Federal Resources and Interests,152
+1994-11,ALL,Prioritization of Federal Resources and Interests,91
+1994-12,ALL,Prioritization of Federal Resources and Interests,160
+1995-01,ALL,Prioritization of Federal Resources and Interests,249
+1995-02,ALL,Prioritization of Federal Resources and Interests,94
+1995-03,ALL,Prioritization of Federal Resources and Interests,162
+1995-04,ALL,Prioritization of Federal Resources and Interests,240
+1995-05,ALL,Prioritization of Federal Resources and Interests,255
+1995-06,ALL,Prioritization of Federal Resources and Interests,157
+1995-07,ALL,Prioritization of Federal Resources and Interests,165
 1995-08,ALL,Prioritization of Federal Resources and Interests,179
-1995-09,ALL,Prioritization of Federal Resources and Interests,311
+1995-09,ALL,Prioritization of Federal Resources and Interests,313
 1995-10,ALL,Prioritization of Federal Resources and Interests,193
 1995-11,ALL,Prioritization of Federal Resources and Interests,110
 1995-12,ALL,Prioritization of Federal Resources and Interests,167
 1996-01,ALL,Prioritization of Federal Resources and Interests,281
-1996-02,ALL,Prioritization of Federal Resources and Interests,159
-1996-03,ALL,Prioritization of Federal Resources and Interests,199
+1996-02,ALL,Prioritization of Federal Resources and Interests,161
+1996-03,ALL,Prioritization of Federal Resources and Interests,202
 1996-04,ALL,Prioritization of Federal Resources and Interests,157
 1996-05,ALL,Prioritization of Federal Resources and Interests,108
 1996-06,ALL,Prioritization of Federal Resources and Interests,252
 1996-07,ALL,Prioritization of Federal Resources and Interests,108
-1996-08,ALL,Prioritization of Federal Resources and Interests,83
-1996-09,ALL,Prioritization of Federal Resources and Interests,133
-1996-10,ALL,Prioritization of Federal Resources and Interests,121
-1996-11,ALL,Prioritization of Federal Resources and Interests,66
-1996-12,ALL,Prioritization of Federal Resources and Interests,102
-1997-01,ALL,Prioritization of Federal Resources and Interests,202
-1997-02,ALL,Prioritization of Federal Resources and Interests,103
+1996-08,ALL,Prioritization of Federal Resources and Interests,84
+1996-09,ALL,Prioritization of Federal Resources and Interests,134
+1996-10,ALL,Prioritization of Federal Resources and Interests,122
+1996-11,ALL,Prioritization of Federal Resources and Interests,67
+1996-12,ALL,Prioritization of Federal Resources and Interests,103
+1997-01,ALL,Prioritization of Federal Resources and Interests,203
+1997-02,ALL,Prioritization of Federal Resources and Interests,106
 1997-03,ALL,Prioritization of Federal Resources and Interests,100
 1997-04,ALL,Prioritization of Federal Resources and Interests,90
 1997-05,ALL,Prioritization of Federal Resources and Interests,94
 1997-06,ALL,Prioritization of Federal Resources and Interests,127
-1997-07,ALL,Prioritization of Federal Resources and Interests,124
-1997-08,ALL,Prioritization of Federal Resources and Interests,120
+1997-07,ALL,Prioritization of Federal Resources and Interests,125
+1997-08,ALL,Prioritization of Federal Resources and Interests,122
 1997-09,ALL,Prioritization of Federal Resources and Interests,123
 1997-10,ALL,Prioritization of Federal Resources and Interests,97
 1997-11,ALL,Prioritization of Federal Resources and Interests,105
-1997-12,ALL,Prioritization of Federal Resources and Interests,98
-1998-01,ALL,Prioritization of Federal Resources and Interests,132
-1998-02,ALL,Prioritization of Federal Resources and Interests,147
+1997-12,ALL,Prioritization of Federal Resources and Interests,100
+1998-01,ALL,Prioritization of Federal Resources and Interests,133
+1998-02,ALL,Prioritization of Federal Resources and Interests,149
 1998-03,ALL,Prioritization of Federal Resources and Interests,155
 1998-04,ALL,Prioritization of Federal Resources and Interests,102
 1998-05,ALL,Prioritization of Federal Resources and Interests,109
 1998-06,ALL,Prioritization of Federal Resources and Interests,119
-1998-07,ALL,Prioritization of Federal Resources and Interests,141
+1998-07,ALL,Prioritization of Federal Resources and Interests,142
 1998-08,ALL,Prioritization of Federal Resources and Interests,142
 1998-09,ALL,Prioritization of Federal Resources and Interests,230
 1998-10,ALL,Prioritization of Federal Resources and Interests,107
@@ -2598,7 +2605,7 @@ ym,category,reason,declined
 1999-09,ALL,Prioritization of Federal Resources and Interests,119
 1999-10,ALL,Prioritization of Federal Resources and Interests,99
 1999-11,ALL,Prioritization of Federal Resources and Interests,114
-1999-12,ALL,Prioritization of Federal Resources and Interests,202
+1999-12,ALL,Prioritization of Federal Resources and Interests,203
 2000-01,ALL,Prioritization of Federal Resources and Interests,157
 2000-02,ALL,Prioritization of Federal Resources and Interests,210
 2000-03,ALL,Prioritization of Federal Resources and Interests,299
@@ -2625,7 +2632,7 @@ ym,category,reason,declined
 2001-12,ALL,Prioritization of Federal Resources and Interests,148
 2002-01,ALL,Prioritization of Federal Resources and Interests,209
 2002-02,ALL,Prioritization of Federal Resources and Interests,123
-2002-03,ALL,Prioritization of Federal Resources and Interests,191
+2002-03,ALL,Prioritization of Federal Resources and Interests,192
 2002-04,ALL,Prioritization of Federal Resources and Interests,234
 2002-05,ALL,Prioritization of Federal Resources and Interests,233
 2002-06,ALL,Prioritization of Federal Resources and Interests,262
@@ -2678,7 +2685,7 @@ ym,category,reason,declined
 2006-05,ALL,Prioritization of Federal Resources and Interests,104
 2006-06,ALL,Prioritization of Federal Resources and Interests,123
 2006-07,ALL,Prioritization of Federal Resources and Interests,95
-2006-08,ALL,Prioritization of Federal Resources and Interests,99
+2006-08,ALL,Prioritization of Federal Resources and Interests,100
 2006-09,ALL,Prioritization of Federal Resources and Interests,195
 2006-10,ALL,Prioritization of Federal Resources and Interests,126
 2006-11,ALL,Prioritization of Federal Resources and Interests,80
@@ -2687,7 +2694,7 @@ ym,category,reason,declined
 2007-02,ALL,Prioritization of Federal Resources and Interests,99
 2007-03,ALL,Prioritization of Federal Resources and Interests,255
 2007-04,ALL,Prioritization of Federal Resources and Interests,134
-2007-05,ALL,Prioritization of Federal Resources and Interests,132
+2007-05,ALL,Prioritization of Federal Resources and Interests,133
 2007-06,ALL,Prioritization of Federal Resources and Interests,119
 2007-07,ALL,Prioritization of Federal Resources and Interests,95
 2007-08,ALL,Prioritization of Federal Resources and Interests,101
@@ -2712,7 +2719,7 @@ ym,category,reason,declined
 2009-03,ALL,Prioritization of Federal Resources and Interests,199
 2009-04,ALL,Prioritization of Federal Resources and Interests,86
 2009-05,ALL,Prioritization of Federal Resources and Interests,67
-2009-06,ALL,Prioritization of Federal Resources and Interests,125
+2009-06,ALL,Prioritization of Federal Resources and Interests,126
 2009-07,ALL,Prioritization of Federal Resources and Interests,129
 2009-08,ALL,Prioritization of Federal Resources and Interests,105
 2009-09,ALL,Prioritization of Federal Resources and Interests,213
@@ -2734,7 +2741,7 @@ ym,category,reason,declined
 2011-01,ALL,Prioritization of Federal Resources and Interests,94
 2011-02,ALL,Prioritization of Federal Resources and Interests,87
 2011-03,ALL,Prioritization of Federal Resources and Interests,227
-2011-04,ALL,Prioritization of Federal Resources and Interests,94
+2011-04,ALL,Prioritization of Federal Resources and Interests,95
 2011-05,ALL,Prioritization of Federal Resources and Interests,91
 2011-06,ALL,Prioritization of Federal Resources and Interests,88
 2011-07,ALL,Prioritization of Federal Resources and Interests,73
@@ -2770,7 +2777,7 @@ ym,category,reason,declined
 2014-01,ALL,Prioritization of Federal Resources and Interests,364
 2014-02,ALL,Prioritization of Federal Resources and Interests,323
 2014-03,ALL,Prioritization of Federal Resources and Interests,397
-2014-04,ALL,Prioritization of Federal Resources and Interests,239
+2014-04,ALL,Prioritization of Federal Resources and Interests,238
 2014-05,ALL,Prioritization of Federal Resources and Interests,191
 2014-06,ALL,Prioritization of Federal Resources and Interests,201
 2014-07,ALL,Prioritization of Federal Resources and Interests,116
@@ -2792,7 +2799,7 @@ ym,category,reason,declined
 2015-11,ALL,Prioritization of Federal Resources and Interests,109
 2015-12,ALL,Prioritization of Federal Resources and Interests,127
 2016-01,ALL,Prioritization of Federal Resources and Interests,102
-2016-02,ALL,Prioritization of Federal Resources and Interests,158
+2016-02,ALL,Prioritization of Federal Resources and Interests,157
 2016-03,ALL,Prioritization of Federal Resources and Interests,272
 2016-04,ALL,Prioritization of Federal Resources and Interests,160
 2016-05,ALL,Prioritization of Federal Resources and Interests,129
@@ -2848,7 +2855,7 @@ ym,category,reason,declined
 2020-07,ALL,Prioritization of Federal Resources and Interests,106
 2020-08,ALL,Prioritization of Federal Resources and Interests,129
 2020-09,ALL,Prioritization of Federal Resources and Interests,298
-2020-10,ALL,Prioritization of Federal Resources and Interests,139
+2020-10,ALL,Prioritization of Federal Resources and Interests,140
 2020-11,ALL,Prioritization of Federal Resources and Interests,68
 2020-12,ALL,Prioritization of Federal Resources and Interests,160
 2021-01,ALL,Prioritization of Federal Resources and Interests,143
@@ -2888,35 +2895,36 @@ ym,category,reason,declined
 2023-11,ALL,Prioritization of Federal Resources and Interests,97
 2023-12,ALL,Prioritization of Federal Resources and Interests,163
 2024-01,ALL,Prioritization of Federal Resources and Interests,155
-2024-02,ALL,Prioritization of Federal Resources and Interests,216
-2024-03,ALL,Prioritization of Federal Resources and Interests,269
+2024-02,ALL,Prioritization of Federal Resources and Interests,215
+2024-03,ALL,Prioritization of Federal Resources and Interests,270
 2024-04,ALL,Prioritization of Federal Resources and Interests,152
 2024-05,ALL,Prioritization of Federal Resources and Interests,147
 2024-06,ALL,Prioritization of Federal Resources and Interests,131
 2024-07,ALL,Prioritization of Federal Resources and Interests,161
 2024-08,ALL,Prioritization of Federal Resources and Interests,169
-2024-09,ALL,Prioritization of Federal Resources and Interests,302
+2024-09,ALL,Prioritization of Federal Resources and Interests,301
 2024-10,ALL,Prioritization of Federal Resources and Interests,132
 2024-11,ALL,Prioritization of Federal Resources and Interests,64
 2024-12,ALL,Prioritization of Federal Resources and Interests,96
 2025-01,ALL,Prioritization of Federal Resources and Interests,127
-2025-02,ALL,Prioritization of Federal Resources and Interests,891
+2025-02,ALL,Prioritization of Federal Resources and Interests,893
 2025-03,ALL,Prioritization of Federal Resources and Interests,341
 2025-04,ALL,Prioritization of Federal Resources and Interests,176
 2025-05,ALL,Prioritization of Federal Resources and Interests,130
 2025-06,ALL,Prioritization of Federal Resources and Interests,145
 2025-07,ALL,Prioritization of Federal Resources and Interests,205
-2025-08,ALL,Prioritization of Federal Resources and Interests,198
+2025-08,ALL,Prioritization of Federal Resources and Interests,197
 2025-09,ALL,Prioritization of Federal Resources and Interests,295
 2025-10,ALL,Prioritization of Federal Resources and Interests,110
 2025-11,ALL,Prioritization of Federal Resources and Interests,83
-2025-12,ALL,Prioritization of Federal Resources and Interests,98
-2026-01,ALL,Prioritization of Federal Resources and Interests,139
-2026-02,ALL,Prioritization of Federal Resources and Interests,187
-2026-03,ALL,Prioritization of Federal Resources and Interests,257
-2026-04,ALL,Prioritization of Federal Resources and Interests,116
-2026-05,ALL,Prioritization of Federal Resources and Interests,167
-2026-06,ALL,Prioritization of Federal Resources and Interests,79
+2025-12,ALL,Prioritization of Federal Resources and Interests,101
+2026-01,ALL,Prioritization of Federal Resources and Interests,140
+2026-02,ALL,Prioritization of Federal Resources and Interests,188
+2026-03,ALL,Prioritization of Federal Resources and Interests,260
+2026-04,ALL,Prioritization of Federal Resources and Interests,121
+2026-05,ALL,Prioritization of Federal Resources and Interests,175
+2026-06,ALL,Prioritization of Federal Resources and Interests,94
+2026-07,ALL,Prioritization of Federal Resources and Interests,138
 1994-10,All Other,Alternative to Federal Prosecution,11
 1994-11,All Other,Alternative to Federal Prosecution,17
 1994-12,All Other,Alternative to Federal Prosecution,15
@@ -2934,7 +2942,7 @@ ym,category,reason,declined
 1995-12,All Other,Alternative to Federal Prosecution,15
 1996-01,All Other,Alternative to Federal Prosecution,8
 1996-02,All Other,Alternative to Federal Prosecution,8
-1996-03,All Other,Alternative to Federal Prosecution,12
+1996-03,All Other,Alternative to Federal Prosecution,13
 1996-04,All Other,Alternative to Federal Prosecution,14
 1996-05,All Other,Alternative to Federal Prosecution,15
 1996-06,All Other,Alternative to Federal Prosecution,19
@@ -3192,7 +3200,7 @@ ym,category,reason,declined
 2017-11,All Other,Alternative to Federal Prosecution,3
 2017-12,All Other,Alternative to Federal Prosecution,10
 2018-01,All Other,Alternative to Federal Prosecution,12
-2018-02,All Other,Alternative to Federal Prosecution,19
+2018-02,All Other,Alternative to Federal Prosecution,18
 2018-03,All Other,Alternative to Federal Prosecution,23
 2018-04,All Other,Alternative to Federal Prosecution,8
 2018-05,All Other,Alternative to Federal Prosecution,14
@@ -3291,7 +3299,8 @@ ym,category,reason,declined
 2026-03,All Other,Alternative to Federal Prosecution,15
 2026-04,All Other,Alternative to Federal Prosecution,5
 2026-05,All Other,Alternative to Federal Prosecution,7
-2026-06,All Other,Alternative to Federal Prosecution,3
+2026-06,All Other,Alternative to Federal Prosecution,5
+2026-07,All Other,Alternative to Federal Prosecution,6
 1994-10,All Other,Defendant Unavailable,75
 1994-11,All Other,Defendant Unavailable,49
 1994-12,All Other,Defendant Unavailable,81
@@ -3320,7 +3329,7 @@ ym,category,reason,declined
 1996-11,All Other,Defendant Unavailable,75
 1996-12,All Other,Defendant Unavailable,71
 1997-01,All Other,Defendant Unavailable,90
-1997-02,All Other,Defendant Unavailable,61
+1997-02,All Other,Defendant Unavailable,60
 1997-03,All Other,Defendant Unavailable,66
 1997-04,All Other,Defendant Unavailable,81
 1997-05,All Other,Defendant Unavailable,80
@@ -3656,7 +3665,8 @@ ym,category,reason,declined
 2026-03,All Other,Defendant Unavailable,10
 2026-04,All Other,Defendant Unavailable,2
 2026-05,All Other,Defendant Unavailable,2
-2026-06,All Other,Defendant Unavailable,1
+2026-06,All Other,Defendant Unavailable,2
+2026-07,All Other,Defendant Unavailable,5
 1994-10,All Other,Insufficient Evidence,126
 1994-11,All Other,Insufficient Evidence,110
 1994-12,All Other,Insufficient Evidence,124
@@ -3674,7 +3684,7 @@ ym,category,reason,declined
 1995-12,All Other,Insufficient Evidence,126
 1996-01,All Other,Insufficient Evidence,131
 1996-02,All Other,Insufficient Evidence,111
-1996-03,All Other,Insufficient Evidence,158
+1996-03,All Other,Insufficient Evidence,157
 1996-04,All Other,Insufficient Evidence,149
 1996-05,All Other,Insufficient Evidence,148
 1996-06,All Other,Insufficient Evidence,276
@@ -3734,7 +3744,7 @@ ym,category,reason,declined
 2000-12,All Other,Insufficient Evidence,93
 2001-01,All Other,Insufficient Evidence,139
 2001-02,All Other,Insufficient Evidence,131
-2001-03,All Other,Insufficient Evidence,184
+2001-03,All Other,Insufficient Evidence,185
 2001-04,All Other,Insufficient Evidence,194
 2001-05,All Other,Insufficient Evidence,107
 2001-06,All Other,Insufficient Evidence,132
@@ -3984,7 +3994,7 @@ ym,category,reason,declined
 2021-10,All Other,Insufficient Evidence,42
 2021-11,All Other,Insufficient Evidence,33
 2021-12,All Other,Insufficient Evidence,34
-2022-01,All Other,Insufficient Evidence,43
+2022-01,All Other,Insufficient Evidence,42
 2022-02,All Other,Insufficient Evidence,62
 2022-03,All Other,Insufficient Evidence,152
 2022-04,All Other,Insufficient Evidence,35
@@ -4013,7 +4023,7 @@ ym,category,reason,declined
 2024-03,All Other,Insufficient Evidence,105
 2024-04,All Other,Insufficient Evidence,55
 2024-05,All Other,Insufficient Evidence,39
-2024-06,All Other,Insufficient Evidence,36
+2024-06,All Other,Insufficient Evidence,37
 2024-07,All Other,Insufficient Evidence,49
 2024-08,All Other,Insufficient Evidence,61
 2024-09,All Other,Insufficient Evidence,142
@@ -4031,13 +4041,14 @@ ym,category,reason,declined
 2025-09,All Other,Insufficient Evidence,142
 2025-10,All Other,Insufficient Evidence,47
 2025-11,All Other,Insufficient Evidence,39
-2025-12,All Other,Insufficient Evidence,33
-2026-01,All Other,Insufficient Evidence,34
+2025-12,All Other,Insufficient Evidence,41
+2026-01,All Other,Insufficient Evidence,35
 2026-02,All Other,Insufficient Evidence,48
 2026-03,All Other,Insufficient Evidence,93
-2026-04,All Other,Insufficient Evidence,53
-2026-05,All Other,Insufficient Evidence,57
-2026-06,All Other,Insufficient Evidence,23
+2026-04,All Other,Insufficient Evidence,56
+2026-05,All Other,Insufficient Evidence,60
+2026-06,All Other,Insufficient Evidence,26
+2026-07,All Other,Insufficient Evidence,74
 1994-10,All Other,Legally Barred,9
 1994-11,All Other,Legally Barred,2
 1994-12,All Other,Legally Barred,3
@@ -4386,6 +4397,7 @@ ym,category,reason,declined
 2026-03,All Other,Legally Barred,8
 2026-04,All Other,Legally Barred,1
 2026-06,All Other,Legally Barred,2
+2026-07,All Other,Legally Barred,2
 1994-10,All Other,Matter Referred to Other Jurisdiction,12
 1994-11,All Other,Matter Referred to Other Jurisdiction,10
 1994-12,All Other,Matter Referred to Other Jurisdiction,8
@@ -4660,7 +4672,7 @@ ym,category,reason,declined
 2017-11,All Other,Matter Referred to Other Jurisdiction,7
 2017-12,All Other,Matter Referred to Other Jurisdiction,2
 2018-01,All Other,Matter Referred to Other Jurisdiction,10
-2018-02,All Other,Matter Referred to Other Jurisdiction,5
+2018-02,All Other,Matter Referred to Other Jurisdiction,6
 2018-03,All Other,Matter Referred to Other Jurisdiction,23
 2018-04,All Other,Matter Referred to Other Jurisdiction,10
 2018-05,All Other,Matter Referred to Other Jurisdiction,8
@@ -4733,7 +4745,7 @@ ym,category,reason,declined
 2023-12,All Other,Matter Referred to Other Jurisdiction,6
 2024-01,All Other,Matter Referred to Other Jurisdiction,7
 2024-02,All Other,Matter Referred to Other Jurisdiction,7
-2024-03,All Other,Matter Referred to Other Jurisdiction,21
+2024-03,All Other,Matter Referred to Other Jurisdiction,22
 2024-04,All Other,Matter Referred to Other Jurisdiction,9
 2024-05,All Other,Matter Referred to Other Jurisdiction,15
 2024-06,All Other,Matter Referred to Other Jurisdiction,7
@@ -4759,8 +4771,9 @@ ym,category,reason,declined
 2026-02,All Other,Matter Referred to Other Jurisdiction,9
 2026-03,All Other,Matter Referred to Other Jurisdiction,22
 2026-04,All Other,Matter Referred to Other Jurisdiction,7
-2026-05,All Other,Matter Referred to Other Jurisdiction,10
-2026-06,All Other,Matter Referred to Other Jurisdiction,1
+2026-05,All Other,Matter Referred to Other Jurisdiction,11
+2026-06,All Other,Matter Referred to Other Jurisdiction,2
+2026-07,All Other,Matter Referred to Other Jurisdiction,8
 1994-10,All Other,Non-Prosecution Agreement,18
 1994-11,All Other,Non-Prosecution Agreement,12
 1994-12,All Other,Non-Prosecution Agreement,40
@@ -4895,7 +4908,7 @@ ym,category,reason,declined
 2005-09,All Other,Non-Prosecution Agreement,41
 2005-10,All Other,Non-Prosecution Agreement,31
 2005-11,All Other,Non-Prosecution Agreement,27
-2005-12,All Other,Non-Prosecution Agreement,22
+2005-12,All Other,Non-Prosecution Agreement,23
 2006-01,All Other,Non-Prosecution Agreement,28
 2006-02,All Other,Non-Prosecution Agreement,33
 2006-03,All Other,Non-Prosecution Agreement,40
@@ -5022,7 +5035,7 @@ ym,category,reason,declined
 1996-11,All Other,Other,45
 1996-12,All Other,Other,54
 1997-01,All Other,Other,62
-1997-02,All Other,Other,56
+1997-02,All Other,Other,57
 1997-03,All Other,Other,47
 1997-04,All Other,Other,45
 1997-05,All Other,Other,31
@@ -5096,7 +5109,7 @@ ym,category,reason,declined
 2003-01,All Other,Other,14
 2003-02,All Other,Other,15
 2003-03,All Other,Other,18
-2003-04,All Other,Other,32
+2003-04,All Other,Other,31
 2003-05,All Other,Other,18
 2003-06,All Other,Other,23
 2003-07,All Other,Other,22
@@ -5697,8 +5710,9 @@ ym,category,reason,declined
 2026-02,All Other,Prioritization of Federal Resources and Interests,8
 2026-03,All Other,Prioritization of Federal Resources and Interests,13
 2026-04,All Other,Prioritization of Federal Resources and Interests,4
-2026-05,All Other,Prioritization of Federal Resources and Interests,50
-2026-06,All Other,Prioritization of Federal Resources and Interests,9
+2026-05,All Other,Prioritization of Federal Resources and Interests,53
+2026-06,All Other,Prioritization of Federal Resources and Interests,10
+2026-07,All Other,Prioritization of Federal Resources and Interests,11
 1994-10,Assimilated Crimes,Alternative to Federal Prosecution,1
 1995-01,Assimilated Crimes,Alternative to Federal Prosecution,2
 1995-02,Assimilated Crimes,Alternative to Federal Prosecution,1
@@ -5892,6 +5906,7 @@ ym,category,reason,declined
 2025-06,Assimilated Crimes,Alternative to Federal Prosecution,3
 2025-10,Assimilated Crimes,Alternative to Federal Prosecution,1
 2026-01,Assimilated Crimes,Alternative to Federal Prosecution,1
+2026-07,Assimilated Crimes,Alternative to Federal Prosecution,1
 1994-10,Assimilated Crimes,Defendant Unavailable,2
 1994-11,Assimilated Crimes,Defendant Unavailable,3
 1995-03,Assimilated Crimes,Defendant Unavailable,1
@@ -5912,7 +5927,7 @@ ym,category,reason,declined
 1996-08,Assimilated Crimes,Defendant Unavailable,1
 1996-09,Assimilated Crimes,Defendant Unavailable,2
 1996-10,Assimilated Crimes,Defendant Unavailable,2
-1997-01,Assimilated Crimes,Defendant Unavailable,4
+1997-01,Assimilated Crimes,Defendant Unavailable,3
 1997-02,Assimilated Crimes,Defendant Unavailable,2
 1997-04,Assimilated Crimes,Defendant Unavailable,1
 1997-05,Assimilated Crimes,Defendant Unavailable,3
@@ -6374,10 +6389,10 @@ ym,category,reason,declined
 2025-06,Assimilated Crimes,Insufficient Evidence,2
 2025-07,Assimilated Crimes,Insufficient Evidence,1
 2025-09,Assimilated Crimes,Insufficient Evidence,2
-2025-11,Assimilated Crimes,Insufficient Evidence,1
 2025-12,Assimilated Crimes,Insufficient Evidence,7
 2026-01,Assimilated Crimes,Insufficient Evidence,6
 2026-04,Assimilated Crimes,Insufficient Evidence,3
+2026-07,Assimilated Crimes,Insufficient Evidence,2
 1995-01,Assimilated Crimes,Legally Barred,1
 1995-02,Assimilated Crimes,Legally Barred,4
 1995-03,Assimilated Crimes,Legally Barred,1
@@ -6470,7 +6485,7 @@ ym,category,reason,declined
 1996-07,Assimilated Crimes,Matter Referred to Other Jurisdiction,1
 1996-10,Assimilated Crimes,Matter Referred to Other Jurisdiction,1
 1996-11,Assimilated Crimes,Matter Referred to Other Jurisdiction,1
-1997-01,Assimilated Crimes,Matter Referred to Other Jurisdiction,1
+1997-01,Assimilated Crimes,Matter Referred to Other Jurisdiction,2
 1997-03,Assimilated Crimes,Matter Referred to Other Jurisdiction,1
 1997-10,Assimilated Crimes,Matter Referred to Other Jurisdiction,2
 1997-12,Assimilated Crimes,Matter Referred to Other Jurisdiction,1
@@ -7364,6 +7379,7 @@ ym,category,reason,declined
 2022-09,Civil Rights Prosecutions,Defendant Unavailable,3
 2022-11,Civil Rights Prosecutions,Defendant Unavailable,1
 2023-02,Civil Rights Prosecutions,Defendant Unavailable,2
+2023-03,Civil Rights Prosecutions,Defendant Unavailable,1
 2023-05,Civil Rights Prosecutions,Defendant Unavailable,1
 2023-09,Civil Rights Prosecutions,Defendant Unavailable,2
 2024-09,Civil Rights Prosecutions,Defendant Unavailable,3
@@ -7532,7 +7548,7 @@ ym,category,reason,declined
 2007-07,Civil Rights Prosecutions,Insufficient Evidence,50
 2007-08,Civil Rights Prosecutions,Insufficient Evidence,36
 2007-09,Civil Rights Prosecutions,Insufficient Evidence,31
-2007-10,Civil Rights Prosecutions,Insufficient Evidence,28
+2007-10,Civil Rights Prosecutions,Insufficient Evidence,27
 2007-11,Civil Rights Prosecutions,Insufficient Evidence,36
 2007-12,Civil Rights Prosecutions,Insufficient Evidence,23
 2008-01,Civil Rights Prosecutions,Insufficient Evidence,19
@@ -7692,7 +7708,7 @@ ym,category,reason,declined
 2020-11,Civil Rights Prosecutions,Insufficient Evidence,14
 2020-12,Civil Rights Prosecutions,Insufficient Evidence,21
 2021-01,Civil Rights Prosecutions,Insufficient Evidence,17
-2021-02,Civil Rights Prosecutions,Insufficient Evidence,36
+2021-02,Civil Rights Prosecutions,Insufficient Evidence,37
 2021-03,Civil Rights Prosecutions,Insufficient Evidence,37
 2021-04,Civil Rights Prosecutions,Insufficient Evidence,22
 2021-05,Civil Rights Prosecutions,Insufficient Evidence,16
@@ -7754,9 +7770,10 @@ ym,category,reason,declined
 2026-01,Civil Rights Prosecutions,Insufficient Evidence,13
 2026-02,Civil Rights Prosecutions,Insufficient Evidence,18
 2026-03,Civil Rights Prosecutions,Insufficient Evidence,57
-2026-04,Civil Rights Prosecutions,Insufficient Evidence,15
+2026-04,Civil Rights Prosecutions,Insufficient Evidence,16
 2026-05,Civil Rights Prosecutions,Insufficient Evidence,9
-2026-06,Civil Rights Prosecutions,Insufficient Evidence,5
+2026-06,Civil Rights Prosecutions,Insufficient Evidence,6
+2026-07,Civil Rights Prosecutions,Insufficient Evidence,43
 1994-10,Civil Rights Prosecutions,Legally Barred,1
 1994-11,Civil Rights Prosecutions,Legally Barred,3
 1995-03,Civil Rights Prosecutions,Legally Barred,2
@@ -8592,6 +8609,7 @@ ym,category,reason,declined
 2025-08,Civil Rights Prosecutions,Other,2
 2026-03,Civil Rights Prosecutions,Other,1
 2026-05,Civil Rights Prosecutions,Other,1
+2026-07,Civil Rights Prosecutions,Other,1
 1995-01,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,1
 1995-02,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,1
 1995-03,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,3
@@ -8875,11 +8893,12 @@ ym,category,reason,declined
 2025-08,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,5
 2025-09,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,3
 2025-10,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,3
-2025-12,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,3
+2025-12,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,4
 2026-01,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,3
 2026-02,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,3
 2026-03,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,7
 2026-05,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,1
+2026-07,Civil Rights Prosecutions,Prioritization of Federal Resources and Interests,8
 1994-10,Drug Offenses,Alternative to Federal Prosecution,1
 1994-11,Drug Offenses,Alternative to Federal Prosecution,1
 1994-12,Drug Offenses,Alternative to Federal Prosecution,2
@@ -9230,11 +9249,12 @@ ym,category,reason,declined
 2026-03,Drug Offenses,Alternative to Federal Prosecution,41
 2026-04,Drug Offenses,Alternative to Federal Prosecution,24
 2026-05,Drug Offenses,Alternative to Federal Prosecution,18
-2026-06,Drug Offenses,Alternative to Federal Prosecution,16
+2026-06,Drug Offenses,Alternative to Federal Prosecution,17
+2026-07,Drug Offenses,Alternative to Federal Prosecution,26
 1994-10,Drug Offenses,Defendant Unavailable,52
 1994-11,Drug Offenses,Defendant Unavailable,62
 1994-12,Drug Offenses,Defendant Unavailable,64
-1995-01,Drug Offenses,Defendant Unavailable,61
+1995-01,Drug Offenses,Defendant Unavailable,60
 1995-02,Drug Offenses,Defendant Unavailable,54
 1995-03,Drug Offenses,Defendant Unavailable,90
 1995-04,Drug Offenses,Defendant Unavailable,73
@@ -9248,7 +9268,7 @@ ym,category,reason,declined
 1995-12,Drug Offenses,Defendant Unavailable,56
 1996-01,Drug Offenses,Defendant Unavailable,80
 1996-02,Drug Offenses,Defendant Unavailable,65
-1996-03,Drug Offenses,Defendant Unavailable,76
+1996-03,Drug Offenses,Defendant Unavailable,75
 1996-04,Drug Offenses,Defendant Unavailable,65
 1996-05,Drug Offenses,Defendant Unavailable,78
 1996-06,Drug Offenses,Defendant Unavailable,131
@@ -9518,7 +9538,7 @@ ym,category,reason,declined
 2018-08,Drug Offenses,Defendant Unavailable,3
 2018-09,Drug Offenses,Defendant Unavailable,5
 2018-10,Drug Offenses,Defendant Unavailable,10
-2018-11,Drug Offenses,Defendant Unavailable,7
+2018-11,Drug Offenses,Defendant Unavailable,8
 2018-12,Drug Offenses,Defendant Unavailable,1
 2019-01,Drug Offenses,Defendant Unavailable,2
 2019-02,Drug Offenses,Defendant Unavailable,7
@@ -9608,6 +9628,7 @@ ym,category,reason,declined
 2026-04,Drug Offenses,Defendant Unavailable,4
 2026-05,Drug Offenses,Defendant Unavailable,7
 2026-06,Drug Offenses,Defendant Unavailable,4
+2026-07,Drug Offenses,Defendant Unavailable,8
 1994-10,Drug Offenses,Insufficient Evidence,112
 1994-11,Drug Offenses,Insufficient Evidence,100
 1994-12,Drug Offenses,Insufficient Evidence,83
@@ -9615,7 +9636,7 @@ ym,category,reason,declined
 1995-02,Drug Offenses,Insufficient Evidence,142
 1995-03,Drug Offenses,Insufficient Evidence,140
 1995-04,Drug Offenses,Insufficient Evidence,149
-1995-05,Drug Offenses,Insufficient Evidence,121
+1995-05,Drug Offenses,Insufficient Evidence,120
 1995-06,Drug Offenses,Insufficient Evidence,148
 1995-07,Drug Offenses,Insufficient Evidence,109
 1995-08,Drug Offenses,Insufficient Evidence,120
@@ -9626,7 +9647,7 @@ ym,category,reason,declined
 1996-01,Drug Offenses,Insufficient Evidence,112
 1996-02,Drug Offenses,Insufficient Evidence,114
 1996-03,Drug Offenses,Insufficient Evidence,132
-1996-04,Drug Offenses,Insufficient Evidence,166
+1996-04,Drug Offenses,Insufficient Evidence,167
 1996-05,Drug Offenses,Insufficient Evidence,135
 1996-06,Drug Offenses,Insufficient Evidence,235
 1996-07,Drug Offenses,Insufficient Evidence,140
@@ -9816,7 +9837,7 @@ ym,category,reason,declined
 2011-11,Drug Offenses,Insufficient Evidence,73
 2011-12,Drug Offenses,Insufficient Evidence,87
 2012-01,Drug Offenses,Insufficient Evidence,120
-2012-02,Drug Offenses,Insufficient Evidence,119
+2012-02,Drug Offenses,Insufficient Evidence,120
 2012-03,Drug Offenses,Insufficient Evidence,240
 2012-04,Drug Offenses,Insufficient Evidence,102
 2012-05,Drug Offenses,Insufficient Evidence,60
@@ -9843,11 +9864,11 @@ ym,category,reason,declined
 2014-02,Drug Offenses,Insufficient Evidence,102
 2014-03,Drug Offenses,Insufficient Evidence,360
 2014-04,Drug Offenses,Insufficient Evidence,151
-2014-05,Drug Offenses,Insufficient Evidence,149
+2014-05,Drug Offenses,Insufficient Evidence,150
 2014-06,Drug Offenses,Insufficient Evidence,147
 2014-07,Drug Offenses,Insufficient Evidence,109
-2014-08,Drug Offenses,Insufficient Evidence,154
-2014-09,Drug Offenses,Insufficient Evidence,326
+2014-08,Drug Offenses,Insufficient Evidence,153
+2014-09,Drug Offenses,Insufficient Evidence,327
 2014-10,Drug Offenses,Insufficient Evidence,163
 2014-11,Drug Offenses,Insufficient Evidence,116
 2014-12,Drug Offenses,Insufficient Evidence,97
@@ -9875,7 +9896,7 @@ ym,category,reason,declined
 2016-10,Drug Offenses,Insufficient Evidence,102
 2016-11,Drug Offenses,Insufficient Evidence,104
 2016-12,Drug Offenses,Insufficient Evidence,117
-2017-01,Drug Offenses,Insufficient Evidence,127
+2017-01,Drug Offenses,Insufficient Evidence,128
 2017-02,Drug Offenses,Insufficient Evidence,129
 2017-03,Drug Offenses,Insufficient Evidence,248
 2017-04,Drug Offenses,Insufficient Evidence,115
@@ -9925,7 +9946,7 @@ ym,category,reason,declined
 2020-12,Drug Offenses,Insufficient Evidence,103
 2021-01,Drug Offenses,Insufficient Evidence,135
 2021-02,Drug Offenses,Insufficient Evidence,147
-2021-03,Drug Offenses,Insufficient Evidence,333
+2021-03,Drug Offenses,Insufficient Evidence,332
 2021-04,Drug Offenses,Insufficient Evidence,152
 2021-05,Drug Offenses,Insufficient Evidence,126
 2021-06,Drug Offenses,Insufficient Evidence,101
@@ -9936,59 +9957,60 @@ ym,category,reason,declined
 2021-11,Drug Offenses,Insufficient Evidence,87
 2021-12,Drug Offenses,Insufficient Evidence,96
 2022-01,Drug Offenses,Insufficient Evidence,135
-2022-02,Drug Offenses,Insufficient Evidence,226
-2022-03,Drug Offenses,Insufficient Evidence,424
+2022-02,Drug Offenses,Insufficient Evidence,227
+2022-03,Drug Offenses,Insufficient Evidence,426
 2022-04,Drug Offenses,Insufficient Evidence,170
 2022-05,Drug Offenses,Insufficient Evidence,140
-2022-06,Drug Offenses,Insufficient Evidence,180
+2022-06,Drug Offenses,Insufficient Evidence,181
 2022-07,Drug Offenses,Insufficient Evidence,154
 2022-08,Drug Offenses,Insufficient Evidence,211
 2022-09,Drug Offenses,Insufficient Evidence,485
 2022-10,Drug Offenses,Insufficient Evidence,145
 2022-11,Drug Offenses,Insufficient Evidence,137
-2022-12,Drug Offenses,Insufficient Evidence,157
+2022-12,Drug Offenses,Insufficient Evidence,158
 2023-01,Drug Offenses,Insufficient Evidence,201
 2023-02,Drug Offenses,Insufficient Evidence,225
 2023-03,Drug Offenses,Insufficient Evidence,490
 2023-04,Drug Offenses,Insufficient Evidence,179
 2023-05,Drug Offenses,Insufficient Evidence,132
-2023-06,Drug Offenses,Insufficient Evidence,127
+2023-06,Drug Offenses,Insufficient Evidence,128
 2023-07,Drug Offenses,Insufficient Evidence,133
-2023-08,Drug Offenses,Insufficient Evidence,168
+2023-08,Drug Offenses,Insufficient Evidence,169
 2023-09,Drug Offenses,Insufficient Evidence,477
 2023-10,Drug Offenses,Insufficient Evidence,152
 2023-11,Drug Offenses,Insufficient Evidence,88
 2023-12,Drug Offenses,Insufficient Evidence,74
-2024-01,Drug Offenses,Insufficient Evidence,133
+2024-01,Drug Offenses,Insufficient Evidence,134
 2024-02,Drug Offenses,Insufficient Evidence,234
-2024-03,Drug Offenses,Insufficient Evidence,401
+2024-03,Drug Offenses,Insufficient Evidence,400
 2024-04,Drug Offenses,Insufficient Evidence,160
 2024-05,Drug Offenses,Insufficient Evidence,150
-2024-06,Drug Offenses,Insufficient Evidence,123
+2024-06,Drug Offenses,Insufficient Evidence,124
 2024-07,Drug Offenses,Insufficient Evidence,154
 2024-08,Drug Offenses,Insufficient Evidence,203
 2024-09,Drug Offenses,Insufficient Evidence,387
 2024-10,Drug Offenses,Insufficient Evidence,195
 2024-11,Drug Offenses,Insufficient Evidence,79
 2024-12,Drug Offenses,Insufficient Evidence,107
-2025-01,Drug Offenses,Insufficient Evidence,107
-2025-02,Drug Offenses,Insufficient Evidence,1069
+2025-01,Drug Offenses,Insufficient Evidence,108
+2025-02,Drug Offenses,Insufficient Evidence,1070
 2025-03,Drug Offenses,Insufficient Evidence,406
-2025-04,Drug Offenses,Insufficient Evidence,115
-2025-05,Drug Offenses,Insufficient Evidence,128
-2025-06,Drug Offenses,Insufficient Evidence,102
-2025-07,Drug Offenses,Insufficient Evidence,119
-2025-08,Drug Offenses,Insufficient Evidence,212
+2025-04,Drug Offenses,Insufficient Evidence,116
+2025-05,Drug Offenses,Insufficient Evidence,130
+2025-06,Drug Offenses,Insufficient Evidence,101
+2025-07,Drug Offenses,Insufficient Evidence,120
+2025-08,Drug Offenses,Insufficient Evidence,211
 2025-09,Drug Offenses,Insufficient Evidence,347
-2025-10,Drug Offenses,Insufficient Evidence,123
-2025-11,Drug Offenses,Insufficient Evidence,106
-2025-12,Drug Offenses,Insufficient Evidence,92
+2025-10,Drug Offenses,Insufficient Evidence,124
+2025-11,Drug Offenses,Insufficient Evidence,105
+2025-12,Drug Offenses,Insufficient Evidence,93
 2026-01,Drug Offenses,Insufficient Evidence,112
-2026-02,Drug Offenses,Insufficient Evidence,184
-2026-03,Drug Offenses,Insufficient Evidence,400
-2026-04,Drug Offenses,Insufficient Evidence,158
-2026-05,Drug Offenses,Insufficient Evidence,120
-2026-06,Drug Offenses,Insufficient Evidence,95
+2026-02,Drug Offenses,Insufficient Evidence,187
+2026-03,Drug Offenses,Insufficient Evidence,403
+2026-04,Drug Offenses,Insufficient Evidence,160
+2026-05,Drug Offenses,Insufficient Evidence,136
+2026-06,Drug Offenses,Insufficient Evidence,117
+2026-07,Drug Offenses,Insufficient Evidence,195
 1994-10,Drug Offenses,Legally Barred,1
 1994-11,Drug Offenses,Legally Barred,3
 1994-12,Drug Offenses,Legally Barred,2
@@ -10349,6 +10371,7 @@ ym,category,reason,declined
 2026-03,Drug Offenses,Legally Barred,3
 2026-04,Drug Offenses,Legally Barred,2
 2026-06,Drug Offenses,Legally Barred,1
+2026-07,Drug Offenses,Legally Barred,2
 1994-10,Drug Offenses,Matter Referred to Other Jurisdiction,6
 1994-11,Drug Offenses,Matter Referred to Other Jurisdiction,15
 1994-12,Drug Offenses,Matter Referred to Other Jurisdiction,7
@@ -10366,7 +10389,7 @@ ym,category,reason,declined
 1995-12,Drug Offenses,Matter Referred to Other Jurisdiction,3
 1996-01,Drug Offenses,Matter Referred to Other Jurisdiction,13
 1996-02,Drug Offenses,Matter Referred to Other Jurisdiction,8
-1996-03,Drug Offenses,Matter Referred to Other Jurisdiction,12
+1996-03,Drug Offenses,Matter Referred to Other Jurisdiction,13
 1996-04,Drug Offenses,Matter Referred to Other Jurisdiction,9
 1996-05,Drug Offenses,Matter Referred to Other Jurisdiction,5
 1996-06,Drug Offenses,Matter Referred to Other Jurisdiction,12
@@ -10584,10 +10607,10 @@ ym,category,reason,declined
 2014-02,Drug Offenses,Matter Referred to Other Jurisdiction,46
 2014-03,Drug Offenses,Matter Referred to Other Jurisdiction,65
 2014-04,Drug Offenses,Matter Referred to Other Jurisdiction,42
-2014-05,Drug Offenses,Matter Referred to Other Jurisdiction,34
+2014-05,Drug Offenses,Matter Referred to Other Jurisdiction,33
 2014-06,Drug Offenses,Matter Referred to Other Jurisdiction,45
 2014-07,Drug Offenses,Matter Referred to Other Jurisdiction,25
-2014-08,Drug Offenses,Matter Referred to Other Jurisdiction,54
+2014-08,Drug Offenses,Matter Referred to Other Jurisdiction,55
 2014-09,Drug Offenses,Matter Referred to Other Jurisdiction,67
 2014-10,Drug Offenses,Matter Referred to Other Jurisdiction,32
 2014-11,Drug Offenses,Matter Referred to Other Jurisdiction,18
@@ -10666,7 +10689,7 @@ ym,category,reason,declined
 2020-12,Drug Offenses,Matter Referred to Other Jurisdiction,24
 2021-01,Drug Offenses,Matter Referred to Other Jurisdiction,25
 2021-02,Drug Offenses,Matter Referred to Other Jurisdiction,32
-2021-03,Drug Offenses,Matter Referred to Other Jurisdiction,52
+2021-03,Drug Offenses,Matter Referred to Other Jurisdiction,53
 2021-04,Drug Offenses,Matter Referred to Other Jurisdiction,22
 2021-05,Drug Offenses,Matter Referred to Other Jurisdiction,31
 2021-06,Drug Offenses,Matter Referred to Other Jurisdiction,11
@@ -10716,7 +10739,7 @@ ym,category,reason,declined
 2025-02,Drug Offenses,Matter Referred to Other Jurisdiction,94
 2025-03,Drug Offenses,Matter Referred to Other Jurisdiction,49
 2025-04,Drug Offenses,Matter Referred to Other Jurisdiction,29
-2025-05,Drug Offenses,Matter Referred to Other Jurisdiction,25
+2025-05,Drug Offenses,Matter Referred to Other Jurisdiction,24
 2025-06,Drug Offenses,Matter Referred to Other Jurisdiction,26
 2025-07,Drug Offenses,Matter Referred to Other Jurisdiction,29
 2025-08,Drug Offenses,Matter Referred to Other Jurisdiction,33
@@ -10724,12 +10747,13 @@ ym,category,reason,declined
 2025-10,Drug Offenses,Matter Referred to Other Jurisdiction,20
 2025-11,Drug Offenses,Matter Referred to Other Jurisdiction,20
 2025-12,Drug Offenses,Matter Referred to Other Jurisdiction,19
-2026-01,Drug Offenses,Matter Referred to Other Jurisdiction,23
+2026-01,Drug Offenses,Matter Referred to Other Jurisdiction,24
 2026-02,Drug Offenses,Matter Referred to Other Jurisdiction,35
 2026-03,Drug Offenses,Matter Referred to Other Jurisdiction,56
 2026-04,Drug Offenses,Matter Referred to Other Jurisdiction,16
-2026-05,Drug Offenses,Matter Referred to Other Jurisdiction,18
-2026-06,Drug Offenses,Matter Referred to Other Jurisdiction,22
+2026-05,Drug Offenses,Matter Referred to Other Jurisdiction,19
+2026-06,Drug Offenses,Matter Referred to Other Jurisdiction,26
+2026-07,Drug Offenses,Matter Referred to Other Jurisdiction,39
 1994-10,Drug Offenses,Non-Prosecution Agreement,17
 1994-11,Drug Offenses,Non-Prosecution Agreement,21
 1994-12,Drug Offenses,Non-Prosecution Agreement,16
@@ -10939,7 +10963,7 @@ ym,category,reason,declined
 2011-12,Drug Offenses,Non-Prosecution Agreement,30
 2012-01,Drug Offenses,Non-Prosecution Agreement,30
 2012-02,Drug Offenses,Non-Prosecution Agreement,36
-2012-03,Drug Offenses,Non-Prosecution Agreement,75
+2012-03,Drug Offenses,Non-Prosecution Agreement,74
 2012-04,Drug Offenses,Non-Prosecution Agreement,89
 2012-05,Drug Offenses,Non-Prosecution Agreement,37
 2012-06,Drug Offenses,Non-Prosecution Agreement,61
@@ -10965,14 +10989,15 @@ ym,category,reason,declined
 2025-09,Drug Offenses,Non-Prosecution Agreement,1
 2026-01,Drug Offenses,Non-Prosecution Agreement,1
 2026-03,Drug Offenses,Non-Prosecution Agreement,1
+2026-07,Drug Offenses,Non-Prosecution Agreement,1
 1994-10,Drug Offenses,Other,39
 1994-11,Drug Offenses,Other,55
 1994-12,Drug Offenses,Other,43
-1995-01,Drug Offenses,Other,58
+1995-01,Drug Offenses,Other,59
 1995-02,Drug Offenses,Other,64
 1995-03,Drug Offenses,Other,42
 1995-04,Drug Offenses,Other,41
-1995-05,Drug Offenses,Other,27
+1995-05,Drug Offenses,Other,28
 1995-06,Drug Offenses,Other,34
 1995-07,Drug Offenses,Other,30
 1995-08,Drug Offenses,Other,45
@@ -10980,10 +11005,10 @@ ym,category,reason,declined
 1995-10,Drug Offenses,Other,38
 1995-11,Drug Offenses,Other,45
 1995-12,Drug Offenses,Other,50
-1996-01,Drug Offenses,Other,42
+1996-01,Drug Offenses,Other,43
 1996-02,Drug Offenses,Other,51
 1996-03,Drug Offenses,Other,46
-1996-04,Drug Offenses,Other,41
+1996-04,Drug Offenses,Other,40
 1996-05,Drug Offenses,Other,60
 1996-06,Drug Offenses,Other,114
 1996-07,Drug Offenses,Other,55
@@ -11174,7 +11199,7 @@ ym,category,reason,declined
 2011-12,Drug Offenses,Other,16
 2012-01,Drug Offenses,Other,37
 2012-02,Drug Offenses,Other,48
-2012-03,Drug Offenses,Other,129
+2012-03,Drug Offenses,Other,130
 2012-04,Drug Offenses,Other,54
 2012-05,Drug Offenses,Other,48
 2012-06,Drug Offenses,Other,40
@@ -11323,7 +11348,7 @@ ym,category,reason,declined
 2024-06,Drug Offenses,Other,2
 2024-07,Drug Offenses,Other,8
 2024-08,Drug Offenses,Other,3
-2024-09,Drug Offenses,Other,4
+2024-09,Drug Offenses,Other,5
 2024-10,Drug Offenses,Other,1
 2024-11,Drug Offenses,Other,4
 2024-12,Drug Offenses,Other,2
@@ -11342,54 +11367,55 @@ ym,category,reason,declined
 2026-01,Drug Offenses,Other,2
 2026-02,Drug Offenses,Other,2
 2026-03,Drug Offenses,Other,4
-2026-05,Drug Offenses,Other,3
+2026-05,Drug Offenses,Other,4
 2026-06,Drug Offenses,Other,4
-1994-10,Drug Offenses,Prioritization of Federal Resources and Interests,9
-1994-11,Drug Offenses,Prioritization of Federal Resources and Interests,15
-1994-12,Drug Offenses,Prioritization of Federal Resources and Interests,6
-1995-01,Drug Offenses,Prioritization of Federal Resources and Interests,15
-1995-02,Drug Offenses,Prioritization of Federal Resources and Interests,6
-1995-03,Drug Offenses,Prioritization of Federal Resources and Interests,27
-1995-04,Drug Offenses,Prioritization of Federal Resources and Interests,18
-1995-05,Drug Offenses,Prioritization of Federal Resources and Interests,18
-1995-06,Drug Offenses,Prioritization of Federal Resources and Interests,24
-1995-07,Drug Offenses,Prioritization of Federal Resources and Interests,16
+2026-07,Drug Offenses,Other,5
+1994-10,Drug Offenses,Prioritization of Federal Resources and Interests,10
+1994-11,Drug Offenses,Prioritization of Federal Resources and Interests,16
+1994-12,Drug Offenses,Prioritization of Federal Resources and Interests,8
+1995-01,Drug Offenses,Prioritization of Federal Resources and Interests,16
+1995-02,Drug Offenses,Prioritization of Federal Resources and Interests,7
+1995-03,Drug Offenses,Prioritization of Federal Resources and Interests,28
+1995-04,Drug Offenses,Prioritization of Federal Resources and Interests,20
+1995-05,Drug Offenses,Prioritization of Federal Resources and Interests,19
+1995-06,Drug Offenses,Prioritization of Federal Resources and Interests,25
+1995-07,Drug Offenses,Prioritization of Federal Resources and Interests,17
 1995-08,Drug Offenses,Prioritization of Federal Resources and Interests,27
-1995-09,Drug Offenses,Prioritization of Federal Resources and Interests,25
+1995-09,Drug Offenses,Prioritization of Federal Resources and Interests,26
 1995-10,Drug Offenses,Prioritization of Federal Resources and Interests,11
 1995-11,Drug Offenses,Prioritization of Federal Resources and Interests,9
 1995-12,Drug Offenses,Prioritization of Federal Resources and Interests,10
 1996-01,Drug Offenses,Prioritization of Federal Resources and Interests,18
-1996-02,Drug Offenses,Prioritization of Federal Resources and Interests,13
-1996-03,Drug Offenses,Prioritization of Federal Resources and Interests,11
+1996-02,Drug Offenses,Prioritization of Federal Resources and Interests,15
+1996-03,Drug Offenses,Prioritization of Federal Resources and Interests,14
 1996-04,Drug Offenses,Prioritization of Federal Resources and Interests,31
 1996-05,Drug Offenses,Prioritization of Federal Resources and Interests,25
 1996-06,Drug Offenses,Prioritization of Federal Resources and Interests,41
 1996-07,Drug Offenses,Prioritization of Federal Resources and Interests,11
-1996-08,Drug Offenses,Prioritization of Federal Resources and Interests,14
-1996-09,Drug Offenses,Prioritization of Federal Resources and Interests,24
-1996-10,Drug Offenses,Prioritization of Federal Resources and Interests,27
-1996-11,Drug Offenses,Prioritization of Federal Resources and Interests,12
-1996-12,Drug Offenses,Prioritization of Federal Resources and Interests,21
-1997-01,Drug Offenses,Prioritization of Federal Resources and Interests,35
-1997-02,Drug Offenses,Prioritization of Federal Resources and Interests,18
+1996-08,Drug Offenses,Prioritization of Federal Resources and Interests,15
+1996-09,Drug Offenses,Prioritization of Federal Resources and Interests,25
+1996-10,Drug Offenses,Prioritization of Federal Resources and Interests,28
+1996-11,Drug Offenses,Prioritization of Federal Resources and Interests,13
+1996-12,Drug Offenses,Prioritization of Federal Resources and Interests,22
+1997-01,Drug Offenses,Prioritization of Federal Resources and Interests,36
+1997-02,Drug Offenses,Prioritization of Federal Resources and Interests,20
 1997-03,Drug Offenses,Prioritization of Federal Resources and Interests,11
 1997-04,Drug Offenses,Prioritization of Federal Resources and Interests,7
 1997-05,Drug Offenses,Prioritization of Federal Resources and Interests,6
 1997-06,Drug Offenses,Prioritization of Federal Resources and Interests,19
-1997-07,Drug Offenses,Prioritization of Federal Resources and Interests,22
-1997-08,Drug Offenses,Prioritization of Federal Resources and Interests,25
+1997-07,Drug Offenses,Prioritization of Federal Resources and Interests,23
+1997-08,Drug Offenses,Prioritization of Federal Resources and Interests,27
 1997-09,Drug Offenses,Prioritization of Federal Resources and Interests,22
 1997-10,Drug Offenses,Prioritization of Federal Resources and Interests,17
 1997-11,Drug Offenses,Prioritization of Federal Resources and Interests,30
-1997-12,Drug Offenses,Prioritization of Federal Resources and Interests,22
-1998-01,Drug Offenses,Prioritization of Federal Resources and Interests,17
-1998-02,Drug Offenses,Prioritization of Federal Resources and Interests,34
+1997-12,Drug Offenses,Prioritization of Federal Resources and Interests,24
+1998-01,Drug Offenses,Prioritization of Federal Resources and Interests,18
+1998-02,Drug Offenses,Prioritization of Federal Resources and Interests,36
 1998-03,Drug Offenses,Prioritization of Federal Resources and Interests,30
 1998-04,Drug Offenses,Prioritization of Federal Resources and Interests,16
 1998-05,Drug Offenses,Prioritization of Federal Resources and Interests,18
 1998-06,Drug Offenses,Prioritization of Federal Resources and Interests,26
-1998-07,Drug Offenses,Prioritization of Federal Resources and Interests,32
+1998-07,Drug Offenses,Prioritization of Federal Resources and Interests,33
 1998-08,Drug Offenses,Prioritization of Federal Resources and Interests,13
 1998-09,Drug Offenses,Prioritization of Federal Resources and Interests,58
 1998-10,Drug Offenses,Prioritization of Federal Resources and Interests,12
@@ -11520,7 +11546,7 @@ ym,category,reason,declined
 2009-03,Drug Offenses,Prioritization of Federal Resources and Interests,57
 2009-04,Drug Offenses,Prioritization of Federal Resources and Interests,21
 2009-05,Drug Offenses,Prioritization of Federal Resources and Interests,2
-2009-06,Drug Offenses,Prioritization of Federal Resources and Interests,16
+2009-06,Drug Offenses,Prioritization of Federal Resources and Interests,17
 2009-07,Drug Offenses,Prioritization of Federal Resources and Interests,19
 2009-08,Drug Offenses,Prioritization of Federal Resources and Interests,13
 2009-09,Drug Offenses,Prioritization of Federal Resources and Interests,43
@@ -11720,11 +11746,12 @@ ym,category,reason,declined
 2025-11,Drug Offenses,Prioritization of Federal Resources and Interests,25
 2025-12,Drug Offenses,Prioritization of Federal Resources and Interests,18
 2026-01,Drug Offenses,Prioritization of Federal Resources and Interests,18
-2026-02,Drug Offenses,Prioritization of Federal Resources and Interests,28
-2026-03,Drug Offenses,Prioritization of Federal Resources and Interests,46
+2026-02,Drug Offenses,Prioritization of Federal Resources and Interests,29
+2026-03,Drug Offenses,Prioritization of Federal Resources and Interests,48
 2026-04,Drug Offenses,Prioritization of Federal Resources and Interests,20
-2026-05,Drug Offenses,Prioritization of Federal Resources and Interests,17
-2026-06,Drug Offenses,Prioritization of Federal Resources and Interests,17
+2026-05,Drug Offenses,Prioritization of Federal Resources and Interests,18
+2026-06,Drug Offenses,Prioritization of Federal Resources and Interests,19
+2026-07,Drug Offenses,Prioritization of Federal Resources and Interests,17
 1994-10,Government Regulatory Offenses,Alternative to Federal Prosecution,2
 1994-11,Government Regulatory Offenses,Alternative to Federal Prosecution,5
 1994-12,Government Regulatory Offenses,Alternative to Federal Prosecution,4
@@ -12076,6 +12103,7 @@ ym,category,reason,declined
 2026-04,Government Regulatory Offenses,Alternative to Federal Prosecution,2
 2026-05,Government Regulatory Offenses,Alternative to Federal Prosecution,2
 2026-06,Government Regulatory Offenses,Alternative to Federal Prosecution,1
+2026-07,Government Regulatory Offenses,Alternative to Federal Prosecution,5
 1994-10,Government Regulatory Offenses,Defendant Unavailable,7
 1994-11,Government Regulatory Offenses,Defendant Unavailable,7
 1994-12,Government Regulatory Offenses,Defendant Unavailable,1
@@ -12385,6 +12413,7 @@ ym,category,reason,declined
 2025-08,Government Regulatory Offenses,Defendant Unavailable,1
 2025-11,Government Regulatory Offenses,Defendant Unavailable,2
 2025-12,Government Regulatory Offenses,Defendant Unavailable,1
+2026-01,Government Regulatory Offenses,Defendant Unavailable,1
 2026-03,Government Regulatory Offenses,Defendant Unavailable,5
 2026-06,Government Regulatory Offenses,Defendant Unavailable,1
 1994-10,Government Regulatory Offenses,Insufficient Evidence,13
@@ -12447,10 +12476,10 @@ ym,category,reason,declined
 1999-07,Government Regulatory Offenses,Insufficient Evidence,68
 1999-08,Government Regulatory Offenses,Insufficient Evidence,43
 1999-09,Government Regulatory Offenses,Insufficient Evidence,42
-1999-10,Government Regulatory Offenses,Insufficient Evidence,59
+1999-10,Government Regulatory Offenses,Insufficient Evidence,60
 1999-11,Government Regulatory Offenses,Insufficient Evidence,40
 1999-12,Government Regulatory Offenses,Insufficient Evidence,37
-2000-01,Government Regulatory Offenses,Insufficient Evidence,45
+2000-01,Government Regulatory Offenses,Insufficient Evidence,44
 2000-02,Government Regulatory Offenses,Insufficient Evidence,37
 2000-03,Government Regulatory Offenses,Insufficient Evidence,103
 2000-04,Government Regulatory Offenses,Insufficient Evidence,31
@@ -12756,18 +12785,19 @@ ym,category,reason,declined
 2025-04,Government Regulatory Offenses,Insufficient Evidence,46
 2025-05,Government Regulatory Offenses,Insufficient Evidence,33
 2025-06,Government Regulatory Offenses,Insufficient Evidence,41
-2025-07,Government Regulatory Offenses,Insufficient Evidence,37
+2025-07,Government Regulatory Offenses,Insufficient Evidence,38
 2025-08,Government Regulatory Offenses,Insufficient Evidence,50
 2025-09,Government Regulatory Offenses,Insufficient Evidence,96
-2025-10,Government Regulatory Offenses,Insufficient Evidence,33
+2025-10,Government Regulatory Offenses,Insufficient Evidence,34
 2025-11,Government Regulatory Offenses,Insufficient Evidence,29
 2025-12,Government Regulatory Offenses,Insufficient Evidence,26
 2026-01,Government Regulatory Offenses,Insufficient Evidence,25
 2026-02,Government Regulatory Offenses,Insufficient Evidence,43
-2026-03,Government Regulatory Offenses,Insufficient Evidence,104
+2026-03,Government Regulatory Offenses,Insufficient Evidence,107
 2026-04,Government Regulatory Offenses,Insufficient Evidence,31
-2026-05,Government Regulatory Offenses,Insufficient Evidence,37
-2026-06,Government Regulatory Offenses,Insufficient Evidence,18
+2026-05,Government Regulatory Offenses,Insufficient Evidence,41
+2026-06,Government Regulatory Offenses,Insufficient Evidence,21
+2026-07,Government Regulatory Offenses,Insufficient Evidence,92
 1994-10,Government Regulatory Offenses,Legally Barred,1
 1994-11,Government Regulatory Offenses,Legally Barred,140
 1994-12,Government Regulatory Offenses,Legally Barred,1
@@ -13061,7 +13091,8 @@ ym,category,reason,declined
 2026-02,Government Regulatory Offenses,Legally Barred,1
 2026-03,Government Regulatory Offenses,Legally Barred,4
 2026-04,Government Regulatory Offenses,Legally Barred,2
-2026-06,Government Regulatory Offenses,Legally Barred,1
+2026-05,Government Regulatory Offenses,Legally Barred,1
+2026-06,Government Regulatory Offenses,Legally Barred,3
 1995-01,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,2
 1995-02,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,4
 1995-03,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,1
@@ -13114,6 +13145,7 @@ ym,category,reason,declined
 1999-10,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,4
 1999-11,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,3
 1999-12,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,2
+2000-01,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,1
 2000-02,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,3
 2000-03,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,3
 2000-05,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,2
@@ -13400,8 +13432,9 @@ ym,category,reason,declined
 2026-02,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,3
 2026-03,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,10
 2026-04,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,5
-2026-05,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,2
+2026-05,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,3
 2026-06,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,5
+2026-07,Government Regulatory Offenses,Matter Referred to Other Jurisdiction,3
 1994-10,Government Regulatory Offenses,Non-Prosecution Agreement,2
 1994-11,Government Regulatory Offenses,Non-Prosecution Agreement,4
 1995-01,Government Regulatory Offenses,Non-Prosecution Agreement,4
@@ -13921,6 +13954,7 @@ ym,category,reason,declined
 2025-09,Government Regulatory Offenses,Other,2
 2026-01,Government Regulatory Offenses,Other,1
 2026-05,Government Regulatory Offenses,Other,1
+2026-07,Government Regulatory Offenses,Other,2
 1994-10,Government Regulatory Offenses,Prioritization of Federal Resources and Interests,4
 1994-11,Government Regulatory Offenses,Prioritization of Federal Resources and Interests,1
 1994-12,Government Regulatory Offenses,Prioritization of Federal Resources and Interests,2
@@ -14298,6 +14332,7 @@ ym,category,reason,declined
 2026-04,Government Regulatory Offenses,Prioritization of Federal Resources and Interests,7
 2026-05,Government Regulatory Offenses,Prioritization of Federal Resources and Interests,8
 2026-06,Government Regulatory Offenses,Prioritization of Federal Resources and Interests,3
+2026-07,Government Regulatory Offenses,Prioritization of Federal Resources and Interests,5
 1995-01,Immigration,Alternative to Federal Prosecution,2
 1995-10,Immigration,Alternative to Federal Prosecution,1
 1996-01,Immigration,Alternative to Federal Prosecution,1
@@ -14451,6 +14486,7 @@ ym,category,reason,declined
 2026-03,Immigration,Alternative to Federal Prosecution,8
 2026-04,Immigration,Alternative to Federal Prosecution,1
 2026-05,Immigration,Alternative to Federal Prosecution,1
+2026-07,Immigration,Alternative to Federal Prosecution,1
 1994-10,Immigration,Defendant Unavailable,1
 1994-11,Immigration,Defendant Unavailable,2
 1994-12,Immigration,Defendant Unavailable,3
@@ -14806,11 +14842,12 @@ ym,category,reason,declined
 2025-11,Immigration,Defendant Unavailable,8
 2025-12,Immigration,Defendant Unavailable,5
 2026-01,Immigration,Defendant Unavailable,5
-2026-02,Immigration,Defendant Unavailable,10
+2026-02,Immigration,Defendant Unavailable,12
 2026-03,Immigration,Defendant Unavailable,13
 2026-04,Immigration,Defendant Unavailable,5
-2026-05,Immigration,Defendant Unavailable,5
-2026-06,Immigration,Defendant Unavailable,4
+2026-05,Immigration,Defendant Unavailable,6
+2026-06,Immigration,Defendant Unavailable,9
+2026-07,Immigration,Defendant Unavailable,9
 1994-10,Immigration,Insufficient Evidence,7
 1994-11,Immigration,Insufficient Evidence,5
 1994-12,Immigration,Insufficient Evidence,17
@@ -14892,7 +14929,7 @@ ym,category,reason,declined
 2001-04,Immigration,Insufficient Evidence,20
 2001-05,Immigration,Insufficient Evidence,12
 2001-06,Immigration,Insufficient Evidence,12
-2001-07,Immigration,Insufficient Evidence,13
+2001-07,Immigration,Insufficient Evidence,14
 2001-08,Immigration,Insufficient Evidence,12
 2001-09,Immigration,Insufficient Evidence,10
 2001-10,Immigration,Insufficient Evidence,23
@@ -15191,7 +15228,8 @@ ym,category,reason,declined
 2026-03,Immigration,Insufficient Evidence,70
 2026-04,Immigration,Insufficient Evidence,24
 2026-05,Immigration,Insufficient Evidence,7
-2026-06,Immigration,Insufficient Evidence,13
+2026-06,Immigration,Insufficient Evidence,14
+2026-07,Immigration,Insufficient Evidence,42
 1994-10,Immigration,Legally Barred,1
 1994-11,Immigration,Legally Barred,2
 1994-12,Immigration,Legally Barred,1
@@ -15432,10 +15470,11 @@ ym,category,reason,declined
 2025-11,Immigration,Legally Barred,2
 2025-12,Immigration,Legally Barred,1
 2026-01,Immigration,Legally Barred,1
-2026-02,Immigration,Legally Barred,1
+2026-02,Immigration,Legally Barred,3
 2026-03,Immigration,Legally Barred,4
 2026-04,Immigration,Legally Barred,1
 2026-05,Immigration,Legally Barred,3
+2026-07,Immigration,Legally Barred,1
 1994-11,Immigration,Matter Referred to Other Jurisdiction,1
 1994-12,Immigration,Matter Referred to Other Jurisdiction,2
 1995-01,Immigration,Matter Referred to Other Jurisdiction,2
@@ -15710,12 +15749,13 @@ ym,category,reason,declined
 2025-07,Immigration,Matter Referred to Other Jurisdiction,1
 2025-08,Immigration,Matter Referred to Other Jurisdiction,2
 2025-09,Immigration,Matter Referred to Other Jurisdiction,3
-2025-10,Immigration,Matter Referred to Other Jurisdiction,2
+2025-10,Immigration,Matter Referred to Other Jurisdiction,3
 2025-11,Immigration,Matter Referred to Other Jurisdiction,2
 2025-12,Immigration,Matter Referred to Other Jurisdiction,2
 2026-03,Immigration,Matter Referred to Other Jurisdiction,2
 2026-04,Immigration,Matter Referred to Other Jurisdiction,3
 2026-06,Immigration,Matter Referred to Other Jurisdiction,1
+2026-07,Immigration,Matter Referred to Other Jurisdiction,2
 1994-10,Immigration,Non-Prosecution Agreement,2
 1994-11,Immigration,Non-Prosecution Agreement,1
 1994-12,Immigration,Non-Prosecution Agreement,1
@@ -16261,6 +16301,7 @@ ym,category,reason,declined
 2026-01,Immigration,Other,2
 2026-03,Immigration,Other,3
 2026-05,Immigration,Other,2
+2026-07,Immigration,Other,3
 1994-10,Immigration,Prioritization of Federal Resources and Interests,2
 1995-01,Immigration,Prioritization of Federal Resources and Interests,1
 1995-02,Immigration,Prioritization of Federal Resources and Interests,2
@@ -16402,7 +16443,7 @@ ym,category,reason,declined
 2007-02,Immigration,Prioritization of Federal Resources and Interests,2
 2007-03,Immigration,Prioritization of Federal Resources and Interests,6
 2007-04,Immigration,Prioritization of Federal Resources and Interests,5
-2007-05,Immigration,Prioritization of Federal Resources and Interests,1
+2007-05,Immigration,Prioritization of Federal Resources and Interests,2
 2007-06,Immigration,Prioritization of Federal Resources and Interests,2
 2007-07,Immigration,Prioritization of Federal Resources and Interests,2
 2007-08,Immigration,Prioritization of Federal Resources and Interests,2
@@ -16616,10 +16657,11 @@ ym,category,reason,declined
 2025-12,Immigration,Prioritization of Federal Resources and Interests,1
 2026-01,Immigration,Prioritization of Federal Resources and Interests,4
 2026-02,Immigration,Prioritization of Federal Resources and Interests,5
-2026-03,Immigration,Prioritization of Federal Resources and Interests,12
+2026-03,Immigration,Prioritization of Federal Resources and Interests,13
 2026-04,Immigration,Prioritization of Federal Resources and Interests,6
 2026-05,Immigration,Prioritization of Federal Resources and Interests,6
-2026-06,Immigration,Prioritization of Federal Resources and Interests,1
+2026-06,Immigration,Prioritization of Federal Resources and Interests,2
+2026-07,Immigration,Prioritization of Federal Resources and Interests,7
 1995-10,Internal Security Offenses,Alternative to Federal Prosecution,1
 1996-01,Internal Security Offenses,Alternative to Federal Prosecution,1
 1996-03,Internal Security Offenses,Alternative to Federal Prosecution,1
@@ -16671,6 +16713,7 @@ ym,category,reason,declined
 2026-01,Internal Security Offenses,Alternative to Federal Prosecution,1
 2026-02,Internal Security Offenses,Alternative to Federal Prosecution,2
 2026-03,Internal Security Offenses,Alternative to Federal Prosecution,2
+2026-05,Internal Security Offenses,Alternative to Federal Prosecution,1
 2026-06,Internal Security Offenses,Alternative to Federal Prosecution,1
 1994-12,Internal Security Offenses,Defendant Unavailable,1
 1995-01,Internal Security Offenses,Defendant Unavailable,2
@@ -16765,7 +16808,8 @@ ym,category,reason,declined
 2025-02,Internal Security Offenses,Defendant Unavailable,4
 2025-03,Internal Security Offenses,Defendant Unavailable,1
 2025-06,Internal Security Offenses,Defendant Unavailable,1
-2026-06,Internal Security Offenses,Defendant Unavailable,1
+2026-06,Internal Security Offenses,Defendant Unavailable,2
+2026-07,Internal Security Offenses,Defendant Unavailable,1
 1994-11,Internal Security Offenses,Insufficient Evidence,1
 1995-01,Internal Security Offenses,Insufficient Evidence,4
 1995-02,Internal Security Offenses,Insufficient Evidence,2
@@ -17095,10 +17139,11 @@ ym,category,reason,declined
 2025-12,Internal Security Offenses,Insufficient Evidence,15
 2026-01,Internal Security Offenses,Insufficient Evidence,8
 2026-02,Internal Security Offenses,Insufficient Evidence,4
-2026-03,Internal Security Offenses,Insufficient Evidence,29
-2026-04,Internal Security Offenses,Insufficient Evidence,10
-2026-05,Internal Security Offenses,Insufficient Evidence,14
-2026-06,Internal Security Offenses,Insufficient Evidence,11
+2026-03,Internal Security Offenses,Insufficient Evidence,28
+2026-04,Internal Security Offenses,Insufficient Evidence,11
+2026-05,Internal Security Offenses,Insufficient Evidence,19
+2026-06,Internal Security Offenses,Insufficient Evidence,12
+2026-07,Internal Security Offenses,Insufficient Evidence,29
 1995-10,Internal Security Offenses,Legally Barred,1
 1996-04,Internal Security Offenses,Legally Barred,1
 2000-07,Internal Security Offenses,Legally Barred,1
@@ -17136,6 +17181,8 @@ ym,category,reason,declined
 2025-05,Internal Security Offenses,Legally Barred,1
 2025-07,Internal Security Offenses,Legally Barred,1
 2025-09,Internal Security Offenses,Legally Barred,2
+2026-05,Internal Security Offenses,Legally Barred,1
+2026-07,Internal Security Offenses,Legally Barred,1
 1996-06,Internal Security Offenses,Matter Referred to Other Jurisdiction,1
 1998-03,Internal Security Offenses,Matter Referred to Other Jurisdiction,1
 1999-03,Internal Security Offenses,Matter Referred to Other Jurisdiction,1
@@ -17208,6 +17255,7 @@ ym,category,reason,declined
 2025-09,Internal Security Offenses,Matter Referred to Other Jurisdiction,1
 2025-11,Internal Security Offenses,Matter Referred to Other Jurisdiction,1
 2026-03,Internal Security Offenses,Matter Referred to Other Jurisdiction,1
+2026-05,Internal Security Offenses,Matter Referred to Other Jurisdiction,1
 2026-06,Internal Security Offenses,Matter Referred to Other Jurisdiction,1
 1995-03,Internal Security Offenses,Non-Prosecution Agreement,1
 1995-08,Internal Security Offenses,Non-Prosecution Agreement,1
@@ -17474,6 +17522,7 @@ ym,category,reason,declined
 2026-03,Internal Security Offenses,Prioritization of Federal Resources and Interests,2
 2026-04,Internal Security Offenses,Prioritization of Federal Resources and Interests,1
 2026-05,Internal Security Offenses,Prioritization of Federal Resources and Interests,1
+2026-07,Internal Security Offenses,Prioritization of Federal Resources and Interests,2
 1994-10,Interstate Theft,Alternative to Federal Prosecution,1
 1994-12,Interstate Theft,Alternative to Federal Prosecution,1
 1995-02,Interstate Theft,Alternative to Federal Prosecution,1
@@ -17544,6 +17593,7 @@ ym,category,reason,declined
 2025-07,Interstate Theft,Alternative to Federal Prosecution,1
 2025-11,Interstate Theft,Alternative to Federal Prosecution,1
 2026-05,Interstate Theft,Alternative to Federal Prosecution,1
+2026-07,Interstate Theft,Alternative to Federal Prosecution,1
 1994-10,Interstate Theft,Defendant Unavailable,3
 1994-11,Interstate Theft,Defendant Unavailable,3
 1994-12,Interstate Theft,Defendant Unavailable,3
@@ -18093,6 +18143,8 @@ ym,category,reason,declined
 2026-03,Interstate Theft,Insufficient Evidence,7
 2026-04,Interstate Theft,Insufficient Evidence,3
 2026-05,Interstate Theft,Insufficient Evidence,1
+2026-06,Interstate Theft,Insufficient Evidence,1
+2026-07,Interstate Theft,Insufficient Evidence,2
 1995-04,Interstate Theft,Legally Barred,1
 1995-09,Interstate Theft,Legally Barred,1
 1996-01,Interstate Theft,Legally Barred,1
@@ -18242,7 +18294,7 @@ ym,category,reason,declined
 2019-09,Interstate Theft,Matter Referred to Other Jurisdiction,2
 2020-03,Interstate Theft,Matter Referred to Other Jurisdiction,1
 2020-09,Interstate Theft,Matter Referred to Other Jurisdiction,1
-2020-10,Interstate Theft,Matter Referred to Other Jurisdiction,2
+2020-10,Interstate Theft,Matter Referred to Other Jurisdiction,1
 2021-02,Interstate Theft,Matter Referred to Other Jurisdiction,2
 2021-03,Interstate Theft,Matter Referred to Other Jurisdiction,4
 2021-04,Interstate Theft,Matter Referred to Other Jurisdiction,1
@@ -18663,7 +18715,7 @@ ym,category,reason,declined
 2006-03,Interstate Theft,Prioritization of Federal Resources and Interests,1
 2006-05,Interstate Theft,Prioritization of Federal Resources and Interests,1
 2006-07,Interstate Theft,Prioritization of Federal Resources and Interests,1
-2006-08,Interstate Theft,Prioritization of Federal Resources and Interests,1
+2006-08,Interstate Theft,Prioritization of Federal Resources and Interests,2
 2006-09,Interstate Theft,Prioritization of Federal Resources and Interests,1
 2007-02,Interstate Theft,Prioritization of Federal Resources and Interests,1
 2007-03,Interstate Theft,Prioritization of Federal Resources and Interests,1
@@ -18723,7 +18775,7 @@ ym,category,reason,declined
 2019-08,Interstate Theft,Prioritization of Federal Resources and Interests,1
 2020-02,Interstate Theft,Prioritization of Federal Resources and Interests,2
 2020-06,Interstate Theft,Prioritization of Federal Resources and Interests,1
-2020-10,Interstate Theft,Prioritization of Federal Resources and Interests,2
+2020-10,Interstate Theft,Prioritization of Federal Resources and Interests,3
 2020-11,Interstate Theft,Prioritization of Federal Resources and Interests,1
 2020-12,Interstate Theft,Prioritization of Federal Resources and Interests,2
 2021-01,Interstate Theft,Prioritization of Federal Resources and Interests,1
@@ -19234,7 +19286,7 @@ ym,category,reason,declined
 2026-03,Labor Management Offenses,Insufficient Evidence,3
 2026-04,Labor Management Offenses,Insufficient Evidence,1
 2026-05,Labor Management Offenses,Insufficient Evidence,1
-2026-06,Labor Management Offenses,Insufficient Evidence,1
+2026-06,Labor Management Offenses,Insufficient Evidence,2
 1995-03,Labor Management Offenses,Legally Barred,1
 1996-05,Labor Management Offenses,Legally Barred,1
 1996-12,Labor Management Offenses,Legally Barred,1
@@ -20322,12 +20374,13 @@ ym,category,reason,declined
 2025-07,Non-violent Crime in Indian Country,Insufficient Evidence,2
 2025-08,Non-violent Crime in Indian Country,Insufficient Evidence,3
 2025-09,Non-violent Crime in Indian Country,Insufficient Evidence,5
-2025-10,Non-violent Crime in Indian Country,Insufficient Evidence,4
+2025-10,Non-violent Crime in Indian Country,Insufficient Evidence,5
 2025-11,Non-violent Crime in Indian Country,Insufficient Evidence,4
 2026-01,Non-violent Crime in Indian Country,Insufficient Evidence,1
 2026-03,Non-violent Crime in Indian Country,Insufficient Evidence,2
 2026-04,Non-violent Crime in Indian Country,Insufficient Evidence,2
 2026-06,Non-violent Crime in Indian Country,Insufficient Evidence,1
+2026-07,Non-violent Crime in Indian Country,Insufficient Evidence,1
 1994-10,Non-violent Crime in Indian Country,Legally Barred,2
 1994-12,Non-violent Crime in Indian Country,Legally Barred,2
 1995-01,Non-violent Crime in Indian Country,Legally Barred,3
@@ -20645,6 +20698,7 @@ ym,category,reason,declined
 2026-03,Non-violent Crime in Indian Country,Matter Referred to Other Jurisdiction,1
 2026-04,Non-violent Crime in Indian Country,Matter Referred to Other Jurisdiction,1
 2026-05,Non-violent Crime in Indian Country,Matter Referred to Other Jurisdiction,1
+2026-07,Non-violent Crime in Indian Country,Matter Referred to Other Jurisdiction,1
 1994-12,Non-violent Crime in Indian Country,Non-Prosecution Agreement,3
 1995-03,Non-violent Crime in Indian Country,Non-Prosecution Agreement,1
 1995-04,Non-violent Crime in Indian Country,Non-Prosecution Agreement,1
@@ -21135,7 +21189,6 @@ ym,category,reason,declined
 2025-07,Non-violent Crime in Indian Country,Prioritization of Federal Resources and Interests,1
 2025-08,Non-violent Crime in Indian Country,Prioritization of Federal Resources and Interests,1
 2025-09,Non-violent Crime in Indian Country,Prioritization of Federal Resources and Interests,3
-2025-12,Non-violent Crime in Indian Country,Prioritization of Federal Resources and Interests,1
 2026-02,Non-violent Crime in Indian Country,Prioritization of Federal Resources and Interests,1
 2026-05,Non-violent Crime in Indian Country,Prioritization of Federal Resources and Interests,1
 1994-10,Official Corruption,Alternative to Federal Prosecution,1
@@ -21412,7 +21465,7 @@ ym,category,reason,declined
 1994-12,Official Corruption,Defendant Unavailable,3
 1995-01,Official Corruption,Defendant Unavailable,6
 1995-02,Official Corruption,Defendant Unavailable,7
-1995-03,Official Corruption,Defendant Unavailable,6
+1995-03,Official Corruption,Defendant Unavailable,5
 1995-04,Official Corruption,Defendant Unavailable,4
 1995-05,Official Corruption,Defendant Unavailable,4
 1995-06,Official Corruption,Defendant Unavailable,4
@@ -21666,7 +21719,7 @@ ym,category,reason,declined
 1994-12,Official Corruption,Insufficient Evidence,31
 1995-01,Official Corruption,Insufficient Evidence,50
 1995-02,Official Corruption,Insufficient Evidence,43
-1995-03,Official Corruption,Insufficient Evidence,32
+1995-03,Official Corruption,Insufficient Evidence,33
 1995-04,Official Corruption,Insufficient Evidence,31
 1995-05,Official Corruption,Insufficient Evidence,36
 1995-06,Official Corruption,Insufficient Evidence,30
@@ -22029,7 +22082,7 @@ ym,category,reason,declined
 2025-03,Official Corruption,Insufficient Evidence,62
 2025-04,Official Corruption,Insufficient Evidence,21
 2025-05,Official Corruption,Insufficient Evidence,26
-2025-06,Official Corruption,Insufficient Evidence,28
+2025-06,Official Corruption,Insufficient Evidence,29
 2025-07,Official Corruption,Insufficient Evidence,32
 2025-08,Official Corruption,Insufficient Evidence,20
 2025-09,Official Corruption,Insufficient Evidence,70
@@ -22039,9 +22092,10 @@ ym,category,reason,declined
 2026-01,Official Corruption,Insufficient Evidence,18
 2026-02,Official Corruption,Insufficient Evidence,30
 2026-03,Official Corruption,Insufficient Evidence,60
-2026-04,Official Corruption,Insufficient Evidence,22
-2026-05,Official Corruption,Insufficient Evidence,11
-2026-06,Official Corruption,Insufficient Evidence,16
+2026-04,Official Corruption,Insufficient Evidence,23
+2026-05,Official Corruption,Insufficient Evidence,10
+2026-06,Official Corruption,Insufficient Evidence,17
+2026-07,Official Corruption,Insufficient Evidence,18
 1994-11,Official Corruption,Legally Barred,2
 1995-03,Official Corruption,Legally Barred,4
 1995-06,Official Corruption,Legally Barred,1
@@ -22254,6 +22308,7 @@ ym,category,reason,declined
 2025-09,Official Corruption,Legally Barred,1
 2025-11,Official Corruption,Legally Barred,1
 2026-01,Official Corruption,Legally Barred,1
+2026-07,Official Corruption,Legally Barred,1
 1994-11,Official Corruption,Matter Referred to Other Jurisdiction,1
 1994-12,Official Corruption,Matter Referred to Other Jurisdiction,1
 1995-02,Official Corruption,Matter Referred to Other Jurisdiction,1
@@ -23327,7 +23382,7 @@ ym,category,reason,declined
 2024-11,Official Corruption,Prioritization of Federal Resources and Interests,2
 2024-12,Official Corruption,Prioritization of Federal Resources and Interests,8
 2025-01,Official Corruption,Prioritization of Federal Resources and Interests,2
-2025-02,Official Corruption,Prioritization of Federal Resources and Interests,19
+2025-02,Official Corruption,Prioritization of Federal Resources and Interests,20
 2025-03,Official Corruption,Prioritization of Federal Resources and Interests,5
 2025-04,Official Corruption,Prioritization of Federal Resources and Interests,3
 2025-05,Official Corruption,Prioritization of Federal Resources and Interests,1
@@ -23343,6 +23398,7 @@ ym,category,reason,declined
 2026-04,Official Corruption,Prioritization of Federal Resources and Interests,1
 2026-05,Official Corruption,Prioritization of Federal Resources and Interests,5
 2026-06,Official Corruption,Prioritization of Federal Resources and Interests,2
+2026-07,Official Corruption,Prioritization of Federal Resources and Interests,3
 1995-04,Organized Crime,Alternative to Federal Prosecution,1
 1995-08,Organized Crime,Alternative to Federal Prosecution,2
 1995-09,Organized Crime,Alternative to Federal Prosecution,1
@@ -23943,6 +23999,7 @@ ym,category,reason,declined
 2026-04,Organized Crime,Insufficient Evidence,7
 2026-05,Organized Crime,Insufficient Evidence,1
 2026-06,Organized Crime,Insufficient Evidence,3
+2026-07,Organized Crime,Insufficient Evidence,2
 1995-02,Organized Crime,Legally Barred,1
 1995-03,Organized Crime,Legally Barred,1
 1996-06,Organized Crime,Legally Barred,2
@@ -24025,6 +24082,7 @@ ym,category,reason,declined
 2024-04,Organized Crime,Legally Barred,5
 2024-09,Organized Crime,Legally Barred,1
 2025-02,Organized Crime,Legally Barred,1
+2026-07,Organized Crime,Legally Barred,1
 1994-12,Organized Crime,Matter Referred to Other Jurisdiction,1
 1995-02,Organized Crime,Matter Referred to Other Jurisdiction,1
 1995-06,Organized Crime,Matter Referred to Other Jurisdiction,1
@@ -24157,6 +24215,7 @@ ym,category,reason,declined
 2026-01,Organized Crime,Matter Referred to Other Jurisdiction,2
 2026-02,Organized Crime,Matter Referred to Other Jurisdiction,1
 2026-03,Organized Crime,Matter Referred to Other Jurisdiction,2
+2026-05,Organized Crime,Matter Referred to Other Jurisdiction,1
 1995-01,Organized Crime,Non-Prosecution Agreement,1
 1995-02,Organized Crime,Non-Prosecution Agreement,1
 1995-04,Organized Crime,Non-Prosecution Agreement,2
@@ -24475,6 +24534,7 @@ ym,category,reason,declined
 2025-02,Organized Crime,Other,2
 2025-12,Organized Crime,Other,1
 2026-02,Organized Crime,Other,1
+2026-07,Organized Crime,Other,1
 1995-01,Organized Crime,Prioritization of Federal Resources and Interests,1
 1995-06,Organized Crime,Prioritization of Federal Resources and Interests,2
 1995-07,Organized Crime,Prioritization of Federal Resources and Interests,1
@@ -24668,6 +24728,7 @@ ym,category,reason,declined
 2026-01,Organized Crime,Prioritization of Federal Resources and Interests,1
 2026-02,Organized Crime,Prioritization of Federal Resources and Interests,2
 2026-03,Organized Crime,Prioritization of Federal Resources and Interests,3
+2026-05,Organized Crime,Prioritization of Federal Resources and Interests,1
 2026-06,Organized Crime,Prioritization of Federal Resources and Interests,1
 1994-10,Other,Alternative to Federal Prosecution,4
 1994-11,Other,Alternative to Federal Prosecution,6
@@ -24786,7 +24847,8 @@ ym,category,reason,declined
 2025-04,Other,Alternative to Federal Prosecution,2
 2025-08,Other,Alternative to Federal Prosecution,1
 2025-09,Other,Alternative to Federal Prosecution,1
-2026-03,Other,Alternative to Federal Prosecution,2
+2026-03,Other,Alternative to Federal Prosecution,3
+2026-07,Other,Alternative to Federal Prosecution,1
 1994-10,Other,Defendant Unavailable,10
 1994-11,Other,Defendant Unavailable,11
 1994-12,Other,Defendant Unavailable,2
@@ -25108,7 +25170,7 @@ ym,category,reason,declined
 2004-11,Other,Insufficient Evidence,13
 2004-12,Other,Insufficient Evidence,11
 2005-01,Other,Insufficient Evidence,17
-2005-02,Other,Insufficient Evidence,15
+2005-02,Other,Insufficient Evidence,14
 2005-03,Other,Insufficient Evidence,36
 2005-04,Other,Insufficient Evidence,21
 2005-05,Other,Insufficient Evidence,25
@@ -25280,7 +25342,7 @@ ym,category,reason,declined
 2019-08,Other,Insufficient Evidence,1
 2019-09,Other,Insufficient Evidence,23
 2019-10,Other,Insufficient Evidence,19
-2019-11,Other,Insufficient Evidence,19
+2019-11,Other,Insufficient Evidence,20
 2019-12,Other,Insufficient Evidence,12
 2020-01,Other,Insufficient Evidence,7
 2020-02,Other,Insufficient Evidence,7
@@ -25295,7 +25357,7 @@ ym,category,reason,declined
 2020-11,Other,Insufficient Evidence,15
 2020-12,Other,Insufficient Evidence,15
 2021-01,Other,Insufficient Evidence,1
-2021-02,Other,Insufficient Evidence,7
+2021-02,Other,Insufficient Evidence,6
 2021-03,Other,Insufficient Evidence,10
 2021-04,Other,Insufficient Evidence,4
 2021-05,Other,Insufficient Evidence,3
@@ -25308,7 +25370,7 @@ ym,category,reason,declined
 2021-12,Other,Insufficient Evidence,1
 2022-01,Other,Insufficient Evidence,3
 2022-02,Other,Insufficient Evidence,10
-2022-03,Other,Insufficient Evidence,28
+2022-03,Other,Insufficient Evidence,27
 2022-04,Other,Insufficient Evidence,8
 2022-05,Other,Insufficient Evidence,3
 2022-06,Other,Insufficient Evidence,16
@@ -25333,7 +25395,7 @@ ym,category,reason,declined
 2024-02,Other,Insufficient Evidence,5
 2024-03,Other,Insufficient Evidence,7
 2024-04,Other,Insufficient Evidence,5
-2024-05,Other,Insufficient Evidence,7
+2024-05,Other,Insufficient Evidence,8
 2024-06,Other,Insufficient Evidence,2
 2024-07,Other,Insufficient Evidence,3
 2024-08,Other,Insufficient Evidence,3
@@ -25345,20 +25407,20 @@ ym,category,reason,declined
 2025-02,Other,Insufficient Evidence,16
 2025-03,Other,Insufficient Evidence,20
 2025-04,Other,Insufficient Evidence,3
-2025-05,Other,Insufficient Evidence,3
-2025-06,Other,Insufficient Evidence,3
+2025-05,Other,Insufficient Evidence,4
+2025-06,Other,Insufficient Evidence,4
 2025-07,Other,Insufficient Evidence,4
-2025-08,Other,Insufficient Evidence,5
+2025-08,Other,Insufficient Evidence,6
 2025-09,Other,Insufficient Evidence,12
-2025-10,Other,Insufficient Evidence,6
+2025-10,Other,Insufficient Evidence,5
 2025-11,Other,Insufficient Evidence,2
 2025-12,Other,Insufficient Evidence,1
 2026-01,Other,Insufficient Evidence,4
 2026-02,Other,Insufficient Evidence,2
-2026-03,Other,Insufficient Evidence,23
+2026-03,Other,Insufficient Evidence,22
 2026-04,Other,Insufficient Evidence,11
-2026-05,Other,Insufficient Evidence,5
-2026-06,Other,Insufficient Evidence,1
+2026-05,Other,Insufficient Evidence,4
+2026-07,Other,Insufficient Evidence,7
 1994-10,Other,Legally Barred,1
 1995-01,Other,Legally Barred,1
 1995-03,Other,Legally Barred,2
@@ -25501,6 +25563,7 @@ ym,category,reason,declined
 2013-01,Other,Matter Referred to Other Jurisdiction,1
 2013-02,Other,Matter Referred to Other Jurisdiction,1
 2013-08,Other,Matter Referred to Other Jurisdiction,1
+2013-11,Other,Matter Referred to Other Jurisdiction,1
 2014-02,Other,Matter Referred to Other Jurisdiction,1
 2014-03,Other,Matter Referred to Other Jurisdiction,2
 2014-04,Other,Matter Referred to Other Jurisdiction,1
@@ -25557,9 +25620,11 @@ ym,category,reason,declined
 2024-09,Other,Matter Referred to Other Jurisdiction,3
 2025-02,Other,Matter Referred to Other Jurisdiction,1
 2025-03,Other,Matter Referred to Other Jurisdiction,1
+2025-05,Other,Matter Referred to Other Jurisdiction,1
 2025-08,Other,Matter Referred to Other Jurisdiction,2
 2025-09,Other,Matter Referred to Other Jurisdiction,1
 2026-05,Other,Matter Referred to Other Jurisdiction,1
+2026-07,Other,Matter Referred to Other Jurisdiction,1
 1994-10,Other,Non-Prosecution Agreement,2
 1994-12,Other,Non-Prosecution Agreement,1
 1995-01,Other,Non-Prosecution Agreement,1
@@ -25657,7 +25722,7 @@ ym,category,reason,declined
 2005-01,Other,Non-Prosecution Agreement,3
 2005-02,Other,Non-Prosecution Agreement,6
 2005-03,Other,Non-Prosecution Agreement,7
-2005-04,Other,Non-Prosecution Agreement,5
+2005-04,Other,Non-Prosecution Agreement,4
 2005-05,Other,Non-Prosecution Agreement,6
 2005-06,Other,Non-Prosecution Agreement,7
 2005-07,Other,Non-Prosecution Agreement,2
@@ -25818,7 +25883,7 @@ ym,category,reason,declined
 2003-12,Other,Other,1
 2004-01,Other,Other,3
 2004-02,Other,Other,1
-2004-03,Other,Other,22
+2004-03,Other,Other,21
 2004-04,Other,Other,4
 2004-05,Other,Other,2
 2004-07,Other,Other,7
@@ -25909,7 +25974,7 @@ ym,category,reason,declined
 2013-06,Other,Other,3
 2013-07,Other,Other,2
 2013-08,Other,Other,1
-2013-11,Other,Other,2
+2013-11,Other,Other,1
 2013-12,Other,Other,1
 2014-02,Other,Other,1
 2014-03,Other,Other,1
@@ -25936,18 +26001,17 @@ ym,category,reason,declined
 2025-02,Other,Other,1
 2025-09,Other,Other,1
 2026-01,Other,Other,1
-2026-05,Other,Other,1
 1994-10,Other,Prioritization of Federal Resources and Interests,1
 1994-11,Other,Prioritization of Federal Resources and Interests,1
 1994-12,Other,Prioritization of Federal Resources and Interests,1
-1995-01,Other,Prioritization of Federal Resources and Interests,1
+1995-01,Other,Prioritization of Federal Resources and Interests,2
 1995-03,Other,Prioritization of Federal Resources and Interests,8
 1995-04,Other,Prioritization of Federal Resources and Interests,6
 1995-05,Other,Prioritization of Federal Resources and Interests,6
 1995-06,Other,Prioritization of Federal Resources and Interests,2
 1995-07,Other,Prioritization of Federal Resources and Interests,2
 1995-08,Other,Prioritization of Federal Resources and Interests,5
-1995-09,Other,Prioritization of Federal Resources and Interests,3
+1995-09,Other,Prioritization of Federal Resources and Interests,4
 1995-10,Other,Prioritization of Federal Resources and Interests,4
 1995-11,Other,Prioritization of Federal Resources and Interests,3
 1995-12,Other,Prioritization of Federal Resources and Interests,2
@@ -25960,6 +26024,7 @@ ym,category,reason,declined
 1996-11,Other,Prioritization of Federal Resources and Interests,1
 1996-12,Other,Prioritization of Federal Resources and Interests,10
 1997-01,Other,Prioritization of Federal Resources and Interests,3
+1997-02,Other,Prioritization of Federal Resources and Interests,1
 1997-03,Other,Prioritization of Federal Resources and Interests,1
 1997-04,Other,Prioritization of Federal Resources and Interests,2
 1997-05,Other,Prioritization of Federal Resources and Interests,1
@@ -26136,7 +26201,7 @@ ym,category,reason,declined
 2025-10,Other,Prioritization of Federal Resources and Interests,1
 2025-12,Other,Prioritization of Federal Resources and Interests,1
 2026-04,Other,Prioritization of Federal Resources and Interests,1
-2026-06,Other,Prioritization of Federal Resources and Interests,1
+2026-07,Other,Prioritization of Federal Resources and Interests,1
 1997-05,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,1
 2001-01,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,1
 2001-12,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,1
@@ -26301,8 +26366,9 @@ ym,category,reason,declined
 2026-02,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,3
 2026-03,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,7
 2026-04,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,4
-2026-05,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,3
-2026-06,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,3
+2026-05,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,4
+2026-06,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,4
+2026-07,Terrorism/National Security Critical Infrastructure,Alternative to Federal Prosecution,1
 1996-06,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,1
 1996-07,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,1
 1996-12,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,3
@@ -26409,7 +26475,7 @@ ym,category,reason,declined
 2006-06,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,9
 2006-07,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,3
 2006-08,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,1
-2006-09,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,6
+2006-09,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,5
 2006-10,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,4
 2006-11,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,4
 2006-12,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,4
@@ -26603,6 +26669,7 @@ ym,category,reason,declined
 2026-03,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,8
 2026-05,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,3
 2026-06,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,1
+2026-07,Terrorism/National Security Critical Infrastructure,Defendant Unavailable,2
 1995-05,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,1
 1996-01,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,1
 1996-03,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,1
@@ -26705,7 +26772,7 @@ ym,category,reason,declined
 2004-11,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,28
 2004-12,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,21
 2005-01,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,24
-2005-02,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,15
+2005-02,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,16
 2005-03,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,26
 2005-04,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,15
 2005-05,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,15
@@ -26866,7 +26933,7 @@ ym,category,reason,declined
 2018-04,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,71
 2018-05,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,69
 2018-06,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,31
-2018-07,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,40
+2018-07,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,41
 2018-08,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,65
 2018-09,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,302
 2018-10,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,85
@@ -26898,7 +26965,7 @@ ym,category,reason,declined
 2020-12,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,21
 2021-01,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,51
 2021-02,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,55
-2021-03,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,184
+2021-03,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,185
 2021-04,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,48
 2021-05,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,45
 2021-06,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,43
@@ -26908,10 +26975,10 @@ ym,category,reason,declined
 2021-10,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,83
 2021-11,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,35
 2021-12,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,54
-2022-01,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,63
+2022-01,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,64
 2022-02,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,146
 2022-03,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,227
-2022-04,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,58
+2022-04,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,59
 2022-05,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,45
 2022-06,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,60
 2022-07,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,33
@@ -26927,7 +26994,7 @@ ym,category,reason,declined
 2023-05,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,59
 2023-06,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,52
 2023-07,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,43
-2023-08,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,92
+2023-08,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,91
 2023-09,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,164
 2023-10,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,59
 2023-11,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,33
@@ -26946,13 +27013,13 @@ ym,category,reason,declined
 2024-12,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,29
 2025-01,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,55
 2025-02,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,499
-2025-03,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,125
+2025-03,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,127
 2025-04,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,55
 2025-05,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,60
 2025-06,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,50
 2025-07,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,34
 2025-08,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,60
-2025-09,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,118
+2025-09,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,119
 2025-10,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,57
 2025-11,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,51
 2025-12,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,53
@@ -26960,8 +27027,9 @@ ym,category,reason,declined
 2026-02,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,67
 2026-03,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,173
 2026-04,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,39
-2026-05,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,39
-2026-06,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,47
+2026-05,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,57
+2026-06,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,56
+2026-07,Terrorism/National Security Critical Infrastructure,Insufficient Evidence,95
 2000-07,Terrorism/National Security Critical Infrastructure,Legally Barred,2
 2002-03,Terrorism/National Security Critical Infrastructure,Legally Barred,2
 2002-08,Terrorism/National Security Critical Infrastructure,Legally Barred,1
@@ -27141,7 +27209,8 @@ ym,category,reason,declined
 2026-01,Terrorism/National Security Critical Infrastructure,Legally Barred,3
 2026-02,Terrorism/National Security Critical Infrastructure,Legally Barred,4
 2026-03,Terrorism/National Security Critical Infrastructure,Legally Barred,2
-2026-05,Terrorism/National Security Critical Infrastructure,Legally Barred,1
+2026-05,Terrorism/National Security Critical Infrastructure,Legally Barred,4
+2026-06,Terrorism/National Security Critical Infrastructure,Legally Barred,1
 1996-06,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,1
 1997-02,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,1
 1997-04,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,1
@@ -27180,7 +27249,6 @@ ym,category,reason,declined
 2005-10,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,1
 2005-11,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,1
 2005-12,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,3
-2006-01,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,1
 2006-02,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,2
 2006-03,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,14
 2006-04,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,2
@@ -27320,7 +27388,7 @@ ym,category,reason,declined
 2020-12,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,5
 2021-01,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,9
 2021-02,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,9
-2021-03,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,16
+2021-03,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,15
 2021-04,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,8
 2021-05,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,3
 2021-06,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,5
@@ -27380,10 +27448,11 @@ ym,category,reason,declined
 2025-12,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,7
 2026-01,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,6
 2026-02,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,7
-2026-03,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,34
+2026-03,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,33
 2026-04,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,10
 2026-05,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,8
 2026-06,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,7
+2026-07,Terrorism/National Security Critical Infrastructure,Matter Referred to Other Jurisdiction,10
 1995-01,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,1
 1996-12,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,1
 1997-08,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,1
@@ -27452,7 +27521,7 @@ ym,category,reason,declined
 2005-01,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,5
 2005-02,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,8
 2005-03,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,18
-2005-04,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,6
+2005-04,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,7
 2005-05,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,6
 2005-06,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,19
 2005-07,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,2
@@ -27460,7 +27529,7 @@ ym,category,reason,declined
 2005-09,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,8
 2005-10,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,12
 2005-11,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,8
-2005-12,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,8
+2005-12,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,7
 2006-01,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,4
 2006-02,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,9
 2006-03,Terrorism/National Security Critical Infrastructure,Non-Prosecution Agreement,15
@@ -27597,7 +27666,7 @@ ym,category,reason,declined
 2002-12,Terrorism/National Security Critical Infrastructure,Other,2
 2003-02,Terrorism/National Security Critical Infrastructure,Other,4
 2003-03,Terrorism/National Security Critical Infrastructure,Other,1
-2003-04,Terrorism/National Security Critical Infrastructure,Other,5
+2003-04,Terrorism/National Security Critical Infrastructure,Other,6
 2003-05,Terrorism/National Security Critical Infrastructure,Other,4
 2003-07,Terrorism/National Security Critical Infrastructure,Other,2
 2003-08,Terrorism/National Security Critical Infrastructure,Other,10
@@ -27607,7 +27676,7 @@ ym,category,reason,declined
 2003-12,Terrorism/National Security Critical Infrastructure,Other,3
 2004-01,Terrorism/National Security Critical Infrastructure,Other,6
 2004-02,Terrorism/National Security Critical Infrastructure,Other,8
-2004-03,Terrorism/National Security Critical Infrastructure,Other,2
+2004-03,Terrorism/National Security Critical Infrastructure,Other,3
 2004-04,Terrorism/National Security Critical Infrastructure,Other,6
 2004-06,Terrorism/National Security Critical Infrastructure,Other,1
 2004-07,Terrorism/National Security Critical Infrastructure,Other,2
@@ -27750,6 +27819,7 @@ ym,category,reason,declined
 2022-03,Terrorism/National Security Critical Infrastructure,Other,3
 2022-09,Terrorism/National Security Critical Infrastructure,Other,1
 2023-02,Terrorism/National Security Critical Infrastructure,Other,3
+2023-08,Terrorism/National Security Critical Infrastructure,Other,1
 2023-09,Terrorism/National Security Critical Infrastructure,Other,1
 2023-10,Terrorism/National Security Critical Infrastructure,Other,1
 2024-03,Terrorism/National Security Critical Infrastructure,Other,4
@@ -27765,6 +27835,7 @@ ym,category,reason,declined
 2026-02,Terrorism/National Security Critical Infrastructure,Other,1
 2026-04,Terrorism/National Security Critical Infrastructure,Other,1
 2026-06,Terrorism/National Security Critical Infrastructure,Other,1
+2026-07,Terrorism/National Security Critical Infrastructure,Other,5
 1995-02,Terrorism/National Security Critical Infrastructure,Prioritization of Federal Resources and Interests,1
 1997-07,Terrorism/National Security Critical Infrastructure,Prioritization of Federal Resources and Interests,1
 1997-11,Terrorism/National Security Critical Infrastructure,Prioritization of Federal Resources and Interests,1
@@ -28060,7 +28131,8 @@ ym,category,reason,declined
 2026-03,Terrorism/National Security Critical Infrastructure,Prioritization of Federal Resources and Interests,10
 2026-04,Terrorism/National Security Critical Infrastructure,Prioritization of Federal Resources and Interests,1
 2026-05,Terrorism/National Security Critical Infrastructure,Prioritization of Federal Resources and Interests,4
-2026-06,Terrorism/National Security Critical Infrastructure,Prioritization of Federal Resources and Interests,3
+2026-06,Terrorism/National Security Critical Infrastructure,Prioritization of Federal Resources and Interests,5
+2026-07,Terrorism/National Security Critical Infrastructure,Prioritization of Federal Resources and Interests,3
 1994-10,Theft,Alternative to Federal Prosecution,12
 1994-11,Theft,Alternative to Federal Prosecution,14
 1994-12,Theft,Alternative to Federal Prosecution,15
@@ -28435,9 +28507,10 @@ ym,category,reason,declined
 2026-01,Theft,Alternative to Federal Prosecution,5
 2026-02,Theft,Alternative to Federal Prosecution,2
 2026-03,Theft,Alternative to Federal Prosecution,7
-2026-04,Theft,Alternative to Federal Prosecution,3
+2026-04,Theft,Alternative to Federal Prosecution,4
 2026-05,Theft,Alternative to Federal Prosecution,1
 2026-06,Theft,Alternative to Federal Prosecution,2
+2026-07,Theft,Alternative to Federal Prosecution,3
 1994-10,Theft,Defendant Unavailable,12
 1994-11,Theft,Defendant Unavailable,14
 1994-12,Theft,Defendant Unavailable,10
@@ -28641,7 +28714,7 @@ ym,category,reason,declined
 2011-06,Theft,Defendant Unavailable,11
 2011-07,Theft,Defendant Unavailable,10
 2011-08,Theft,Defendant Unavailable,14
-2011-09,Theft,Defendant Unavailable,33
+2011-09,Theft,Defendant Unavailable,30
 2011-10,Theft,Defendant Unavailable,14
 2011-11,Theft,Defendant Unavailable,10
 2011-12,Theft,Defendant Unavailable,19
@@ -28754,6 +28827,7 @@ ym,category,reason,declined
 2025-10,Theft,Defendant Unavailable,1
 2026-01,Theft,Defendant Unavailable,1
 2026-05,Theft,Defendant Unavailable,1
+2026-07,Theft,Defendant Unavailable,1
 1994-10,Theft,Insufficient Evidence,32
 1994-11,Theft,Insufficient Evidence,35
 1994-12,Theft,Insufficient Evidence,18
@@ -29127,14 +29201,15 @@ ym,category,reason,declined
 2025-08,Theft,Insufficient Evidence,22
 2025-09,Theft,Insufficient Evidence,53
 2025-10,Theft,Insufficient Evidence,18
-2025-11,Theft,Insufficient Evidence,6
+2025-11,Theft,Insufficient Evidence,7
 2025-12,Theft,Insufficient Evidence,12
 2026-01,Theft,Insufficient Evidence,14
 2026-02,Theft,Insufficient Evidence,20
 2026-03,Theft,Insufficient Evidence,40
 2026-04,Theft,Insufficient Evidence,14
 2026-05,Theft,Insufficient Evidence,23
-2026-06,Theft,Insufficient Evidence,11
+2026-06,Theft,Insufficient Evidence,17
+2026-07,Theft,Insufficient Evidence,23
 1994-11,Theft,Legally Barred,2
 1994-12,Theft,Legally Barred,2
 1995-02,Theft,Legally Barred,1
@@ -29371,6 +29446,7 @@ ym,category,reason,declined
 2025-08,Theft,Legally Barred,2
 2026-03,Theft,Legally Barred,1
 2026-04,Theft,Legally Barred,2
+2026-07,Theft,Legally Barred,1
 1994-10,Theft,Matter Referred to Other Jurisdiction,4
 1994-11,Theft,Matter Referred to Other Jurisdiction,5
 1994-12,Theft,Matter Referred to Other Jurisdiction,4
@@ -29697,7 +29773,7 @@ ym,category,reason,declined
 2026-03,Theft,Matter Referred to Other Jurisdiction,7
 2026-04,Theft,Matter Referred to Other Jurisdiction,2
 2026-05,Theft,Matter Referred to Other Jurisdiction,1
-2026-06,Theft,Matter Referred to Other Jurisdiction,2
+2026-06,Theft,Matter Referred to Other Jurisdiction,3
 1994-10,Theft,Non-Prosecution Agreement,5
 1994-11,Theft,Non-Prosecution Agreement,8
 1994-12,Theft,Non-Prosecution Agreement,6
@@ -30126,7 +30202,7 @@ ym,category,reason,declined
 2011-04,Theft,Other,1
 2011-06,Theft,Other,2
 2011-07,Theft,Other,1
-2011-09,Theft,Other,6
+2011-09,Theft,Other,9
 2011-10,Theft,Other,4
 2011-11,Theft,Other,1
 2011-12,Theft,Other,2
@@ -30208,6 +30284,7 @@ ym,category,reason,declined
 2025-07,Theft,Other,1
 2025-09,Theft,Other,1
 2025-10,Theft,Other,1
+2026-07,Theft,Other,1
 1994-10,Theft,Prioritization of Federal Resources and Interests,4
 1994-11,Theft,Prioritization of Federal Resources and Interests,9
 1994-12,Theft,Prioritization of Federal Resources and Interests,6
@@ -30573,9 +30650,10 @@ ym,category,reason,declined
 2026-01,Theft,Prioritization of Federal Resources and Interests,4
 2026-02,Theft,Prioritization of Federal Resources and Interests,3
 2026-03,Theft,Prioritization of Federal Resources and Interests,3
-2026-04,Theft,Prioritization of Federal Resources and Interests,3
-2026-05,Theft,Prioritization of Federal Resources and Interests,5
-2026-06,Theft,Prioritization of Federal Resources and Interests,3
+2026-04,Theft,Prioritization of Federal Resources and Interests,5
+2026-05,Theft,Prioritization of Federal Resources and Interests,6
+2026-06,Theft,Prioritization of Federal Resources and Interests,4
+2026-07,Theft,Prioritization of Federal Resources and Interests,7
 1994-10,Violent Crime,Alternative to Federal Prosecution,5
 1994-11,Violent Crime,Alternative to Federal Prosecution,2
 1995-01,Violent Crime,Alternative to Federal Prosecution,2
@@ -30816,7 +30894,7 @@ ym,category,reason,declined
 2014-12,Violent Crime,Alternative to Federal Prosecution,30
 2015-01,Violent Crime,Alternative to Federal Prosecution,27
 2015-02,Violent Crime,Alternative to Federal Prosecution,22
-2015-03,Violent Crime,Alternative to Federal Prosecution,43
+2015-03,Violent Crime,Alternative to Federal Prosecution,44
 2015-04,Violent Crime,Alternative to Federal Prosecution,52
 2015-05,Violent Crime,Alternative to Federal Prosecution,28
 2015-06,Violent Crime,Alternative to Federal Prosecution,26
@@ -30909,7 +30987,7 @@ ym,category,reason,declined
 2022-09,Violent Crime,Alternative to Federal Prosecution,93
 2022-10,Violent Crime,Alternative to Federal Prosecution,47
 2022-11,Violent Crime,Alternative to Federal Prosecution,34
-2022-12,Violent Crime,Alternative to Federal Prosecution,43
+2022-12,Violent Crime,Alternative to Federal Prosecution,44
 2023-01,Violent Crime,Alternative to Federal Prosecution,55
 2023-02,Violent Crime,Alternative to Federal Prosecution,53
 2023-03,Violent Crime,Alternative to Federal Prosecution,109
@@ -30921,7 +30999,7 @@ ym,category,reason,declined
 2023-09,Violent Crime,Alternative to Federal Prosecution,113
 2023-10,Violent Crime,Alternative to Federal Prosecution,43
 2023-11,Violent Crime,Alternative to Federal Prosecution,33
-2023-12,Violent Crime,Alternative to Federal Prosecution,42
+2023-12,Violent Crime,Alternative to Federal Prosecution,41
 2024-01,Violent Crime,Alternative to Federal Prosecution,45
 2024-02,Violent Crime,Alternative to Federal Prosecution,58
 2024-03,Violent Crime,Alternative to Federal Prosecution,92
@@ -30941,17 +31019,18 @@ ym,category,reason,declined
 2025-05,Violent Crime,Alternative to Federal Prosecution,48
 2025-06,Violent Crime,Alternative to Federal Prosecution,70
 2025-07,Violent Crime,Alternative to Federal Prosecution,66
-2025-08,Violent Crime,Alternative to Federal Prosecution,64
+2025-08,Violent Crime,Alternative to Federal Prosecution,65
 2025-09,Violent Crime,Alternative to Federal Prosecution,115
 2025-10,Violent Crime,Alternative to Federal Prosecution,32
 2025-11,Violent Crime,Alternative to Federal Prosecution,27
 2025-12,Violent Crime,Alternative to Federal Prosecution,51
-2026-01,Violent Crime,Alternative to Federal Prosecution,41
+2026-01,Violent Crime,Alternative to Federal Prosecution,43
 2026-02,Violent Crime,Alternative to Federal Prosecution,75
 2026-03,Violent Crime,Alternative to Federal Prosecution,108
-2026-04,Violent Crime,Alternative to Federal Prosecution,50
-2026-05,Violent Crime,Alternative to Federal Prosecution,46
-2026-06,Violent Crime,Alternative to Federal Prosecution,37
+2026-04,Violent Crime,Alternative to Federal Prosecution,51
+2026-05,Violent Crime,Alternative to Federal Prosecution,47
+2026-06,Violent Crime,Alternative to Federal Prosecution,42
+2026-07,Violent Crime,Alternative to Federal Prosecution,47
 1994-10,Violent Crime,Defendant Unavailable,33
 1994-11,Violent Crime,Defendant Unavailable,40
 1994-12,Violent Crime,Defendant Unavailable,33
@@ -31095,7 +31174,7 @@ ym,category,reason,declined
 2006-06,Violent Crime,Defendant Unavailable,86
 2006-07,Violent Crime,Defendant Unavailable,85
 2006-08,Violent Crime,Defendant Unavailable,93
-2006-09,Violent Crime,Defendant Unavailable,127
+2006-09,Violent Crime,Defendant Unavailable,128
 2006-10,Violent Crime,Defendant Unavailable,100
 2006-11,Violent Crime,Defendant Unavailable,55
 2006-12,Violent Crime,Defendant Unavailable,86
@@ -31124,7 +31203,7 @@ ym,category,reason,declined
 2008-11,Violent Crime,Defendant Unavailable,77
 2008-12,Violent Crime,Defendant Unavailable,71
 2009-01,Violent Crime,Defendant Unavailable,100
-2009-02,Violent Crime,Defendant Unavailable,123
+2009-02,Violent Crime,Defendant Unavailable,122
 2009-03,Violent Crime,Defendant Unavailable,180
 2009-04,Violent Crime,Defendant Unavailable,104
 2009-05,Violent Crime,Defendant Unavailable,83
@@ -31133,7 +31212,7 @@ ym,category,reason,declined
 2009-08,Violent Crime,Defendant Unavailable,106
 2009-09,Violent Crime,Defendant Unavailable,167
 2009-10,Violent Crime,Defendant Unavailable,100
-2009-11,Violent Crime,Defendant Unavailable,72
+2009-11,Violent Crime,Defendant Unavailable,73
 2009-12,Violent Crime,Defendant Unavailable,86
 2010-01,Violent Crime,Defendant Unavailable,107
 2010-02,Violent Crime,Defendant Unavailable,120
@@ -31150,7 +31229,7 @@ ym,category,reason,declined
 2011-01,Violent Crime,Defendant Unavailable,112
 2011-02,Violent Crime,Defendant Unavailable,118
 2011-03,Violent Crime,Defendant Unavailable,213
-2011-04,Violent Crime,Defendant Unavailable,136
+2011-04,Violent Crime,Defendant Unavailable,135
 2011-05,Violent Crime,Defendant Unavailable,76
 2011-06,Violent Crime,Defendant Unavailable,99
 2011-07,Violent Crime,Defendant Unavailable,87
@@ -31261,7 +31340,7 @@ ym,category,reason,declined
 2020-04,Violent Crime,Defendant Unavailable,4
 2020-05,Violent Crime,Defendant Unavailable,3
 2020-06,Violent Crime,Defendant Unavailable,9
-2020-07,Violent Crime,Defendant Unavailable,11
+2020-07,Violent Crime,Defendant Unavailable,10
 2020-08,Violent Crime,Defendant Unavailable,4
 2020-09,Violent Crime,Defendant Unavailable,13
 2020-10,Violent Crime,Defendant Unavailable,7
@@ -31296,7 +31375,7 @@ ym,category,reason,declined
 2023-03,Violent Crime,Defendant Unavailable,21
 2023-04,Violent Crime,Defendant Unavailable,10
 2023-05,Violent Crime,Defendant Unavailable,10
-2023-06,Violent Crime,Defendant Unavailable,7
+2023-06,Violent Crime,Defendant Unavailable,8
 2023-07,Violent Crime,Defendant Unavailable,5
 2023-08,Violent Crime,Defendant Unavailable,14
 2023-09,Violent Crime,Defendant Unavailable,18
@@ -31315,7 +31394,7 @@ ym,category,reason,declined
 2024-10,Violent Crime,Defendant Unavailable,9
 2024-11,Violent Crime,Defendant Unavailable,3
 2024-12,Violent Crime,Defendant Unavailable,11
-2025-01,Violent Crime,Defendant Unavailable,17
+2025-01,Violent Crime,Defendant Unavailable,16
 2025-02,Violent Crime,Defendant Unavailable,37
 2025-03,Violent Crime,Defendant Unavailable,19
 2025-04,Violent Crime,Defendant Unavailable,11
@@ -31328,11 +31407,12 @@ ym,category,reason,declined
 2025-11,Violent Crime,Defendant Unavailable,5
 2025-12,Violent Crime,Defendant Unavailable,3
 2026-01,Violent Crime,Defendant Unavailable,10
-2026-02,Violent Crime,Defendant Unavailable,8
+2026-02,Violent Crime,Defendant Unavailable,9
 2026-03,Violent Crime,Defendant Unavailable,21
-2026-04,Violent Crime,Defendant Unavailable,7
+2026-04,Violent Crime,Defendant Unavailable,8
 2026-05,Violent Crime,Defendant Unavailable,9
 2026-06,Violent Crime,Defendant Unavailable,7
+2026-07,Violent Crime,Defendant Unavailable,9
 1994-10,Violent Crime,Insufficient Evidence,54
 1994-11,Violent Crime,Insufficient Evidence,35
 1994-12,Violent Crime,Insufficient Evidence,46
@@ -31548,7 +31628,7 @@ ym,category,reason,declined
 2012-06,Violent Crime,Insufficient Evidence,194
 2012-07,Violent Crime,Insufficient Evidence,172
 2012-08,Violent Crime,Insufficient Evidence,189
-2012-09,Violent Crime,Insufficient Evidence,266
+2012-09,Violent Crime,Insufficient Evidence,267
 2012-10,Violent Crime,Insufficient Evidence,240
 2012-11,Violent Crime,Insufficient Evidence,127
 2012-12,Violent Crime,Insufficient Evidence,161
@@ -31567,7 +31647,7 @@ ym,category,reason,declined
 2014-01,Violent Crime,Insufficient Evidence,199
 2014-02,Violent Crime,Insufficient Evidence,184
 2014-03,Violent Crime,Insufficient Evidence,351
-2014-04,Violent Crime,Insufficient Evidence,242
+2014-04,Violent Crime,Insufficient Evidence,243
 2014-05,Violent Crime,Insufficient Evidence,193
 2014-06,Violent Crime,Insufficient Evidence,177
 2014-07,Violent Crime,Insufficient Evidence,218
@@ -31590,7 +31670,7 @@ ym,category,reason,declined
 2015-12,Violent Crime,Insufficient Evidence,174
 2016-01,Violent Crime,Insufficient Evidence,166
 2016-02,Violent Crime,Insufficient Evidence,248
-2016-03,Violent Crime,Insufficient Evidence,411
+2016-03,Violent Crime,Insufficient Evidence,412
 2016-04,Violent Crime,Insufficient Evidence,157
 2016-05,Violent Crime,Insufficient Evidence,146
 2016-06,Violent Crime,Insufficient Evidence,168
@@ -31669,7 +31749,7 @@ ym,category,reason,declined
 2022-07,Violent Crime,Insufficient Evidence,273
 2022-08,Violent Crime,Insufficient Evidence,351
 2022-09,Violent Crime,Insufficient Evidence,542
-2022-10,Violent Crime,Insufficient Evidence,226
+2022-10,Violent Crime,Insufficient Evidence,227
 2022-11,Violent Crime,Insufficient Evidence,210
 2022-12,Violent Crime,Insufficient Evidence,233
 2023-01,Violent Crime,Insufficient Evidence,279
@@ -31683,11 +31763,11 @@ ym,category,reason,declined
 2023-09,Violent Crime,Insufficient Evidence,675
 2023-10,Violent Crime,Insufficient Evidence,252
 2023-11,Violent Crime,Insufficient Evidence,175
-2023-12,Violent Crime,Insufficient Evidence,178
+2023-12,Violent Crime,Insufficient Evidence,179
 2024-01,Violent Crime,Insufficient Evidence,273
 2024-02,Violent Crime,Insufficient Evidence,338
-2024-03,Violent Crime,Insufficient Evidence,654
-2024-04,Violent Crime,Insufficient Evidence,315
+2024-03,Violent Crime,Insufficient Evidence,655
+2024-04,Violent Crime,Insufficient Evidence,316
 2024-05,Violent Crime,Insufficient Evidence,244
 2024-06,Violent Crime,Insufficient Evidence,236
 2024-07,Violent Crime,Insufficient Evidence,284
@@ -31698,22 +31778,23 @@ ym,category,reason,declined
 2024-12,Violent Crime,Insufficient Evidence,200
 2025-01,Violent Crime,Insufficient Evidence,252
 2025-02,Violent Crime,Insufficient Evidence,1261
-2025-03,Violent Crime,Insufficient Evidence,591
+2025-03,Violent Crime,Insufficient Evidence,592
 2025-04,Violent Crime,Insufficient Evidence,240
-2025-05,Violent Crime,Insufficient Evidence,178
+2025-05,Violent Crime,Insufficient Evidence,179
 2025-06,Violent Crime,Insufficient Evidence,230
 2025-07,Violent Crime,Insufficient Evidence,308
-2025-08,Violent Crime,Insufficient Evidence,293
-2025-09,Violent Crime,Insufficient Evidence,619
-2025-10,Violent Crime,Insufficient Evidence,262
+2025-08,Violent Crime,Insufficient Evidence,292
+2025-09,Violent Crime,Insufficient Evidence,621
+2025-10,Violent Crime,Insufficient Evidence,263
 2025-11,Violent Crime,Insufficient Evidence,167
-2025-12,Violent Crime,Insufficient Evidence,235
-2026-01,Violent Crime,Insufficient Evidence,268
-2026-02,Violent Crime,Insufficient Evidence,299
-2026-03,Violent Crime,Insufficient Evidence,597
-2026-04,Violent Crime,Insufficient Evidence,338
-2026-05,Violent Crime,Insufficient Evidence,214
-2026-06,Violent Crime,Insufficient Evidence,176
+2025-12,Violent Crime,Insufficient Evidence,234
+2026-01,Violent Crime,Insufficient Evidence,270
+2026-02,Violent Crime,Insufficient Evidence,302
+2026-03,Violent Crime,Insufficient Evidence,601
+2026-04,Violent Crime,Insufficient Evidence,345
+2026-05,Violent Crime,Insufficient Evidence,220
+2026-06,Violent Crime,Insufficient Evidence,198
+2026-07,Violent Crime,Insufficient Evidence,254
 1994-10,Violent Crime,Legally Barred,2
 1994-11,Violent Crime,Legally Barred,4
 1994-12,Violent Crime,Legally Barred,2
@@ -32083,7 +32164,8 @@ ym,category,reason,declined
 2026-03,Violent Crime,Legally Barred,11
 2026-04,Violent Crime,Legally Barred,5
 2026-05,Violent Crime,Legally Barred,6
-2026-06,Violent Crime,Legally Barred,6
+2026-06,Violent Crime,Legally Barred,7
+2026-07,Violent Crime,Legally Barred,6
 1994-10,Violent Crime,Matter Referred to Other Jurisdiction,9
 1994-11,Violent Crime,Matter Referred to Other Jurisdiction,5
 1995-01,Violent Crime,Matter Referred to Other Jurisdiction,1
@@ -32261,7 +32343,7 @@ ym,category,reason,declined
 2009-08,Violent Crime,Matter Referred to Other Jurisdiction,12
 2009-09,Violent Crime,Matter Referred to Other Jurisdiction,12
 2009-10,Violent Crime,Matter Referred to Other Jurisdiction,3
-2009-11,Violent Crime,Matter Referred to Other Jurisdiction,6
+2009-11,Violent Crime,Matter Referred to Other Jurisdiction,5
 2009-12,Violent Crime,Matter Referred to Other Jurisdiction,13
 2010-01,Violent Crime,Matter Referred to Other Jurisdiction,6
 2010-02,Violent Crime,Matter Referred to Other Jurisdiction,3
@@ -32440,7 +32522,7 @@ ym,category,reason,declined
 2024-07,Violent Crime,Matter Referred to Other Jurisdiction,79
 2024-08,Violent Crime,Matter Referred to Other Jurisdiction,124
 2024-09,Violent Crime,Matter Referred to Other Jurisdiction,140
-2024-10,Violent Crime,Matter Referred to Other Jurisdiction,69
+2024-10,Violent Crime,Matter Referred to Other Jurisdiction,68
 2024-11,Violent Crime,Matter Referred to Other Jurisdiction,39
 2024-12,Violent Crime,Matter Referred to Other Jurisdiction,57
 2025-01,Violent Crime,Matter Referred to Other Jurisdiction,72
@@ -32450,17 +32532,18 @@ ym,category,reason,declined
 2025-05,Violent Crime,Matter Referred to Other Jurisdiction,77
 2025-06,Violent Crime,Matter Referred to Other Jurisdiction,83
 2025-07,Violent Crime,Matter Referred to Other Jurisdiction,117
-2025-08,Violent Crime,Matter Referred to Other Jurisdiction,79
-2025-09,Violent Crime,Matter Referred to Other Jurisdiction,157
+2025-08,Violent Crime,Matter Referred to Other Jurisdiction,80
+2025-09,Violent Crime,Matter Referred to Other Jurisdiction,158
 2025-10,Violent Crime,Matter Referred to Other Jurisdiction,77
-2025-11,Violent Crime,Matter Referred to Other Jurisdiction,43
+2025-11,Violent Crime,Matter Referred to Other Jurisdiction,42
 2025-12,Violent Crime,Matter Referred to Other Jurisdiction,76
-2026-01,Violent Crime,Matter Referred to Other Jurisdiction,72
+2026-01,Violent Crime,Matter Referred to Other Jurisdiction,73
 2026-02,Violent Crime,Matter Referred to Other Jurisdiction,74
 2026-03,Violent Crime,Matter Referred to Other Jurisdiction,133
-2026-04,Violent Crime,Matter Referred to Other Jurisdiction,83
-2026-05,Violent Crime,Matter Referred to Other Jurisdiction,68
-2026-06,Violent Crime,Matter Referred to Other Jurisdiction,39
+2026-04,Violent Crime,Matter Referred to Other Jurisdiction,86
+2026-05,Violent Crime,Matter Referred to Other Jurisdiction,69
+2026-06,Violent Crime,Matter Referred to Other Jurisdiction,48
+2026-07,Violent Crime,Matter Referred to Other Jurisdiction,64
 1994-10,Violent Crime,Non-Prosecution Agreement,9
 1994-11,Violent Crime,Non-Prosecution Agreement,10
 1994-12,Violent Crime,Non-Prosecution Agreement,7
@@ -32633,7 +32716,7 @@ ym,category,reason,declined
 2008-11,Violent Crime,Non-Prosecution Agreement,28
 2008-12,Violent Crime,Non-Prosecution Agreement,21
 2009-01,Violent Crime,Non-Prosecution Agreement,25
-2009-02,Violent Crime,Non-Prosecution Agreement,25
+2009-02,Violent Crime,Non-Prosecution Agreement,26
 2009-03,Violent Crime,Non-Prosecution Agreement,48
 2009-04,Violent Crime,Non-Prosecution Agreement,31
 2009-05,Violent Crime,Non-Prosecution Agreement,13
@@ -32915,7 +32998,7 @@ ym,category,reason,declined
 2012-06,Violent Crime,Other,96
 2012-07,Violent Crime,Other,98
 2012-08,Violent Crime,Other,86
-2012-09,Violent Crime,Other,170
+2012-09,Violent Crime,Other,169
 2012-10,Violent Crime,Other,88
 2012-11,Violent Crime,Other,76
 2012-12,Violent Crime,Other,69
@@ -33077,7 +33160,8 @@ ym,category,reason,declined
 2026-03,Violent Crime,Other,12
 2026-04,Violent Crime,Other,6
 2026-05,Violent Crime,Other,4
-2026-06,Violent Crime,Other,3
+2026-06,Violent Crime,Other,4
+2026-07,Violent Crime,Other,14
 1994-10,Violent Crime,Prioritization of Federal Resources and Interests,7
 1994-11,Violent Crime,Prioritization of Federal Resources and Interests,6
 1994-12,Violent Crime,Prioritization of Federal Resources and Interests,7
@@ -33276,7 +33360,7 @@ ym,category,reason,declined
 2011-01,Violent Crime,Prioritization of Federal Resources and Interests,20
 2011-02,Violent Crime,Prioritization of Federal Resources and Interests,11
 2011-03,Violent Crime,Prioritization of Federal Resources and Interests,36
-2011-04,Violent Crime,Prioritization of Federal Resources and Interests,20
+2011-04,Violent Crime,Prioritization of Federal Resources and Interests,21
 2011-05,Violent Crime,Prioritization of Federal Resources and Interests,18
 2011-06,Violent Crime,Prioritization of Federal Resources and Interests,18
 2011-07,Violent Crime,Prioritization of Federal Resources and Interests,12
@@ -33312,7 +33396,7 @@ ym,category,reason,declined
 2014-01,Violent Crime,Prioritization of Federal Resources and Interests,72
 2014-02,Violent Crime,Prioritization of Federal Resources and Interests,46
 2014-03,Violent Crime,Prioritization of Federal Resources and Interests,44
-2014-04,Violent Crime,Prioritization of Federal Resources and Interests,35
+2014-04,Violent Crime,Prioritization of Federal Resources and Interests,34
 2014-05,Violent Crime,Prioritization of Federal Resources and Interests,26
 2014-06,Violent Crime,Prioritization of Federal Resources and Interests,31
 2014-07,Violent Crime,Prioritization of Federal Resources and Interests,21
@@ -33430,14 +33514,14 @@ ym,category,reason,declined
 2023-11,Violent Crime,Prioritization of Federal Resources and Interests,24
 2023-12,Violent Crime,Prioritization of Federal Resources and Interests,27
 2024-01,Violent Crime,Prioritization of Federal Resources and Interests,50
-2024-02,Violent Crime,Prioritization of Federal Resources and Interests,55
-2024-03,Violent Crime,Prioritization of Federal Resources and Interests,73
+2024-02,Violent Crime,Prioritization of Federal Resources and Interests,54
+2024-03,Violent Crime,Prioritization of Federal Resources and Interests,72
 2024-04,Violent Crime,Prioritization of Federal Resources and Interests,26
 2024-05,Violent Crime,Prioritization of Federal Resources and Interests,37
 2024-06,Violent Crime,Prioritization of Federal Resources and Interests,39
 2024-07,Violent Crime,Prioritization of Federal Resources and Interests,25
 2024-08,Violent Crime,Prioritization of Federal Resources and Interests,44
-2024-09,Violent Crime,Prioritization of Federal Resources and Interests,72
+2024-09,Violent Crime,Prioritization of Federal Resources and Interests,71
 2024-10,Violent Crime,Prioritization of Federal Resources and Interests,41
 2024-11,Violent Crime,Prioritization of Federal Resources and Interests,20
 2024-12,Violent Crime,Prioritization of Federal Resources and Interests,27
@@ -33452,13 +33536,14 @@ ym,category,reason,declined
 2025-09,Violent Crime,Prioritization of Federal Resources and Interests,61
 2025-10,Violent Crime,Prioritization of Federal Resources and Interests,25
 2025-11,Violent Crime,Prioritization of Federal Resources and Interests,17
-2025-12,Violent Crime,Prioritization of Federal Resources and Interests,34
+2025-12,Violent Crime,Prioritization of Federal Resources and Interests,36
 2026-01,Violent Crime,Prioritization of Federal Resources and Interests,24
 2026-02,Violent Crime,Prioritization of Federal Resources and Interests,52
-2026-03,Violent Crime,Prioritization of Federal Resources and Interests,65
+2026-03,Violent Crime,Prioritization of Federal Resources and Interests,66
 2026-04,Violent Crime,Prioritization of Federal Resources and Interests,29
-2026-05,Violent Crime,Prioritization of Federal Resources and Interests,25
-2026-06,Violent Crime,Prioritization of Federal Resources and Interests,14
+2026-05,Violent Crime,Prioritization of Federal Resources and Interests,26
+2026-06,Violent Crime,Prioritization of Federal Resources and Interests,19
+2026-07,Violent Crime,Prioritization of Federal Resources and Interests,42
 1994-10,White Collar Crime,Alternative to Federal Prosecution,27
 1994-11,White Collar Crime,Alternative to Federal Prosecution,27
 1994-12,White Collar Crime,Alternative to Federal Prosecution,41
@@ -33715,7 +33800,7 @@ ym,category,reason,declined
 2015-11,White Collar Crime,Alternative to Federal Prosecution,11
 2015-12,White Collar Crime,Alternative to Federal Prosecution,12
 2016-01,White Collar Crime,Alternative to Federal Prosecution,15
-2016-02,White Collar Crime,Alternative to Federal Prosecution,29
+2016-02,White Collar Crime,Alternative to Federal Prosecution,30
 2016-03,White Collar Crime,Alternative to Federal Prosecution,30
 2016-04,White Collar Crime,Alternative to Federal Prosecution,27
 2016-05,White Collar Crime,Alternative to Federal Prosecution,9
@@ -33759,7 +33844,7 @@ ym,category,reason,declined
 2019-07,White Collar Crime,Alternative to Federal Prosecution,16
 2019-08,White Collar Crime,Alternative to Federal Prosecution,21
 2019-09,White Collar Crime,Alternative to Federal Prosecution,37
-2019-10,White Collar Crime,Alternative to Federal Prosecution,22
+2019-10,White Collar Crime,Alternative to Federal Prosecution,21
 2019-11,White Collar Crime,Alternative to Federal Prosecution,7
 2019-12,White Collar Crime,Alternative to Federal Prosecution,5
 2020-01,White Collar Crime,Alternative to Federal Prosecution,16
@@ -33834,12 +33919,13 @@ ym,category,reason,declined
 2025-10,White Collar Crime,Alternative to Federal Prosecution,15
 2025-11,White Collar Crime,Alternative to Federal Prosecution,12
 2025-12,White Collar Crime,Alternative to Federal Prosecution,7
-2026-01,White Collar Crime,Alternative to Federal Prosecution,15
-2026-02,White Collar Crime,Alternative to Federal Prosecution,8
-2026-03,White Collar Crime,Alternative to Federal Prosecution,30
+2026-01,White Collar Crime,Alternative to Federal Prosecution,14
+2026-02,White Collar Crime,Alternative to Federal Prosecution,9
+2026-03,White Collar Crime,Alternative to Federal Prosecution,31
 2026-04,White Collar Crime,Alternative to Federal Prosecution,11
 2026-05,White Collar Crime,Alternative to Federal Prosecution,10
-2026-06,White Collar Crime,Alternative to Federal Prosecution,8
+2026-06,White Collar Crime,Alternative to Federal Prosecution,9
+2026-07,White Collar Crime,Alternative to Federal Prosecution,9
 1994-10,White Collar Crime,Defendant Unavailable,61
 1994-11,White Collar Crime,Defendant Unavailable,58
 1994-12,White Collar Crime,Defendant Unavailable,36
@@ -33892,11 +33978,11 @@ ym,category,reason,declined
 1998-11,White Collar Crime,Defendant Unavailable,56
 1998-12,White Collar Crime,Defendant Unavailable,41
 1999-01,White Collar Crime,Defendant Unavailable,65
-1999-02,White Collar Crime,Defendant Unavailable,52
+1999-02,White Collar Crime,Defendant Unavailable,53
 1999-03,White Collar Crime,Defendant Unavailable,60
 1999-04,White Collar Crime,Defendant Unavailable,49
 1999-05,White Collar Crime,Defendant Unavailable,52
-1999-06,White Collar Crime,Defendant Unavailable,55
+1999-06,White Collar Crime,Defendant Unavailable,54
 1999-07,White Collar Crime,Defendant Unavailable,76
 1999-08,White Collar Crime,Defendant Unavailable,45
 1999-09,White Collar Crime,Defendant Unavailable,46
@@ -33927,7 +34013,7 @@ ym,category,reason,declined
 2001-10,White Collar Crime,Defendant Unavailable,61
 2001-11,White Collar Crime,Defendant Unavailable,22
 2001-12,White Collar Crime,Defendant Unavailable,43
-2002-01,White Collar Crime,Defendant Unavailable,58
+2002-01,White Collar Crime,Defendant Unavailable,57
 2002-02,White Collar Crime,Defendant Unavailable,50
 2002-03,White Collar Crime,Defendant Unavailable,62
 2002-04,White Collar Crime,Defendant Unavailable,48
@@ -34216,11 +34302,12 @@ ym,category,reason,declined
 2025-11,White Collar Crime,Defendant Unavailable,7
 2025-12,White Collar Crime,Defendant Unavailable,5
 2026-01,White Collar Crime,Defendant Unavailable,3
-2026-02,White Collar Crime,Defendant Unavailable,5
+2026-02,White Collar Crime,Defendant Unavailable,6
 2026-03,White Collar Crime,Defendant Unavailable,9
 2026-04,White Collar Crime,Defendant Unavailable,9
 2026-05,White Collar Crime,Defendant Unavailable,4
 2026-06,White Collar Crime,Defendant Unavailable,6
+2026-07,White Collar Crime,Defendant Unavailable,5
 1994-10,White Collar Crime,Insufficient Evidence,232
 1994-11,White Collar Crime,Insufficient Evidence,180
 1994-12,White Collar Crime,Insufficient Evidence,201
@@ -34273,7 +34360,7 @@ ym,category,reason,declined
 1998-11,White Collar Crime,Insufficient Evidence,169
 1998-12,White Collar Crime,Insufficient Evidence,171
 1999-01,White Collar Crime,Insufficient Evidence,234
-1999-02,White Collar Crime,Insufficient Evidence,230
+1999-02,White Collar Crime,Insufficient Evidence,229
 1999-03,White Collar Crime,Insufficient Evidence,242
 1999-04,White Collar Crime,Insufficient Evidence,232
 1999-05,White Collar Crime,Insufficient Evidence,224
@@ -34349,7 +34436,7 @@ ym,category,reason,declined
 2005-03,White Collar Crime,Insufficient Evidence,305
 2005-04,White Collar Crime,Insufficient Evidence,174
 2005-05,White Collar Crime,Insufficient Evidence,132
-2005-06,White Collar Crime,Insufficient Evidence,175
+2005-06,White Collar Crime,Insufficient Evidence,176
 2005-07,White Collar Crime,Insufficient Evidence,151
 2005-08,White Collar Crime,Insufficient Evidence,172
 2005-09,White Collar Crime,Insufficient Evidence,304
@@ -34476,10 +34563,10 @@ ym,category,reason,declined
 2015-10,White Collar Crime,Insufficient Evidence,389
 2015-11,White Collar Crime,Insufficient Evidence,241
 2015-12,White Collar Crime,Insufficient Evidence,164
-2016-01,White Collar Crime,Insufficient Evidence,200
+2016-01,White Collar Crime,Insufficient Evidence,201
 2016-02,White Collar Crime,Insufficient Evidence,221
 2016-03,White Collar Crime,Insufficient Evidence,471
-2016-04,White Collar Crime,Insufficient Evidence,223
+2016-04,White Collar Crime,Insufficient Evidence,224
 2016-05,White Collar Crime,Insufficient Evidence,166
 2016-06,White Collar Crime,Insufficient Evidence,204
 2016-07,White Collar Crime,Insufficient Evidence,189
@@ -34506,7 +34593,7 @@ ym,category,reason,declined
 2018-04,White Collar Crime,Insufficient Evidence,217
 2018-05,White Collar Crime,Insufficient Evidence,201
 2018-06,White Collar Crime,Insufficient Evidence,237
-2018-07,White Collar Crime,Insufficient Evidence,206
+2018-07,White Collar Crime,Insufficient Evidence,207
 2018-08,White Collar Crime,Insufficient Evidence,272
 2018-09,White Collar Crime,Insufficient Evidence,412
 2018-10,White Collar Crime,Insufficient Evidence,228
@@ -34524,7 +34611,7 @@ ym,category,reason,declined
 2019-10,White Collar Crime,Insufficient Evidence,252
 2019-11,White Collar Crime,Insufficient Evidence,148
 2019-12,White Collar Crime,Insufficient Evidence,116
-2020-01,White Collar Crime,Insufficient Evidence,217
+2020-01,White Collar Crime,Insufficient Evidence,218
 2020-02,White Collar Crime,Insufficient Evidence,254
 2020-03,White Collar Crime,Insufficient Evidence,340
 2020-04,White Collar Crime,Insufficient Evidence,177
@@ -34542,7 +34629,7 @@ ym,category,reason,declined
 2021-04,White Collar Crime,Insufficient Evidence,213
 2021-05,White Collar Crime,Insufficient Evidence,184
 2021-06,White Collar Crime,Insufficient Evidence,153
-2021-07,White Collar Crime,Insufficient Evidence,268
+2021-07,White Collar Crime,Insufficient Evidence,269
 2021-08,White Collar Crime,Insufficient Evidence,308
 2021-09,White Collar Crime,Insufficient Evidence,554
 2021-10,White Collar Crime,Insufficient Evidence,207
@@ -34558,7 +34645,7 @@ ym,category,reason,declined
 2022-08,White Collar Crime,Insufficient Evidence,308
 2022-09,White Collar Crime,Insufficient Evidence,594
 2022-10,White Collar Crime,Insufficient Evidence,191
-2022-11,White Collar Crime,Insufficient Evidence,174
+2022-11,White Collar Crime,Insufficient Evidence,175
 2022-12,White Collar Crime,Insufficient Evidence,208
 2023-01,White Collar Crime,Insufficient Evidence,212
 2023-02,White Collar Crime,Insufficient Evidence,225
@@ -34575,33 +34662,34 @@ ym,category,reason,declined
 2024-01,White Collar Crime,Insufficient Evidence,222
 2024-02,White Collar Crime,Insufficient Evidence,338
 2024-03,White Collar Crime,Insufficient Evidence,557
-2024-04,White Collar Crime,Insufficient Evidence,214
-2024-05,White Collar Crime,Insufficient Evidence,280
-2024-06,White Collar Crime,Insufficient Evidence,155
+2024-04,White Collar Crime,Insufficient Evidence,215
+2024-05,White Collar Crime,Insufficient Evidence,279
+2024-06,White Collar Crime,Insufficient Evidence,156
 2024-07,White Collar Crime,Insufficient Evidence,230
 2024-08,White Collar Crime,Insufficient Evidence,256
-2024-09,White Collar Crime,Insufficient Evidence,651
+2024-09,White Collar Crime,Insufficient Evidence,653
 2024-10,White Collar Crime,Insufficient Evidence,247
 2024-11,White Collar Crime,Insufficient Evidence,139
-2024-12,White Collar Crime,Insufficient Evidence,153
+2024-12,White Collar Crime,Insufficient Evidence,155
 2025-01,White Collar Crime,Insufficient Evidence,227
-2025-02,White Collar Crime,Insufficient Evidence,1519
+2025-02,White Collar Crime,Insufficient Evidence,1518
 2025-03,White Collar Crime,Insufficient Evidence,461
-2025-04,White Collar Crime,Insufficient Evidence,235
+2025-04,White Collar Crime,Insufficient Evidence,236
 2025-05,White Collar Crime,Insufficient Evidence,196
-2025-06,White Collar Crime,Insufficient Evidence,186
+2025-06,White Collar Crime,Insufficient Evidence,185
 2025-07,White Collar Crime,Insufficient Evidence,200
 2025-08,White Collar Crime,Insufficient Evidence,232
-2025-09,White Collar Crime,Insufficient Evidence,520
-2025-10,White Collar Crime,Insufficient Evidence,191
+2025-09,White Collar Crime,Insufficient Evidence,523
+2025-10,White Collar Crime,Insufficient Evidence,192
 2025-11,White Collar Crime,Insufficient Evidence,149
 2025-12,White Collar Crime,Insufficient Evidence,162
-2026-01,White Collar Crime,Insufficient Evidence,169
-2026-02,White Collar Crime,Insufficient Evidence,215
-2026-03,White Collar Crime,Insufficient Evidence,438
-2026-04,White Collar Crime,Insufficient Evidence,189
-2026-05,White Collar Crime,Insufficient Evidence,164
-2026-06,White Collar Crime,Insufficient Evidence,123
+2026-01,White Collar Crime,Insufficient Evidence,168
+2026-02,White Collar Crime,Insufficient Evidence,219
+2026-03,White Collar Crime,Insufficient Evidence,440
+2026-04,White Collar Crime,Insufficient Evidence,190
+2026-05,White Collar Crime,Insufficient Evidence,169
+2026-06,White Collar Crime,Insufficient Evidence,146
+2026-07,White Collar Crime,Insufficient Evidence,219
 1994-10,White Collar Crime,Legally Barred,14
 1994-11,White Collar Crime,Legally Barred,11
 1994-12,White Collar Crime,Legally Barred,10
@@ -34982,7 +35070,8 @@ ym,category,reason,declined
 2026-03,White Collar Crime,Legally Barred,10
 2026-04,White Collar Crime,Legally Barred,7
 2026-05,White Collar Crime,Legally Barred,2
-2026-06,White Collar Crime,Legally Barred,2
+2026-06,White Collar Crime,Legally Barred,6
+2026-07,White Collar Crime,Legally Barred,3
 1994-10,White Collar Crime,Matter Referred to Other Jurisdiction,271
 1994-11,White Collar Crime,Matter Referred to Other Jurisdiction,16
 1994-12,White Collar Crime,Matter Referred to Other Jurisdiction,15
@@ -35039,7 +35128,7 @@ ym,category,reason,declined
 1999-03,White Collar Crime,Matter Referred to Other Jurisdiction,120
 1999-04,White Collar Crime,Matter Referred to Other Jurisdiction,13
 1999-05,White Collar Crime,Matter Referred to Other Jurisdiction,15
-1999-06,White Collar Crime,Matter Referred to Other Jurisdiction,15
+1999-06,White Collar Crime,Matter Referred to Other Jurisdiction,16
 1999-07,White Collar Crime,Matter Referred to Other Jurisdiction,17
 1999-08,White Collar Crime,Matter Referred to Other Jurisdiction,58
 1999-09,White Collar Crime,Matter Referred to Other Jurisdiction,10
@@ -35283,7 +35372,7 @@ ym,category,reason,declined
 2019-07,White Collar Crime,Matter Referred to Other Jurisdiction,19
 2019-08,White Collar Crime,Matter Referred to Other Jurisdiction,27
 2019-09,White Collar Crime,Matter Referred to Other Jurisdiction,62
-2019-10,White Collar Crime,Matter Referred to Other Jurisdiction,27
+2019-10,White Collar Crime,Matter Referred to Other Jurisdiction,28
 2019-11,White Collar Crime,Matter Referred to Other Jurisdiction,15
 2019-12,White Collar Crime,Matter Referred to Other Jurisdiction,17
 2020-01,White Collar Crime,Matter Referred to Other Jurisdiction,16
@@ -35342,7 +35431,7 @@ ym,category,reason,declined
 2024-06,White Collar Crime,Matter Referred to Other Jurisdiction,17
 2024-07,White Collar Crime,Matter Referred to Other Jurisdiction,21
 2024-08,White Collar Crime,Matter Referred to Other Jurisdiction,32
-2024-09,White Collar Crime,Matter Referred to Other Jurisdiction,46
+2024-09,White Collar Crime,Matter Referred to Other Jurisdiction,47
 2024-10,White Collar Crime,Matter Referred to Other Jurisdiction,31
 2024-11,White Collar Crime,Matter Referred to Other Jurisdiction,13
 2024-12,White Collar Crime,Matter Referred to Other Jurisdiction,23
@@ -35354,16 +35443,17 @@ ym,category,reason,declined
 2025-06,White Collar Crime,Matter Referred to Other Jurisdiction,25
 2025-07,White Collar Crime,Matter Referred to Other Jurisdiction,17
 2025-08,White Collar Crime,Matter Referred to Other Jurisdiction,22
-2025-09,White Collar Crime,Matter Referred to Other Jurisdiction,56
+2025-09,White Collar Crime,Matter Referred to Other Jurisdiction,55
 2025-10,White Collar Crime,Matter Referred to Other Jurisdiction,16
 2025-11,White Collar Crime,Matter Referred to Other Jurisdiction,15
 2025-12,White Collar Crime,Matter Referred to Other Jurisdiction,8
 2026-01,White Collar Crime,Matter Referred to Other Jurisdiction,15
 2026-02,White Collar Crime,Matter Referred to Other Jurisdiction,24
-2026-03,White Collar Crime,Matter Referred to Other Jurisdiction,52
-2026-04,White Collar Crime,Matter Referred to Other Jurisdiction,20
+2026-03,White Collar Crime,Matter Referred to Other Jurisdiction,53
+2026-04,White Collar Crime,Matter Referred to Other Jurisdiction,22
 2026-05,White Collar Crime,Matter Referred to Other Jurisdiction,12
-2026-06,White Collar Crime,Matter Referred to Other Jurisdiction,14
+2026-06,White Collar Crime,Matter Referred to Other Jurisdiction,15
+2026-07,White Collar Crime,Matter Referred to Other Jurisdiction,24
 1994-10,White Collar Crime,Non-Prosecution Agreement,36
 1994-11,White Collar Crime,Non-Prosecution Agreement,31
 1994-12,White Collar Crime,Non-Prosecution Agreement,24
@@ -35508,7 +35598,7 @@ ym,category,reason,declined
 2006-07,White Collar Crime,Non-Prosecution Agreement,51
 2006-08,White Collar Crime,Non-Prosecution Agreement,49
 2006-09,White Collar Crime,Non-Prosecution Agreement,61
-2006-10,White Collar Crime,Non-Prosecution Agreement,61
+2006-10,White Collar Crime,Non-Prosecution Agreement,60
 2006-11,White Collar Crime,Non-Prosecution Agreement,42
 2006-12,White Collar Crime,Non-Prosecution Agreement,51
 2007-01,White Collar Crime,Non-Prosecution Agreement,76
@@ -35729,7 +35819,7 @@ ym,category,reason,declined
 2005-03,White Collar Crime,Other,51
 2005-04,White Collar Crime,Other,42
 2005-05,White Collar Crime,Other,30
-2005-06,White Collar Crime,Other,38
+2005-06,White Collar Crime,Other,37
 2005-07,White Collar Crime,Other,32
 2005-08,White Collar Crime,Other,30
 2005-09,White Collar Crime,Other,39
@@ -35976,8 +36066,9 @@ ym,category,reason,declined
 2026-02,White Collar Crime,Other,2
 2026-03,White Collar Crime,Other,5
 2026-04,White Collar Crime,Other,3
-2026-05,White Collar Crime,Other,4
+2026-05,White Collar Crime,Other,5
 2026-06,White Collar Crime,Other,1
+2026-07,White Collar Crime,Other,1
 1994-10,White Collar Crime,Prioritization of Federal Resources and Interests,100
 1994-11,White Collar Crime,Prioritization of Federal Resources and Interests,36
 1994-12,White Collar Crime,Prioritization of Federal Resources and Interests,109
@@ -36040,7 +36131,7 @@ ym,category,reason,declined
 1999-09,White Collar Crime,Prioritization of Federal Resources and Interests,44
 1999-10,White Collar Crime,Prioritization of Federal Resources and Interests,24
 1999-11,White Collar Crime,Prioritization of Federal Resources and Interests,34
-1999-12,White Collar Crime,Prioritization of Federal Resources and Interests,54
+1999-12,White Collar Crime,Prioritization of Federal Resources and Interests,55
 2000-01,White Collar Crime,Prioritization of Federal Resources and Interests,43
 2000-02,White Collar Crime,Prioritization of Federal Resources and Interests,38
 2000-03,White Collar Crime,Prioritization of Federal Resources and Interests,99
@@ -36067,7 +36158,7 @@ ym,category,reason,declined
 2001-12,White Collar Crime,Prioritization of Federal Resources and Interests,41
 2002-01,White Collar Crime,Prioritization of Federal Resources and Interests,57
 2002-02,White Collar Crime,Prioritization of Federal Resources and Interests,34
-2002-03,White Collar Crime,Prioritization of Federal Resources and Interests,68
+2002-03,White Collar Crime,Prioritization of Federal Resources and Interests,69
 2002-04,White Collar Crime,Prioritization of Federal Resources and Interests,59
 2002-05,White Collar Crime,Prioritization of Federal Resources and Interests,71
 2002-06,White Collar Crime,Prioritization of Federal Resources and Interests,55
@@ -36234,7 +36325,7 @@ ym,category,reason,declined
 2015-11,White Collar Crime,Prioritization of Federal Resources and Interests,35
 2015-12,White Collar Crime,Prioritization of Federal Resources and Interests,42
 2016-01,White Collar Crime,Prioritization of Federal Resources and Interests,34
-2016-02,White Collar Crime,Prioritization of Federal Resources and Interests,33
+2016-02,White Collar Crime,Prioritization of Federal Resources and Interests,32
 2016-03,White Collar Crime,Prioritization of Federal Resources and Interests,62
 2016-04,White Collar Crime,Prioritization of Federal Resources and Interests,29
 2016-05,White Collar Crime,Prioritization of Federal Resources and Interests,27
@@ -36331,7 +36422,7 @@ ym,category,reason,declined
 2023-12,White Collar Crime,Prioritization of Federal Resources and Interests,38
 2024-01,White Collar Crime,Prioritization of Federal Resources and Interests,48
 2024-02,White Collar Crime,Prioritization of Federal Resources and Interests,66
-2024-03,White Collar Crime,Prioritization of Federal Resources and Interests,76
+2024-03,White Collar Crime,Prioritization of Federal Resources and Interests,78
 2024-04,White Collar Crime,Prioritization of Federal Resources and Interests,62
 2024-05,White Collar Crime,Prioritization of Federal Resources and Interests,40
 2024-06,White Collar Crime,Prioritization of Federal Resources and Interests,37
@@ -36342,20 +36433,21 @@ ym,category,reason,declined
 2024-11,White Collar Crime,Prioritization of Federal Resources and Interests,13
 2024-12,White Collar Crime,Prioritization of Federal Resources and Interests,26
 2025-01,White Collar Crime,Prioritization of Federal Resources and Interests,48
-2025-02,White Collar Crime,Prioritization of Federal Resources and Interests,263
+2025-02,White Collar Crime,Prioritization of Federal Resources and Interests,264
 2025-03,White Collar Crime,Prioritization of Federal Resources and Interests,117
 2025-04,White Collar Crime,Prioritization of Federal Resources and Interests,55
 2025-05,White Collar Crime,Prioritization of Federal Resources and Interests,34
 2025-06,White Collar Crime,Prioritization of Federal Resources and Interests,46
 2025-07,White Collar Crime,Prioritization of Federal Resources and Interests,59
-2025-08,White Collar Crime,Prioritization of Federal Resources and Interests,78
+2025-08,White Collar Crime,Prioritization of Federal Resources and Interests,77
 2025-09,White Collar Crime,Prioritization of Federal Resources and Interests,98
 2025-10,White Collar Crime,Prioritization of Federal Resources and Interests,40
 2025-11,White Collar Crime,Prioritization of Federal Resources and Interests,26
-2025-12,White Collar Crime,Prioritization of Federal Resources and Interests,24
-2026-01,White Collar Crime,Prioritization of Federal Resources and Interests,51
+2025-12,White Collar Crime,Prioritization of Federal Resources and Interests,25
+2026-01,White Collar Crime,Prioritization of Federal Resources and Interests,52
 2026-02,White Collar Crime,Prioritization of Federal Resources and Interests,61
-2026-03,White Collar Crime,Prioritization of Federal Resources and Interests,75
-2026-04,White Collar Crime,Prioritization of Federal Resources and Interests,42
-2026-05,White Collar Crime,Prioritization of Federal Resources and Interests,44
-2026-06,White Collar Crime,Prioritization of Federal Resources and Interests,24
+2026-03,White Collar Crime,Prioritization of Federal Resources and Interests,74
+2026-04,White Collar Crime,Prioritization of Federal Resources and Interests,45
+2026-05,White Collar Crime,Prioritization of Federal Resources and Interests,45
+2026-06,White Collar Crime,Prioritization of Federal Resources and Interests,28
+2026-07,White Collar Crime,Prioritization of Federal Resources and Interests,32
