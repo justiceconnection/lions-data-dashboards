@@ -103,11 +103,11 @@
 </div>
 <header>
   <h1>Case Look-Up</h1>
-  <span class="tag">All 93 districts · civil + criminal · 7.51M cases</span>
+  <span class="tag" id="caseCount">7.51M cases included</span>
 </header>
 
 <div class="wrap">
-  <div id="status" class="panel"><span class="spinner"></span>Loading search engine…</div>
+  <div id="status" class="panel"><span class="spinner"></span>Loading…</div>
 
   <div class="panel" id="filterPanel" style="display:none">
     <div class="filters">
@@ -207,7 +207,7 @@ const $=id=>document.getElementById(id);
 let db, conn, sortState={col:null,dir:1}, catByType={Civil:[],Criminal:[]}, facets={};
 let msDist, msCat, msRole, msCourt, msDisp, msLead;
 function sqlLit(s){ return "'"+String(s).replaceAll("'","''")+"'"; }
-function log(m){ const s=$('status'); s.style.display=''; s.insertAdjacentHTML('beforeend','<div>'+m+'</div>'); }
+function log(m){ try{ console.log('[case-lookup]', m); }catch(e){} }   // console only — the UI just shows "Loading…"
 window.addEventListener('error', e=> log('⚠️ error: '+(e.message||e.filename||e)));
 window.addEventListener('unhandledrejection', e=> log('⚠️ '+((e.reason&&e.reason.message)||e.reason||e)));
 async function qy(sql){ return (await conn.query(sql)).toArray().map(r=>r.toJSON()); }
@@ -293,7 +293,7 @@ async function init(){
     conn=await db.connect();
     facets=await (await fetch(base+'facets.json?'+BUILD)).json();
     log('Step 5/5: preparing filters…');
-  }catch(e){ log('❌ FAILED at engine load: '+(e&&(e.message||e.name||String(e)))); log('detail: '+String(e&&e.stack||e).slice(0,300)); throw e; }
+  }catch(e){ console.error(e); try{ $('status').innerHTML='Couldn’t load the search tool — please refresh the page.'; }catch(_){} throw e; }
 
   msDist=new MS($('ms_dist')); msCat=new MS($('ms_cat')); msRole=new MS($('ms_role')); msCourt=new MS($('ms_court')); msDisp=new MS($('ms_disp')); msLead=new MS($('ms_lead'));
 
@@ -318,6 +318,7 @@ async function init(){
   $('capClose').onclick=()=>$('capDialog').close();
   $('status').style.display='none';
   $('filterPanel').style.display='';
+  try{ if(facets.nCases) $('caseCount').textContent=(facets.nCases/1e6).toFixed(2)+'M cases included'; }catch(e){}
 }
 
 async function fillOptions(sel,sql){
@@ -456,7 +457,7 @@ init().catch(e=>console.error(e));
 </script>
 <!-- Dashboard selector: reads the shared DASHBOARDS list (single source of truth) and links back
      to the dashboards with the correct relative path. No Filters dropdown here by design. -->
-<script src="../shared/config.js?v=20260824a"></script>
+<script src="../shared/config.js?v=20260825c"></script>
 <script>
 (function(){
   var CUR='case-lookup/index.html';
