@@ -65,7 +65,11 @@
 
   /* Dashboard selector — 1:1 with the LIONS dashboards' folded nav (accordion + chips).
      Values hard-coded to the dashboards' shared tokens so it matches exactly. No Filters dropdown here. */
-  .nv-acc{border:1px solid #e4e4e1;border-radius:12px;background:#fff;margin:14px 20px 0;max-width:1440px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .nv-acc{border:1px solid #e4e4e1;border-radius:12px;background:#fff;margin:14px 20px 0;max-width:1440px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04);position:sticky;top:0;z-index:50}
+  /* grouped category multiselect (criminal umbrella groups) */
+  .ms-list .ms-ghead{display:flex;gap:9px;align-items:center;padding:6px 7px;margin:4px 0 1px;border-radius:6px;font-size:12.5px;font-weight:700;color:#212123;background:#f0f0f2;cursor:pointer;text-transform:none;letter-spacing:0}
+  .ms-list .ms-ghead:hover{background:#e9e9ec}
+  .ms-list .ms-item{padding-left:24px}
   .nv-head{width:100%;display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;border:0;cursor:pointer;font:inherit;text-align:left}
   .nv-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#6b6c68;font-weight:700;flex:none}
   .nv-cur{flex:1;font-weight:700;color:#212123;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -99,7 +103,7 @@
 </div>
 <header>
   <h1>Case Look-Up</h1>
-  <span class="tag">All 93 districts · civil + criminal · 7.48M cases</span>
+  <span class="tag">All 93 districts · civil + criminal · 7.51M cases</span>
 </header>
 
 <div class="wrap">
@@ -112,6 +116,7 @@
       <div class="fld"><label>Record type</label><select id="f_record"><option value="">All</option><option>Matter</option><option>Case</option></select></div>
       <div class="fld"><label>Category</label><div id="ms_cat"></div></div>
       <div class="fld"><label>U.S. role</label><div id="ms_role"></div></div>
+      <div class="fld"><label>Lead agency</label><div id="ms_lead"></div></div>
       <div class="fld"><label>Status</label><select id="f_status"><option value="">All</option></select></div>
       <div class="fld"><label>Court type</label><div id="ms_court"></div></div>
       <div class="fld"><label>Disposition</label><div id="ms_disp"></div></div>
@@ -156,7 +161,7 @@
 </dialog>
 
 <script type="module">
-let duckdb; const BUILD='prod1';
+let duckdb; const BUILD='prod2';
 const SHARDS=['cases_a_m.parquet','cases_n_z.parquet'];
 const SRC="read_parquet(['cases_a_m.parquet','cases_n_z.parquet'])";
 const EXPORT_CAP=500000;
@@ -200,7 +205,7 @@ const MONTHS=['January','February','March','April','May','June','July','August',
 
 const $=id=>document.getElementById(id);
 let db, conn, sortState={col:null,dir:1}, catByType={Civil:[],Criminal:[]}, facets={};
-let msDist, msCat, msRole, msCourt, msDisp;
+let msDist, msCat, msRole, msCourt, msDisp, msLead;
 function sqlLit(s){ return "'"+String(s).replaceAll("'","''")+"'"; }
 function log(m){ const s=$('status'); s.style.display=''; s.insertAdjacentHTML('beforeend','<div>'+m+'</div>'); }
 window.addEventListener('error', e=> log('⚠️ error: '+(e.message||e.filename||e)));
@@ -210,7 +215,7 @@ async function qy(sql){ return (await conn.query(sql)).toArray().map(r=>r.toJSON
 /* compact multi-select dropdown */
 class MS{
   constructor(mount){
-    this.m=mount; this.sel=new Set(); this.opts=[];
+    this.m=mount; this.sel=new Set(); this.opts=[]; this.groups=null;
     mount.classList.add('ms');
     mount.innerHTML=`<button type="button" class="ms-btn">All</button>
       <div class="ms-panel" hidden>
@@ -227,16 +232,42 @@ class MS{
       if(a.dataset.a==='all') this.opts.forEach(o=>this.sel.add(o)); else this.sel.clear();
       this.render(); this.updateBtn(); });
   }
-  setOptions(arr,{keep=false}={}){ this.opts=arr; if(!keep) this.sel.clear(); else [...this.sel].forEach(v=>{ if(!arr.includes(v)) this.sel.delete(v); }); this.render(); this.updateBtn(); }
+  setOptions(arr,{keep=false}={}){ this.groups=null; this.opts=arr; if(!keep) this.sel.clear(); else [...this.sel].forEach(v=>{ if(!arr.includes(v)) this.sel.delete(v); }); this.render(); this.updateBtn(); }
+  // groups = [{group:'Umbrella', items:[...]}] — renders umbrella headers with grouped, indented items.
+  setGroups(groups,{keep=false}={}){ this.groups=groups; this.opts=groups.reduce((a,g)=>a.concat(g.items),[]);
+    if(!keep) this.sel.clear(); else [...this.sel].forEach(v=>{ if(!this.opts.includes(v)) this.sel.delete(v); }); this.render(); this.updateBtn(); }
   render(){
     const f=this.search.value.toLowerCase();
     this.list.innerHTML='';
+    if(this.groups){ this.renderGrouped(f); return; }
     this.opts.filter(o=>o.toLowerCase().includes(f)).forEach(o=>{
       const lab=document.createElement('label');
       const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=this.sel.has(o);
       cb.onchange=()=>{ cb.checked?this.sel.add(o):this.sel.delete(o); this.updateBtn(); };
       lab.appendChild(cb); lab.appendChild(document.createTextNode(' '+o));
       this.list.appendChild(lab);
+    });
+  }
+  renderGrouped(f){
+    this.groups.forEach(g=>{
+      const gmatch=g.group.toLowerCase().includes(f);
+      const items=g.items.filter(o=>gmatch || o.toLowerCase().includes(f));
+      if(!items.length) return;
+      const gh=document.createElement('label'); gh.className='ms-ghead';
+      const gc=document.createElement('input'); gc.type='checkbox';
+      const nsel=g.items.filter(o=>this.sel.has(o)).length;
+      gc.checked = nsel===g.items.length && g.items.length>0;
+      gc.indeterminate = nsel>0 && nsel<g.items.length;
+      gc.onchange=()=>{ if(gc.checked) g.items.forEach(o=>this.sel.add(o)); else g.items.forEach(o=>this.sel.delete(o)); this.render(); this.updateBtn(); };
+      gh.appendChild(gc); gh.appendChild(document.createTextNode(' '+g.group));
+      this.list.appendChild(gh);
+      items.forEach(o=>{
+        const lab=document.createElement('label'); lab.className='ms-item';
+        const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=this.sel.has(o);
+        cb.onchange=()=>{ cb.checked?this.sel.add(o):this.sel.delete(o); this.render(); this.updateBtn(); };
+        lab.appendChild(cb); lab.appendChild(document.createTextNode(' '+o));
+        this.list.appendChild(lab);
+      });
     });
   }
   updateBtn(){ const n=this.sel.size; this.btn.textContent = n===0?'All' : n===1?[...this.sel][0] : n+' selected'; }
@@ -264,7 +295,7 @@ async function init(){
     log('Step 5/5: preparing filters…');
   }catch(e){ log('❌ FAILED at engine load: '+(e&&(e.message||e.name||String(e)))); log('detail: '+String(e&&e.stack||e).slice(0,300)); throw e; }
 
-  msDist=new MS($('ms_dist')); msCat=new MS($('ms_cat')); msRole=new MS($('ms_role')); msCourt=new MS($('ms_court')); msDisp=new MS($('ms_disp'));
+  msDist=new MS($('ms_dist')); msCat=new MS($('ms_cat')); msRole=new MS($('ms_role')); msCourt=new MS($('ms_court')); msDisp=new MS($('ms_disp')); msLead=new MS($('ms_lead'));
 
   msDist.setOptions(facets.districts||[]);
   catByType={Civil:facets.catCivil||[], Criminal:facets.catCriminal||[]};
@@ -272,6 +303,7 @@ async function init(){
   msRole.setOptions(facets.roles||[]);
   msCourt.setOptions(facets.courts||[]);
   msDisp.setOptions(facets.disps||[]);
+  msLead.setOptions(facets.leadAgencies||[]);
   (facets.statuses||[]).forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; $('f_status').appendChild(o); });
 
   buildDatePickers(Math.max(1994, facets.minYear||1994), facets.maxYear||2026);
@@ -293,8 +325,16 @@ async function fillOptions(sel,sql){
   (await qy(sql)).forEach(r=>{ const o=document.createElement('option'); o.value=r.v; o.textContent=r.v; el.appendChild(o); });
 }
 
+function criminalGroups(){
+  const hier=facets.crimHier||[]; const known=new Set();
+  const groups=hier.map(g=>{ const items=(g.items||[]).filter(x=>catByType.Criminal.includes(x)); items.forEach(x=>known.add(x)); return {group:g.group, items}; }).filter(g=>g.items.length);
+  const leftover=catByType.Criminal.filter(x=>!known.has(x));
+  if(leftover.length) groups.push({group:'Other / Uncategorized', items:leftover.slice().sort()});
+  return groups;
+}
 function refreshCategory(){
   const t=$('f_type').value;
+  if(t==='Criminal' && (facets.crimHier||[]).length){ msCat.setGroups(criminalGroups(),{keep:true}); return; }
   let cats;
   if(t==='Civil') cats=catByType.Civil;
   else if(t==='Criminal') cats=catByType.Criminal;
@@ -339,6 +379,7 @@ function currentFilter(){
   const cats=msCat.values();
   if(cats.length) c.push('('+cats.map(x=>'(category_primary='+sqlLit(x)+' OR category_all LIKE '+sqlLit('%'+x+'%')+')').join(' OR ')+')');
   const r=inList('us_role', msRole.values()); if(r) c.push(r);
+  const la=inList('lead_agency', msLead.values()); if(la) c.push(la);
   const ct=inList('court_type', msCourt.values()); if(ct) c.push(ct);
   const dp=inList('disposition', msDisp.values()); if(dp) c.push(dp);
   const st=$('f_status').value; if(st) c.push('status='+sqlLit(st));

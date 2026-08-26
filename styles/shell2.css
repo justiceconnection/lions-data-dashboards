@@ -44,6 +44,11 @@
 .dw-panel .controls{background:transparent;border:0;padding:0;margin:0 0 8px}
 .dw-panel .occbar,.dw-panel .masters,.dw-panel .master{margin:0 0 12px}
 
+/* ── SVG download button on each chart card (sits by the collapse caret) ── */
+.dlsvg{display:inline-flex;align-items:center;justify-content:center;height:26px;padding:0 9px;font:inherit;font-size:10.5px;font-weight:700;letter-spacing:.03em;color:var(--mut);background:var(--panel);border:1px solid var(--line);border-radius:7px;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.dlsvg:hover{background:var(--accent);border-color:var(--accent);color:#000}
+.card h3 .dlsvg{margin-left:6px}
+
 /* ── item 1: dashboard nav — flat chips with an animated accent underline (no pills) ── */
 .dw-bar .nv-body .dashnav{gap:6px}
 .dw-bar .nv-body .dashnav a{position:relative;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-weight:600;padding:8px 14px;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease,background .15s ease}

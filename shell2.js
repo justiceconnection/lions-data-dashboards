@@ -60,6 +60,21 @@
    setOpen(window.matchMedia? window.matchMedia('(min-width:760px)').matches : true);            // open desktop, collapsed mobile
    } }
    collapsibles(wrap);                                                                           // note 1
+   // ── SVG download button on every chart card (resolves the live chart via Chart.getChart) ──
+   [].slice.call(wrap.querySelectorAll('.card')).forEach(function(card){
+     var cv=card.querySelector('canvas'), h3=card.querySelector('h3');
+     if(!cv||!h3||h3.querySelector('.dlsvg')) return;
+     var b=document.createElement('button'); b.type='button'; b.className='dlsvg'; b.title='Download this chart as an SVG'; b.textContent='SVG';
+     h3.appendChild(b);
+     b.addEventListener('click',function(e){ e.stopPropagation();
+       try{ var C=window.Chart, ch=(C&&C.getChart)?C.getChart(cv):null; if(!ch) return;
+         var ttl=(h3.querySelector('span')||{}).textContent||'chart';
+         var page=(document.title.split('—')[0]||'lions').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'lions';
+         var name=(cv.id||'chart')+'-'+page+'.svg';
+         if(typeof downloadChartSVG==='function') downloadChartSVG(ch, name, ttl);
+       }catch(err){ console.error('[shell2 svg]',err); }
+     });
+   });
  }catch(e){ console.error('[shell2] non-fatal:',e); } }
  if(document.readyState!=='loading') run(); else document.addEventListener('DOMContentLoaded',run);
 })();

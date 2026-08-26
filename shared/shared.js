@@ -58,3 +58,75 @@ function grainAnyPartial(B){ return B.some(b=>b.partial); }
 // grain-aware x-axis tick label: month keeps the "year at January" behavior; coarser grains show every label.
 function grainTick(grain){ return function(v,index){ const l=this.getLabelForValue(v); if(!l) return '';
   if(grain && grain!=='month') return l; const s=String(l).split('-'); return (s[1]==='01'||index===0)?s[0]:''; }; }
+
+// ── Chart → SVG export (vector download of any dashboard chart) ──
+// Reads Chart.js computed geometry (chartArea, scales, element x/y/base). Supports bar + line.
+function chartToSVG(chart, opts){
+  opts = opts || {};
+  const W = chart.width, H = chart.height, A = chart.chartArea;
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const gp = (el,props) => { try{ return el.getProps(props,true); }catch(e){ const o={}; props.forEach(p=>o[p]=el[p]); return o; } };
+  const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+  const scales = chart.scales||{};
+  const allS = Object.keys(scales).map(k=>scales[k]);
+  const yScales = allS.filter(s=>s.axis==='y');
+  const xScale  = allS.find(s=>s.axis==='x');
+  const yMain   = yScales.find(s=>s.position==='left') || yScales[0];
+  const datasets = chart.data.datasets||[];
+  const pad = A.left;
+  const items = [];
+  datasets.forEach((ds,i)=>{ const m=chart.getDatasetMeta(i); if(m&&m.hidden) return;
+    const col = ds._col || ds.borderColor || (Array.isArray(ds.backgroundColor)?ds.backgroundColor[0]:ds.backgroundColor) || '#333';
+    items.push({label: ds.label||('Series '+(i+1)), col: typeof col==='string'?col:'#333'}); });
+  let rows=1, lx=pad;
+  items.forEach(it=>{ const w=it.label.length*6.2+22; if(lx+w>W-8 && lx>pad){ rows++; lx=pad; } it._x=lx; it._row=rows; lx+=w; });
+  const titleH = opts.title ? 20 : 0, legendH = items.length ? rows*16+8 : 0, top = titleH+legendH, totalH = H+top;
+  const out = [];
+  out.push('<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+totalH+'" viewBox="0 0 '+W+' '+totalH+'" font-family="'+FONT+'">');
+  out.push('<rect x="0" y="0" width="'+W+'" height="'+totalH+'" fill="#ffffff"/>');
+  if(opts.title) out.push('<text x="'+pad+'" y="14" font-size="13" font-weight="600" fill="#212123">'+esc(opts.title)+'</text>');
+  items.forEach(it=>{ const y=titleH + it._row*16 - 4;
+    out.push('<rect x="'+it._x+'" y="'+(y-8).toFixed(1)+'" width="9" height="9" rx="2" fill="'+it.col+'"/>');
+    out.push('<text x="'+(it._x+13).toFixed(1)+'" y="'+y.toFixed(1)+'" font-size="10.5" fill="#212123">'+esc(it.label)+'</text>'); });
+  out.push('<g transform="translate(0,'+top+')">');
+  if(yMain && yMain.ticks){ yMain.ticks.forEach((t,i)=>{ const y=yMain.getPixelForTick(i);
+    out.push('<line x1="'+A.left+'" y1="'+y.toFixed(1)+'" x2="'+A.right+'" y2="'+y.toFixed(1)+'" stroke="#e4e4e1" stroke-width="1"/>'); }); }
+  yScales.forEach(s=>{ if(!s.ticks) return; const left = s.position!=='right';
+    s.ticks.forEach((t,i)=>{ const lab=t.label!=null?t.label:''; if(lab==='') return; const y=s.getPixelForTick(i);
+      const x = left ? s.right-6 : s.left+6;
+      out.push('<text x="'+x.toFixed(1)+'" y="'+(y+3).toFixed(1)+'" text-anchor="'+(left?'end':'start')+'" font-size="10" fill="#6b6c68">'+esc(lab)+'</text>'); }); });
+  if(xScale && xScale.ticks){ const rot=(xScale.options&&xScale.options.ticks&&xScale.options.ticks.maxRotation)||0;
+    xScale.ticks.forEach((t,i)=>{ const lab=t.label!=null?t.label:''; if(lab==='') return; const x=xScale.getPixelForTick(i); const y=A.bottom+13;
+      if(rot>10) out.push('<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" transform="rotate('+rot+' '+x.toFixed(1)+' '+y.toFixed(1)+')" text-anchor="end" font-size="9" fill="#6b6c68">'+esc(lab)+'</text>');
+      else out.push('<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="middle" font-size="9" fill="#6b6c68">'+esc(lab)+'</text>'); }); }
+  out.push('<line x1="'+A.left+'" y1="'+A.top+'" x2="'+A.left+'" y2="'+A.bottom+'" stroke="#c9c9c4"/>');
+  out.push('<line x1="'+A.left+'" y1="'+A.bottom+'" x2="'+A.right+'" y2="'+A.bottom+'" stroke="#c9c9c4"/>');
+  for(let i=0;i<datasets.length;i++){ const meta=chart.getDatasetMeta(i); if(!meta||meta.hidden) continue;
+    const els=meta.data||[]; const type=meta.type||chart.config.type;
+    if(type==='bar'){
+      for(const el of els){ if(!el) continue; const p=gp(el,['x','y','base','width','height']);
+        const w=p.width||1, x=p.x-w/2, yTop=Math.min(p.y,p.base), h=Math.abs(p.base-p.y);
+        if(h<=0.2) continue; const fill=(el.options&&el.options.backgroundColor)||'#888';
+        out.push('<rect x="'+x.toFixed(1)+'" y="'+yTop.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+fill+'"/>'); }
+    } else {
+      const dopt=(meta.dataset&&meta.dataset.options)||{};
+      const col=dopt.borderColor||datasets[i].borderColor||'#333';
+      const bw=dopt.borderWidth!=null?dopt.borderWidth:2;
+      let d='', started=false;
+      for(const el of els){ if(!el||el.skip){ started=false; continue; } const p=gp(el,['x','y']);
+        if(p.x==null||p.y==null||isNaN(p.x)||isNaN(p.y)){ started=false; continue; }
+        d+=(started?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)+' '; started=true; }
+      if(d) out.push('<path d="'+d.trim()+'" fill="none" stroke="'+(typeof col==='string'?col:'#333')+'" stroke-width="'+bw+'" stroke-linejoin="round" stroke-linecap="round"/>');
+    }
+  }
+  out.push('</g></svg>');
+  return out.join('');
+}
+function downloadChartSVG(chart, filename, title){
+  try{
+    const svg=chartToSVG(chart,{title:title});
+    const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+    const a=document.createElement('a'); a.href=url; a.download=filename||'chart.svg';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch(e){ console.error('SVG export failed',e); alert('SVG export failed: '+(e&&e.message||e)); }
+}
