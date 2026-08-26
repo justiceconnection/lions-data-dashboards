@@ -371,7 +371,7 @@ async function init(){ renderNav();
     const contig=idx.length===0||(idx[idx.length-1]-idx[0]+1===idx.length);
     state.admins=contig?ns:new Set([k]); applyAdmins(); render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
-  document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
+  state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
