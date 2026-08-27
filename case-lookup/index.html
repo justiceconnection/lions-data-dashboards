@@ -161,7 +161,7 @@
 </dialog>
 
 <script type="module">
-let duckdb; const BUILD='prod2';
+let duckdb; const BUILD='prod3';
 const SHARDS=['cases_a_m.parquet','cases_n_z.parquet'];
 const SRC="read_parquet(['cases_a_m.parquet','cases_n_z.parquet'])";
 const EXPORT_CAP=500000;
@@ -182,12 +182,14 @@ const COLUMNS=[
   ['filed_date','Filed',true],
   ['terminated_date','Terminated',true],
   ['court_type','Court type',false],
+  ['court_number','Court no. (docket / PACER)',true],
   ['disposition','Disposition',true],
   ['lead_agency','Lead agency',false],
   ['all_agencies','All agencies',false],
   ['litigating_responsibility','Litigating responsibility',false],
   ['lead_charge','Lead charge (criminal)',false],
   ['national_priority','National priority',false],
+  ['grand_jury_num','Grand jury number',false],
   ['victim_witness','Victim/witness',false],
   ['drug_related','Drug-related',false],
   ['drug_top_type','Top drug type',false],
@@ -289,7 +291,7 @@ async function init(){
     await db.instantiate(base+'duckdb-wasm/duckdb-eh.wasm');
     log('Step 4/5: connecting to the national data file (read on demand)…');
     // range-read: the engine fetches only the parts of the 124 MB file each query needs
-    for(const sh of SHARDS){ await db.registerFileURL(sh, new URL(sh, base).href, duckdb.DuckDBDataProtocol.HTTP, false); }
+    for(const sh of SHARDS){ await db.registerFileURL(sh, new URL(sh+'?'+BUILD, base).href, duckdb.DuckDBDataProtocol.HTTP, false); }
     conn=await db.connect();
     facets=await (await fetch(base+'facets.json?'+BUILD)).json();
     log('Step 5/5: preparing filters…');

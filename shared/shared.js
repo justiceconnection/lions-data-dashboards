@@ -21,7 +21,7 @@ function extTooltip(context){ const {chart,tooltip}=context; let el=document.get
   if(x+w>window.innerWidth-8) x=r.left+tooltip.caretX-w-14;
   if(x<8)x=8; if(y<8)y=8; if(y+ht>window.innerHeight-8)y=window.innerHeight-ht-8;
   el.style.left=x+'px'; el.style.top=y+'px'; }
-function fmtDist(c){ return (c&&c.length===3 && 'NSEWMC'.includes(c[2])) ? c.slice(0,2)+'-'+c[2] : c; }
+function fmtDist(c){ if(c&&c.length===3&&'NSEWMC'.includes(c[2])){ const P={N:'Northern',S:'Southern',E:'Eastern',W:'Western',M:'Middle',C:'Central'}; return c.slice(0,2)+'-'+P[c[2]]; } return c; }
 function fmtMMYYYY(x){ const p=(x||'').split('-'); return p.length===2?p[1]+'-'+p[0]:x; }
 function months(a,b){ const r=[]; let [y,m]=a.split("-").map(Number); const [Y,M]=b.split("-").map(Number);
   while(y<Y||(y===Y&&m<=M)){ r.push(y+"-"+String(m).padStart(2,"0")); m++; if(m>12){m=1;y++;} } return r; }
