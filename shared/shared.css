@@ -39,11 +39,21 @@ tr.recent td{color:#9a7b2e}
 .disc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
 .disc:hover{border-color:var(--accent)}
 #dl{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-.foot{color:var(--mut);font-size:11.5px;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.foot{
+    color:var(--mut);
+    font-size:12px;
+    margin-top:10px;
+    border-top:1px solid var(--line);
+    padding-top:10px;
+    white-space: pre-line;
+}
 #status{color:var(--mut);font-size:12px}
 .dashnav{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 16px}
 .dashnav a{font-size:14.5px;padding:9px 18px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--accent);text-decoration:none;font-weight:600}
 .dashnav a:hover{opacity:.88}
 .dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .dashsel{display:none;font:inherit;font-size:14.5px;font-weight:600;color:var(--accent);background:var(--ink);border:1px solid var(--ink);border-radius:8px;padding:9px 12px;margin:2px 0 16px;width:100%;max-width:360px}
+.preserve-breaks {
+  white-space: pre-line; /* Keeps your manual line breaks and wraps text normally */
+}
 @media(max-width:600px){.dashnav{display:none}.dashsel{display:block}}
