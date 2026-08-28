@@ -14,7 +14,7 @@
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
   <h1>Criminal Matter Declinations</h1>
-  <div class="sub"> This interactive tool, developed by the Justice Coalition, helps showcase trends in case filing and clearance by the U.S. Department of Justice' Legal Information Office Network System (LIONS). All data is from publicly released DOJ data, which ranges from October 1994 to June 2026 and will be regularly updated on a monthly basis with information from LIONS. For more information about this data, see the footnote below. <span id="status" aria-live="polite" hidden></span></div> 
+  <div class="sub"> This interactive tool, developed by the Justice Coalition, helps showcase trends in case filing and clearance by the U.S. Department of Justice' Legal Information Office Network System (LIONS). All data is from publicly released DOJ data, which ranges from October 1994 to June 2026 and will be regularly updated on a monthly basis with information from LIONS. For more information about this data, <a href="#footnote">see the footnote below</a>. <span id="status" aria-live="polite" hidden></span></div> 
 
   <div class="master"><span class="ml">Break down by</span>
     <span class="seg" id="dimSeg"><button data-v="category" class="on">Program category</button><button data-v="agency">Referring agency</button></span>
@@ -52,7 +52,7 @@
   <div id="tablePanel" hidden><div class="tblwrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div></div>
   <div class="bottombar"><button id="dl">Download CSV</button></div>
 
- <div class="foot">
+  <div class="foot" id="footnote">
 <b>About this data:</b> The DOJ National Caseload data dashboard is sourced and cleaned from monthly filings from the Department of Justice’s Legal Information Office Network System (LIONS). 
 
 LIONS data, also known as the DOJ Case Management System (CMS), <a href="https://www.justice.gov/usao/media/1443941/dl?inline" target="_blank">is aggregated into a redacted annual fiscal year report at the close of the year.</a> However, monthly data is provided in a 20 gigabyte file available to the public, with some categories and identifying information redacted. This dashboard provides users a way to make data actionable and understood over time from 1994 to 2026.
