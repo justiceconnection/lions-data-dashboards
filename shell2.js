@@ -44,17 +44,36 @@
    var gear='<svg class="dw-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>';
    btn.innerHTML=gear+'<span>Filters</span> <span class="dw-chev">▾</span>';
    bar.appendChild(btn);
+  // small "User guide" button (toggles a separate guide panel; content kept empty for user input)
+  var book='<svg class="dw-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20"></path><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 1 4 17.5z"></path></svg>';
+  var gbtn=document.createElement('button'); gbtn.type='button'; gbtn.className='dw-btn dw-guide-btn';
+  gbtn.setAttribute('aria-expanded','false'); gbtn.innerHTML=book+'<span>User guide</span> <span class="dw-chev">▾</span>';
+  bar.appendChild(gbtn);
    var panel=document.createElement('div'); panel.className='dw-panel';
+  var gpanel=document.createElement('div'); gpanel.className='dw-guide-panel';
    wrap.insertBefore(stick, anchor);                                                             // insert wrapper BEFORE moving tools
    stick.appendChild(bar); stick.appendChild(panel);
+  stick.appendChild(gpanel);
    blocks.forEach(function(b){ panel.appendChild(b); });                                         // move tools into the dropdown
    var phead=document.createElement('div'); phead.className='dw-phead';                          // collapse control at BOTTOM of panel
    phead.innerHTML='<span class="dw-ptitle">'+gear+'<span>Filters</span></span><button type="button" class="dw-close">Collapse <span class="dw-cchev">▴</span></button>';
    panel.appendChild(phead);
+  // guide panel header + empty content container — DO NOT populate text here (user will provide)
+  var ghead=document.createElement('div'); ghead.className='dw-phead';
+  ghead.innerHTML='<span class="dw-ptitle">'+book+'<span>User guide</span></span><button type="button" class="dw-close">Collapse <span class="dw-cchev">▴</span></button>';
+  var gcontent=document.createElement('div'); gcontent.className='dw-guide-content';
+  // three empty paragraph placeholders for layout only — DO NOT add textual content here
+  gcontent.innerHTML = '<p class="dw-guide-par"></p><p class="dw-guide-par"></p><p class="dw-guide-par"></p>';
+  gpanel.appendChild(ghead); gpanel.appendChild(gcontent);
    function setOpen(o){ panel.classList.toggle('open',o); btn.classList.toggle('on',o); try{window.dispatchEvent(new Event('resize'));}catch(e){} }
    function isOpen(){ return panel.classList.contains('open'); }
    btn.addEventListener('click',function(){ setOpen(!isOpen()); });
    phead.querySelector('.dw-close').addEventListener('click',function(){ setOpen(false); });
+  // guide panel toggle
+  function setGuideOpen(o){ gpanel.classList.toggle('open',o); gbtn.classList.toggle('on',o); gbtn.setAttribute('aria-expanded', o?'true':'false'); try{window.dispatchEvent(new Event('resize'));}catch(e){} }
+  function isGuideOpen(){ return gpanel.classList.contains('open'); }
+  gbtn.addEventListener('click',function(e){ setGuideOpen(!isGuideOpen()); });
+  ghead.querySelector('.dw-close').addEventListener('click',function(){ setGuideOpen(false); });
    // (click-outside-to-collapse removed by request — the "Filters" button and the in-panel
    //  "Collapse" button are the only ways to open/close the panel.)
    setOpen(window.matchMedia? window.matchMedia('(min-width:760px)').matches : true);            // open desktop, collapsed mobile
