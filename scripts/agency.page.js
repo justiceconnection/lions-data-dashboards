@@ -1,5 +1,3 @@
-const FOOT_R='[ Footnote area — reserved for notes, sources, or disclaimers. ]';
-const FOOT_V='[ Footnote area — reserved for notes, sources, or disclaimers. ]';
 
 const DEFAULT_AGS_R=['CBP','ICE','HSI','Secret Service','Coast Guard','FBI','DEA','ATF','USMS','Other DOJ'];
 const DEFAULT_AGS_V=['SSA','HUD','IRS','Bureau of Prisons','ICE','HSI','FBI','DEA','Education','Veterans Affairs'];
@@ -409,7 +407,6 @@ async function render(){ const st=document.getElementById("status");
   // toggle mode-specific controls
   document.getElementById('occbar').hidden=isCiv();
   document.getElementById('civMasters').hidden=!isCiv();
-  document.getElementById('foot').innerHTML=isCiv()?FOOT_V:FOOT_R;
   const needFull=!(state.dists.has('National')||state.dists.size===0);
   if(needFull){ if(isCiv()) await ensureFullC(); else await ensureFull(); }
   st.textContent=(isCiv()?'Civil · U.S. as '+state.role+' · '+state.basis+' · ':'Criminal · ')+(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+curAgs().size+" agencies";
