@@ -15,12 +15,35 @@ function extTooltip(context){ const {chart,tooltip}=context; let el=document.get
   (function(){var __d=(tooltip.dataPoints||[]);try{if(chart&&chart.options&&chart.options.scales&&chart.options.scales.y&&chart.options.scales.y.stacked)__d=__d.slice().reverse();}catch(e){}return __d;})().forEach(dp=>{ const ds=dp.dataset; const c=ds._col||ds.borderColor||'#fff';
     const y=dp.parsed.y; const val=y==null?'—':(ds._pct?(+y).toFixed(1)+'%':Math.round(y).toLocaleString());
     h+=`<div style="display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;flex:none"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${ds.label}</span><span style="font-variant-numeric:tabular-nums;padding-left:8px">${val}</span></div>`; });
+  // Provisional (L-014): one extra line on any point inside the provisional zone.
+  // chart.data._prov carries the bucket flags — the same smuggle-on-data convention
+  // already used for chart.data._ym. extTooltip serves all four dashboards, so this
+  // is the single edit that covers every chart.
+  try{ const pf=chart&&chart.data&&chart.data._prov; const dp=(tooltip.dataPoints||[])[0];
+    if(pf&&dp&&pf[dp.dataIndex]){ const t=(window.LIONS_PROV?window.LIONS_PROV.tooltipLine():'Provisional — incomplete reporting');
+      h+=`<div style="margin-top:5px;padding-top:4px;border-top:1px solid rgba(255,255,255,.2);opacity:.85">${t}</div>`; } }catch(e){}
   el.innerHTML=h; el.style.opacity='1';
   const r=chart.canvas.getBoundingClientRect(), w=el.offsetWidth, ht=el.offsetHeight;
   let x=r.left+tooltip.caretX+14, y=r.top+tooltip.caretY-ht/2;
   if(x+w>window.innerWidth-8) x=r.left+tooltip.caretX-w-14;
   if(x<8)x=8; if(y<8)y=8; if(y+ht>window.innerHeight-8)y=window.innerHeight-ht-8;
   el.style.left=x+'px'; el.style.top=y+'px'; }
+// Provisional caveat line under a KPI value (spec §7). The NUMBER is unchanged —
+// this only says the window it covers reaches into provisional months. Elements are
+// created/removed rather than toggled with [hidden], because .provnote is display:flex
+// and an author display rule beats the browser's [hidden]{display:none} (see the
+// front-end notes; shared.css does carry the !important guard, but not relying on it
+// keeps this safe if the card is ever restyled).
+function setKpiNote(valueId, on, text){
+  const v=document.getElementById(valueId); if(!v) return;
+  const card=v.closest ? v.closest('.kpi') : null; if(!card) return;
+  let n=card.querySelector('.provnote');
+  if(!on){ if(n) n.remove(); return; }
+  if(!n){ n=document.createElement('div'); n.className='provnote'; card.appendChild(n); }
+  n.innerHTML='<span class="sw sw-prov"></span><span>'+text+'</span>';
+}
+const KPI_NOTE_INCLUDES='Includes provisional months';
+const KPI_NOTE_COMPARES='Compares a provisional window with a settled one';
 function fmtDist(c){ if(c&&c.length===3&&'NSEWMC'.includes(c[2])){ const P={N:'Northern',S:'Southern',E:'Eastern',W:'Western',M:'Middle',C:'Central'}; return c.slice(0,2)+'-'+P[c[2]]; } return c; }
 function fmtMMYYYY(x){ const p=(x||'').split('-'); return p.length===2?p[1]+'-'+p[0]:x; }
 function months(a,b){ const r=[]; let [y,m]=a.split("-").map(Number); const [Y,M]=b.split("-").map(Number);
@@ -73,6 +96,42 @@ function chartToSVG(chart, opts){
   const xScale  = allS.find(s=>s.axis==='x');
   const yMain   = yScales.find(s=>s.position==='left') || yScales[0];
   const datasets = chart.data.datasets||[];
+  // ── Provisional zone (L-021, revision B) ────────────────────────────────────
+  // chartToSVG re-emits geometry by hand and runs no Chart.js plugins, so every mark
+  // the treatment makes has to be rebuilt here or the export silently drops the
+  // caveat — and an export travels, which is why that is worse than never having had
+  // the marker. The numbers come from LIONS_PROV.TILES / .STYLE via svgPattern(), so
+  // the canvas and the SVG cannot drift apart. (The administration bands are still
+  // missing from every export; pre-existing, logged as L-012, not fixed here.)
+  //
+  // Revision B forks by chart family exactly as the plugin does, and for the same
+  // reason: on a stacked chart the marker is ink laid OVER the data, never a
+  // transform applied TO it. So the flat hatch goes under the data on an unstacked
+  // chart, the two-tone hatch goes over the fills on a stacked one, and a stacked
+  // chart's strokes are NOT faded.
+  const PV_ = (typeof window!=='undefined' && window.LIONS_PROV) ? window.LIONS_PROV : null;
+  const PVS = (PV_ && PV_.STYLE) || {rule:'#9a9b96',gutter:'rgba(33,33,35,0.72)',gutterH:3,gutterGap:1,
+    label:'Provisional',labelInk:'#3f4043',labelHalo:'rgba(251,251,251,0.92)',labelPad:14,labelTop:24};
+  const provFlags = (chart.data && chart.data._prov) || null;
+  const provFade = c => (PV_ ? PV_.fade(c) : c);
+  const firstProv = f => { if(!f) return -1; for(let k=0;k<f.length;k++) if(f[k]) return k; return -1; };
+  let provStacked = false;
+  try{ provStacked = !!(chart.options&&chart.options.scales&&chart.options.scales.y&&chart.options.scales.y.stacked); }catch(e){}
+  let provX0 = null;
+  { const i0 = firstProv(provFlags);
+    if(i0>=0 && xScale){
+      const half = provFlags.length>1 ? Math.abs(xScale.getPixelForValue(1)-xScale.getPixelForValue(0))/2 : 10;
+      provX0 = Math.max(A.left, xScale.getPixelForValue(i0)-half); } }
+  // Emits the hatch <rect> for one tile kind. Called before the datasets for 'flat'
+  // and after them for 'stacked' — the stacking order IS the fix for QA's D1.
+  const provHatchRect = kind => {
+    const pat = PV_ ? PV_.svgPattern(kind)
+      : '<pattern id="lionsProvHatch-flat" patternUnits="userSpaceOnUse" width="8" height="8">'
+        +'<path d="M-1,1 L1,-1 M0,8 L8,0 M-8,16 L0,8" stroke="rgba(33,33,35,0.13)" stroke-width="1" fill="none"/></pattern>';
+    const id = PV_ ? PV_.svgPatternId(kind) : 'lionsProvHatch-flat';
+    out.push('<defs>'+pat+'</defs>');
+    out.push('<rect x="'+provX0.toFixed(1)+'" y="'+A.top.toFixed(1)+'" width="'+(A.right-provX0).toFixed(1)
+      +'" height="'+(A.bottom-A.top).toFixed(1)+'" fill="url(#'+id+')"/>'); };
   const pad = A.left;
   const items = [];
   datasets.forEach((ds,i)=>{ const m=chart.getDatasetMeta(i); if(m&&m.hidden) return;
@@ -101,6 +160,10 @@ function chartToSVG(chart, opts){
       else out.push('<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="middle" font-size="9" fill="#6b6c68">'+esc(lab)+'</text>'); }); }
   out.push('<line x1="'+A.left+'" y1="'+A.top+'" x2="'+A.left+'" y2="'+A.bottom+'" stroke="#c9c9c4"/>');
   out.push('<line x1="'+A.left+'" y1="'+A.bottom+'" x2="'+A.right+'" y2="'+A.bottom+'" stroke="#c9c9c4"/>');
+  // Unstacked only: the flat hatch goes UNDER the data. On a stacked chart the fills
+  // would erase it (measured: a 3/255 modulation — that is D1), so there is no "under"
+  // and the stacked tile is emitted after the datasets instead.
+  if(provX0!=null && !provStacked) provHatchRect('flat');
   for(let i=0;i<datasets.length;i++){ const meta=chart.getDatasetMeta(i); if(!meta||meta.hidden) continue;
     const els=meta.data||[]; const type=meta.type||chart.config.type;
     if(type==='bar'){
@@ -112,11 +175,61 @@ function chartToSVG(chart, opts){
       const dopt=(meta.dataset&&meta.dataset.options)||{};
       const col=dopt.borderColor||datasets[i].borderColor||'#333';
       const bw=dopt.borderWidth!=null?dopt.borderWidth:2;
-      let d='', started=false;
-      for(const el of els){ if(!el||el.skip){ started=false; continue; } const p=gp(el,['x','y']);
-        if(p.x==null||p.y==null||isNaN(p.x)||isNaN(p.y)){ started=false; continue; }
-        d+=(started?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)+' '; started=true; }
-      if(d) out.push('<path d="'+d.trim()+'" fill="none" stroke="'+(typeof col==='string'?col:'#333')+'" stroke-width="'+bw+'" stroke-linejoin="round" stroke-linecap="round"/>');
+      const dash=dopt.borderDash||datasets[i].borderDash||[];   // [5,4] means "right axis"
+      const stroke=typeof col==='string'?col:'#333';
+      const emit=(d,c)=>{ if(!d) return; out.push('<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="'+bw
+        +'"'+(dash.length?' stroke-dasharray="'+dash.join(' ')+'"':'')+' stroke-linejoin="round" stroke-linecap="round"/>'); };
+      const pts=[];
+      for(const el of els){ if(!el||el.skip){ pts.push(null); continue; } const p=gp(el,['x','y']);
+        pts.push((p.x==null||p.y==null||isNaN(p.x)||isNaN(p.y))?null:p); }
+      const seg=(from,to)=>{ let d='',on=false;
+        for(let k=Math.max(0,from);k<=to&&k<pts.length;k++){ const p=pts[k]; if(!p){ on=false; continue; }
+          d+=(on?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)+' '; on=true; }
+        return d.trim(); };
+      // Each dataset fades on its OWN window (ds._prov, set by LIONS_PROV.decorateLine);
+      // chart.data._prov is the chart-wide envelope and is only the fallback. The
+      // segment ENTERING the first provisional bucket is faded too, so the faded run
+      // starts one point earlier.
+      // Revision B: a stacked chart is never faded. Fading a stacked fill moves the
+      // apparent colour, and on a stacked chart the colour is the series identity —
+      // the scrim defect by another route (spec §3.4, §6.7).
+      const dsFlags=provStacked?null:((datasets[i]&&datasets[i]._prov)||provFlags);
+      const i0=firstProv(dsFlags);
+      if(i0<0){ emit(seg(0,pts.length-1),stroke); }
+      else { emit(seg(0,i0-1),stroke); emit(seg(Math.max(0,i0-1),pts.length-1),provFade(stroke)); }
+    }
+  }
+  if(provX0!=null){
+    // Stacked only: the two-tone hatch, OVER the fills.
+    if(provStacked) provHatchRect('stacked');
+    // Boundary rule (both families) and, on a stacked chart, the open right edge —
+    // the stacked stand-in for the line family's hollow terminal point.
+    out.push('<line x1="'+(provX0+0.5).toFixed(1)+'" y1="'+A.top.toFixed(1)+'" x2="'+(provX0+0.5).toFixed(1)
+      +'" y2="'+A.bottom.toFixed(1)+'" stroke="'+PVS.rule+'" stroke-width="1" stroke-dasharray="3 3"/>');
+    if(provStacked)
+      out.push('<line x1="'+(A.right-0.5).toFixed(1)+'" y1="'+A.top.toFixed(1)+'" x2="'+(A.right-0.5).toFixed(1)
+        +'" y2="'+A.bottom.toFixed(1)+'" stroke="'+PVS.rule+'" stroke-width="1" stroke-dasharray="3 3"/>');
+    // The gutter bar — identical on every family, and the only mark outside the plot
+    // area. In the export it sits in the same place the canvas puts it.
+    out.push('<rect x="'+provX0.toFixed(1)+'" y="'+(A.bottom+PVS.gutterGap).toFixed(1)+'" width="'+(A.right-provX0).toFixed(1)
+      +'" height="'+PVS.gutterH+'" fill="'+PVS.gutter+'"/>');
+    // The haloed label. NO WIDTH GUARD — rev A's `>64` is what made it absent at the
+    // default range (QA D3); it must not come back here either. There is no
+    // measureText in the exporter, so the width is estimated at ~5.8px/char for
+    // 10.5px/600, the same figure the check harness stubs; the placement rule itself
+    // is LIONS_PROV.labelPlacement so the two cannot disagree about which side wins.
+    const zSVG = {x0:provX0, x1:A.right, area:A};
+    const twSVG = PVS.label.length*5.8;
+    const plSVG = PV_ ? PV_.labelPlacement(zSVG, twSVG)
+      : ((A.right-provX0 >= twSVG+PVS.labelPad) ? {x:A.right-7} : {x:provX0-6});
+    if(plSVG){
+      const lx=plSVG.x.toFixed(1), ly=(A.top+PVS.labelTop).toFixed(1);
+      // Two elements rather than paint-order:stroke, so the halo renders in every
+      // SVG consumer, not only SVG2-complete ones. Halo first, exactly as on canvas.
+      out.push('<text x="'+lx+'" y="'+ly+'" text-anchor="end" font-size="10.5" font-weight="600" fill="none" stroke="'
+        +PVS.labelHalo+'" stroke-width="3" stroke-linejoin="round">'+esc(PVS.label)+'</text>');
+      out.push('<text x="'+lx+'" y="'+ly+'" text-anchor="end" font-size="10.5" font-weight="600" fill="'
+        +PVS.labelInk+'">'+esc(PVS.label)+'</text>');
     }
   }
   out.push('</g></svg>');

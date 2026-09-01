@@ -22,6 +22,24 @@ const SUB_ORDER_R={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"
 const DEPT_ORDER_V=["Social Security Admin","DOJ","DHS","Treasury","HUD","HHS","Education","Veterans Affairs","Small Business Admin","Agriculture","Defense","Labor","Interior","State","EPA","OPM","Energy","Commerce","USPS","Other"];
 const SUB_ORDER_V={"DOJ":["Bureau of Prisons","FBI","DEA","ATF","USMS","Other DOJ"],"DHS":["ICE","HSI","CBP","Secret Service","Other DHS"],"Treasury":["IRS","Other Treasury"],"Defense":["Army","Navy","Air Force","Army Corps of Engineers","Other Defense"],"HHS":["FDA","HHS-OIG","Other HHS"]};
 const CURRENT="agency.html";
+// Provisional (right-censored) data — L-014, revised to rev B in L-021.
+// Spec: ops/handoffs/L-003-design-spec.md (revision B).
+// All the logic lives in shared/provisional.js; this page only makes calls.
+// Two things this page owns for rev B, neither of them logic:
+//   scales.x.ticks.padding:6 on every chart carrying the treatment — a LAYOUT
+//     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
+//     bar lives in that space; Chart.js defaults to 3 and the bar would touch
+//     the tick labels.
+//   _stacked:true on datasets built for a stacked render — the input to
+//     LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
+//     Set per render, because the mix charts flip family at runtime.
+// This page is dual-mode, so the window set follows the mode: criminal 3/6, civil 4/6.
+const PV=window.LIONS_PROV;
+const pvopt=()=>({civil:isCiv()});
+// The share chart normalises on the mode's inflow; the table prints every metric and
+// so takes the widest window across its own columns (spec §3.5).
+const TBL_METRICS_R=["cases_filed","cases_terminated","clearance","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"];
+function mixMetric(){ return isCiv()?(state.basis==='cases'?'cases_filed':'matters_received'):'cases_filed'; }
 
 // mode helpers
 const isCiv=()=>state.cls==='V';
@@ -143,6 +161,15 @@ function renderKPIs(){
   const shr=(i)=>{ const su=sum3(sel,i),t=sum3(tot,i); return (su!=null&&t)?100*su/t:null; };
   const comp=(shr(e)!=null&&shr(e-12)!=null)?shr(e)-shr(e-12):null;
   set('kpi4',comp==null?'—':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
+  // Provisional caveats (spec §7). No arithmetic changes.
+  const pcut=PV.cutIndex(SPINE,PV.n(curMetric(),pvopt()));
+  const provIn=ix=>ix.some(i=>i>pcut);
+  const w3=i=>[i,i-1,i-2].filter(k=>k>=0);
+  const yoyProv=provIn(w3(e))&&!provIn(w3(e-12));
+  setKpiNote('kpi1',isLevel?(e>pcut):provIn(idxs),KPI_NOTE_INCLUDES);
+  setKpiNote('kpi2',provIn(last12),KPI_NOTE_INCLUDES);
+  setKpiNote('kpi3',yoy!=null&&yoyProv,KPI_NOTE_COMPARES);
+  setKpiNote('kpi4',comp!=null&&yoyProv,KPI_NOTE_COMPARES);
   document.getElementById('kpiMetric').textContent=metricLabel(curMetric());
   document.getElementById('kpi1lab').textContent=pct?'Overall rate, selected range':(isLevel?'Latest (end of range)':'Total, selected range');
   document.getElementById('kpi2lab').textContent=pct?'Overall rate, last 12 mo':(isLevel?'Avg, last 12 months':'Total, last 12 months');
@@ -168,20 +195,24 @@ function renderChart(){
   const pr=B.map(b=>b.partial?3.2:0), anyPartial=grainAnyPartial(B);
   const pct=isPct();
   const ags=selAgs();
+  // Provisional: this chart plots one metric across agencies, so the zone and every
+  // series share the same window. Anchored to the vintage edge, never to state.to.
+  const nOwn=PV.n(curMetric(),pvopt()), flagsOwn=PV.bucketFlags(SPINE,B,nOwn);
   const datasets=ags.map((ag)=>{ const arr=metricArray(bucketComp(aggregate(state.dists,new Set([ag])),B),curMetric()); const col=agColor(ag);
-    return {label:ag,data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:col,_pct:pct}; });
+    return PV.decorateLine({label:ag,data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:col,_pct:pct},flagsOwn,pr); });
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
-     + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'');
+     + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
+     + (PV.anyProv(flagsOwn)?PV.legendChip(nOwn,PV.dir(curMetric())):'');   // separate marker from "*" — two different facts
   document.getElementById("chartTitle").textContent=metricLabel(curMetric())+(isCiv()?" — "+state.role:"")+" — by "+(isCiv()?"client":"referring")+" agency";
   if(typeof window==='undefined'||!window.Chart){ return; }
   const yfmt=pct?(v=>v+'%'):(v=>v.toLocaleString());
   if(chart) chart.destroy();
-  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis},
+  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis,_prov:PV.anyProv(flagsOwn)?flagsOwn:null},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,padding:6,callback:grainTick(state.grain)}},
         y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(curMetric()),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:yfmt},grid:{color:'#e6e6e3'}}}},
-    plugins:[adminBands]});
+    plugins:[adminBands,PV.plugin]});
 }
 
 function renderChart2(){
@@ -190,25 +221,28 @@ function renderChart2(){
   const ags=selAgs();
   const totB=bucketSum(shareFlow(aggregate(state.dists,new Set(['ALL']))),B);
   const aB={}; for(const a of ags) aB[a]=bucketSum(shareFlow(aggregate(state.dists,new Set([a]))),B);
+  // Normalised on the mode's inflow -> inflow window. Under-reporting distorts the MIX.
+  const nMix=PV.n(mixMetric(),pvopt()), flagsMix=PV.bucketFlags(SPINE,B,nMix);
   let datasets;
   if(state.mixMode==='sum'){
     const data=totB.map((t,bi)=>{ if(!t)return null; let s=0; for(const a of ags) s+=aB[a][bi]; return 100*s/t; });
     datasets=[{label:ags.length+' agenc'+(ags.length===1?'y':'ies')+' share',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,_pct:true,_col:'#212123'}];
   } else {
-    datasets=ags.map(a=>{ const col=agColor(a); return {label:a,data:totB.map((t,bi)=>t?100*aB[a][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
+    datasets=ags.map(a=>{ const col=agColor(a); return {label:a,data:totB.map((t,bi)=>t?100*aB[a][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true}; });
   }
-  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("");
+  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("")
+    + (PV.anyProv(flagsMix)?PV.legendChip(nMix,'mix'):'');
   const denom=isCiv()?primaryLabel():'referred cases filed';
   document.getElementById("chart2Title").textContent="Share of "+denom+" — % of total"+(state.mixMode==='stacked'?" (stacked)":" (combined)");
   if(typeof window==='undefined'||!window.Chart){ return; }
   datasets=datasets.slice().reverse();
   if(chart2) chart2.destroy();
-  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis},
+  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis,_prov:PV.anyProv(flagsMix)?flagsMix:null},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,padding:6,callback:grainTick(state.grain)}},
         y:{stacked:state.mixMode==='stacked',beginAtZero:true,title:{display:true,text:'% of '+denom,color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
-    plugins:[adminBands]});
+    plugins:[adminBands,PV.plugin]});
 }
 
 function renderChart3(){
@@ -222,13 +256,16 @@ function renderChart3(){
   const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
   const R=aggregate(state.dists,curAgs());
   const ctB=bucketSum(R.ct,B);
-  const datasets=DISP.map(([key,name,col])=>{ const kB=bucketSum(R[key],B); return {label:name,data:ctB.map((t,bi)=>t?100*kB[bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
-  document.getElementById("legend3").innerHTML=DISP.map(([k,name,col])=>`<span class="lg"><span class="sw" style="background:${col}"></span>${name}</span>`).join("");
+  const datasets=DISP.map(([key,name,col])=>{ const kB=bucketSum(R[key],B); return {label:name,data:ctB.map((t,bi)=>t?100*kB[bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true}; });
+  // Disposition mix is normalised on cases terminated -> outflow window (6).
+  const nDisp=PV.n('cases_terminated',pvopt()), flagsDisp=PV.bucketFlags(SPINE,B,nDisp);
+  document.getElementById("legend3").innerHTML=DISP.map(([k,name,col])=>`<span class="lg"><span class="sw" style="background:${col}"></span>${name}</span>`).join("")
+    + (PV.anyProv(flagsDisp)?PV.legendChip(nDisp,'mix'):'');
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart3) chart3.destroy();
-  chart3=mkChart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse(),_ym:ymAxis},
+  chart3=mkChart(document.getElementById('chart3').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse(),_ym:ymAxis,_prov:PV.anyProv(flagsDisp)?flagsDisp:null},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands]});
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,padding:6,callback:grainTick(state.grain)}},y:{stacked:true,beginAtZero:true,title:{display:true,text:'% of cases terminated',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},plugins:[adminBands,PV.plugin]});
 }
 
 function updateChartAccessibility(){
@@ -245,12 +282,21 @@ function updateChartAccessibility(){
     :`${curAgs().size} selected agencies`;
   const modeText=isCiv()?'civil':'criminal';
 
+  // The provisional treatment must not be vision-only. Appended only when the visible
+  // range actually reaches the zone (spec §4).
+  const reaches=n=>{ const c=PV.cutIndex(SPINE,n); return visIdx().some(i=>i>c); };
+  const nA=PV.n(curMetric(),pvopt());
+  const provA=reaches(nA)?(' '+PV.noteText(nA,PV.dir(curMetric()))):'';
+  const nA2=PV.n(mixMetric(),pvopt());
+  const provA2=reaches(nA2)?(' '+PV.noteText(nA2,'mix')):'';
+  const nA3=PV.n('cases_terminated',pvopt());
+  const provA3=reaches(nA3)?(' '+PV.noteText(nA3,'mix')):'';
   chartEl.setAttribute('aria-label',
-    `${metricLabel(curMetric())} trend over time by ${isCiv()?'client':'referring'} agency. Mode: ${modeText}. Filters: ${distText}; ${agText}; ${state.from} to ${state.to}${isCiv()?`; U.S. as ${state.role}; basis ${state.basis}`:''}.`
+    `${metricLabel(curMetric())} trend over time by ${isCiv()?'client':'referring'} agency. Mode: ${modeText}. Filters: ${distText}; ${agText}; ${state.from} to ${state.to}${isCiv()?`; U.S. as ${state.role}; basis ${state.basis}`:''}.${provA}`
   );
 
   chart2El.setAttribute('aria-label',
-    `Agency share over time as percent of total ${isCiv()?primaryLabel():'referred cases filed'}, ${state.mixMode==='stacked'?'stacked view':'combined view'}. Filters: ${distText}; ${agText}; ${state.from} to ${state.to}${isCiv()?`; U.S. as ${state.role}; basis ${state.basis}`:''}.`
+    `Agency share over time as percent of total ${isCiv()?primaryLabel():'referred cases filed'}, ${state.mixMode==='stacked'?'stacked view':'combined view'}. Filters: ${distText}; ${agText}; ${state.from} to ${state.to}${isCiv()?`; U.S. as ${state.role}; basis ${state.basis}`:''}.${provA2}`
   );
 
   if(!isCiv()){
@@ -262,24 +308,29 @@ function updateChartAccessibility(){
     return;
   }
   chart3El.setAttribute('aria-label',
-    `Disposition mix over time as percent of cases terminated. Filters: ${distText}; ${agText}; ${state.from} to ${state.to}; U.S. as ${state.role}; basis ${state.basis}.`
+    `Disposition mix over time as percent of cases terminated. Filters: ${distText}; ${agText}; ${state.from} to ${state.to}; U.S. as ${state.role}; basis ${state.basis}.${provA3}`
   );
 }
 
 function renderTable(){
   const R=aggregate(state.dists,curAgs());
+  // Computed from the vintage edge, replacing a hardcoded `ym>="2026-03"` that would
+  // have meant the wrong thing the moment the next vintage promoted. Colour alone is a
+  // WCAG 1.4.1 failure, so provisional rows also carry a dagger.
+  const provM=PV.monthFlags(SPINE,PV.nMax(isCiv()?metricsList().map(m=>m[0]):TBL_METRICS_R,pvopt()));
   if(!isCiv()){
     const rows=[]; let sf=0,stt=0;
     for(const i of visIdx()){ const ym=SPINE[i]; const filed=R.filed[i],term=R.term[i],dt=R.dt[i];
       const row={ym,filed,term,df:R.df[i],dt,filed3:mean3(R.filed,i),term3:mean3(R.term,i),
         clr:filed>0?100*term/filed:null,clr3:ratio3(R.term,R.filed,i),
         gpct:dt>0?100*R.guilty[i]/dt:null,dpct:dt>0?100*R.dismissed[i]/dt:null,
-        tag:ym<="1996-09"?"edge":(ym>="2026-03"?"recent":"")};
+        prov:!!provM[i],
+        tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")};
       rows.push(row); sf+=filed; stt+=term; }
     lastRows=rows; lastCols=null;
     document.getElementById("thead").innerHTML="<tr><th>Month</th><th>Cases filed</th><th>Cases term.</th><th>Clearance %</th><th>Def. filed</th><th>Def. term.</th><th>Guilty %</th><th>Dismissed %</th></tr>";
     document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-      return `<tr${cls}><td>${r.ym}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
+      return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
     }).join("");
     const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"—";
     document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b> · clearance <b>${ocl}</b>`;
@@ -287,11 +338,11 @@ function renderTable(){
   } else {
     const cols=metricsList().map(m=>m[0]); const arrs=cols.map(m=>metricArray(R,m));
     const rows=[];
-    for(const i of visIdx()){ const ym=SPINE[i]; rows.push({ym,vals:arrs.map(a=>a[i]),tag:ym<="1996-09"?"edge":(ym>="2026-03"?"recent":"")}); }
+    for(const i of visIdx()){ const ym=SPINE[i]; rows.push({ym,vals:arrs.map(a=>a[i]),prov:!!provM[i],tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")}); }
     lastRows=rows; lastCols=cols;
     document.getElementById("thead").innerHTML="<tr><th>Month</th>"+metricsList().map(m=>`<th>${m[1]}</th>`).join("")+"</tr>";
     document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-      return `<tr${cls}><td>${r.ym}</td>`+r.vals.map(v=>`<td>${v==null?"—":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
+      return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${v==null?"—":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
     }).join("");
     const tot=metricArray(R, state.basis==='cases'?'cases_filed':'matters_received');
     const s=visIdx().reduce((a,i)=>a+tot[i],0);
@@ -303,11 +354,11 @@ function renderTable(){
 function buildCSV(){
   const L=[];
   if(!isCiv()){
-    L.push(["month","cases_filed","cases_terminated","clearance_pct","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"].join(","));
-    for(const r of lastRows) L.push([r.ym,r.filed,r.term,r.clr==null?"":r.clr.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2)].join(","));
+    L.push(["month","cases_filed","cases_terminated","clearance_pct","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct","provisional"].join(","));
+    for(const r of lastRows) L.push([r.ym,r.filed,r.term,r.clr==null?"":r.clr.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2),r.prov?"yes":""].join(","));
   } else {
-    L.push(["month",...lastCols].join(","));
-    for(const r of lastRows) L.push([r.ym,...r.vals.map(v=>v==null?"":(Number.isInteger(v)?v:v.toFixed(2)))].join(","));
+    L.push(["month",...lastCols,"provisional"].join(","));
+    for(const r of lastRows) L.push([r.ym,...r.vals.map(v=>v==null?"":(Number.isInteger(v)?v:v.toFixed(2))),r.prov?"yes":""].join(","));
   }
   const blob=new Blob([L.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   const dt=(state.dists.has('National')||state.dists.size===0)?'National':state.dists.size+'dists';
@@ -447,6 +498,14 @@ async function init(){ renderNav();
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
   document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
+  // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
+  // The district cube (agency_cube.csv, ~40 MB) is fetched on EVERY page load,
+  // not on district selection. It is intentionally un-awaited, so it never blocks
+  // first paint: the national view renders immediately and this streams in behind it.
+  // The point is that opening the district filter and switching districts is instant,
+  // rather than making the user wait on a multi-megabyte download mid-interaction.
+  // Cary's call, 31 Aug 2026 — responsiveness over bytes. It is the dominant share of
+  // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();

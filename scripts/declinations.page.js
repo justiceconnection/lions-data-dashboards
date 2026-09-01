@@ -20,6 +20,22 @@ const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:[
 const DEPT_ORDER=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const CURRENT="declinations.html";
+// Provisional (right-censored) data — L-014, revised to rev B in L-021.
+// Spec: ops/handoffs/L-003-design-spec.md (revision B).
+// All the logic lives in shared/provisional.js; this page only makes calls.
+// Two things this page owns for rev B, neither of them logic:
+//   scales.x.ticks.padding:6 on every chart carrying the treatment — a LAYOUT
+//     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
+//     bar lives in that space; Chart.js defaults to 3 and the bar would touch
+//     the tick labels.
+//   _stacked:true on datasets built for a stacked render — the input to
+//     LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
+//     Set per render, because the mix charts flip family at runtime.
+// A declination is a disposition event on a criminal matter, so `declined` is criminal
+// OUTFLOW: window 6 months, on both charts, the table and the CSV.
+const PV=window.LIONS_PROV;
+const PVOPT={civil:false};
+const PROV_METRIC='declined';
 
 const isAg=()=>state.dim==='agency';
 function parseCat(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Object.fromEntries(H.map((h,i)=>[h,i]));
@@ -77,17 +93,21 @@ function renderChart(){
   // ratio-of-sums: bucket each reason's monthly series, then normalize by the bucketed total of selected reasons
   const rB={}; for(const r of rs) rB[r]=bucketSum(SER[r],B);
   const totals=B.map((b,bi)=>rs.reduce((a,r)=>a+rB[r][bi],0));   // 100%-stacked: normalize to selected reasons
-  const datasets=rs.map(r=>{ const col=RCOLOR[r]; return {label:r,data:totals.map((t,bi)=>t?100*rB[r][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
-  document.getElementById("legend").innerHTML=rs.map(r=>`<span class="lg"><span class="sw" style="background:${RCOLOR[r]}"></span>${r}</span>`).join("");
+  // Provisional: a normalised share chart, so under-reporting distorts the MIX (reasons
+  // mature at different rates) rather than simply lowering the edge — 'mix' wording.
+  const nProv=PV.n(PROV_METRIC,PVOPT), flagsProv=PV.bucketFlags(SPINE,B,nProv);
+  const datasets=rs.map(r=>{ const col=RCOLOR[r]; return {label:r,data:totals.map((t,bi)=>t?100*rB[r][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true}; });
+  document.getElementById("legend").innerHTML=rs.map(r=>`<span class="lg"><span class="sw" style="background:${RCOLOR[r]}"></span>${r}</span>`).join("")
+    + (PV.anyProv(flagsProv)?PV.legendChip(nProv,'mix'):'');
   document.getElementById("chart1Title").textContent="Matters declined by reason — % share (stacked) — "+scopeText();
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart) chart.destroy();
-  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse(),_ym:ymAxis},
+  chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse(),_ym:ymAxis,_prov:PV.anyProv(flagsProv)?flagsProv:null},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,padding:6,callback:grainTick(state.grain)}},
         y:{stacked:true,beginAtZero:true,max:100,title:{display:true,text:'% of declined matters (selected reasons)',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
-    plugins:[adminBands]});
+    plugins:[adminBands,PV.plugin]});
 }
 function renderChart2(){
   const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
@@ -95,27 +115,34 @@ function renderChart2(){
   const rs=selReasons();
   const totalArr=SPINE.map((_,i)=>rs.reduce((a,r)=>a+SER[r][i],0));
   const data=bucketSum(totalArr,B);
-  const datasets=[{label:'Total declined (selected reasons)',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:'#212123',pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:'#212123'}];
-  document.getElementById("legend2").innerHTML=`<span class="lg"><span class="sw" style="background:#212123"></span>Total of selected reasons</span>`+(anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'');
+  const nProv=PV.n(PROV_METRIC,PVOPT), flagsProv=PV.bucketFlags(SPINE,B,nProv);
+  const datasets=[PV.decorateLine({label:'Total declined (selected reasons)',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:'#212123',pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:'#212123'},flagsProv,pr)];
+  document.getElementById("legend2").innerHTML=`<span class="lg"><span class="sw" style="background:#212123"></span>Total of selected reasons</span>`
+    +(anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
+    +(PV.anyProv(flagsProv)?PV.legendChip(nProv,PV.dir(PROV_METRIC)):'');   // separate marker from "*" — two different facts
   document.getElementById("chart2Title").textContent="Matters declined — total of selected reasons";
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart2) chart2.destroy();
-  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis},
+  chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis,_prov:PV.anyProv(flagsProv)?flagsProv:null},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,padding:6,callback:grainTick(state.grain)}},
         y:{beginAtZero:true,title:{display:true,text:'Matters declined',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v.toLocaleString()},grid:{color:'#e6e6e3'}}}},
-    plugins:[adminBands]});
+    plugins:[adminBands,PV.plugin]});
 }
 function renderTable(){
   const rs=selReasons(); const rows=[]; let totAll=0; const totBy={}; for(const r of rs) totBy[r]=0;
+  // Computed from the vintage edge, replacing a hardcoded `ym>="2026-03"` that would
+  // have meant the wrong thing the moment the next vintage promoted. Colour alone is a
+  // WCAG 1.4.1 failure, so provisional rows also carry a dagger.
+  const provM=PV.monthFlags(SPINE,PV.n(PROV_METRIC,PVOPT));
   for(const i of visIdx()){ const ym=SPINE[i]; const vals=rs.map(r=>SER[r][i]); const tot=vals.reduce((a,b)=>a+b,0);
     rs.forEach((r,j)=>totBy[r]+=vals[j]); totAll+=tot;
-    rows.push({ym,vals,tot,tag:ym>="2026-03"?"recent":""}); }
+    rows.push({ym,vals,tot,prov:!!provM[i],tag:provM[i]?"recent prov":""}); }
   lastRows={rs,rows};
   document.getElementById("thead").innerHTML="<tr><th>Month</th>"+rs.map(r=>`<th>${r}</th>`).join("")+"<th>Total</th></tr>";
   document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-    return `<tr${cls}><td>${r.ym}</td>`+r.vals.map(v=>`<td>${Math.round(v).toLocaleString()}</td>`).join("")+`<td>${Math.round(r.tot).toLocaleString()}</td></tr>`;
+    return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${Math.round(v).toLocaleString()}</td>`).join("")+`<td>${Math.round(r.tot).toLocaleString()}</td></tr>`;
   }).join("");
   document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · <b>${Math.round(totAll).toLocaleString()}</b> matters declined · ${scopeText()}`;
   document.getElementById("note").textContent=rs.length===0?"Select at least one declination reason.":"";
@@ -137,11 +164,17 @@ function updateChartAccessibility(){
     ?'all declination reasons'
     :[...state.reasons].join(', ');
 
+  // The provisional treatment must not be vision-only. Appended only when the visible
+  // range actually reaches the zone (spec §4).
+  const nA=PV.n(PROV_METRIC,PVOPT), aCut=PV.cutIndex(SPINE,nA);
+  const reaches=visIdx().some(i=>i>aCut);
+  const provA=reaches?(' '+PV.noteText(nA,PV.dir(PROV_METRIC))):'';
+  const provA1=reaches?(' '+PV.noteText(nA,'mix')):'';
   chartEl.setAttribute('aria-label',
-    `Declinations by reason over time as stacked percent share. Breakdown mode: ${dimText}. Filters: ${distText}; ${groupText}; reasons: ${reasonText}; ${state.from} to ${state.to}.`
+    `Declinations by reason over time as stacked percent share. Breakdown mode: ${dimText}. Filters: ${distText}; ${groupText}; reasons: ${reasonText}; ${state.from} to ${state.to}.${provA1}`
   );
   chart2El.setAttribute('aria-label',
-    `Total declined matters over time for selected declination reasons. Breakdown mode: ${dimText}. Filters: ${distText}; ${groupText}; reasons: ${reasonText}; ${state.from} to ${state.to}.`
+    `Total declined matters over time for selected declination reasons. Breakdown mode: ${dimText}. Filters: ${distText}; ${groupText}; reasons: ${reasonText}; ${state.from} to ${state.to}.${provA}`
   );
 }
 
@@ -156,9 +189,9 @@ async function render(){ const st=document.getElementById("status");
 }
 
 function buildCSV(){
-  const rs=lastRows.rs, head=["month",...rs,"total"];
+  const rs=lastRows.rs, head=["month",...rs,"total","provisional"];
   const L=[head.join(",")];
-  for(const r of lastRows.rows) L.push([r.ym,...r.vals.map(v=>Math.round(v)),Math.round(r.tot)].join(","));
+  for(const r of lastRows.rows) L.push([r.ym,...r.vals.map(v=>Math.round(v)),Math.round(r.tot),r.prov?"yes":""].join(","));
   const blob=new Blob([L.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   const dt=(state.dists.has('National')||state.dists.size===0)?'National':state.dists.size+'dists';
   a.download=`lions_declinations_${state.dim}_${dt}_${state.from}_${state.to}.csv`; a.click();
@@ -273,6 +306,14 @@ async function init(){ renderNav();
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
   document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
+  // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
+  // The district cube (decl_cat_cube.csv, ~23 MB) is fetched on EVERY page load,
+  // not on district selection. It is intentionally un-awaited, so it never blocks
+  // first paint: the national view renders immediately and this streams in behind it.
+  // The point is that opening the district filter and switching districts is instant,
+  // rather than making the user wait on a multi-megabyte download mid-interaction.
+  // Cary's call, 31 Aug 2026 — responsiveness over bytes. It is the dominant share of
+  // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
   ensureCatFull(); render();
 }
 if(typeof document!=='undefined') init();

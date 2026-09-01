@@ -18,6 +18,23 @@ function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const 
 const METRICS=[["cases_filed","Cases filed"],["cases_terminated","Cases terminated"],["clearance","Clearance %"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
 const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const CURRENT="index.html";
+// Provisional (right-censored) data — L-014, revised to rev B in L-021.
+// Spec: ops/handoffs/L-003-design-spec.md (revision B).
+// All the logic lives in shared/provisional.js; this page only makes calls.
+// Two things this page owns for rev B, neither of them logic:
+//   scales.x.ticks.padding:6 on every chart carrying the treatment — a LAYOUT
+//     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
+//     bar lives in that space; Chart.js defaults to 3 and the bar would touch
+//     the tick labels.
+//   _stacked:true on datasets built for a stacked render — the input to
+//     LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
+//     Set per render, because the mix charts flip family at runtime.
+// This dashboard is criminal throughout: inflow window 3 months, outflow 6.
+const PV=window.LIONS_PROV;
+const PVOPT={civil:false};
+// The data table and CSV are always monthly and always show every metric, so they take
+// the widest window across the columns they print (spec §3.5, the same envelope rule).
+const TBL_METRICS=["cases_filed","cases_terminated","clearance","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"];
 
 function parseCSV(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Object.fromEntries(H.map((h,i)=>[h,i]));
   const out=new Array(L.length-1);
@@ -110,6 +127,17 @@ function renderKPIs(){
   const shr=(i)=>{ const su=sum3(sel,i),t=sum3(tot,i); return (su!=null&&t)?100*su/t:null; };
   const comp=(shr(e)!=null&&shr(e-12)!=null)?shr(e)-shr(e-12):null;
   set('kpi4',comp==null?'—':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
+  // Provisional caveats (spec §7). No arithmetic changes: cards 1 and 2 say their
+  // window reaches into provisional months; cards 3 and 4 are year-over-year and so
+  // compare a provisional window against a settled one.
+  const pcut=PV.cutIndex(SPINE,PV.n(state.metric,PVOPT));
+  const provIn=ix=>ix.some(i=>i>pcut);
+  const w3=i=>[i,i-1,i-2].filter(k=>k>=0);
+  const yoyProv=provIn(w3(e))&&!provIn(w3(e-12));
+  setKpiNote('kpi1',provIn(idxs),KPI_NOTE_INCLUDES);
+  setKpiNote('kpi2',provIn(last12),KPI_NOTE_INCLUDES);
+  setKpiNote('kpi3',yoy!=null&&yoyProv,KPI_NOTE_COMPARES);
+  setKpiNote('kpi4',comp!=null&&yoyProv,KPI_NOTE_COMPARES);
   document.getElementById('kpiMetric').textContent=metricLabel(state.metric);
   document.getElementById('kpi1lab').textContent=pct?'Overall rate, selected range':'Total, selected range';
   document.getElementById('kpi2lab').textContent=pct?'Overall rate, last 12 mo':'Total, last 12 months';
@@ -121,15 +149,20 @@ function renderKPIs(){
 function renderTable(){
   const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats);
   const rows=[]; let sf=0,stt=0;
+  // Provisional rows were tagged by a hardcoded `ym>="2026-03"`, which would have meant
+  // the wrong thing the moment the next vintage promoted. Now computed from the vintage
+  // edge, and marked with a dagger as well as colour (colour alone fails WCAG 1.4.1).
+  const provM=PV.monthFlags(SPINE,PV.nMax(TBL_METRICS,PVOPT));
   for(const i of visIdx()){ const ym=SPINE[i]; const filed=R.filed[i],term=R.term[i],dt=R.dt[i];
     const row={ym,filed,term,df:R.df[i],dt,
       clr:filed>0?100*term/filed:null,
       gpct:dt>0?100*R.guilty[i]/dt:null,dpct:dt>0?100*R.dismissed[i]/dt:null,
-      tag:ym<="1996-09"?"edge":(ym>="2026-03"?"recent":"")};
+      prov:!!provM[i],
+      tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")};
     rows.push(row); sf+=filed; stt+=term; }
   lastRows=rows;
   document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-    return `<tr${cls}><td>${r.ym}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
+    return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
   }).join("");
   const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"—";
   document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b>`;
@@ -154,29 +187,38 @@ function renderChart(){
   const left=buildSeries(leftItems(),'y');
   const metricMode = state.ax2by==='metric' && state.ax2sel.size>0;
   const right=(state.ax2by!=='metric' && state.ax2sel.size)?buildSeries([...state.ax2sel],'y1'):[];
+  const rMetrics = metricMode?[...state.ax2sel]:[];
+  // Provisional envelope (spec §3.5): the shaded zone takes the WIDEST window among the
+  // plotted metrics; each series fades on its own window, so the band is a conservative
+  // envelope and the fades say which series is actually affected inside it.
+  const plotted=[state.metric,...rMetrics];
+  const nZone=PV.nMax(plotted,PVOPT), nOwn=PV.n(state.metric,PVOPT);
+  const flagsZone=PV.bucketFlags(SPINE,B,nZone), flagsOwn=PV.bucketFlags(SPINE,B,nOwn);
+  const provDir=PV.dirAll(plotted);
   const mk=(s,j,pal,dash)=>{ const arr=metricArray(bucketComp(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats),B),state.metric); const col=pal[j%pal.length];
-    return {label:s.label+(s.axis==='y1'?' (R)':''),data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,borderDash:dash?[5,4]:[],yAxisID:s.axis,_col:col,_pct:pct}; };
+    // borderDash still means "right axis" and is untouched; fade means provisional.
+    return PV.decorateLine({label:s.label+(s.axis==='y1'?' (R)':''),data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,borderDash:dash?[5,4]:[],yAxisID:s.axis,_col:col,_pct:pct},flagsOwn,pr); };
   const leftDs=left.map((s,j)=>mk(s,j,PALETTE,false));
   const datasets=[...leftDs, ...right.map((s,j)=>mk(s,j,RPAL,true))];
-  const rMetrics = metricMode?[...state.ax2sel]:[];
   rMetrics.forEach((m2,j)=>{ const arr=metricArray(bucketComp(aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats),B),m2); const col=RPAL[j%RPAL.length];
-    datasets.push({label:metricLabel(m2)+' (R)',data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col,_pct:isPct(m2)}); });
+    datasets.push(PV.decorateLine({label:metricLabel(m2)+' (R)',data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col,_pct:isPct(m2)},PV.bucketFlags(SPINE,B,PV.n(m2,PVOPT)),pr)); });
   const anyR=right.length>0||rMetrics.length>0;
   const rightPct=metricMode?rMetrics.every(isPct):pct;
   const rAxisTitle=(metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):metricLabel(state.metric))+' (Right)';
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
      + (anyR?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'')
-     + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'');
+     + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
+     + (PV.anyProv(flagsZone)?PV.legendChip(nZone,provDir):'');   // separate marker from "*" — two different facts
   document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" — by "+(state.seriesBy==='category'?'program category':'district');
   if(typeof window==='undefined'||!window.Chart){ return; }
   const yfmt=pct?(v=>v+'%'):(v=>v.toLocaleString()); const y1fmt=rightPct?(v=>v+'%'):(v=>v.toLocaleString());
-  const cfg={type:'line',data:{labels,datasets,_ym:ymAxis},
+  const cfg={type:'line',data:{labels,datasets,_ym:ymAxis,_prov:PV.anyProv(flagsZone)?flagsZone:null},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,padding:6,callback:grainTick(state.grain)}},
         y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(state.metric),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:yfmt},grid:{color:'#e6e6e3'}},
         y1:{position:'right',display:anyR,beginAtZero:!rightPct,title:{display:anyR,text:rAxisTitle,color:'#212123',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:y1fmt},grid:{drawOnChartArea:false}}}},
-    plugins:[adminBands]};
+    plugins:[adminBands,PV.plugin]};
   if(chart) chart.destroy();
   chart=mkChart(document.getElementById('chart').getContext('2d'),cfg);
 }
@@ -188,23 +230,28 @@ function renderChart2(){
   const cats=allSel?CATLIST:[...state.cats];
   const totB=bucketSum(aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL'])).filed,B);
   const cAB={}; for(const c of cats) cAB[c]=bucketSum(aggregateRaw(NAT,FULL,SPINE,state.dists,new Set([c])).filed,B);
+  // This chart is normalised on cases filed -> the inflow window. Under-reporting makes
+  // the MIX wrong, not simply the edge low, because categories mature at very different
+  // rates — so the chip uses the 'mix' wording (spec §3.4).
+  const nMix=PV.n('cases_filed',PVOPT), flagsMix=PV.bucketFlags(SPINE,B,nMix);
   let datasets;
   if(state.mixMode==='sum'){
     const data=totB.map((t,bi)=>{ if(!t)return null; let s=0; for(const c of cats) s+=cAB[c][bi]; return 100*s/t; });
     datasets=[{label:(allSel?'All categories':cats.join(', ')),data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,_pct:true,_col:'#212123'}];
   } else {
-    datasets=cats.map(c=>{ const col=catColor(c); return {label:c,data:totB.map((t,bi)=>t?100*cAB[c][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col}; });
+    datasets=cats.map(c=>{ const col=catColor(c); return {label:c,data:totB.map((t,bi)=>t?100*cAB[c][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true}; });
   }
-  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("");
+  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("")
+    + (PV.anyProv(flagsMix)?PV.legendChip(nMix,'mix'):'');
   document.getElementById("chart2Title").textContent="Program Category Distribution";
   if(typeof window==='undefined'||!window.Chart){ return; }
   const stacked=state.mixMode==='stacked';
-  const cfg={type:'line',data:{labels,datasets,_ym:ymAxis},
+  const cfg={type:'line',data:{labels,datasets,_ym:ymAxis,_prov:PV.anyProv(flagsMix)?flagsMix:null},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:TT},
-      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,callback:grainTick(state.grain)}},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,padding:6,callback:grainTick(state.grain)}},
         y:{stacked,beginAtZero:true,title:{display:true,text:'% of cases filed',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
-    plugins:[adminBands]};
+    plugins:[adminBands,PV.plugin]};
   cfg.data.datasets=cfg.data.datasets.slice().reverse();
   if(chart2) chart2.destroy();
   chart2=mkChart(document.getElementById('chart2').getContext('2d'),cfg);
@@ -226,15 +273,21 @@ function updateChartAccessibility(){
     :'all category occurrences';
 
   const seriesByText=state.seriesBy==='category'?'program category':'district';
+  // The provisional treatment must not be vision-only. Only appended when the visible
+  // range actually reaches the zone (spec §4: To set before the window -> no marker).
+  const nA=PV.n(state.metric,PVOPT), aCut=PV.cutIndex(SPINE,nA);
+  const provA=visIdx().some(i=>i>aCut)?(' '+PV.noteText(nA,PV.dir(state.metric))):'';
+  const nA2=PV.n('cases_filed',PVOPT), aCut2=PV.cutIndex(SPINE,nA2);
+  const provA2=visIdx().some(i=>i>aCut2)?(' '+PV.noteText(nA2,'mix')):'';
   chartEl.setAttribute('aria-label',
-    `${metricLabel(state.metric)} trend over time, series by ${seriesByText}. Filters: ${distText}; ${catText}; ${state.from} to ${state.to}; counting basis ${basisText}.`
+    `${metricLabel(state.metric)} trend over time, series by ${seriesByText}. Filters: ${distText}; ${catText}; ${state.from} to ${state.to}; counting basis ${basisText}.${provA}`
   );
 
   const mixText=state.mixMode==='stacked'
     ?'stacked view by category'
     :'combined category share view';
   chart2El.setAttribute('aria-label',
-    `Program category distribution over time as a share of cases filed, ${mixText}. Filters: ${distText}; ${catText}; ${state.from} to ${state.to}; counting basis ${basisText}.`
+    `Program category distribution over time as a share of cases filed, ${mixText}. Filters: ${distText}; ${catText}; ${state.from} to ${state.to}; counting basis ${basisText}.${provA2}`
   );
 }
 
@@ -245,9 +298,9 @@ function render(){ const st=document.getElementById("status");
   renderKPIs(); renderChart(); renderChart2(); updateChartAccessibility(); renderTable(); }
 
 function buildCSV(){
-  const head=["month","cases_filed","cases_terminated","clearance_pct","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"];
+  const head=["month","cases_filed","cases_terminated","clearance_pct","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct","provisional"];
   const L=[head.join(",")];
-  for(const r of lastRows) L.push([r.ym,r.filed,r.term,r.clr==null?"":r.clr.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2)].join(","));
+  for(const r of lastRows) L.push([r.ym,r.filed,r.term,r.clr==null?"":r.clr.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2),r.prov?"yes":""].join(","));
   const blob=new Blob([L.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
   const ct=(state.cats.has('ALL')||state.cats.size===0)?'ALL':(state.cats.size===1?[...state.cats][0].replace(/\W+/g,''):state.cats.size+'cats');
@@ -376,6 +429,14 @@ async function init(){ renderNav();
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
   document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
+  // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
+  // The district cube (lions_cube.csv.gz, ~9.8 MB) is fetched on EVERY page load,
+  // not on district selection. It is intentionally un-awaited, so it never blocks
+  // first paint: the national view renders immediately and this streams in behind it.
+  // The point is that opening the district filter and switching districts is instant,
+  // rather than making the user wait on a multi-megabyte download mid-interaction.
+  // Cary's call, 31 Aug 2026 — responsiveness over bytes. It is the dominant share of
+  // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();
