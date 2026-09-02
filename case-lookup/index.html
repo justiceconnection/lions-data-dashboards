@@ -46,6 +46,47 @@
   .muted{color:var(--muted)}
   details.cols{margin-top:12px}
   details.cols summary{cursor:pointer;color:var(--muted);font-size:12px}
+
+  /* ===================== L-078: the record-type note ======================
+     Copy, placement and behaviour are ops/handoffs/L-078-design-spec.md.
+     Two rules matter beyond appearance:
+       (1) the note lives OUTSIDE .filters. That grid is align-items:end, so
+           prose in a cell makes its row taller and drops the other controls
+           in that row to the new bottom — the select bar stops reading as a
+           bar. Measured by the designer in Chromium; do not put it back.
+       (2) nothing here uses --accent. #eaf54c is 1.19:1 on #fff and 1.15:1
+           on --bg, below WCAG 1.4.11's 3:1, so it cannot carry a focus ring.
+           These two new controls ring in charcoal (16.07:1). The nine EXISTING
+           filter controls still ring in yellow and still fail — that is L-098,
+           a live pre-existing defect, deliberately not fixed here. */
+
+  /* Label-level info affordance. Scoped to .withhint so the shared `.fld label`
+     rule is untouched, and 16px so it fits inside the 11px x 1.5 = 16.5px label
+     line box — that is what keeps all nine control baselines aligned. */
+  .fld label.withhint{display:flex;align-items:center;gap:6px}
+  .hint{appearance:none;border:0;background:none;padding:0;margin:0;line-height:1;
+        font:inherit;font-size:13px;color:var(--muted);cursor:pointer;
+        width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;
+        border-radius:50%;flex:none}
+  .hint:hover{color:var(--ink)}
+  .hint:focus-visible{outline:2px solid var(--ink);outline-offset:2px;color:var(--ink)}
+
+  details.note{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+  details.note>summary{cursor:pointer;color:var(--ink);font-size:13px;font-weight:600;list-style:none;display:flex;align-items:center;gap:7px}
+  details.note>summary::-webkit-details-marker{display:none}
+  details.note>summary::before{content:"\25B8";color:var(--muted);font-size:11px;transition:transform .15s;display:inline-block}
+  details.note[open]>summary::before{transform:rotate(90deg)}
+  details.note>summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .note-body{max-width:78ch;font-size:13px;margin-top:10px}
+  .note-body h4{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:14px 0 5px}
+  .note-body h4:first-child{margin-top:2px}
+  .note-body p{margin:0 0 8px}
+  .note-body dl{margin:0 0 8px}
+  .note-body dt{font-weight:700;margin-top:7px}
+  .note-body dd{margin:0}
+  .note-body code{font-size:12px;background:#f4f4f5;border-radius:4px;padding:1px 4px}
+  .note-count[data-state="loading"]{color:var(--muted)}
+  .note-count[data-state="zero"]{color:var(--err)}
   .colgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px;margin-top:10px}
   .colgrid label{display:flex;gap:9px;align-items:center;color:var(--ink);font-size:13px;border:1px solid var(--line);border-radius:8px;padding:8px 11px;cursor:pointer;transition:background .1s,border-color .1s}
   .colgrid label:hover{border-color:#cdd400}
@@ -113,12 +154,12 @@
     <div class="filters">
       <div class="fld"><label>District</label><div id="ms_dist"></div></div>
       <div class="fld"><label>Case type</label><select id="f_type"><option value="">All</option><option>Civil</option><option>Criminal</option></select></div>
-      <div class="fld"><label>Record type</label><select id="f_record"><option value="">All</option><option>Matter</option><option>Case</option></select></div>
+      <div class="fld"><label class="withhint">Record type<button type="button" class="hint" id="hintRecord" aria-controls="recNote" aria-expanded="false" aria-label="About record types">&#9432;</button></label><select id="f_record"><option value="">All</option><option>Matter</option><option>Case</option><option value="post_disposition">Post-disposition Proceeding</option></select></div>
       <div class="fld"><label>Category</label><div id="ms_cat"></div></div>
       <div class="fld"><label>U.S. role</label><div id="ms_role"></div></div>
       <div class="fld"><label>Lead agency</label><div id="ms_lead"></div></div>
       <div class="fld"><label>Status</label><select id="f_status"><option value="">All</option></select></div>
-      <div class="fld"><label>Court type</label><div id="ms_court"></div></div>
+      <div class="fld"><label class="withhint">Court type<button type="button" class="hint" id="hintCourt" aria-controls="recNote" aria-expanded="false" aria-label="Why some court types are no longer listed">&#9432;</button></label><div id="ms_court"></div></div>
       <div class="fld"><label>Disposition</label><div id="ms_disp"></div></div>
     </div>
 
@@ -128,6 +169,7 @@
           <option value="received_date">Received date</option>
           <option value="filed_date">Filed date</option>
           <option value="terminated_date">Terminated date</option>
+          <option value="dc_filed_date">U.S. District Court filing date</option>
         </select></div>
       <div class="fld"><label>From date (year · month · day)</label>
         <div class="drow"><select id="from_y" class="y"></select><select id="from_m" class="m"></select><select id="from_d" class="d"></select></div></div>
@@ -136,6 +178,39 @@
     </div>
 
     <details class="cols"><summary>Choose columns</summary><div class="colgrid" id="colChooser"></div></details>
+
+    <!-- L-078: the record-type note. Copy is binding (ops/handoffs/L-078-design-spec.md §3)
+         and deliberately asserts NOTHING about what these proceedings are — no
+         "supervised release", no "revocation", no statute. That reading is an
+         inference from lead charges and 1,509 of the FY2025 subset carry neither a
+         charge nor a category. The count sentence is filled by loadNoteCount(). -->
+    <details class="note" id="recNote">
+      <summary id="recNoteSummary">Record types, and what changed for post-disposition proceedings</summary>
+      <div class="note-body">
+
+        <h4>The three record types</h4>
+        <dl>
+          <dt>Case</dt>
+          <dd>LIONS records at least one proceeding in a real court that is not post-disposition. These records carry a <b>Filed</b> date and a <b>Court type</b>.</dd>
+          <dt>Matter</dt>
+          <dd>LIONS records no real-court proceeding. <b>Filed</b> and <b>Court type</b> are blank.</dd>
+          <dt>Post-disposition Proceeding</dt>
+          <dd>The only real-court activity LIONS records for this case is post-disposition &mdash; activity recorded after a case has already been disposed of. There is no filing that opens a case, so <b>Filed</b>, <b>Court type</b>, <b>Court no.</b> and <b>U.S. District Court filing date</b> are blank on every one of these records. A <b>Disposition</b> may still be shown: it is the outcome recorded on the post-disposition proceeding itself, not the outcome of a prosecution.</dd>
+        </dl>
+
+        <h4>What we can and cannot tell you about them</h4>
+        <p>The name describes <i>where the record sits in the court history</i>. It is not a description of what the proceeding was about: LIONS records that the activity is post-disposition, it does not record what kind of proceeding it was. Most of these records carry a program category or a lead charge, some carry neither, and we have not labelled them beyond what the data records.</p>
+
+        <h4>What changed</h4>
+        <p>These records used to be counted as <b>Cases</b>, and were given a Filed date taken from the post-disposition proceeding. They are now their own record type. Nothing was removed &mdash; every record that could be found before can still be found, and the total number of records is unchanged. <span class="note-count" id="pdCount" aria-live="polite"></span></p>
+
+        <h4>If you used Court type to exclude them</h4>
+        <p>The <b>Court type</b> list no longer offers the three post-disposition values, because these records no longer carry a court type at all. Use <b>Record type</b> instead: choose <b>Case</b> to exclude post-disposition proceedings, or <b>Post-disposition Proceeding</b> to see only them. Record type is the only filter that separates them from Matters &mdash; Court type is blank for both.</p>
+
+        <h4>On screen and in the download</h4>
+        <p>Dates read <code>MM/DD/YYYY</code> on screen and <code>YYYY-MM-DD</code> in the downloaded CSV, which is the unambiguous form for spreadsheets and scripts. The CSV&rsquo;s column headings are the underlying data field names rather than the table headings &mdash; for example <code>dc_filed_date</code> for &ldquo;U.S. District Court filing date&rdquo;.</p>
+      </div>
+    </details>
 
     <div class="actions">
       <button class="go" id="searchBtn">Search</button>
@@ -161,11 +236,11 @@
 </dialog>
 
 <script type="module">
-let duckdb; const BUILD='prod3';
+let duckdb; const BUILD='prod5';
 const SHARDS=['cases_a_m.parquet','cases_n_z.parquet'];
 const SRC="read_parquet(['cases_a_m.parquet','cases_n_z.parquet'])";
 const EXPORT_CAP=500000;
-const DATE_COLS=new Set(['received_date','filed_date','terminated_date']);
+const DATE_COLS=new Set(['received_date','filed_date','terminated_date','dc_filed_date']);
 
 const COLUMNS=[
   ['district','District',true],
@@ -180,6 +255,7 @@ const COLUMNS=[
   ['us_role','U.S. role',true],
   ['received_date','Received',false],
   ['filed_date','Filed',true],
+  ['dc_filed_date','U.S. District Court filing date',false],
   ['terminated_date','Terminated',true],
   ['court_type','Court type',false],
   ['court_number','Court no. (docket / PACER)',true],
@@ -189,7 +265,6 @@ const COLUMNS=[
   ['litigating_responsibility','Litigating responsibility',false],
   ['lead_charge','Lead charge (criminal)',false],
   ['national_priority','National priority',false],
-  ['grand_jury_num','Grand jury number',false],
   ['victim_witness','Victim/witness',false],
   ['drug_related','Drug-related',false],
   ['drug_top_type','Top drug type',false],
@@ -318,9 +393,64 @@ async function init(){
   $('searchBtn').onclick=runSearch;
   $('csvBtn').onclick=downloadCSV;
   $('capClose').onclick=()=>$('capDialog').close();
+  setupNote();
   $('status').style.display='none';
   $('filterPanel').style.display='';
   try{ if(facets.nCases) $('caseCount').textContent=(facets.nCases/1e6).toFixed(2)+'M cases included'; }catch(e){}
+}
+
+
+/* ------------------------------------------------------------------ L-078 --
+   The record-type note. Additive by construction: it reads no filter, writes
+   no filter, runs no search and changes no result. Wired from init() so it can
+   only be reachable once `conn` exists — #filterPanel is display:none until
+   then, so there is no "not ready" state to design.
+
+   The one figure the copy quotes is QUERIED, lazily, on first expand, and is
+   never hard-coded: a literal 297,198 goes silently wrong at the next vintage.
+   Four states, all of them specified rather than incidental —
+     loading  "Counting…", muted, in an aria-live span; the prose never blocks
+     value    the class size and its share of the loaded file
+     zero     stated in words, NEVER "0 records". A zero here means the page is
+              being served against Parquets that predate L-079, which is a real
+              deploy hazard (invariant 11 / the deploy-ordering rule), and a
+              plain sentence beats a dead filter option nobody can explain.
+     failed   the clause disappears entirely — no error text, no red. The
+              paragraph is written to read correctly with no number in it.        */
+function setupNote(){
+  const note=$('recNote'), summary=$('recNoteSummary');
+  if(!note || !summary) return;
+  const hints=[$('hintRecord'), $('hintCourt')].filter(Boolean);
+  /* aria-expanded is synced FROM the details' own toggle event, not from the
+     click handler, so collapsing from the summary is not missed. */
+  const sync=()=>hints.forEach(b=>b.setAttribute('aria-expanded', note.open?'true':'false'));
+  note.addEventListener('toggle',()=>{ sync(); if(note.open) loadNoteCount(); });
+  sync();
+  hints.forEach(b=>b.addEventListener('click',()=>{
+    if(!note.open) note.open=true;                       // already open: just move focus
+    /* tabindex is set only for the duration of the focus() call and then removed.
+       <summary> is focusable natively; LEAVING tabindex="-1" on it would take it
+       out of the tab order for the rest of the session, so a keyboard user who
+       opened the note from a hint could never Tab back to it to collapse it.
+       Verified in Chromium: Tab still reaches the summary after a hint click. */
+    summary.setAttribute('tabindex','-1'); summary.focus(); summary.removeAttribute('tabindex');
+  }));
+}
+let noteCountStarted=false;
+async function loadNoteCount(){
+  if(noteCountStarted) return; noteCountStarted=true;
+  const el=$('pdCount'); if(!el) return;
+  const set=(state,text)=>{ el.dataset.state=state; el.textContent=text; };
+  set('loading','Counting…');
+  try{
+    const r=(await qy("SELECT count(*) FILTER (WHERE record_type='post_disposition') AS n, count(*) AS total FROM "+SRC))[0];
+    const n=Number(r.n), total=Number(r.total);
+    if(!(n>0)){ set('zero','No post-disposition proceedings are present in the data currently loaded.'); return; }
+    set('ok','This record type covers '+n.toLocaleString('en-US')+' records, '+(n/total*100).toFixed(1)+
+             '% of the '+total.toLocaleString('en-US')+' in the data currently loaded.');
+  }catch(e){
+    set('error',''); log('note count failed: '+((e&&e.message)||e));
+  }
 }
 
 async function fillOptions(sel,sql){
@@ -419,9 +549,28 @@ async function runSearch(){
   $('searchBtn').disabled=false;
 }
 
+/* L-095 / L-093 — value labels, one map, two renderers.
+   Cary's naming decision gives a `record_type` value a stored token
+   (`post_disposition`) and a separate display name. This map is the single
+   source of truth for every such value whose stored form differs from the text
+   a user should see, and BOTH output paths read it:
+     - fmtCell()    renders the on-screen table from JS row objects;
+     - sqlProject() rewrites the CSV export's SELECT list, because that path is
+       a DuckDB `COPY (...) TO 'export.csv'` and never returns rows to JS.
+   Add a column here and the table and the download stay in step. Do not label a
+   value in only one of the two. The FILTER still matches the stored token
+   (`currentFilter`, `f_record`): WHERE runs against the base column, not the
+   projection alias. */
+const VALUE_LABELS={ record_type:{ post_disposition:'Post-disposition Proceeding' } };
+function labelFor(key,v){ const m=VALUE_LABELS[key]; return (m && m[v]!=null) ? m[v] : null; }
+function sqlProject(k){
+  const m=VALUE_LABELS[k]; if(!m) return k;
+  return 'CASE '+k+Object.keys(m).map(t=>' WHEN '+sqlLit(t)+' THEN '+sqlLit(m[t])).join('')+' ELSE '+k+' END AS '+k;
+}
 function toDate(v){ if(v instanceof Date) return v; const n=typeof v==='bigint'?Number(v):v; if(typeof n==='number'&&isFinite(n)) return new Date(n); return null; }
 function fmtCell(v,key){
   if(v==null||v==='') return '';
+  const lab=labelFor(key,v); if(lab!=null) return lab;
   if(DATE_COLS.has(key)){ const d=toDate(v); if(d&&!isNaN(d)){ const p=x=>String(x).padStart(2,'0'); return `${p(d.getUTCMonth()+1)}/${p(d.getUTCDate())}/${d.getUTCFullYear()}`; } }
   if(typeof v==='bigint') return v.toString();
   return String(v);
@@ -447,7 +596,7 @@ async function downloadCSV(){
     }
     const cols=selectedCols();
     try{ await db.dropFile('export.csv'); }catch(_){}
-    await conn.query("COPY (SELECT "+cols.join(',')+" FROM "+SRC+""+f.where+") TO 'export.csv' (FORMAT CSV, HEADER)");
+    await conn.query("COPY (SELECT "+cols.map(sqlProject).join(',')+" FROM "+SRC+""+f.where+") TO 'export.csv' (FORMAT CSV, HEADER)");
     const buf=await db.copyFileToBuffer('export.csv');
     const url=URL.createObjectURL(new Blob([buf],{type:'text/csv'}));
     const a=document.createElement('a'); a.href=url; a.download='case_lookup_export.csv'; a.click(); URL.revokeObjectURL(url);

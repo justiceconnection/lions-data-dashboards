@@ -3,66 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Case Look-Up Tool</title>
+<title>Case Look-Up has moved — Justice Connection</title>
 <link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
-<link rel="stylesheet" href="styles/case_lookup.css?v=20260827a">
+<!--
+  L-068 / L-075 — redirect stub, 2026-09-01.
+  This page used to be a second, older Case Look-Up app. It range-read the same two
+  Parquets as the canonical app under a URL that carried no cache key, so a visitor
+  here could mix stale and fresh byte ranges after a Parquet promotion and hit a ZSTD
+  decompression failure. It is retired by redirect rather than deleted so that
+  bookmarked/shared URLs and any Framer iframe embed keep working (there is no
+  404.html in the Pages clone).
+  DO NOT add a script, a stylesheet, a Parquet fetch or DuckDB-WASM to this file.
+  With no Parquet read here, the second BUILD constant no longer exists and
+  invariant 11 governs two constants, not three.
+-->
+<link rel="canonical" href="https://justiceconnection.github.io/lions-data-dashboards/case-lookup/index.html">
+<meta http-equiv="refresh" content="3;url=./case-lookup/index.html">
+<style>
+  :root{ --bg:#fbfbfb; --ink:#212123; --muted:#6b6b70; --line:#dcdce0; --accent:#eaf54c; --card:#fff; }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{padding:16px 20px;max-width:1440px;margin:0 auto}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin:24px 0;max-width:620px}
+  h1{font-size:20px;margin:0 0 10px}
+  p{margin:0 0 14px}
+  .muted{font-size:12px;color:var(--muted);margin:0}
+  a.go{display:inline-block;text-decoration:none;font-weight:600;color:var(--ink);
+       background:var(--accent);border:1px solid #c3cc00;border-radius:8px;padding:9px 18px}
+  a.go:hover{opacity:.88}
+  a.go:focus{outline:2px solid var(--ink);outline-offset:2px}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <nav class="dashnav" id="dashnav"></nav>
-  <div class="head-wrap"> 
-  <h1 id="hdrTitle">Case Look-Up Tool</h1>
-     <div class="sub"> This interactive tool, developed by the Justice Connection, allows users to search individual DOJ / U.S. Attorney case records (both civil and criminal). All data is from publicly released DOJ data, which ranges from October 1994 to July 2026 but may contain redactions. For more information about this data, <a href="https://justiceconnection.github.io/lions-data-dashboards/case_lookup.html#footnote">see the footnote below</a>.
-    </div>
-    </div>
-
-  <div id="status" class="panel"><span class="spinner"></span>Loading search engine…</div>
-
-  <div class="panel" id="filterPanel" style="display:none">
-    <div class="filters">
-      <div class="fld"><label>District</label><div id="ms_dist"></div></div>
-      <div class="fld"><label>Case type</label><select id="f_type"><option value="">All</option><option>Civil</option><option>Criminal</option></select></div>
-      <div class="fld"><label>Record type</label><select id="f_record"><option value="">All</option><option>Matter</option><option>Case</option></select></div>
-      <div class="fld"><label>Category</label><div id="ms_cat"></div></div>
-      <div class="fld"><label>U.S. role</label><div id="ms_role"></div></div>
-      <div class="fld"><label>Status</label><select id="f_status"><option value="">All</option></select></div>
-      <div class="fld"><label>Court type</label><div id="ms_court"></div></div>
-      <div class="fld"><label>Disposition</label><div id="ms_disp"></div></div>
-    </div>
-    <div class="datebar">
-      <div class="fld basis"><label>Date range applies to</label>
-        <select id="f_basis"><option value="received_date">Received date</option><option value="filed_date">Filed date</option><option value="terminated_date">Terminated date</option></select></div>
-      <div class="fld"><label>From date (year · month · day)</label>
-        <div class="drow"><select id="from_y" class="y"></select><select id="from_m" class="m"></select><select id="from_d" class="d"></select></div></div>
-      <div class="fld"><label>To date (year · month · day)</label>
-        <div class="drow"><select id="to_y" class="y"></select><select id="to_m" class="m"></select><select id="to_d" class="d"></select></div></div>
-    </div>
-    <details class="cols"><summary>Choose columns</summary><div class="colgrid" id="colChooser"></div></details>
-    <div class="actions">
-      <button class="go" id="searchBtn">Search</button>
-      <button class="go secondary" id="csvBtn" disabled>Download CSV</button>
-      <span id="count" class="muted"></span>
-    </div>
-    <div id="filterErr"></div>
-  </div>
-
-  <div id="resultArea" style="display:none">
-    <div class="banner">Showing the first <b>100</b> matching cases. Use <b>Download CSV</b> for the full result. Recent months are still being reported and may be incomplete.</div>
-    <div class="tablewrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
+  <div class="panel">
+    <h1>The Case Look-Up tool has moved</h1>
+    <p>It now lives at <b>case-lookup/</b>. You will be taken there automatically in a
+       few seconds — or open it now:</p>
+    <p><a class="go" href="./case-lookup/index.html">Open Case Look-Up</a></p>
+    <p class="muted">Please update any bookmarks or links that point at this address.</p>
   </div>
 </div>
-
-<dialog id="capDialog"><h3>Too many rows to download here</h3><p id="capMsg"></p><div style="text-align:right"><button class="go" id="capClose">OK</button></div></dialog>
-
-<div id="footnote" class="foot">
-<b>About this data:</b> The DOJ National Caseload data dashboard is sourced and cleaned from monthly filings from the Department of Justice’s Legal Information Office Network System (LIONS). 
-
-Justice Connection does not manipulate the data or conduct any analysis of the data; this dashboard is a data management tool that allows users to investigate the data as its presented in the DOJ’s distribution. Data validation is possible by comparing the DOJ’s annual filings to monthly data downloads. However, given the manual input processes of the LIONS system and lack of information due to redaction or sealed cases, it’s important to note that all data cannot be independently validated.
-
-LIONS data updates monthly. Monthly updates include revised data from previous months, meaning updates may differ from previously posted numbers. Based on data analysis, Justice Connection estimates that a near-complete picture of monthly filings can be assumed after a three-month lag. In other words, for the most accurate monthly filing data, users should only analyze data from three months prior, because more cases data will be added in the subsequent two updates.  
-</div>
-<!-- shared nav config (same source of truth as the dashboards) -->
-<script src="shared/config.js?v=20260818j"></script>
-<script type="module" src="scripts/case_lookup.page.js?v=20260827a"></script>
 </body>
 </html>
