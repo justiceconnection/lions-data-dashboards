@@ -87,6 +87,45 @@
   .note-body code{font-size:12px;background:#f4f4f5;border-radius:4px;padding:1px 4px}
   .note-count[data-state="loading"]{color:var(--muted)}
   .note-count[data-state="zero"]{color:var(--err)}
+
+  /* ===================== L-111: the declination parity block ===============
+     Spec: ops/handoffs/L-111-design-spec.md §5 / §12; style guide §5c.
+     Three rules that are arithmetic, not taste:
+       (1) This is NOT a #fff9c4 banner. §5b reserves that fill plus the 4px
+           charcoal left rule for a CAUTION; a factual comparison is not one,
+           and reusing the shape dilutes a signal that had to be argued for.
+           So: the page's own card idiom.
+       (2) The hairline is #dcdce0 on #ffffff = 1.37:1. It is DECORATIVE. Every
+           meaning in this block is a word, a number or a glyph — the difference
+           reads "= Exact match" / "− 7 fewer here" / "+ 731 more here", never a
+           hue. Ink 16.07:1, muted 5.30:1 on white.
+       (3) NO ALPHA anywhere in these rules, so there is no compositing that can
+           annihilate a channel (the L-003 failure).
+     Nothing here uses --accent (1.19:1 on #fff). */
+  .parity{border:1px solid var(--line);border-radius:8px;background:#fff;
+          padding:11px 13px;margin-bottom:10px;font-size:13px}
+  /* [hidden] is spelled out because an author display rule beats the UA sheet.
+     .parity has no flex/grid rule of its own, so this is sufficient here — but
+     it is written !important deliberately: this has bitten twice. */
+  .parity[hidden]{display:none !important}
+  .parity .ttl{font-size:11px;text-transform:uppercase;letter-spacing:.04em;
+               color:var(--muted);font-weight:600;margin-bottom:6px}
+  .parity .figs{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:baseline}
+  .parity .cell{display:flex;flex-direction:column}
+  .parity .cell .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .parity .cell .v{font-size:19px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .parity .cell .v[data-state="loading"]{font-size:13px;font-weight:400;color:var(--muted)}
+  .parity .why{margin-top:7px;color:var(--muted);line-height:1.45}
+  .parity .why b{color:var(--ink);font-weight:600}
+
+  /* The contradiction notice (Declination=Exclude + a reason ticked). This one
+     IS a caution shape — 4px var(--ink) left rule on #fff9c4, 15.00:1 on the
+     fill and 15.53:1 on the page ground, both far over WCAG 1.4.11's 3:1.
+     role="status", never role="alert": nothing here is an error. */
+  .selnotice{margin-top:12px;border-left:4px solid var(--ink);background:#fff9c4;
+             border-radius:0 8px 8px 0;padding:9px 12px;font-size:13px}
+  .selnotice[hidden]{display:none !important}
+  .selnotice .lead{font-weight:700}
   .colgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px;margin-top:10px}
   .colgrid label{display:flex;gap:9px;align-items:center;color:var(--ink);font-size:13px;border:1px solid var(--line);border-radius:8px;padding:8px 11px;cursor:pointer;transition:background .1s,border-color .1s}
   .colgrid label:hover{border-color:#cdd400}
@@ -160,7 +199,18 @@
       <div class="fld"><label>Lead agency</label><div id="ms_lead"></div></div>
       <div class="fld"><label>Status</label><select id="f_status"><option value="">All</option></select></div>
       <div class="fld"><label class="withhint">Court type<button type="button" class="hint" id="hintCourt" aria-controls="recNote" aria-expanded="false" aria-label="Why some court types are no longer listed">&#9432;</button></label><div id="ms_court"></div></div>
-      <div class="fld"><label>Disposition</label><div id="ms_disp"></div></div>
+      <div class="fld"><label class="withhint">Disposition<button type="button" class="hint" id="hintDisp" aria-controls="dispNote" aria-expanded="false" aria-label="What Disposition records, and how it differs from Declination">&#9432;</button></label><div id="ms_disp"></div></div>
+
+      <!-- L-111: the two new cells. Both are ordinary grid cells carrying an
+           ordinary control and NO prose, so the grid baselines are untouched
+           (style guide §5a: .filters is align-items:end, and prose in a cell
+           drops every other control in its row). -->
+      <div class="fld"><label>Declination</label><select id="f_decl">
+        <option value="">All records</option>
+        <option value="only">Declined matters only</option>
+        <option value="exclude">Exclude declined matters</option>
+      </select></div>
+      <div class="fld"><label>Declination reason</label><div id="ms_reason"></div></div>
     </div>
 
     <div class="datebar">
@@ -170,6 +220,7 @@
           <option value="filed_date">Filed date</option>
           <option value="terminated_date">Terminated date</option>
           <option value="dc_filed_date">U.S. District Court filing date</option>
+          <option value="declined_date">Declination date</option>
         </select></div>
       <div class="fld"><label>From date (year · month · day)</label>
         <div class="drow"><select id="from_y" class="y"></select><select id="from_m" class="m"></select><select id="from_d" class="d"></select></div></div>
@@ -212,6 +263,57 @@
       </div>
     </details>
 
+    <!-- ==================== L-111: the Disposition note =====================
+         Copy is binding — ops/handoffs/L-111-design-spec.md §9.2.
+
+         BRANCH A. L-106's data-fidelity caution was specified but never
+         implemented: this page has never carried DECL_DISPS, isFlagged, the
+         ⚠ prefix on the Disposition button, the selection notice or the
+         results caution. So there is nothing to delete and L-106 §8's
+         retirement steps 1–4 are moot. What lands instead is the part of §5b
+         that SURVIVES a retirement — the definition, not the alarm.
+
+         And the definition really does survive L-110: `arg_max(disposition,
+         disp_date)` still takes the LATEST outcome, so a matter that was
+         declined and later convicted still reads Guilty. Disposition remains
+         the wrong control for finding declinations — it is simply no longer
+         0.2% wrong, so the note carries no figures at all. Every number
+         L-106's note would have carried was about the size of the defect;
+         once the defect is fixed they are about nothing. -->
+    <details class="note" id="dispNote">
+      <summary id="dispNoteSummary">Disposition, and how it differs from Declination</summary>
+      <div class="note-body">
+        <h4>What Disposition records</h4>
+        <p>Disposition is the <b>last outcome recorded on a proceeding in a real court</b>. Where a case had several court proceedings, it is the outcome of the latest one.</p>
+        <h4>Why it is not the way to find declined matters</h4>
+        <p>A matter that was declined and later charged and prosecuted shows the outcome of <b>that prosecution</b>, so it can read <b>Guilty</b>. To find declined matters use the <b>Declination</b> filter, which is built from the declination itself.</p>
+        <h4>The &ldquo;Declined &ndash; &hellip;&rdquo; values</h4>
+        <p>The Disposition list also carries several values beginning <b>Declined &ndash;</b>, such as &ldquo;Declined &ndash; Agency Request&rdquo;. Those are <b>civil</b> outcomes from debt-collection and bankruptcy work. They are not criminal declinations.</p>
+      </div>
+    </details>
+
+    <!-- L-120, 2 Sep 2026 (Cary): the L-111 declination note (#declNote,
+         "Declined matters: what this filter finds, and how it compares with the
+         dashboard") was REMOVED from here, along with the two ⓘ hint buttons on
+         the Declination and Declination reason labels that opened it. The
+         dashboard it compared against has never been live to any member of the
+         public. The FILTER, the parity block and the cube loader all stay —
+         only the prose went.
+         KEPT DELIBERATELY, and put to Cary explicitly: #dispNote above and
+         #recNote further up. #dispNote is what became of L-106's warning and is
+         the only thing stopping a user picking "Declination or Referral" from
+         the Disposition list and getting ~1,250 rows where the real declined
+         population is 904,628. Do not remove it, fold it in, or shorten it.
+         The cube is still fetched LAZILY — this note's expand was one of four
+         triggers and the other three cover every path to the parity block; see
+         ensureCube()'s header comment. -->
+
+    <!-- L-111 §7.3: the contradiction notice. role="status", NEVER role="alert"
+         — nothing here is an error. Neither control is disabled and neither is
+         auto-corrected: a control that silently rewrites another control's
+         value is worse than a search that returns nothing and says why. -->
+    <div class="selnotice" id="conflictNotice" role="status" hidden></div>
+
     <div class="actions">
       <button class="go" id="searchBtn">Search</button>
       <button class="go secondary" id="csvBtn" disabled>Download CSV</button>
@@ -219,6 +321,15 @@
     </div>
     <div id="filterErr"></div>
   </div>
+
+  <!-- L-111 §5: the parity block. ONE render site, above the results and before
+       the existing informational banner in DOM order.
+       It sits OUTSIDE #resultArea deliberately. §7.3's "empty result" state
+       requires the block to render on a 0-row search — where the difference is
+       the whole dashboard figure and is correct and informative — and
+       #resultArea is display:none when the count is 0. Inside it, that state
+       could not exist. -->
+  <div class="parity" id="parity" hidden></div>
 
   <div id="resultArea" style="display:none">
     <div class="banner">
@@ -236,11 +347,11 @@
 </dialog>
 
 <script type="module">
-let duckdb; const BUILD='prod5';
+let duckdb; const BUILD='prod6';
 const SHARDS=['cases_a_m.parquet','cases_n_z.parquet'];
 const SRC="read_parquet(['cases_a_m.parquet','cases_n_z.parquet'])";
 const EXPORT_CAP=500000;
-const DATE_COLS=new Set(['received_date','filed_date','terminated_date','dc_filed_date']);
+const DATE_COLS=new Set(['received_date','filed_date','terminated_date','dc_filed_date','declined_date']);
 
 const COLUMNS=[
   ['district','District',true],
@@ -257,9 +368,11 @@ const COLUMNS=[
   ['filed_date','Filed',true],
   ['dc_filed_date','U.S. District Court filing date',false],
   ['terminated_date','Terminated',true],
+  ['declined_date','Declination date',false],
   ['court_type','Court type',false],
   ['court_number','Court no. (docket / PACER)',true],
   ['disposition','Disposition',true],
+  ['declination_reason','Declination reason',false],
   ['lead_agency','Lead agency',false],
   ['all_agencies','All agencies',false],
   ['litigating_responsibility','Litigating responsibility',false],
@@ -282,7 +395,7 @@ const MONTHS=['January','February','March','April','May','June','July','August',
 
 const $=id=>document.getElementById(id);
 let db, conn, sortState={col:null,dir:1}, catByType={Civil:[],Criminal:[]}, facets={};
-let msDist, msCat, msRole, msCourt, msDisp, msLead;
+let msDist, msCat, msRole, msCourt, msDisp, msLead, msReason;
 function sqlLit(s){ return "'"+String(s).replaceAll("'","''")+"'"; }
 function log(m){ try{ console.log('[case-lookup]', m); }catch(e){} }   // console only — the UI just shows "Loading…"
 window.addEventListener('error', e=> log('⚠️ error: '+(e.message||e.filename||e)));
@@ -302,7 +415,8 @@ class MS{
     this.btn=mount.querySelector('.ms-btn'); this.panel=mount.querySelector('.ms-panel');
     this.list=mount.querySelector('.ms-list'); this.search=mount.querySelector('.ms-search');
     this.btn.onclick=e=>{ e.stopPropagation(); const open=!this.panel.hidden;
-      document.querySelectorAll('.ms-panel').forEach(p=>p.hidden=true); this.panel.hidden=open; if(!open) this.search.focus(); };
+      document.querySelectorAll('.ms-panel').forEach(p=>p.hidden=true); this.panel.hidden=open;
+      if(!open){ this.search.focus(); if(this.onOpen) this.onOpen(); } };
     this.panel.onclick=e=>e.stopPropagation();
     this.search.oninput=()=>this.render();
     this.panel.querySelectorAll('[data-a]').forEach(a=>a.onclick=()=>{
@@ -347,7 +461,12 @@ class MS{
       });
     });
   }
-  updateBtn(){ const n=this.sel.size; this.btn.textContent = n===0?'All' : n===1?[...this.sel][0] : n+' selected'; }
+  /* L-111: `onOpen` and `onChange` are optional hooks, undefined unless a caller
+     assigns them, so every pre-existing instance behaves exactly as before.
+     updateBtn() is the one funnel every selection change already passes through
+     — checkbox, group header, Select all and Clear all reach it. */
+  updateBtn(){ const n=this.sel.size; this.btn.textContent = n===0?'All' : n===1?[...this.sel][0] : n+' selected';
+    if(this.onChange) this.onChange(); }
   values(){ return [...this.sel]; }
 }
 document.addEventListener('click',()=>document.querySelectorAll('.ms-panel').forEach(p=>p.hidden=true));
@@ -372,7 +491,7 @@ async function init(){
     log('Step 5/5: preparing filters…');
   }catch(e){ console.error(e); try{ $('status').innerHTML='Couldn’t load the search tool — please refresh the page.'; }catch(_){} throw e; }
 
-  msDist=new MS($('ms_dist')); msCat=new MS($('ms_cat')); msRole=new MS($('ms_role')); msCourt=new MS($('ms_court')); msDisp=new MS($('ms_disp')); msLead=new MS($('ms_lead'));
+  msDist=new MS($('ms_dist')); msCat=new MS($('ms_cat')); msRole=new MS($('ms_role')); msCourt=new MS($('ms_court')); msDisp=new MS($('ms_disp')); msLead=new MS($('ms_lead')); msReason=new MS($('ms_reason'));
 
   msDist.setOptions(facets.districts||[]);
   catByType={Civil:facets.catCivil||[], Criminal:facets.catCriminal||[]};
@@ -381,6 +500,14 @@ async function init(){
   msCourt.setOptions(facets.courts||[]);
   msDisp.setOptions(facets.disps||[]);
   msLead.setOptions(facets.leadAgencies||[]);
+  /* L-111: the reason list comes from facets.json's `reasons` key, which
+     build_case_lookup_publish.py generates from SELECT DISTINCT
+     declination_reason. It is NEVER hardcoded here — a hand-edit to a
+     build-generated facet file is reverted silently by the next rebuild
+     (established in L-106 §1). Order is the facet's alphabetical order with
+     "Other" moved last, the project's existing convention for an "Other X"
+     leaf (style guide §8a). */
+  msReason.setOptions(reasonOptions());
   (facets.statuses||[]).forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; $('f_status').appendChild(o); });
 
   buildDatePickers(Math.max(1994, facets.minYear||1994), facets.maxYear||2026);
@@ -389,11 +516,12 @@ async function init(){
   COLUMNS.forEach(([k,lab,def])=> cc.insertAdjacentHTML('beforeend',
     `<label><input type="checkbox" id="col_${k}" ${def?'checked':''}> ${lab}</label>`));
 
-  $('f_type').onchange=refreshCategory;
+  $('f_type').onchange=()=>{ refreshCategory(); onFilterChange(); };
   $('searchBtn').onclick=runSearch;
   $('csvBtn').onclick=downloadCSV;
   $('capClose').onclick=()=>$('capDialog').close();
   setupNote();
+  setupDeclination();
   $('status').style.display='none';
   $('filterPanel').style.display='';
   try{ if(facets.nCases) $('caseCount').textContent=(facets.nCases/1e6).toFixed(2)+'M cases included'; }catch(e){}
@@ -451,6 +579,265 @@ async function loadNoteCount(){
   }catch(e){
     set('error',''); log('note count failed: '+((e&&e.message)||e));
   }
+}
+
+/* ==========================================================================
+   L-111 — declination filtering, and the parity block that compares this
+   page's count with the Criminal Matter Declinations dashboard's own figure.
+
+   Spec: ops/handoffs/L-111-design-spec.md. Style guide §5c. D-036/D-038/D-039.
+
+   THE THREE RULES THAT ARE ARITHMETIC, NOT TASTE
+   1. NO FIGURE IS HARD-CODED. Both sides are queried and the difference is
+      subtracted. The residual is 7 in FY2025, 0 in FY2024, 43 in FY2026-to-date
+      and 30,328 all-time — a constant would be wrong in most windows a user can
+      pick. That is the error D-038 exists to correct.
+   2. THE FAIL-SAFE RULE. The search result is NEVER gated on the cube. The
+      count renders the moment the search returns; every dashboard-derived
+      figure is a CLAUSE that appears when it arrives and is absent otherwise,
+      and the block reads correctly with no dashboard number in it at all.
+   3. INVARIANT 3. The dashboard figure is read from the cube's own total row,
+      category='ALL', summed over MONTHS and — where the user has picked them —
+      over REASONS, which partition. It is NEVER summed over categories.
+   ========================================================================== */
+
+/* Alphabetical with "Other" last (style guide §8a). Never hardcoded: this reads
+   facets.json's build-generated `reasons` key. */
+function reasonOptions(){
+  const all=(facets.reasons||[]).slice();
+  const other=all.filter(r=>r==='Other');
+  return all.filter(r=>r!=='Other').concat(other);
+}
+
+/* ---- the ONE independent loader ------------------------------------------
+   The declinations cube. Fired ONCE, LAZILY, on the first of: the Declination
+   select leaving "All records"; a reason being ticked; the reason dropdown
+   opening. NEVER on page load — 2.06 MiB raw that a user who is not using this
+   feature must not pay for.
+   L-120 removed a FOURTH trigger — the declination note being expanded — with
+   the note itself. The three that remain still cover every path to the parity
+   block, and that is not a coincidence: the block renders only when
+   lastRun.declFilter is true, which needs f_decl==='only' or a ticked reason,
+   and both of those fire onFilterChange() → ensureCube(). If you ever make the
+   block render on some other condition, give the cube a trigger for it too.
+   Cube files carry no ?v= stamp by design (invariant 10): they are fetched
+   {cache:"reload"}, so promoting a rebuilt cube needs no bump here.           */
+const CUBE_URL='../data/decl_cat_cube_national.csv';
+let cube=null;            /* null = not loaded yet | 'failed' | {byYm,maxYm} */
+let cubeStarted=false;
+const cubeSubs=[];
+function cubePublish(){ cubeSubs.forEach(f=>{ try{ f(); }catch(e){ log(e); } }); }
+function parseCube(text){
+  const lines=text.split(/\r?\n/);
+  const head=(lines[0]||'').split(',');
+  const iYm=head.indexOf('ym'), iCat=head.indexOf('category'),
+        iRs=head.indexOf('reason'), iN=head.indexOf('declined');
+  if(iYm<0||iCat<0||iRs<0||iN<0) throw new Error('unexpected cube header: '+lines[0]);
+  const byYm={}; let maxYm='';
+  for(let i=1;i<lines.length;i++){
+    const ln=lines[i]; if(!ln) continue;
+    const f=ln.split(',');
+    if(f[iCat]!=='ALL') continue;          /* invariant 3 — the cube's own total row */
+    const ym=f[iYm], rs=f[iRs], n=Number(f[iN]);
+    if(!ym||!isFinite(n)) continue;
+    (byYm[ym]=byYm[ym]||{})[rs]=(byYm[ym][rs]||0)+n;
+    if(ym>maxYm) maxYm=ym;
+  }
+  return {byYm, maxYm};
+}
+function ensureCube(){
+  if(cubeStarted) return; cubeStarted=true;
+  fetch(CUBE_URL,{cache:'reload'})
+    .then(r=>{ if(!r.ok) throw new Error(CUBE_URL+' '+r.status); return r.text(); })
+    .then(t=>{ cube=parseCube(t); log('declinations cube: '+Object.keys(cube.byYm).length+' months, max '+cube.maxYm); },
+          e=>{ cube='failed'; log('declinations cube unavailable: '+((e&&e.message)||e)); })
+    .then(cubePublish);
+  cubePublish();                            /* paint the loading state at once */
+}
+/* Sum the cube over a whole-month window and, if any are selected, over the
+   chosen reasons. Reasons partition to the total, which is why §1.1 works. */
+function cubeCount(win, reasons){
+  if(!cube||cube==='failed'||!win) return null;
+  let n=0, saw=false;
+  Object.keys(cube.byYm).forEach(ym=>{
+    if(ym<win.a||ym>win.b) return;
+    Object.keys(cube.byYm[ym]).forEach(rs=>{
+      if(reasons.length && reasons.indexOf(rs)<0) return;
+      n+=cube.byYm[ym][rs]; saw=true;
+    });
+  });
+  return saw?n:0;
+}
+
+const ymOf=(y,m)=>y+'-'+String(m).padStart(2,'0');
+function ymText(ym){ const p=String(ym).split('-'); return MONTHS[Number(p[1])-1]+' '+p[0]; }
+function rawBound(p){
+  const y=$(p+'_y').value, m=$(p+'_m').value, d=$(p+'_d').value;
+  return (y&&m&&d)?{y,m,d}:null;
+}
+
+/* ---- the parity condition -------------------------------------------------
+   ORDERED, and only the FIRST unmet condition is named. Naming all five at once
+   is a wall of text nobody reads. A comparison is SUPPRESSED, never
+   approximated: where the two grains do not correspond the honest output is no
+   comparison at all plus one line saying what would make one available.
+   Reason selection is deliberately NOT a suppressor — reasons partition.       */
+function parityCheck(){
+  if($('f_basis').value!=='declined_date')
+    return {ok:false, need:'the date range to apply to the <b>declination date</b>'};
+  const a=rawBound('from'), b=rawBound('to');
+  if(!a||!b) return {ok:false, need:'a complete <b>From</b> and <b>To</b> date'};
+  if(a.d!=='01' || Number(b.d)!==daysInMonth(b.y,b.m))
+    return {ok:false, need:'a date range covering <b>whole calendar months</b> — from the 1st of a month to the last day of a month'};
+  /* The published figure this compares against is national and unnarrowed. The
+     Category entry is the non-obvious one: the cube's axis is 16 umbrella
+     groups and this page's is the 99 specifics, matched all-occurrences, so the
+     two axes do not correspond even where the labels look like they should
+     (L-105 §4). */
+  const narrowed=[];
+  if(msDist.values().length) narrowed.push('District');
+  if(msCat.values().length) narrowed.push('Category');
+  if(msRole.values().length) narrowed.push('U.S. role');
+  if(msLead.values().length) narrowed.push('Lead agency');
+  if(msCourt.values().length) narrowed.push('Court type');
+  if(msDisp.values().length) narrowed.push('Disposition');
+  if($('f_record').value) narrowed.push('Record type');
+  if($('f_status').value) narrowed.push('Status');
+  if(narrowed.length)
+    return {ok:false, need:'no <b>'+narrowed.join('</b>, <b>')+'</b> filter — the dashboard’s published national figure cannot be narrowed that way'};
+  const t=$('f_type').value;
+  if(t && t!=='Criminal') return {ok:false, need:'<b>Case type</b> set to Criminal or All'};
+  return {ok:true, win:{a:ymOf(a.y,a.m), b:ymOf(b.y,b.m)}};
+}
+
+/* ---- the contradiction notice --------------------------------------------- */
+function renderConflict(){
+  const el=$('conflictNotice'); if(!el) return;
+  const bad = $('f_decl').value==='exclude' && msReason.values().length>0;
+  if(!bad){ el.hidden=true; el.innerHTML=''; return; }
+  el.innerHTML='<span class="lead">⚠ These two filters cannot both be met.</span> '+
+    '<b>Declination</b> is set to exclude declined matters and <b>Declination reason</b> names one. '+
+    'No record can satisfy both, so this search will return nothing. Clear one of them.';
+  el.hidden=false;
+}
+
+/* ---- the parity block ------------------------------------------------------
+   Renders whenever the search that produced the results had a declination
+   filter set. Mode A is the comparison; mode B suppresses it and says why.
+   The difference is COMPUTED as dashboard − search and its outcome is carried
+   by a GLYPH AND A WORD, never by colour.                                     */
+let lastRun=null;      /* the filter state AT THE MOMENT OF SEARCH, not now */
+function renderParity(){
+  const el=$('parity'); if(!el) return;
+  if(!lastRun||!lastRun.declFilter){ el.hidden=true; el.innerHTML=''; return; }
+  const pc=lastRun.parity, n=lastRun.n, reasons=lastRun.reasons, h=[];
+
+  if(!pc.ok){                                                   /* mode B */
+    h.push('<div class="ttl">Declined matters</div>');
+    h.push('<div class="figs"><div class="cell"><span class="k">This search</span>'+
+           '<span class="v">'+n.toLocaleString('en-US')+'</span></div></div>');
+    h.push('<div class="why">A comparison with the Criminal Matter Declinations dashboard needs '+pc.need+'.</div>');
+    el.innerHTML=h.join(''); el.hidden=false; return;
+  }
+
+  h.push('<div class="ttl">Declined matters &middot; '+ymText(pc.win.a)+' – '+ymText(pc.win.b)+
+         (reasons.length? ' &middot; '+reasons.length+' of '+(facets.reasons||[]).length+' reasons':'')+'</div>');
+  h.push('<div class="figs">');
+  h.push('<div class="cell"><span class="k">This search</span><span class="v">'+n.toLocaleString('en-US')+'</span></div>');
+
+  if(cube===null){                          /* loading — nothing is blocked */
+    h.push('<div class="cell"><span class="k">Declinations dashboard</span>'+
+           '<span class="v" data-state="loading" aria-live="polite">Loading…</span></div>');
+    h.push('</div>');
+    el.innerHTML=h.join(''); el.hidden=false; return;
+  }
+  if(cube==='failed'){
+    /* Silent to the user: no error text, no code, no red. Console only. This is
+       the state web/case-lookup/serve.command produces, because it serves only
+       this folder and ../data/… 404s. */
+    h.push('</div>');
+    h.push('<div class="why">The dashboard’s own figure is not available right now, so no comparison is shown.</div>');
+    el.innerHTML=h.join(''); el.hidden=false; return;
+  }
+
+  const c=cubeCount(pc.win, reasons);
+  h.push('<div class="cell"><span class="k">Declinations dashboard</span><span class="v">'+c.toLocaleString('en-US')+'</span></div>');
+  const diff=c-n;
+  let glyph,word;
+  if(diff===0){ glyph='='; word='Exact match'; }
+  else if(diff>0){ glyph='−'; word=diff.toLocaleString('en-US')+' fewer here'; }
+  else { glyph='+'; word=(-diff).toLocaleString('en-US')+' more here'; }
+  h.push('<div class="cell"><span class="k">Difference</span><span class="v">'+glyph+' '+word+'</span></div>');
+  h.push('</div>');
+
+  const why=[];
+  if(diff>0){
+    /* "the known reason", never "accounts for the difference": this page cannot
+       count rows it does not have, so it cannot prove the attribution. */
+    why.push('Case Look-Up leaves out cases received before <b>October 1994</b> and the dashboard counts them. '+
+             'That is the known reason the two differ, and the gap grows the further back you look.');
+  } else if(diff<0){
+    if(cube.maxYm && pc.win.b>cube.maxYm){
+      why.push('The dashboard’s data ends at <b>'+ymText(cube.maxYm)+'</b>. This search covers later months as well, '+
+               'which the dashboard does not count.');
+    } else {
+      /* Not a failure state and not a guess. This is what a reader sees if the
+         two definitions ever drift apart again. */
+      why.push('This search found more records than the dashboard counts for the same period, which is not expected. '+
+               'Treat both figures with caution.');
+    }
+  } else {
+    why.push('The two agree exactly for this period.');
+  }
+  if(!reasons.length){
+    why.push('The dashboard figure is its all-reasons total, <b>including Other</b>. The dashboard’s own default view '+
+             'leaves Other unticked; tick the seven named reasons here to match what it shows.');
+  }
+  /* Invariant 6, discharged on a component with no chart to mark. */
+  why.push('The most recent months are still being reported on both sides and will rise.');
+  h.push('<div class="why">'+why.join(' ')+'</div>');
+  el.innerHTML=h.join(''); el.hidden=false;
+}
+
+/* L-120: renderNoteCount() lived here — the #declNote runtime clause (§8.3),
+   the one sentence in that note that described the comparison. The note is
+   gone (see the HTML above), so the function and its cubeSubs subscription
+   went with it. renderParity() is untouched and is still subscribed; it is the
+   only cube consumer now. */
+/* ---- wiring ---------------------------------------------------------------
+   Additive by construction, exactly as L-078's note is: it reads filters, adds
+   two clauses to currentFilter(), and changes no existing result. */
+function wireNote(noteId, summaryId, hintIds, onOpen){
+  const note=$(noteId), summary=$(summaryId);
+  if(!note||!summary) return;
+  const hints=hintIds.map(i=>$(i)).filter(Boolean);
+  /* aria-expanded is synced FROM the details' own toggle event, so collapsing
+     from the summary is not missed. <details> fires toggle on a LATER task, so
+     it is correct one tick after the click, not synchronously. */
+  const sync=()=>hints.forEach(b=>b.setAttribute('aria-expanded', note.open?'true':'false'));
+  note.addEventListener('toggle',()=>{ sync(); if(note.open&&onOpen) onOpen(); });
+  sync();
+  hints.forEach(b=>b.addEventListener('click',()=>{
+    if(!note.open) note.open=true;
+    /* tabindex only for the duration of the focus() call — see L-078 §9a. */
+    summary.setAttribute('tabindex','-1'); summary.focus(); summary.removeAttribute('tabindex');
+  }));
+}
+function onFilterChange(){
+  renderConflict();
+  if($('f_decl').value || msReason.values().length) ensureCube();
+}
+function setupDeclination(){
+  wireNote('dispNote','dispNoteSummary',['hintDisp']);
+  ['f_decl','f_basis','f_record','f_status'].forEach(id=>{
+    const el=$(id); if(!el) return;
+    const prev=el.onchange;
+    el.onchange=function(e){ if(prev) prev.call(this,e); onFilterChange(); };
+  });
+  [msDist,msCat,msRole,msLead,msCourt,msDisp,msReason].forEach(ms=>{ if(ms) ms.onChange=onFilterChange; });
+  msReason.onOpen=ensureCube;
+  cubeSubs.push(()=>{ renderParity(); });
+  renderConflict();
 }
 
 async function fillOptions(sel,sql){
@@ -516,6 +903,13 @@ function currentFilter(){
   const ct=inList('court_type', msCourt.values()); if(ct) c.push(ct);
   const dp=inList('disposition', msDisp.values()); if(dp) c.push(dp);
   const st=$('f_status').value; if(st) c.push('status='+sqlLit(st));
+  /* L-111: two independent clauses that do not interact. The IS NOT NULL clause
+     is kept even when a declination date range is set — a user can choose
+     "Declined matters only" and leave the dates blank, and that must work. */
+  const dc=$('f_decl').value;
+  if(dc==='only') c.push('declined_date IS NOT NULL');
+  else if(dc==='exclude') c.push('declined_date IS NULL');
+  const rs=inList('declination_reason', msReason.values()); if(rs) c.push(rs);
   const fb=readBound('from','From'), tb=readBound('to','To');
   if(fb.error) return {error:fb.error};
   if(tb.error) return {error:tb.error};
@@ -540,6 +934,14 @@ async function runSearch(){
     const n=Number((await qy("SELECT count(*) n FROM "+SRC+""+f.where))[0].n);
     $('count').textContent=n.toLocaleString()+' cases matched';
     $('csvBtn').disabled=n===0;
+    /* L-111, THE FAIL-SAFE RULE: the parity block is rendered here, off the
+       search result alone, BEFORE the row query and without ever awaiting the
+       cube. Every dashboard-derived figure inside it is a clause that appears
+       when it arrives. Snapshot the filter state at the moment of search, so
+       the block cannot describe a filter the user changed afterwards. */
+    lastRun={ declFilter: ($('f_decl').value==='only' || msReason.values().length>0),
+              parity: parityCheck(), n, reasons: msReason.values() };
+    renderParity();
     const cols=selectedCols();
     let order=''; if(sortState.col && cols.includes(sortState.col)) order=' ORDER BY '+sortState.col+(sortState.dir<0?' DESC':'');
     const rows=await qy("SELECT "+cols.join(',')+" FROM "+SRC+""+f.where+order+" LIMIT 100");
