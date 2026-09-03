@@ -13,19 +13,19 @@ const METRICS_CASES=[["cases_filed","Cases filed"],["cases_pending","Cases pendi
 const METRICS_MATTERS=[["matters_received","Matters received"],["matters_pending","Matters pending"],["matters_terminated","Matters terminated"]];
 const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const CURRENT="civil.html";
-// Provisional (right-censored) data — L-014, revised to rev B in L-021.
+// Provisional (right-censored) data - L-014, revised to rev B in L-021.
 // Spec: ops/handoffs/L-003-design-spec.md (revision B).
 // All the logic lives in shared/provisional.js; this page only makes calls.
 // Two things this page owns for rev B, neither of them logic:
-//   scales.x.ticks.padding:6 on every chart carrying the treatment — a LAYOUT
+//   scales.x.ticks.padding:6 on every chart carrying the treatment - a LAYOUT
 //     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
 //     bar lives in that space; Chart.js defaults to 3 and the bar would touch
 //     the tick labels.
-//   _stacked:true on datasets built for a stacked render — the input to
+//   _stacked:true on datasets built for a stacked render - the input to
 //     LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
 //     Set per render, because the mix charts flip family at runtime.
 // This dashboard is civil throughout: inflow window 4 months, outflow 6, net stock 6.
-// It is the only surface with a DOWN-direction metric — pending is a running net
+// It is the only surface with a DOWN-direction metric - pending is a running net
 // (received − terminated), and because outflow lags far more than inflow it is
 // OVERSTATED at the edge and will fall. Telling a user it will rise is worse than
 // saying nothing, so the copy is direction-aware.
@@ -91,8 +91,8 @@ function leftItems(){ return state.seriesBy==='category'
     ? ((state.cats.has('ALL')||state.cats.size===0)?['ALL']:[...state.cats])
     : ((state.dists.has('National')||state.dists.size===0)?['National']:[...state.dists]); }
 function rightLabelText(){ return state.ax2&&state.ax2sel.size?[...state.ax2sel].slice(0,3).join(', ')+(state.ax2sel.size>3?'…':''):''; }
-const r1=x=>x==null?"—":x.toLocaleString(undefined,{maximumFractionDigits:1});
-const rint=x=>x==null?"—":Math.round(x).toLocaleString();
+const r1=x=>x==null?"-":x.toLocaleString(undefined,{maximumFractionDigits:1});
+const rint=x=>x==null?"-":Math.round(x).toLocaleString();
 let lastRows=[];
 
 function renderKPIs(){
@@ -100,7 +100,7 @@ function renderKPIs(){
   const arr=metricArray(R,state.metric); const idxs=visIdx(); if(!idxs.length) return;
   const isLevel=state.metric.includes('pending');
   const set=(id,v)=>document.getElementById(id).textContent=v;
-  const fmtVal=v=> v==null?'—':Math.round(v).toLocaleString();
+  const fmtVal=v=> v==null?'-':Math.round(v).toLocaleString();
   const S=(a,ix)=>{ let s=0,any=false; for(const i of ix){ const v=a[i]; if(v!=null){s+=v;any=true;} } return any?s:null; };
   const avgOver=(ix)=>{ let s=0,n=0; for(const i of ix){ const v=arr[i]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
   const e=idxs[idxs.length-1]; const last12=idxs.slice(-12);
@@ -111,13 +111,13 @@ function renderKPIs(){
   const avg3at=(i)=>{ if(i<2) return null; let s=0,n=0; for(let k=0;k<3;k++){ const v=arr[i-k]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
   const chg=(a,b)=> (a==null||b==null||b===0)?null:100*(a-b)/Math.abs(b);
   const yoy=chg(avg3at(e),avg3at(e-12));
-  set('kpi3', yoy==null?'—':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
+  set('kpi3', yoy==null?'-':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
   // KPI 4: cause share change (kept)
   const sel=R[primaryFlow()], tot=aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL']),state.role)[primaryFlow()];
   const sum3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2]);
   const shr=(i)=>{ const su=sum3(sel,i),t=sum3(tot,i); return (su!=null&&t)?100*su/t:null; };
   const comp=(shr(e)!=null&&shr(e-12)!=null)?shr(e)-shr(e-12):null;
-  set('kpi4',comp==null?'—':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
+  set('kpi4',comp==null?'-':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
   // Provisional caveats (spec §7). No arithmetic changes.
   const pcut=PV.cutIndex(SPINE,PV.n(state.metric,PVOPT));
   const provIn=ix=>ix.some(i=>i>pcut);
@@ -149,7 +149,7 @@ function renderTable(){
   lastRows={head:cols.map(c=>c.key),rows};
   document.getElementById("thead").innerHTML="<tr><th>Month</th>"+cols.map(c=>`<th>${c.label}</th>`).join("")+"</tr>";
   document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-    return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${v==null?"—":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
+    return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${v==null?"-":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
   }).join("");
   const pf=primaryFlow(); const tot=metricArray(R, state.basis==='cases'?'cases_filed':'matters_received');
   const s=visIdx().reduce((a,i)=>a+tot[i],0);
@@ -179,7 +179,7 @@ function renderChart(){
   const rMetrics=metricMode?[...state.ax2sel]:[];
   // Provisional envelope (spec §3.5): the zone takes the widest plotted window; each
   // series fades on its own. Direction is 'down' only when every plotted metric is a
-  // net stock — a pending series next to a flow still reads "will rise" overall.
+  // net stock - a pending series next to a flow still reads "will rise" overall.
   const plotted=[state.metric,...rMetrics];
   const nZone=PV.nMax(plotted,PVOPT), nOwn=PV.n(state.metric,PVOPT);
   const flagsZone=PV.bucketFlags(SPINE,B,nZone), flagsOwn=PV.bucketFlags(SPINE,B,nOwn);
@@ -194,10 +194,10 @@ function renderChart(){
   const anyR=right.length>0||rMetrics.length>0;
   const rAxisTitle=(metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):metricLabel(state.metric))+' (Right)';
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
-     + (anyR?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'')
+     + (anyR?'<span class="lg" style="color:var(--mut)">- dashed = right axis</span>':'')
      + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
-     + (PV.anyProv(flagsZone)?PV.legendChip(nZone,provDir):'');   // separate marker from "*" — two different facts
-  document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" — "+state.role+" — by "+(state.seriesBy==='category'?'cause of action':'district');
+     + (PV.anyProv(flagsZone)?PV.legendChip(nZone,provDir):'');   // separate marker from "*" - two different facts
+  document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" - "+state.role+" - by "+(state.seriesBy==='category'?'cause of action':'district');
   if(typeof window==='undefined'||!window.Chart){ return; }
   if(chart) chart.destroy();
   chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis,_prov:PV.anyProv(flagsZone)?flagsZone:null},
@@ -221,7 +221,7 @@ function renderChart2(){
   } else { datasets=cats.map((c2,j)=>{const col=CATPAL[(CATLIST.indexOf(c2)+1)%CATPAL.length];return {label:c2,data:totB.map((t,bi)=>t?100*cAB[c2][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true};}); }
   document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("")
     + (PV.anyProv(flagsMix)?PV.legendChip(nMix,'mix'):'');
-  document.getElementById("chart2Title").textContent="Cause of action mix — % of "+primaryLabel()+(state.mixMode==='stacked'?" (stacked)":" (combined)");
+  document.getElementById("chart2Title").textContent="Cause of action mix - % of "+primaryLabel()+(state.mixMode==='stacked'?" (stacked)":" (combined)");
   if(typeof window==='undefined'||!window.Chart) return;
   datasets=datasets.slice().reverse();
   if(chart2) chart2.destroy();
@@ -232,7 +232,7 @@ function renderChart2(){
 
 function renderChart3(){
   const box=document.getElementById('chart3box'), msg=document.getElementById('chart3msg');
-  if(state.basis!=='cases'){ box.style.display='none'; msg.style.display='block'; msg.textContent='No disposition data for Matters — court dispositions apply to Cases only. Switch the basis toggle to Cases.'; document.getElementById('legend3').innerHTML=''; if(chart3){chart3.destroy();chart3=null;} return; }
+  if(state.basis!=='cases'){ box.style.display='none'; msg.style.display='block'; msg.textContent='No disposition data for Matters - court dispositions apply to Cases only. Switch the basis toggle to Cases.'; document.getElementById('legend3').innerHTML=''; if(chart3){chart3.destroy();chart3=null;} return; }
   box.style.display=''; msg.style.display='none';
   const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
   const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
@@ -332,7 +332,7 @@ function multiSelect(mountId,opts){
 function districtList(){ return FULL?[...new Set(FULL.map(r=>r.district))].sort():[]; }
 function buildAx2Picker(){ state.ax2sel=new Set(); const mount=document.getElementById('ax2sel');
   if(state.ax2by==='metric'){ mount.classList.remove('ms'); mount.innerHTML='';
-    const sel=document.createElement('select'); sel.innerHTML='<option value="">— pick a metric —</option>'+metricsList().map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');
+    const sel=document.createElement('select'); sel.innerHTML='<option value="">- pick a metric -</option>'+metricsList().map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');
     sel.addEventListener('change',()=>{ state.ax2sel=sel.value?new Set([sel.value]):new Set(); renderChart(); }); mount.append(sel);
   } else {
     ax2MS=multiSelect('ax2sel',{items:(state.seriesBy==='category'?CATLIST:districtList()),plain:true,emptyLabel:'pick series…',initial:state.ax2sel,searchable:state.seriesBy==='district',
@@ -344,7 +344,7 @@ function populateMetric(){ const sel=document.getElementById("metric"); sel.inne
 
 async function init(){ renderNav();
   try{ const r=await fetch("./data/civil_cube_national.csv",{cache:"reload"}); NAT=parseCSV(await r.text()); }
-  catch(e){ document.getElementById("status").textContent="could not load civil_cube_national.csv — serve this folder over http"; return; }
+  catch(e){ document.getElementById("status").textContent="could not load civil_cube_national.csv - serve this folder over http"; return; }
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   CATLIST=[...new Set(NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();
   populateMetric();
@@ -378,7 +378,7 @@ async function init(){ renderNav();
   // first paint: the national view renders immediately and this streams in behind it.
   // The point is that opening the district filter and switching districts is instant,
   // rather than making the user wait on a multi-megabyte download mid-interaction.
-  // Cary's call, 31 Aug 2026 — responsiveness over bytes. It is the dominant share of
+  // Cary's call, 31 Aug 2026 - responsiveness over bytes. It is the dominant share of
   // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
   ensureFull(); render();
 }

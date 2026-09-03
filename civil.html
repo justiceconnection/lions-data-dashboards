@@ -2,13 +2,13 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Civil Matters and Cases — LIONS</title>
+<title>Civil Matters and Cases - LIONS</title>
 <link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="shared/multipliers.js?v=202606"></script>
-<link rel="stylesheet" href="shared/shared.css?v=20260831b">
-<link rel="stylesheet" href="lab.css?v=20260818j">
-<link rel="stylesheet" href="styles/shell2.css?v=20260830a">
+<link rel="stylesheet" href="shared/shared.css?v=20260903a">
+<link rel="stylesheet" href="lab.css?v=20260903a">
+<link rel="stylesheet" href="styles/shell2.css?v=20260903a">
 <link rel="stylesheet" href="styles/civil.css?v=20260819a">
 <script src="scripts/civil.head.js?v=20260820c"></script>
 </head><body><div class="wrap">
@@ -45,12 +45,12 @@
       <div class="ax2row"><div class="seg" id="ax2by"><button data-v="series" class="on">Series</button><button data-v="metric">Metric</button></div><div id="ax2sel"></div></div></div>
   </div>
 
-  <div class="kpihdr" id="kpihdr" hidden>Topline — <b id="kpiMetric">Cases filed</b> · <span id="kpiScope"></span></div>
+  <div class="kpihdr" id="kpihdr" hidden>Topline - <b id="kpiMetric">Cases filed</b> · <span id="kpiScope"></span></div>
   <div class="kpis">
-    <div class="kpi"><div class="v" id="kpi1">—</div><div class="l"><span id="kpi1lab">Total, selected range</span> <span id="kpi1ym" style="opacity:.7"></span></div></div>
-    <div class="kpi"><div class="v" id="kpi2">—</div><div class="l"><span id="kpi2lab">Total, last 12 months</span> <span id="kpi2ym" style="opacity:.7"></span></div></div>
-    <div class="kpi"><div class="v" id="kpi3">—</div><div class="l">Year-over-year change</div></div>
-    <div class="kpi"><div class="v" id="kpi4">—</div><div class="l">Category share change vs last year</div></div>
+    <div class="kpi"><div class="v" id="kpi1">-</div><div class="l"><span id="kpi1lab">Total, selected range</span> <span id="kpi1ym" style="opacity:.7"></span></div></div>
+    <div class="kpi"><div class="v" id="kpi2">-</div><div class="l"><span id="kpi2lab">Total, last 12 months</span> <span id="kpi2ym" style="opacity:.7"></span></div></div>
+    <div class="kpi"><div class="v" id="kpi3">-</div><div class="l">Year-over-year change</div></div>
+    <div class="kpi"><div class="v" id="kpi4">-</div><div class="l">Category share change vs last year</div></div>
   </div>
 
   <div class="card"><h3><span id="chartTitle">Cases filed</span></h3><div id="legend"></div>
@@ -58,7 +58,7 @@
   <div class="card"><h3><span id="chart2Title">Cause of action mix</span>
     <span class="seg" id="mixMode"><button data-v="sum">Sum</button><button data-v="stacked" class="on">Stacked</button></span></h3>
     <div id="legend2"></div><div class="chartbox sm"><canvas id="chart2" role="img" aria-label="Cause of action share chart showing percent of total matters or cases.">Cause of action share chart showing percent of total matters or cases.</canvas></div></div>
-  <div class="card"><h3><span id="chart3Title">Disposition mix — % of cases terminated</span></h3>
+  <div class="card"><h3><span id="chart3Title">Disposition mix - % of cases terminated</span></h3>
     <div id="legend3"></div><div id="chart3msg"></div><div class="chartbox sm" id="chart3box"><canvas id="chart3" role="img" aria-label="Disposition mix chart showing percent of cases terminated by disposition type.">Disposition mix chart showing percent of cases terminated by disposition type.</canvas></div></div>
 
   <div id="summary"></div>
@@ -73,7 +73,7 @@ LIONS data, also known as the DOJ Case Management System (CMS), <a href="https:/
 
 Justice Connection does not manipulate the data or conduct any analysis of the data; this dashboard is a data management tool that allows users to investigate the data as its presented in the DOJ’s distribution. Data validation is possible by comparing the DOJ’s annual filings to monthly data downloads. However, given the manual input processes of the LIONS system and lack of information due to redaction or sealed cases, it’s important to note that all data cannot be independently validated.
 
-LIONS data updates monthly. Monthly updates include revised data from previous months, meaning updates may differ from previously posted numbers. Based on data analysis, Justice Connection estimates that a near-complete picture of monthly filings can be assumed after a three-month lag. In other words, for the most accurate monthly filing data, users should only analyze data from three months prior, because more cases data will be added in the subsequent two updates. Terminations take longer than filings to settle — six months or more — so the provisional marking on termination and disposition series covers a wider window than on filings.  
+LIONS data updates monthly. Monthly updates include revised data from previous months, meaning updates may differ from previously posted numbers. Based on data analysis, Justice Connection estimates that a near-complete picture of monthly filings can be assumed after a three-month lag. In other words, for the most accurate monthly filing data, users should only analyze data from three months prior, because more cases data will be added in the subsequent two updates. Terminations take longer than filings to settle - six months or more - so the provisional marking on termination and disposition series covers a wider window than on filings.  
 
 Most information in the LIONS system is obtained during case intake and screening stages, according to the DOJ’s website. Any additional information is filed as the matter moves through proceedings. 
 
@@ -87,11 +87,11 @@ Most information in the LIONS system is obtained during case intake and screenin
 
 </div>
 </div>
-<script src="shared/config.js?v=20260825c"></script>
-<script src="shared/provisional.js?v=20260831b"></script>
-<script src="shared/shared.js?v=20260831b"></script>
-<script src="scripts/civil.page.js?v=20260831b"></script><!-- LIONS auto-height reporter (for Framer embed) -->
-<script src="shared/height-reporter.js?v=20260818j"></script>
-<script src="lab.js?v=20260818j"></script>
-<script src="shell2.js?v=20260830a"></script>
+<script src="shared/config.js?v=20260903a"></script>
+<script src="shared/provisional.js?v=20260903a"></script>
+<script src="shared/shared.js?v=20260903a"></script>
+<script src="scripts/civil.page.js?v=20260903a"></script><!-- LIONS auto-height reporter (for Framer embed) -->
+<script src="shared/height-reporter.js?v=20260903a"></script>
+<script src="lab.js?v=20260903a"></script>
+<script src="shell2.js?v=20260903a"></script>
 </body></html>

@@ -1,4 +1,4 @@
-/* item 1 — fold the 4-dashboard nav into a collapsed accordion (all designs). Additive; try/catch. */
+/* item 1 - fold the 4-dashboard nav into a collapsed accordion (all designs). Additive; try/catch. */
 (function(){ "use strict";
  function run(){ try{
    var wrap=document.querySelector('.wrap'); if(!wrap||document.querySelector('.nv-acc')) return;

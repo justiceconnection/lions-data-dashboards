@@ -1,10 +1,10 @@
-/* Design B — Filter top-dropdown + Design-2 chart/section polish. Additive; never rewrites
+/* Design B - Filter top-dropdown + Design-2 chart/section polish. Additive; never rewrites
    dashboard logic. Wrapped in try/catch so any failure here can't break the dashboard. */
 (function(){ "use strict";
 
  /* notes 2 & 3 (grid color + x-axis year ticks) are handled by window.LIONS_CHART_TWEAK,
     injected in the page <head> for Design-2 pages and applied inside shared.js's mkChart()
-    — deterministic (runs before the first render), unlike wrapping the constructor here. */
+    - deterministic (runs before the first render), unlike wrapping the constructor here. */
 
  /* ── note 1: collapse toggles for the KPI row and for each graph card ──
     Defaults to expanded; a caret in each header collapses/expands its section.  */
@@ -58,7 +58,7 @@
    var phead=document.createElement('div'); phead.className='dw-phead';                          // collapse control at BOTTOM of panel
    phead.innerHTML='<span class="dw-ptitle">'+gear+'<span>Filters</span></span><button type="button" class="dw-close">Collapse <span class="dw-cchev">▴</span></button>';
    panel.appendChild(phead);
-  // guide panel header + empty content container — DO NOT populate text here (user will provide)
+  // guide panel header + empty content container - DO NOT populate text here (user will provide)
   var ghead=document.createElement('div'); ghead.className='dw-phead';
   ghead.innerHTML='<span class="dw-ptitle"><span>How to Use This Dashboard</span></span><button type="button" class="dw-close">Collapse <span class="dw-cchev">▴</span></button>';
   var gcontent=document.createElement('div'); gcontent.className='dw-guide-content';
@@ -73,7 +73,7 @@
   function isGuideOpen(){ return gpanel.classList.contains('open'); }
   gbtn.addEventListener('click',function(e){ setGuideOpen(!isGuideOpen()); });
   ghead.querySelector('.dw-close').addEventListener('click',function(){ setGuideOpen(false); });
-   // (click-outside-to-collapse removed by request — the "Filters" button and the in-panel
+   // (click-outside-to-collapse removed by request - the "Filters" button and the in-panel
    //  "Collapse" button are the only ways to open/close the panel.)
    setOpen(window.matchMedia? window.matchMedia('(min-width:760px)').matches : true);            // open desktop, collapsed mobile
    } }
@@ -87,7 +87,7 @@
      b.addEventListener('click',function(e){ e.stopPropagation();
        try{ var C=window.Chart, ch=(C&&C.getChart)?C.getChart(cv):null; if(!ch) return;
          var ttl=(h3.querySelector('span')||{}).textContent||'chart';
-         var page=(document.title.split('—')[0]||'lions').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'lions';
+         var page=(document.title.split(' - ')[0]||'lions').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'lions';
          var name=(cv.id||'chart')+'-'+page+'.svg';
          if(typeof downloadChartSVG==='function') downloadChartSVG(ch, name, ttl);
        }catch(err){ console.error('[shell2 svg]',err); }

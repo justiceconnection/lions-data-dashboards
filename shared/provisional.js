@@ -1,10 +1,10 @@
-/* LIONS dashboards — provisional (right-censored) data treatment.
+/* LIONS dashboards - provisional (right-censored) data treatment.
  * Ledger L-021 (revision B), implementing ops/handoffs/L-003-design-spec.md rev B.
  * Ported from the reference implementation at design-lab/shared/provisional.js.
  *
  * What this is: every LIONS vintage under-reports its most recent months. This module
  * decides WHICH buckets are provisional and paints a consistent marker on them. It does
- * NOT estimate what the true value will be — no projection, no multiplier applied to any
+ * NOT estimate what the true value will be - no projection, no multiplier applied to any
  * plotted number. Marking uncertainty, not estimating through it.
  *
  * Pure client-side. The only new input is a month's age relative to the vintage edge,
@@ -13,11 +13,11 @@
  *
  * Load order (invariant 9): body end, between shared/config.js and shared/shared.js.
  * It has no dependency on shared.js and must exist before scripts/<page>.page.js runs.
- * Revision B adds and removes no asset, so invariant 9 is UNCHANGED by this change —
+ * Revision B adds and removes no asset, so invariant 9 is UNCHANGED by this change -
  * stated explicitly because the invariant carries its own amendment rule and "nothing
  * to do" is a conclusion, not an assumption.
  *
- * ── REVISION B — 31 Aug 2026, ledger L-019 (design) / L-021 (implementation) ────────
+ * ── REVISION B - 31 Aug 2026, ledger L-019 (design) / L-021 (implementation) ────────
  * Rev A shipped and FAILED QA on 100%-stacked charts (L-003 test report, D1-D3).
  * The governing rule of this revision:
  *
@@ -26,16 +26,16 @@
  *
  * A stacked chart encodes value as area extent and identity as fill hue, and has no
  * spare surface. A line chart encodes value as the position of a thin stroke over empty
- * ground. Channels do not transfer between the two at any strength — that was the one
+ * ground. Channels do not transfer between the two at any strength - that was the one
  * defect behind all three symptoms. What changed, and nothing else did:
  *   - the white scrim is DELETED, not softened. It moved a dark fill 63/255 toward
  *     white (worst case 85/255) on a chart where hue IS the series identity.
  *   - stacked charts get a TWO-TONE hatch drawn OVER the fills instead of a flat hatch
  *     under them. Worst-case mean-luminance shift 17/255; worst-case local contrast
  *     41/255, against the 3/255 the under-hatch actually achieved through an 80%-alpha
- *     fill (that arithmetic is D1 — no alpha tuning could have fixed it, because the
+ *     fill (that arithmetic is D1 - no alpha tuning could have fixed it, because the
  *     fill was over it; only a change of stacking order could).
- *   - stacked charts get an OPEN RIGHT EDGE — the stacked stand-in for the line
+ *   - stacked charts get an OPEN RIGHT EDGE - the stacked stand-in for the line
  *     family's hollow terminal point. The zone reads as a bracketed interval.
  *   - a GUTTER BAR under the plot area: the one channel identical on every family, and
  *     the only mark outside the plot area, where nothing it covers is data. Requires
@@ -43,12 +43,12 @@
  *   - the label gets a halo, a darker ink (#3f4043) and an outside-the-zone fallback,
  *     so it draws at EVERY zone width. The rev-A `w > 64` guard is gone and must not
  *     come back: at the default 13-year range the zone is ~43px, so the label never
- *     drew — on the family where it was the only surviving non-colour channel (D3).
- * Line-chart behaviour (fade, hollow endpoints, flat hatch) is UNCHANGED — it passed.
+ *     drew - on the family where it was the only surviving non-colour channel (D3).
+ * Line-chart behaviour (fade, hollow endpoints, flat hatch) is UNCHANGED - it passed.
  *
  * Channel count after this revision: line family 6 chart channels (4 non-colour);
- * stacked family 4, ALL of them non-colour. Three are shared, and the strongest one —
- * the gutter bar — is the shared one.
+ * stacked family 4, ALL of them non-colour. Three are shared, and the strongest one -
+ * the gutter bar - is the shared one.
  */
 (function (global) {
   'use strict';
@@ -76,14 +76,14 @@
    * objection that killed the prediction lines in Aug 2026: the age-0 criminal
    * termination factor moved from x2.9 to x5.4 between two vintage pairs, and the
    * boundary did not move at all. Re-deriving them when a new vintage lands is a
-   * Data Analyst / Knowledge Steward job — it is not a cube rebuild.
-   * UNCHANGED IN REVISION B — QA confirmed the widths are right.
+   * Data Analyst / Knowledge Steward job - it is not a cube rebuild.
+   * UNCHANGED IN REVISION B - QA confirmed the widths are right.
    */
   var WINDOWS = { crim_in: 3, crim_out: 6, civ_in: 4, civ_out: 6, civ_stock: 6 };
 
   /* ── 2. Which window does a metric take? ────────────────────────────────────
-   * 'in'    inflow  — filings, receipts. Under-reported; the number RISES.
-   * 'out'   outflow — terminations, dispositions, declinations. Under-reported far
+   * 'in'    inflow  - filings, receipts. Under-reported; the number RISES.
+   * 'out'   outflow - terminations, dispositions, declinations. Under-reported far
    *                   more and for far longer; the number RISES.
    * 'stock' net running balance (civil pending = received - terminated). Because
    *                   outflow lags much more than inflow, pending is OVERSTATED at
@@ -143,7 +143,7 @@
   /* ── 4. Colour helpers ──────────────────────────────────────────────────────
    * FADE is the provisional channel ON LINE CHARTS ONLY. DASH is already taken: the
    * style guide uses borderDash [5,4] to mean "right axis". Never overload it.
-   * Fade is NOT used on stacked charts — see §4a and decorateLine below.
+   * Fade is NOT used on stacked charts - see §4a and decorateLine below.
    */
   var FADE_ALPHA = 0.45;
   function fade(col, a) {
@@ -162,30 +162,30 @@
     return m;
   }
 
-  /* ── 4a. The zone texture — the heart of revision B ─────────────────────────
+  /* ── 4a. The zone texture - the heart of revision B ─────────────────────────
    * TILES is DATA, not code, so the spec, this module, the SVG exporter and the check
    * harness all read the same numbers. Each tile is an 8x8 canvas carrying 45-degree
    * strokes. Because the strokes run at 45 degrees, ANY axis-aligned run of 8 pixels
-   * crosses each stroke exactly once — which is what makes the arithmetic below exact.
+   * crosses each stroke exactly once - which is what makes the arithmetic below exact.
    *
    *   'flat'    one charcoal stroke. For UNSTACKED charts, drawn UNDER the data.
    *             Passed QA on the line charts; unchanged from rev A.
    *
    *   'stacked' one WHITE stroke and one CHARCOAL stroke. For stacked charts, drawn
-   *             OVER the data, because on a stacked chart there is no "under" — the
+   *             OVER the data, because on a stacked chart there is no "under" - the
    *             fills (col+'cc', 80% alpha) erase anything beneath them.
    *
    * WHY TWO TONES. A single-tone hatch has to choose a polarity, and a stacked chart
    * carries fills from #212123 (L~33) to pale. A dark hatch vanishes on the dark
    * fills; a light hatch vanishes on the pale ones. Pairing opposite polarities means
-   * one stroke always contrasts, AND the two nearly cancel in the mean — so the
+   * one stroke always contrasts, AND the two nearly cancel in the mean - so the
    * region gains texture WITHOUT ITS COLOUR MOVING. That is the whole fix for D2: on
    * a 100%-stacked chart colour IS the data.
    *
    * Both properties are computed by meanShift()/localContrast() below and asserted in
    * design-lab/prov-lab.check.js §15:
    *   MEAN SHIFT     worst case 16.9/255 over the whole luminance range.
-   *                  The deleted scrim's worst case was 85.3/255 — 5x heavier.
+   *                  The deleted scrim's worst case was 85.3/255 - 5x heavier.
    *   LOCAL CONTRAST worst case 41/255, at L=169, which is exactly the luminance
    *                  where the mean shift is zero.
    * Change an alpha here and both re-derive themselves. Do not hardcode either.
@@ -203,7 +203,7 @@
     t.lines.forEach(function (ln) { s += ln.a * (_lum(ln.rgb) - L); });
     return s / t.size;
   }
-  /* The strongest single-stroke contrast against a base of luminance L — what makes
+  /* The strongest single-stroke contrast against a base of luminance L - what makes
    * the texture visible at all. */
   function localContrast(kind, L) {
     var t = TILES[kind], m = 0;
@@ -257,7 +257,7 @@
    * Point radii: union with whatever the caller already set for partial periods.
    *
    * REVISION B: a stacked dataset is REFUSED, not merely discouraged. Fading a
-   * stacked area fill is the scrim defect by another route — it moves the colour, and
+   * stacked area fill is the scrim defect by another route - it moves the colour, and
    * on a stacked chart the colour is the series identity (spec §6.7). Callers mark
    * stacked datasets with `_stacked:true`, per render, from the Sum/Stacked toggle.
    */
@@ -303,7 +303,7 @@
    */
   var STYLE = {
     rule:      '#9a9b96',                  /* boundary + open edge, 1px [3,3]        */
-    gutter:    'rgba(33,33,35,0.72)',      /* 6.2:1 on #fbfbfb — passes WCAG 1.4.11  */
+    gutter:    'rgba(33,33,35,0.72)',      /* 6.2:1 on #fbfbfb - passes WCAG 1.4.11  */
     gutterH:   3,                          /* px, sits in the x-axis tick padding    */
     gutterGap: 1,                          /* px below chartArea.bottom              */
     label:     'Provisional',
@@ -328,12 +328,12 @@
   }
 
   /* Where does the label go? Rev A suppressed it below a 64px zone, which at the
-   * DEFAULT 13-year range meant it never drew at all — and on a stacked chart it was
+   * DEFAULT 13-year range meant it never drew at all - and on a stacked chart it was
    * the only surviving non-colour channel (QA D3). D-017 settled that the ZONE has no
    * minimum rendered width; it said nothing about whether the zone is LABELLED. So:
    * inside the zone when it fits, otherwise immediately LEFT of the boundary rule,
    * which always has room on a long range. Omitted only when the whole plot is
-   * narrower than the word — so in practice the label always draws.
+   * narrower than the word - so in practice the label always draws.
    * Do not reintroduce a width guard here or anywhere else (spec §6.8). */
   function labelPlacement(z, textW) {
     var need = textW + STYLE.labelPad;
@@ -358,14 +358,14 @@
       var w = z.x1 - z.x0, h = z.area.bottom - z.area.top;
       ctx.save();
 
-      /* 1. zone texture — over the fills, and ONLY on stacked charts. No wash, no
+      /* 1. zone texture - over the fills, and ONLY on stacked charts. No wash, no
        *    tint, no scrim: ink laid over the data, never a transform applied to it. */
       if (st) {
         ctx.fillStyle = hatch(ctx, 'stacked');
         ctx.fillRect(z.x0, z.area.top, w, h);
       }
 
-      /* 2. boundary rule, and on stacked charts the open right edge — the stacked
+      /* 2. boundary rule, and on stacked charts the open right edge - the stacked
        *    stand-in for the line family's hollow terminal point. */
       ctx.strokeStyle = STYLE.rule; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
       ctx.beginPath(); ctx.moveTo(z.x0 + 0.5, z.area.top); ctx.lineTo(z.x0 + 0.5, z.area.bottom); ctx.stroke();
@@ -374,7 +374,7 @@
       }
       ctx.setLineDash([]);
 
-      /* 3. the gutter bar — the ONE channel identical on every chart family, and the
+      /* 3. the gutter bar - the ONE channel identical on every chart family, and the
        *    only one drawn OUTSIDE the plot area, where nothing it sits on is data.
        *    Needs scales.x.ticks.padding >= 6 on the chart config, or it touches the
        *    tick labels (spec §3.6 / §6.9). */
@@ -419,7 +419,7 @@
   /* ── 7. Copy. One wording, everywhere. ──────────────────────────────────────
    * d: 'up' (understated, will rise) | 'down' (net stock, overstated, will fall)
    *    | 'mix' (100%-stacked share: under-reporting distorts the MIX, because
-   *             categories mature at very different rates — it does not simply
+   *             categories mature at very different rates - it does not simply
    *             make the edge lower).
    */
   function phrase(nMonths, d) {
@@ -429,14 +429,14 @@
   }
   function legendChip(nMonths, d) {
     return '<span class="lg" style="color:var(--mut)">' +
-      '<span class="sw sw-prov"></span>Provisional — ' + phrase(nMonths, d) + '</span>';
+      '<span class="sw sw-prov"></span>Provisional - ' + phrase(nMonths, d) + '</span>';
   }
   function noteText(nMonths, d) { return 'Provisional: ' + phrase(nMonths, d) + '.'; }
-  function tooltipLine() { return 'Provisional — incomplete reporting'; }
+  function tooltipLine() { return 'Provisional - incomplete reporting'; }
   /* Table marker. Colour alone is a WCAG 1.4.1 failure, so provisional rows also
      carry a glyph with a title attribute. */
   function tableMark() {
-    return '<span class="provmark" title="Provisional — incomplete reporting">†</span>';
+    return '<span class="provmark" title="Provisional - incomplete reporting">†</span>';
   }
 
   global.LIONS_PROV = {

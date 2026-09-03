@@ -1,4 +1,4 @@
-// LIONS dashboards — Framer iframe auto-height reporter (shared).
+// LIONS dashboards - Framer iframe auto-height reporter (shared).
 (function () {
   var last = 0;
   function measure() {
