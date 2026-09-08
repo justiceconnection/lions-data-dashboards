@@ -77,7 +77,7 @@
   details.note>summary::before{content:"\25B8";color:var(--muted);font-size:11px;transition:transform .15s;display:inline-block}
   details.note[open]>summary::before{transform:rotate(90deg)}
   details.note>summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  .note-body{max-width:78ch;font-size:13px;margin-top:10px}
+  .note-body{max-width:100%;font-size:13px;margin-top:10px}
   .note-body h4{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:14px 0 5px}
   .note-body h4:first-child{margin-top:2px}
   .note-body p{margin:0 0 8px}
@@ -199,7 +199,7 @@
       <div class="fld"><label>Lead agency</label><div id="ms_lead"></div></div>
       <div class="fld"><label>Status</label><select id="f_status"><option value="">All</option></select></div>
       <div class="fld"><label class="withhint">Court type<button type="button" class="hint" id="hintCourt" aria-controls="recNote" aria-expanded="false" aria-label="Why some court types are no longer listed">&#9432;</button></label><div id="ms_court"></div></div>
-      <div class="fld"><label class="withhint">Disposition<button type="button" class="hint" id="hintDisp" aria-controls="dispNote" aria-expanded="false" aria-label="What Disposition records, and how it differs from Declination">&#9432;</button></label><div id="ms_disp"></div></div>
+      <div class="fld"><label class="withhint">Disposition<button type="button" class="hint" id="hintDisp" aria-controls="dispNote" aria-expanded="false" aria-label="Differences between declinations and dispositions">&#9432;</button></label><div id="ms_disp"></div></div>
 
       <!-- L-111: the two new cells. Both are ordinary grid cells carrying an
            ordinary control and NO prose, so the grid baselines are untouched
@@ -236,30 +236,30 @@
          inference from lead charges and 1,509 of the FY2025 subset carry neither a
          charge nor a category. The count sentence is filled by loadNoteCount(). -->
     <details class="note" id="recNote">
-      <summary id="recNoteSummary">Record types, and what changed for post-disposition proceedings</summary>
+      <summary id="recNoteSummary">Data note: record types</summary>
       <div class="note-body">
 
-        <h4>The three record types</h4>
+       <h4>The three record types</h4>
         <dl>
           <dt>Case</dt>
-          <dd>LIONS records at least one proceeding in a real court that is not post-disposition. These records carry a <b>Filed</b> date and a <b>Court type</b>.</dd>
+          <dd> A case is when there is at least one proceeding in a real court that is not post-disposition. These records carry a <b>filed</b> date and a <b>court type</b>.</dd>
           <dt>Matter</dt>
-          <dd>LIONS records no real-court proceeding. <b>Filed</b> and <b>Court type</b> are blank.</dd>
+          <dd>When the USAO records no real-court proceeding. <b>Filed</b> and <b>court type</b> are blank.</dd>
           <dt>Post-disposition Proceeding</dt>
-          <dd>The only real-court activity LIONS records for this case is post-disposition - activity recorded after a case has already been disposed of. There is no filing that opens a case, so <b>Filed</b>, <b>Court type</b>, <b>Court no.</b> and <b>U.S. District Court filing date</b> are blank on every one of these records. A <b>Disposition</b> may still be shown: it is the outcome recorded on the post-disposition proceeding itself, not the outcome of a prosecution.</dd>
+          <dd>The only real-court activity USAO records for this case is post-disposition - activity recorded after a case has already been disposed of. There is no filing that opens a case, so <b>filed</b>, <b>court type</b>, <b>court no.</b> and <b>U.S. District Court filing date</b> are blank on every one of these records. A <b>disposition</b> may still be shown: it is the outcome recorded on the post-disposition proceeding itself, not the outcome of a prosecution.</dd>
         </dl>
 
-        <h4>What we can and cannot tell you about them</h4>
-        <p>The name describes <i>where the record sits in the court history</i>. It is not a description of what the proceeding was about: LIONS records that the activity is post-disposition, it does not record what kind of proceeding it was. Most of these records carry a program category or a lead charge, some carry neither, and we have not labelled them beyond what the data records.</p>
+        <h4>Some caveats about record types</h4>
+        <p>The name describes <i>where the record sits in the court history</i>. It is not a description of what the proceeding was about: if LIONS shows that the activity is post-disposition, it does not record what kind of proceeding it was. Most of these records carry a program category or a lead charge, some carry neither, and we have not labeled them beyond what is recorded.</p>
 
-        <h4>What changed</h4>
-        <p>These records used to be counted as <b>Cases</b>, and were given a Filed date taken from the post-disposition proceeding. They are now their own record type. Nothing was removed - every record that could be found before can still be found, and the total number of records is unchanged. <span class="note-count" id="pdCount" aria-live="polite"></span></p>
+        <dt>What changed</dt>
+        <p>These records used to be counted as <b>cases</b>, and were given a <b>filed date</b> taken from the post-disposition proceeding. They are now their own record type. Nothing was removed and the total number of records is unchanged. <span class="note-count" id="pdCount" aria-live="polite"></span></p>
 
-        <h4>If you used Court type to exclude them</h4>
-        <p>The <b>Court type</b> list no longer offers the three post-disposition values, because these records no longer carry a court type at all. Use <b>Record type</b> instead: choose <b>Case</b> to exclude post-disposition proceedings, or <b>Post-disposition Proceeding</b> to see only them. Record type is the only filter that separates them from Matters - Court type is blank for both.</p>
+        <dt>Use record type to exclude them</dt>
+        <p>The <b>court type</b> filter  no longer offers the three post-disposition values, because these records no longer carry a court type at all. Use <b>record type</b> instead: choose <b>case</b> to exclude post-disposition proceedings, or <b>post-disposition proceeding</b> to see only them. Record type is the only filter that separates them from <b>matters</b> - <b>court type</b> is blank for both.</p>
 
-        <h4>On screen and in the download</h4>
-        <p>Dates read <code>MM/DD/YYYY</code> on screen and <code>YYYY-MM-DD</code> in the downloaded CSV, which is the unambiguous form for spreadsheets and scripts. The CSV&rsquo;s column headings are the underlying data field names rather than the table headings - for example <code>dc_filed_date</code> for &ldquo;U.S. District Court filing date&rdquo;.</p>
+        <dt>Differences in dashboard display and data download</dt>
+        <p>Justice Connection did some data labeling to make the dashboard easier to read so there may be some slight changes if you choose to download data as a CSV. One example: dates are <code>MM/DD/YYYY</code> on screen and <code>YYYY-MM-DD</code> in the original data. Another change is the CSV&rsquo;s column headings match the underlying data field names rather than our table headings - for example <code>dc_filed_date</code> for &ldquo;U.S. District Court filing date&rdquo;.</p>
       </div>
     </details>
 
@@ -281,14 +281,13 @@
          L-106's note would have carried was about the size of the defect;
          once the defect is fixed they are about nothing. -->
     <details class="note" id="dispNote">
-      <summary id="dispNoteSummary">Disposition, and how it differs from Declination</summary>
+      <summary id="dispNoteSummary">Data note: dispositions versus declinations</summary>
       <div class="note-body">
-        <h4>What Disposition records</h4>
-        <p>Disposition is the <b>last outcome recorded on a proceeding in a real court</b>. Where a case had several court proceedings, it is the outcome of the latest one.</p>
-        <h4>Why it is not the way to find declined matters</h4>
-        <p>A matter that was declined and later charged and prosecuted shows the outcome of <b>that prosecution</b>, so it can read <b>Guilty</b>. To find declined matters use the <b>Declination</b> filter, which is built from the declination itself.</p>
+        <h4>Disposition records</h4>
+        <p>Disposition is the last outcome recorded on a proceeding in a real court. Where a case had several court proceedings, it is the outcome of the latest one.</p>
+        <p>A matter that was declined and later charged and prosecuted shows the outcome of <b>that prosecution</b>, so it can read <b>guilty</b>. To find declined matters use the <b>declination</b> filter, which is built from the declination itself.</p>
         <h4>The &ldquo;Declined &ndash; &hellip;&rdquo; values</h4>
-        <p>The Disposition list also carries several values beginning <b>Declined &ndash;</b>, such as &ldquo;Declined &ndash; Agency Request&rdquo;. Those are <b>civil</b> outcomes from debt-collection and bankruptcy work. They are not criminal declinations.</p>
+        <p>The disposition list also carries several values beginning <b>declined &ndash;</b>, such as &ldquo;declined &ndash; agency request&rdquo;. Those are <b>civil</b> outcomes from debt-collection and bankruptcy work. They are not criminal declinations.</p>
       </div>
     </details>
 

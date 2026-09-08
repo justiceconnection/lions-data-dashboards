@@ -45,7 +45,7 @@
    btn.innerHTML=gear+'<span>Filters</span> <span class="dw-chev">▾</span>';
    bar.appendChild(btn);
   // small "User guide" button (toggles a separate guide panel; content kept empty for user input)
-  var book='<svg class="dw-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20"></path><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 1 4 17.5z"></path></svg>';
+  var book='<img class="dw-book" src="assets/book.png" alt="book icon signaling user guide">';
   var gbtn=document.createElement('button'); gbtn.type='button'; gbtn.className='dw-btn dw-guide-btn';
   gbtn.setAttribute('aria-expanded','false'); gbtn.innerHTML=book+'<span>User guide</span> <span class="dw-chev">▾</span>';
   bar.appendChild(gbtn);
@@ -60,9 +60,9 @@
    panel.appendChild(phead);
   // guide panel header + empty content container - DO NOT populate text here (user will provide)
   var ghead=document.createElement('div'); ghead.className='dw-phead';
-  ghead.innerHTML='<span class="dw-ptitle"><span>How to Use This Dashboard</span></span><button type="button" class="dw-close">Collapse <span class="dw-cchev">▴</span></button>';
+  ghead.innerHTML='<span class="dw-ptitle">'+book+'<span>How to Use This Dashboard</span></span><button type="button" class="dw-close">Collapse <span class="dw-cchev">▴</span></button>';
   var gcontent=document.createElement('div'); gcontent.className='dw-guide-content';
-  gcontent.innerHTML = '<p class="dw-guide-par">This dashboard collects data published from the Department of Justice’s Legal Information Office Network System (LIONS). For more information about data collection, verification, categorization and timing, please see the About this Data note below. <p class="dw-guide-par">Data can be filtered on a time basis by calendar date, presidential administration (starting from Obama’s second term to present), and the federal fiscal year. The federal government’s fiscal calendar runs from October 1 to September 30 of the next year. Fiscal quarters, therefore are Oct. 1 to Dec. 31; Jan. 1 to March 31; April 1 to June 30 and July 1 to Sept. 30.</p><p class="dw-guide-par">Please note that complete monthly data lags by about 90 days due to DOJ processing, therefore the most accurate data will be three months old or older.For more detailed information by states, users can select their state(s) district using the district filter. Additional DOJ resources for district breakdowns can be found in About This Data.</p><p class="dw-guide-par">To see case issues, filter by program categories, which includes a list of sub-categories or more specific legal concerns. Program categories can also be filtered to only see “primary” concerns, or the attorney’s first-ranked case law concern. Filtered data can be viewed as a table (collapsed below) or downloaded as a CSV (comma-separated value) file to be analyzed further.</p>'
+  gcontent.innerHTML = '<p class="dw-guide-par">This dashboard collects data published from the Department of Justice’s Legal Information Office Network System (LIONS). For more information about data collection, verification, categorization and timing, please see the About this Data note below. <p class="dw-guide-par">Data can be filtered on a time basis by calendar date, presidential administration (starting from Obama’s second term to present), and the federal fiscal year. The federal government’s fiscal calendar runs from October 1 to September 30 of the next year. Fiscal quarters, therefore are Oct. 1 to Dec. 31; Jan. 1 to March 31; April 1 to June 30 and July 1 to Sept. 30.</p><p class="dw-guide-par">Please note that complete monthly data lags by about 90 days due to DOJ processing, therefore the most accurate data will be three months old or older for criminal cases and six months or longer for declinations. Data that is assumed to be mostly complete will be labeled as "settled" while newer, possibly incomplete data will be labeled as "provisional."</p><p class="dw-guide-par">For more detailed information by states, users can select their state(s) district using the district filter. Additional DOJ resources for district breakdowns can be found in About This Data.</p><p class="dw-guide-par">To see case issues, filter by program categories, which includes a list of sub-categories or more specific legal concerns. Program categories can also be filtered to only see “primary” concerns, or the attorney’s first-ranked case law concern. Filtered data can be viewed as a table (collapsed below) or downloaded as a CSV (comma-separated value) file to be analyzed further.</p>'
   gpanel.appendChild(ghead); gpanel.appendChild(gcontent);
    function setOpen(o){ panel.classList.toggle('open',o); btn.classList.toggle('on',o); try{window.dispatchEvent(new Event('resize'));}catch(e){} }
    function isOpen(){ return panel.classList.contains('open'); }
@@ -95,4 +95,21 @@
    });
  }catch(e){ console.error('[shell2] non-fatal:',e); } }
  if(document.readyState!=='loading') run(); else document.addEventListener('DOMContentLoaded',run);
+})();
+
+/* Small-view notice: show a dismissible modal for very narrow viewports (<=300px) */
+(function(){
+  function showNotice(){
+    if(typeof localStorage==='object' && localStorage.getItem('hideSmallViewNotice')) return;
+    if(window.matchMedia && !window.matchMedia('(max-width:300px)').matches) return;
+    if(document.body.querySelector('.smallview-modal')) return;
+    var m=document.createElement('div'); m.className='smallview-modal';
+    m.innerHTML = '<div class="smallview-inner"><p>For the best experience, view this dashboard on a desktop or larger device.</p><div class="smallview-actions"><button class="sv-close">Close</button><button class="sv-dont">Don\'t show again</button></div></div>';
+    document.body.appendChild(m);
+    m.querySelector('.sv-close').addEventListener('click',function(){ m.remove(); });
+    m.querySelector('.sv-dont').addEventListener('click',function(){ try{ localStorage.setItem('hideSmallViewNotice','1'); }catch(e){} m.remove(); });
+  }
+  function check(){ if(window.matchMedia && window.matchMedia('(max-width:300px)').matches) showNotice(); }
+  if(document.readyState!=='loading') check(); else document.addEventListener('DOMContentLoaded',check);
+  window.addEventListener('resize', function(){ try{ if(window.matchMedia && window.matchMedia('(max-width:300px)').matches) showNotice(); }catch(e){} });
 })();
