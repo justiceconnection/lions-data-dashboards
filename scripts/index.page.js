@@ -18,15 +18,15 @@ function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const 
 const METRICS=[["cases_filed","Cases filed"],["cases_terminated","Cases terminated"],["clearance","Clearance %"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
 const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const CURRENT="index.html";
-// Provisional (right-censored) data — L-014, revised to rev B in L-021.
+// Provisional (right-censored) data - L-014, revised to rev B in L-021.
 // Spec: ops/handoffs/L-003-design-spec.md (revision B).
 // All the logic lives in shared/provisional.js; this page only makes calls.
 // Two things this page owns for rev B, neither of them logic:
-//   scales.x.ticks.padding:6 on every chart carrying the treatment — a LAYOUT
+//   scales.x.ticks.padding:6 on every chart carrying the treatment - a LAYOUT
 //     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
 //     bar lives in that space; Chart.js defaults to 3 and the bar would touch
 //     the tick labels.
-//   _stacked:true on datasets built for a stacked render — the input to
+//   _stacked:true on datasets built for a stacked render - the input to
 //     LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
 //     Set per render, because the mix charts flip family at runtime.
 // This dashboard is criminal throughout: inflow window 3 months, outflow 6.
@@ -95,9 +95,9 @@ function leftItems(){ return state.seriesBy==='category'
     : ((state.dists.has('National')||state.dists.size===0)?['National']:[...state.dists]); }
 function rightLabelText(){ return state.ax2&&state.ax2sel.size?[...state.ax2sel].slice(0,3).join(', ')+(state.ax2sel.size>3?'…':''):''; }
 
-const r1=x=>x==null?"—":x.toLocaleString(undefined,{maximumFractionDigits:1});
-const rint=x=>x==null?"—":Math.round(x).toLocaleString();
-const p1=x=>x==null?"—":x.toFixed(1);
+const r1=x=>x==null?"-":x.toLocaleString(undefined,{maximumFractionDigits:1});
+const rint=x=>x==null?"-":Math.round(x).toLocaleString();
+const p1=x=>x==null?"-":x.toFixed(1);
 let lastRows=[];
 
 function renderKPIs(){
@@ -105,7 +105,7 @@ function renderKPIs(){
   const arr=metricArray(R,state.metric); const idxs=visIdx(); if(!idxs.length) return;
   const pct=isPct(state.metric);
   const set=(id,v)=>document.getElementById(id).textContent=v;
-  const fmtVal=v=> v==null?'—':(pct?v.toFixed(1)+'%':Math.round(v).toLocaleString());
+  const fmtVal=v=> v==null?'-':(pct?v.toFixed(1)+'%':Math.round(v).toLocaleString());
   const S=(a,ix)=>{ let s=0,any=false; for(const i of ix){ const v=a[i]; if(v!=null){s+=v;any=true;} } return any?s:null; };
   const rateOver=(ix)=>{ const m=state.metric;
     if(m==='clearance'){ const f=S(R.filed,ix),t=S(R.term,ix); return (f&&f>0)?100*t/f:null; }
@@ -116,17 +116,17 @@ function renderKPIs(){
   const e=idxs[idxs.length-1]; const last12=idxs.slice(-12);
   // KPI 1 & 2: total (or blended rate) over the selected range and the last 12 months
   set('kpi1',fmtVal(aggOver(idxs))); set('kpi2',fmtVal(aggOver(last12)));
-  // KPI 3: year-over-year change (kept) — 3-mo avg vs the same 3 months a year earlier
+  // KPI 3: year-over-year change (kept) - 3-mo avg vs the same 3 months a year earlier
   const avg3at=(i)=>{ if(i<2) return null; let s=0,n=0; for(let k=0;k<3;k++){ const v=arr[i-k]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
   const chg=(a,b)=> (a==null||b==null||b===0)?null:100*(a-b)/Math.abs(b);
   const yoy=chg(avg3at(e),avg3at(e-12));
-  set('kpi3', yoy==null?'—':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
+  set('kpi3', yoy==null?'-':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
   // KPI 4: category share change (kept)
   const sel=R.filed, tot=aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL'])).filed;
   const sum3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2]);
   const shr=(i)=>{ const su=sum3(sel,i),t=sum3(tot,i); return (su!=null&&t)?100*su/t:null; };
   const comp=(shr(e)!=null&&shr(e-12)!=null)?shr(e)-shr(e-12):null;
-  set('kpi4',comp==null?'—':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
+  set('kpi4',comp==null?'-':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
   // Provisional caveats (spec §7). No arithmetic changes: cards 1 and 2 say their
   // window reaches into provisional months; cards 3 and 4 are year-over-year and so
   // compare a provisional window against a settled one.
@@ -164,10 +164,10 @@ function renderTable(){
   document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
     return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
   }).join("");
-  const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"—";
+  const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"-";
   document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b>`;
   const multiCat=state.occ==='all'&&!(state.cats.has('ALL')||state.cats.size===0)&&state.cats.size>1;
-  document.getElementById("note").textContent=multiCat?"Note: multiple categories are summed (all-occurrences) — a case in several selected categories is counted more than once.":"";
+  document.getElementById("note").textContent=multiCat?"Note: multiple categories are summed (all-occurrences) - a case in several selected categories is counted more than once.":"";
 }
 
 const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
@@ -206,10 +206,10 @@ function renderChart(){
   const rightPct=metricMode?rMetrics.every(isPct):pct;
   const rAxisTitle=(metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):metricLabel(state.metric))+' (Right)';
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
-     + (anyR?'<span class="lg" style="color:var(--mut)">— dashed = right axis</span>':'')
+     + (anyR?'<span class="lg" style="color:var(--mut)">- dashed = right axis</span>':'')
      + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
-     + (PV.anyProv(flagsZone)?PV.legendChip(nZone,provDir):'');   // separate marker from "*" — two different facts
-  document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" — by "+(state.seriesBy==='category'?'program category':'district');
+     + (PV.anyProv(flagsZone)?PV.legendChip(nZone,provDir):'');   // separate marker from "*" - two different facts
+  document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" - by "+(state.seriesBy==='category'?'program category':'district');
   if(typeof window==='undefined'||!window.Chart){ return; }
   const yfmt=pct?(v=>v+'%'):(v=>v.toLocaleString()); const y1fmt=rightPct?(v=>v+'%'):(v=>v.toLocaleString());
   const cfg={type:'line',data:{labels,datasets,_ym:ymAxis,_prov:PV.anyProv(flagsZone)?flagsZone:null},
@@ -232,7 +232,7 @@ function renderChart2(){
   const cAB={}; for(const c of cats) cAB[c]=bucketSum(aggregateRaw(NAT,FULL,SPINE,state.dists,new Set([c])).filed,B);
   // This chart is normalised on cases filed -> the inflow window. Under-reporting makes
   // the MIX wrong, not simply the edge low, because categories mature at very different
-  // rates — so the chip uses the 'mix' wording (spec §3.4).
+  // rates - so the chip uses the 'mix' wording (spec §3.4).
   const nMix=PV.n('cases_filed',PVOPT), flagsMix=PV.bucketFlags(SPINE,B,nMix);
   let datasets;
   if(state.mixMode==='sum'){
@@ -335,7 +335,7 @@ function multiSelect(mountId,opts){
 function districtList(){ return FULL?[...new Set(FULL.map(r=>r.district))].sort():[]; }
 function buildAx2Picker(){ state.ax2sel=new Set(); const mount=document.getElementById('ax2sel');
   if(state.ax2by==='metric'){ mount.classList.remove('ms'); mount.innerHTML='';
-    const sel=document.createElement('select'); sel.innerHTML='<option value="">— pick a metric —</option>'+METRICS.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');
+    const sel=document.createElement('select'); sel.innerHTML='<option value="">- pick a metric -</option>'+METRICS.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');
     sel.addEventListener('change',()=>{ state.ax2sel=sel.value?new Set([sel.value]):new Set(); renderChart(); }); mount.append(sel);
   } else {
     ax2MS=multiSelect('ax2sel',{items:(state.seriesBy==='category'?CATLIST:districtList()),plain:true,emptyLabel:'pick series…',initial:state.ax2sel,searchable:state.seriesBy==='district',
@@ -395,7 +395,7 @@ async function ensureFull(){ if(FULL||fullLoading) return;
 
 async function init(){ renderNav();
   try{ const r=await fetch("./data/lions_cube_national.csv",{cache:"reload"}); NAT=parseCSV(await r.text()); }
-  catch(e){ document.getElementById("status").textContent="could not load lions_cube_national.csv — serve this folder over http"; return; }
+  catch(e){ document.getElementById("status").textContent="could not load lions_cube_national.csv - serve this folder over http"; return; }
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   UMB=[...new Set(NAT.filter(r=>r.grp!=='ALL').map(r=>r.grp))].sort((a,b)=>(a==='All Other')-(b==='All Other')||a.localeCompare(b));
   SPECS={}; for(const u of UMB) SPECS[u]=[];
@@ -435,7 +435,7 @@ async function init(){ renderNav();
   // first paint: the national view renders immediately and this streams in behind it.
   // The point is that opening the district filter and switching districts is instant,
   // rather than making the user wait on a multi-megabyte download mid-interaction.
-  // Cary's call, 31 Aug 2026 — responsiveness over bytes. It is the dominant share of
+  // Cary's call, 31 Aug 2026 - responsiveness over bytes. It is the dominant share of
   // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
   ensureFull(); render();
 }

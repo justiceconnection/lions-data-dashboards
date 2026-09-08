@@ -1,4 +1,4 @@
-// LIONS dashboards — shared helpers used by every dashboard.
+// LIONS dashboards - shared helpers used by every dashboard.
 
 
 function applyAdmins(){ const idx=[...state.admins].map(k=>ADMIN_SEQ.indexOf(k)).sort((a,b)=>a-b);
@@ -13,14 +13,14 @@ function extTooltip(context){ const {chart,tooltip}=context; let el=document.get
   const title=tooltip.title&&tooltip.title.length?fmtMMYYYY(tooltip.title[0]):'';
   let h=title?`<div style="font-weight:600;margin-bottom:4px">${title}</div>`:'';
   (function(){var __d=(tooltip.dataPoints||[]);try{if(chart&&chart.options&&chart.options.scales&&chart.options.scales.y&&chart.options.scales.y.stacked)__d=__d.slice().reverse();}catch(e){}return __d;})().forEach(dp=>{ const ds=dp.dataset; const c=ds._col||ds.borderColor||'#fff';
-    const y=dp.parsed.y; const val=y==null?'—':(ds._pct?(+y).toFixed(1)+'%':Math.round(y).toLocaleString());
+    const y=dp.parsed.y; const val=y==null?'-':(ds._pct?(+y).toFixed(1)+'%':Math.round(y).toLocaleString());
     h+=`<div style="display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;flex:none"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${ds.label}</span><span style="font-variant-numeric:tabular-nums;padding-left:8px">${val}</span></div>`; });
   // Provisional (L-014): one extra line on any point inside the provisional zone.
-  // chart.data._prov carries the bucket flags — the same smuggle-on-data convention
+  // chart.data._prov carries the bucket flags - the same smuggle-on-data convention
   // already used for chart.data._ym. extTooltip serves all four dashboards, so this
   // is the single edit that covers every chart.
   try{ const pf=chart&&chart.data&&chart.data._prov; const dp=(tooltip.dataPoints||[])[0];
-    if(pf&&dp&&pf[dp.dataIndex]){ const t=(window.LIONS_PROV?window.LIONS_PROV.tooltipLine():'Provisional — incomplete reporting');
+    if(pf&&dp&&pf[dp.dataIndex]){ const t=(window.LIONS_PROV?window.LIONS_PROV.tooltipLine():'Provisional - incomplete reporting');
       h+=`<div style="margin-top:5px;padding-top:4px;border-top:1px solid rgba(255,255,255,.2);opacity:.85">${t}</div>`; } }catch(e){}
   el.innerHTML=h; el.style.opacity='1';
   const r=chart.canvas.getBoundingClientRect(), w=el.offsetWidth, ht=el.offsetHeight;
@@ -28,7 +28,7 @@ function extTooltip(context){ const {chart,tooltip}=context; let el=document.get
   if(x+w>window.innerWidth-8) x=r.left+tooltip.caretX-w-14;
   if(x<8)x=8; if(y<8)y=8; if(y+ht>window.innerHeight-8)y=window.innerHeight-ht-8;
   el.style.left=x+'px'; el.style.top=y+'px'; }
-// Provisional caveat line under a KPI value (spec §7). The NUMBER is unchanged —
+// Provisional caveat line under a KPI value (spec §7). The NUMBER is unchanged -
 // this only says the window it covers reaches into provisional months. Elements are
 // created/removed rather than toggled with [hidden], because .provnote is display:flex
 // and an author display rule beats the browser's [hidden]{display:none} (see the
@@ -54,11 +54,11 @@ function renderNav(){ const nav=document.getElementById('dashnav'), sel=document
 function visIdx(){ const r=[]; for(let i=0;i<SPINE.length;i++){ const ym=SPINE[i]; if(ym>=state.from&&ym<=state.to) r.push(i);} return r; }
 // Chart factory: every dashboard chart is created through this so a page can adjust the
 // config just before render (used by the Design-2 lab via window.LIONS_CHART_TWEAK).
-// With no tweak installed it is a passthrough — identical to `new window.Chart(ctx,cfg)`.
+// With no tweak installed it is a passthrough - identical to `new window.Chart(ctx,cfg)`.
 function mkChart(ctx,cfg){ if(window.LIONS_CHART_TWEAK){ try{ window.LIONS_CHART_TWEAK(cfg); }catch(e){} } return new window.Chart(ctx,cfg); }
 
 // ── Time-grain grouping: Month (default) / Calendar Quarter / Fiscal Quarter / Fiscal Year ──
-// Purely a re-bucketing of the monthly data — no new cubes. Counts SUM within a bucket;
+// Purely a re-bucketing of the monthly data - no new cubes. Counts SUM within a bucket;
 // percentages are recomputed by summing the component counts first (ratio-of-sums), so callers
 // bucket the component arrays (bucketComp) and then run their existing metric formula on them.
 // FY convention: FY2025 = Oct 2024 .. Sep 2025 (labeled by the year it ENDS).
@@ -99,7 +99,7 @@ function chartToSVG(chart, opts){
   // ── Provisional zone (L-021, revision B) ────────────────────────────────────
   // chartToSVG re-emits geometry by hand and runs no Chart.js plugins, so every mark
   // the treatment makes has to be rebuilt here or the export silently drops the
-  // caveat — and an export travels, which is why that is worse than never having had
+  // caveat - and an export travels, which is why that is worse than never having had
   // the marker. The numbers come from LIONS_PROV.TILES / .STYLE via svgPattern(), so
   // the canvas and the SVG cannot drift apart. (The administration bands are still
   // missing from every export; pre-existing, logged as L-012, not fixed here.)
@@ -123,7 +123,7 @@ function chartToSVG(chart, opts){
       const half = provFlags.length>1 ? Math.abs(xScale.getPixelForValue(1)-xScale.getPixelForValue(0))/2 : 10;
       provX0 = Math.max(A.left, xScale.getPixelForValue(i0)-half); } }
   // Emits the hatch <rect> for one tile kind. Called before the datasets for 'flat'
-  // and after them for 'stacked' — the stacking order IS the fix for QA's D1.
+  // and after them for 'stacked' - the stacking order IS the fix for QA's D1.
   const provHatchRect = kind => {
     const pat = PV_ ? PV_.svgPattern(kind)
       : '<pattern id="lionsProvHatch-flat" patternUnits="userSpaceOnUse" width="8" height="8">'
@@ -161,7 +161,7 @@ function chartToSVG(chart, opts){
   out.push('<line x1="'+A.left+'" y1="'+A.top+'" x2="'+A.left+'" y2="'+A.bottom+'" stroke="#c9c9c4"/>');
   out.push('<line x1="'+A.left+'" y1="'+A.bottom+'" x2="'+A.right+'" y2="'+A.bottom+'" stroke="#c9c9c4"/>');
   // Unstacked only: the flat hatch goes UNDER the data. On a stacked chart the fills
-  // would erase it (measured: a 3/255 modulation — that is D1), so there is no "under"
+  // would erase it (measured: a 3/255 modulation - that is D1), so there is no "under"
   // and the stacked tile is emitted after the datasets instead.
   if(provX0!=null && !provStacked) provHatchRect('flat');
   for(let i=0;i<datasets.length;i++){ const meta=chart.getDatasetMeta(i); if(!meta||meta.hidden) continue;
@@ -191,7 +191,7 @@ function chartToSVG(chart, opts){
       // segment ENTERING the first provisional bucket is faded too, so the faded run
       // starts one point earlier.
       // Revision B: a stacked chart is never faded. Fading a stacked fill moves the
-      // apparent colour, and on a stacked chart the colour is the series identity —
+      // apparent colour, and on a stacked chart the colour is the series identity -
       // the scrim defect by another route (spec §3.4, §6.7).
       const dsFlags=provStacked?null:((datasets[i]&&datasets[i]._prov)||provFlags);
       const i0=firstProv(dsFlags);
@@ -202,18 +202,18 @@ function chartToSVG(chart, opts){
   if(provX0!=null){
     // Stacked only: the two-tone hatch, OVER the fills.
     if(provStacked) provHatchRect('stacked');
-    // Boundary rule (both families) and, on a stacked chart, the open right edge —
+    // Boundary rule (both families) and, on a stacked chart, the open right edge -
     // the stacked stand-in for the line family's hollow terminal point.
     out.push('<line x1="'+(provX0+0.5).toFixed(1)+'" y1="'+A.top.toFixed(1)+'" x2="'+(provX0+0.5).toFixed(1)
       +'" y2="'+A.bottom.toFixed(1)+'" stroke="'+PVS.rule+'" stroke-width="1" stroke-dasharray="3 3"/>');
     if(provStacked)
       out.push('<line x1="'+(A.right-0.5).toFixed(1)+'" y1="'+A.top.toFixed(1)+'" x2="'+(A.right-0.5).toFixed(1)
         +'" y2="'+A.bottom.toFixed(1)+'" stroke="'+PVS.rule+'" stroke-width="1" stroke-dasharray="3 3"/>');
-    // The gutter bar — identical on every family, and the only mark outside the plot
+    // The gutter bar - identical on every family, and the only mark outside the plot
     // area. In the export it sits in the same place the canvas puts it.
     out.push('<rect x="'+provX0.toFixed(1)+'" y="'+(A.bottom+PVS.gutterGap).toFixed(1)+'" width="'+(A.right-provX0).toFixed(1)
       +'" height="'+PVS.gutterH+'" fill="'+PVS.gutter+'"/>');
-    // The haloed label. NO WIDTH GUARD — rev A's `>64` is what made it absent at the
+    // The haloed label. NO WIDTH GUARD - rev A's `>64` is what made it absent at the
     // default range (QA D3); it must not come back here either. There is no
     // measureText in the exporter, so the width is estimated at ~5.8px/char for
     // 10.5px/600, the same figure the check harness stubs; the placement rule itself

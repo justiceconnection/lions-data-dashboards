@@ -20,15 +20,15 @@ const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:[
 const DEPT_ORDER=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const CURRENT="declinations.html";
-// Provisional (right-censored) data — L-014, revised to rev B in L-021.
+// Provisional (right-censored) data - L-014, revised to rev B in L-021.
 // Spec: ops/handoffs/L-003-design-spec.md (revision B).
 // All the logic lives in shared/provisional.js; this page only makes calls.
 // Two things this page owns for rev B, neither of them logic:
-//   scales.x.ticks.padding:6 on every chart carrying the treatment — a LAYOUT
+//   scales.x.ticks.padding:6 on every chart carrying the treatment - a LAYOUT
 //     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
 //     bar lives in that space; Chart.js defaults to 3 and the bar would touch
 //     the tick labels.
-//   _stacked:true on datasets built for a stacked render — the input to
+//   _stacked:true on datasets built for a stacked render - the input to
 //     LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
 //     Set per render, because the mix charts flip family at runtime.
 // A declination is a disposition event on a criminal matter, so `declined` is criminal
@@ -94,12 +94,12 @@ function renderChart(){
   const rB={}; for(const r of rs) rB[r]=bucketSum(SER[r],B);
   const totals=B.map((b,bi)=>rs.reduce((a,r)=>a+rB[r][bi],0));   // 100%-stacked: normalize to selected reasons
   // Provisional: a normalised share chart, so under-reporting distorts the MIX (reasons
-  // mature at different rates) rather than simply lowering the edge — 'mix' wording.
+  // mature at different rates) rather than simply lowering the edge - 'mix' wording.
   const nProv=PV.n(PROV_METRIC,PVOPT), flagsProv=PV.bucketFlags(SPINE,B,nProv);
   const datasets=rs.map(r=>{ const col=RCOLOR[r]; return {label:r,data:totals.map((t,bi)=>t?100*rB[r][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true}; });
   document.getElementById("legend").innerHTML=rs.map(r=>`<span class="lg"><span class="sw" style="background:${RCOLOR[r]}"></span>${r}</span>`).join("")
     + (PV.anyProv(flagsProv)?PV.legendChip(nProv,'mix'):'');
-  document.getElementById("chart1Title").textContent="Matters declined by reason — % share (stacked) — "+scopeText();
+  document.getElementById("chart1Title").textContent="Matters declined by reason - % share (stacked) - "+scopeText();
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart) chart.destroy();
   chart=mkChart(document.getElementById('chart').getContext('2d'),{type:'line',data:{labels,datasets:datasets.slice().reverse(),_ym:ymAxis,_prov:PV.anyProv(flagsProv)?flagsProv:null},
@@ -119,8 +119,8 @@ function renderChart2(){
   const datasets=[PV.decorateLine({label:'Total declined (selected reasons)',data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:'#212123',pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:'#212123'},flagsProv,pr)];
   document.getElementById("legend2").innerHTML=`<span class="lg"><span class="sw" style="background:#212123"></span>Total of selected reasons</span>`
     +(anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
-    +(PV.anyProv(flagsProv)?PV.legendChip(nProv,PV.dir(PROV_METRIC)):'');   // separate marker from "*" — two different facts
-  document.getElementById("chart2Title").textContent="Matters declined — total of selected reasons";
+    +(PV.anyProv(flagsProv)?PV.legendChip(nProv,PV.dir(PROV_METRIC)):'');   // separate marker from "*" - two different facts
+  document.getElementById("chart2Title").textContent="Matters declined - total of selected reasons";
   if(typeof window==='undefined'||!window.Chart) return;
   if(chart2) chart2.destroy();
   chart2=mkChart(document.getElementById('chart2').getContext('2d'),{type:'line',data:{labels,datasets,_ym:ymAxis,_prov:PV.anyProv(flagsProv)?flagsProv:null},
@@ -283,7 +283,7 @@ function buildDimPicker(){
 
 async function init(){ renderNav();
   try{ const r=await fetch("./data/decl_cat_cube_national.csv",{cache:"reload"}); CAT_NAT=parseCat(await r.text()); }
-  catch(e){ document.getElementById("status").textContent="could not load decl_cat_cube_national.csv — serve this folder over http"; return; }
+  catch(e){ document.getElementById("status").textContent="could not load decl_cat_cube_national.csv - serve this folder over http"; return; }
   const ms=[...new Set(CAT_NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   CATLIST=[...new Set(CAT_NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();
   dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,fmt:fmtDist,
@@ -312,7 +312,7 @@ async function init(){ renderNav();
   // first paint: the national view renders immediately and this streams in behind it.
   // The point is that opening the district filter and switching districts is instant,
   // rather than making the user wait on a multi-megabyte download mid-interaction.
-  // Cary's call, 31 Aug 2026 — responsiveness over bytes. It is the dominant share of
+  // Cary's call, 31 Aug 2026 - responsiveness over bytes. It is the dominant share of
   // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
   ensureCatFull(); render();
 }

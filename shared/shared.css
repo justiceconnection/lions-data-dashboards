@@ -1,4 +1,4 @@
-/* LIONS dashboards — shared styles (identical across all dashboards). */
+/* LIONS dashboards - shared styles (identical across all dashboards). */
 :root{--bg:#fbfbfb;--panel:#ffffff;--panel2:#ffffff;--ink:#212123;--mut:#6b6c68;--line:#e4e4e1;--accent:#eaf54c;--accent-ink:#212123}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -34,11 +34,11 @@ thead th{position:sticky;top:0;background:var(--panel);color:var(--mut);font-siz
 tbody tr:hover{background:#f5f5f3}
 tr.edge td{color:#b0b1ac}
 tr.recent td{color:#9a7b2e}
-/* Provisional (right-censored) data — L-021 rev B, spec ops/handoffs/L-003-design-spec.md.
-   .sw-prov is the legend/KPI swatch. REVISION B: it is TWO-TONE — one light stroke and
-   one dark one — because that is the mark that is actually on the stacked charts, which
+/* Provisional (right-censored) data - L-021 rev B, spec ops/handoffs/L-003-design-spec.md.
+   .sw-prov is the legend/KPI swatch. REVISION B: it is TWO-TONE - one light stroke and
+   one dark one - because that is the mark that is actually on the stacked charts, which
    are the family where the treatment has to work hardest. A single dark hatch keyed a
-   mark that now appears on neither family at full strength. `tr.prov` is a hook only —
+   mark that now appears on neither family at full strength. `tr.prov` is a hook only -
    provisional rows keep the existing `recent` colour and gain the .provmark dagger,
    because colour alone is a WCAG 1.4.1 failure. */
 .sw-prov{width:11px;height:11px;border-radius:2px;display:inline-block;border:1px solid #cfd0cb;

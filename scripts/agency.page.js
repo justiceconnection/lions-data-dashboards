@@ -22,15 +22,15 @@ const SUB_ORDER_R={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"
 const DEPT_ORDER_V=["Social Security Admin","DOJ","DHS","Treasury","HUD","HHS","Education","Veterans Affairs","Small Business Admin","Agriculture","Defense","Labor","Interior","State","EPA","OPM","Energy","Commerce","USPS","Other"];
 const SUB_ORDER_V={"DOJ":["Bureau of Prisons","FBI","DEA","ATF","USMS","Other DOJ"],"DHS":["ICE","HSI","CBP","Secret Service","Other DHS"],"Treasury":["IRS","Other Treasury"],"Defense":["Army","Navy","Air Force","Army Corps of Engineers","Other Defense"],"HHS":["FDA","HHS-OIG","Other HHS"]};
 const CURRENT="agency.html";
-// Provisional (right-censored) data — L-014, revised to rev B in L-021.
+// Provisional (right-censored) data - L-014, revised to rev B in L-021.
 // Spec: ops/handoffs/L-003-design-spec.md (revision B).
 // All the logic lives in shared/provisional.js; this page only makes calls.
 // Two things this page owns for rev B, neither of them logic:
-//   scales.x.ticks.padding:6 on every chart carrying the treatment — a LAYOUT
+//   scales.x.ticks.padding:6 on every chart carrying the treatment - a LAYOUT
 //     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
 //     bar lives in that space; Chart.js defaults to 3 and the bar would touch
 //     the tick labels.
-//   _stacked:true on datasets built for a stacked render — the input to
+//   _stacked:true on datasets built for a stacked render - the input to
 //     LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
 //     Set per render, because the mix charts flip family at runtime.
 // This page is dual-mode, so the window set follows the mode: criminal 3/6, civil 4/6.
@@ -128,9 +128,9 @@ function shareFlow(R){ return isCiv()?R[primaryFlow()]:R.filed; }
 
 function agColor(ag){ const i=curAglist().indexOf(ag); return CATPAL[(i<0?0:i)%CATPAL.length]; }
 function selAgs(){ return [...curAgs()]; }
-const r1=x=>x==null?"—":x.toLocaleString(undefined,{maximumFractionDigits:1});
-const rint=x=>x==null?"—":Math.round(x).toLocaleString();
-const p1=x=>x==null?"—":x.toFixed(1);
+const r1=x=>x==null?"-":x.toLocaleString(undefined,{maximumFractionDigits:1});
+const rint=x=>x==null?"-":Math.round(x).toLocaleString();
+const p1=x=>x==null?"-":x.toFixed(1);
 let lastRows=[], lastCols=[];
 
 function renderKPIs(){
@@ -138,7 +138,7 @@ function renderKPIs(){
   const arr=metricArray(R,curMetric()); const idxs=visIdx(); if(!idxs.length) return;
   const pct=isPct(); const isLevel=curMetric().includes('pending');
   const set=(id,v)=>document.getElementById(id).textContent=v;
-  const fmtVal=v=> v==null?'—':(pct?v.toFixed(1)+'%':Math.round(v).toLocaleString());
+  const fmtVal=v=> v==null?'-':(pct?v.toFixed(1)+'%':Math.round(v).toLocaleString());
   const S=(a,ix)=>{ let s=0,any=false; for(const i of ix){ const v=a[i]; if(v!=null){s+=v;any=true;} } return any?s:null; };
   const avgOver=(ix)=>{ let s=0,n=0; for(const i of ix){ const v=arr[i]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
   const rateOver=(ix)=>{ const m=curMetric();
@@ -154,13 +154,13 @@ function renderKPIs(){
   const avg3at=(i)=>{ if(i<2) return null; let s=0,n=0; for(let k=0;k<3;k++){ const v=arr[i-k]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
   const chg=(a,b)=> (a==null||b==null||b===0)?null:100*(a-b)/Math.abs(b);
   const yoy=chg(avg3at(e),avg3at(e-12));
-  set('kpi3', yoy==null?'—':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
+  set('kpi3', yoy==null?'-':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
   // KPI 4: agency share change (kept)
   const sel=shareFlow(R), tot=shareFlow(aggregate(state.dists,new Set(['ALL'])));
   const sum3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2]);
   const shr=(i)=>{ const su=sum3(sel,i),t=sum3(tot,i); return (su!=null&&t)?100*su/t:null; };
   const comp=(shr(e)!=null&&shr(e-12)!=null)?shr(e)-shr(e-12):null;
-  set('kpi4',comp==null?'—':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
+  set('kpi4',comp==null?'-':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
   // Provisional caveats (spec §7). No arithmetic changes.
   const pcut=PV.cutIndex(SPINE,PV.n(curMetric(),pvopt()));
   const provIn=ix=>ix.some(i=>i>pcut);
@@ -202,8 +202,8 @@ function renderChart(){
     return PV.decorateLine({label:ag,data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:col,_pct:pct},flagsOwn,pr); });
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
      + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
-     + (PV.anyProv(flagsOwn)?PV.legendChip(nOwn,PV.dir(curMetric())):'');   // separate marker from "*" — two different facts
-  document.getElementById("chartTitle").textContent=metricLabel(curMetric())+(isCiv()?" — "+state.role:"")+" — by "+(isCiv()?"client":"referring")+" agency";
+     + (PV.anyProv(flagsOwn)?PV.legendChip(nOwn,PV.dir(curMetric())):'');   // separate marker from "*" - two different facts
+  document.getElementById("chartTitle").textContent=metricLabel(curMetric())+(isCiv()?" - "+state.role:"")+" - by "+(isCiv()?"client":"referring")+" agency";
   if(typeof window==='undefined'||!window.Chart){ return; }
   const yfmt=pct?(v=>v+'%'):(v=>v.toLocaleString());
   if(chart) chart.destroy();
@@ -233,7 +233,7 @@ function renderChart2(){
   document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("")
     + (PV.anyProv(flagsMix)?PV.legendChip(nMix,'mix'):'');
   const denom=isCiv()?primaryLabel():'referred cases filed';
-  document.getElementById("chart2Title").textContent="Share of "+denom+" — % of total"+(state.mixMode==='stacked'?" (stacked)":" (combined)");
+  document.getElementById("chart2Title").textContent="Share of "+denom+" - % of total"+(state.mixMode==='stacked'?" (stacked)":" (combined)");
   if(typeof window==='undefined'||!window.Chart){ return; }
   datasets=datasets.slice().reverse();
   if(chart2) chart2.destroy();
@@ -250,7 +250,7 @@ function renderChart3(){
   if(!isCiv()){ card.hidden=true; if(chart3){chart3.destroy();chart3=null;} return; }
   card.hidden=false;
   const box=document.getElementById('chart3box'), msg=document.getElementById('chart3msg');
-  if(state.basis!=='cases'){ box.style.display='none'; msg.style.display='block'; msg.textContent='No disposition data for Matters — court dispositions apply to Cases only. Switch the basis toggle to Cases.'; document.getElementById('legend3').innerHTML=''; if(chart3){chart3.destroy();chart3=null;} return; }
+  if(state.basis!=='cases'){ box.style.display='none'; msg.style.display='block'; msg.textContent='No disposition data for Matters - court dispositions apply to Cases only. Switch the basis toggle to Cases.'; document.getElementById('legend3').innerHTML=''; if(chart3){chart3.destroy();chart3=null;} return; }
   box.style.display=''; msg.style.display='none';
   const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
   const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
@@ -332,9 +332,9 @@ function renderTable(){
     document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
       return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
     }).join("");
-    const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"—";
+    const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"-";
     document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b> · clearance <b>${ocl}</b>`;
-    document.getElementById("note").textContent=(state.occ==='all'&&curAgs().size>1)?"Note: “All agencies” basis — a case referred by several selected agencies is counted more than once.":"";
+    document.getElementById("note").textContent=(state.occ==='all'&&curAgs().size>1)?"Note: “All agencies” basis - a case referred by several selected agencies is counted more than once.":"";
   } else {
     const cols=metricsList().map(m=>m[0]); const arrs=cols.map(m=>metricArray(R,m));
     const rows=[];
@@ -342,7 +342,7 @@ function renderTable(){
     lastRows=rows; lastCols=cols;
     document.getElementById("thead").innerHTML="<tr><th>Month</th>"+metricsList().map(m=>`<th>${m[1]}</th>`).join("")+"</tr>";
     document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-      return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${v==null?"—":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
+      return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${v==null?"-":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
     }).join("");
     const tot=metricArray(R, state.basis==='cases'?'cases_filed':'matters_received');
     const s=visIdx().reduce((a,i)=>a+tot[i],0);
@@ -472,7 +472,7 @@ async function switchClass(cls){
 
 async function init(){ renderNav();
   try{ const r=await fetch("./data/agency_cube_national.csv",{cache:"reload"}); NAT=parseCSV_R(await r.text()); }
-  catch(e){ document.getElementById("status").textContent="could not load agency_cube_national.csv — serve this folder over http"; return; }
+  catch(e){ document.getElementById("status").textContent="could not load agency_cube_national.csv - serve this folder over http"; return; }
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   const b=buildDepts(NAT,DEPT_ORDER_R,SUB_ORDER_R); DEPTS_R=b.DEPTS; AGLIST_R=b.AGLIST;
   populateMetric();
@@ -504,7 +504,7 @@ async function init(){ renderNav();
   // first paint: the national view renders immediately and this streams in behind it.
   // The point is that opening the district filter and switching districts is instant,
   // rather than making the user wait on a multi-megabyte download mid-interaction.
-  // Cary's call, 31 Aug 2026 — responsiveness over bytes. It is the dominant share of
+  // Cary's call, 31 Aug 2026 - responsiveness over bytes. It is the dominant share of
   // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
   ensureFull(); render();
 }
