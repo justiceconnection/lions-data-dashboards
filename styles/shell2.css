@@ -74,3 +74,16 @@
 .smallview-actions{display:flex;gap:8px;justify-content:center}
 .smallview-actions button{padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:700;cursor:pointer}
 .smallview-actions button:hover{background:var(--accent);border-color:var(--accent);color:#000}
+
+/* footer: apply to the .foot container or the #footnote element */
+.foot, #footnote {
+   color: var(--mut);
+   font-size: 12px;
+   margin: 18px auto 0; /* center and add vertical spacing */
+   border-top: 1px solid var(--line);
+   padding: 10px 0 0;
+   white-space: pre-line;
+   max-width: 980px; /* don't exceed dashboard width */
+   width: 100%;
+   box-sizing: border-box;
+}

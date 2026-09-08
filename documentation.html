@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Documentation — LIONS</title>
+<link rel="stylesheet" href="shared/shared.css?v=20260903a">
+<link rel="stylesheet" href="lab.css?v=20260903a">
+</head><body>
+  <div class="wrap">
+    <nav class="dashnav" id="dashnav"></nav>
+    <h1>Data documentation</h1>
+    <div class="sub">This page documents the data sources, processing, and methodology used for the LIONS dashboards.</div>
+
+    <section>
+      <h2>Source files</h2>
+      <p>Monthly case-level extracts from the Department of Justice’s Legal Information Office Network System (LIONS) are the primary source. Annual redacted reports are also available from the DOJ.</p>
+    </section>
+
+    <section>
+      <h2>Data processing</h2>
+      <p>Data are ingested from the monthly files, cleaned for consistent category codes, and aggregated into the summary cubes used by the dashboard visualizations. Where redactions or missing fields exist, records are kept but may be categorized conservatively.</p>
+    </section>
+
+    <section>
+      <h2>Provisional vs. settled</h2>
+      <p>Monthly data is considered provisional for a short period after release. Based on historical completeness, we treat data as "settled" after approximately three months for filings and up to six months for terminations and dispositions.</p>
+    </section>
+
+    <section>
+      <h2>Contact & reproducibility</h2>
+      <p>For questions about methodology or to request the data processing scripts, please see the project repository or contact the Justice Connection team via the project's contact links.</p>
+    </section>
+
+    <p><a href="index.html">← Back to dashboard</a></p>
+  </div>
+</body></html>

@@ -15,7 +15,7 @@
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
   <h1>Criminal Cases</h1>
-  <div class="sub"> This interactive tool, developed by the Justice Connection, helps showcase trends in case filing and clearance by the U.S. Department of Justice’ Legal Information Office Network System (LIONS). This dashboard highlights criminal cases filed by U.S. Attorney Offices on behalf of the United States as plaintiff. All data is from publicly released DOJ data, which ranges from October 1994 to July 2026 and will be regularly updated on a monthly basis with information from LIONS. For more information about this data, <a href="https://justiceconnection.github.io/lions-data-dashboards/index.html#footnote">see the footnote below</a>. <span id="status" aria-live="polite" hidden></span></div> 
+  <div class="sub"> This interactive tool, developed by the Justice Connection, helps showcase trends in case filing and clearance by the U.S. Department of Justice’ Legal Information Office Network System (LIONS). This dashboard highlights criminal cases filed by U.S. Attorney Offices on behalf of the United States as plaintiff. <br> <br> All data is from publicly released DOJ data, which ranges from October 1994 to July 2026 and will be regularly updated on a monthly basis with information from LIONS. For more information about this data, <a href="https://justiceconnection.github.io/lions-data-dashboards/index.html#footnote">see the footnote below</a> or <a href="documentation.html">our data documentation page</a>. <span id="status" aria-live="polite" hidden></span></div> 
 
   <div class="occbar">Program-category basis:
     <span class="seg" id="occ"><button data-v="all" class="on">All occurrences</button><button data-v="primary">Primary only</button></span>
@@ -81,24 +81,9 @@
   </table></div>
   </div>
   <div class="bottombar"><button id="dl">Download CSV</button></div>
-
-    <div class="foot" id="footnote">
-<b>About this data:</b> The DOJ National Caseload data dashboard is sourced and cleaned from monthly filings from the Department of Justice’s Legal Information Office Network System (LIONS). 
-
-LIONS data, also known as the DOJ Case Management System (CMS), <a href="https://www.justice.gov/usao/media/1443941/dl?inline" target="_blank">is aggregated into a redacted annual fiscal year report at the close of the year.</a> However, monthly data is provided in an 88-gigabyte file available to the public, with some categories and identifying information redacted. This dashboard provides users a way to make data actionable and understood over time from 1994 to 2026.
-
-Justice Connection does not manipulate the data or conduct any analysis of the data; this dashboard is a data management tool that allows users to investigate the data as its presented in the DOJ’s distribution. Data validation is possible by comparing the DOJ’s annual filings to monthly data downloads. However, given the manual input processes of the LIONS system and lack of information due to redaction or sealed cases, it’s important to note that all data cannot be independently validated.
-
-LIONS data updates monthly. Monthly updates include revised data from previous months, meaning updates may differ from previously posted numbers. Based on data analysis, Justice Connection estimates that a near-complete picture of monthly filings can be assumed after a three-month lag, which we categorize as "settled". In other words, for the most accurate monthly filing data, users should only analyze data from three months prior, because more cases data will be added in the subsequent two updates. Data in this three-month window is labeled as "provisional". Terminations generally take more time  to settle, compared to filings - as much as six months - so the provisional marking on termination and disposition series covers a wider window.  
-
-For more information about the LIONS system, <a href="https://www.justice.gov/usao/resources/foia-library/national-caseload-data/frequently-asked-questions" target="_blank">please visit the DOJ’s website.</a> Note not all DOJ cases are reflected in this data set because the system is used by U.S. attorneys offices (USAO), meaning it will exclude cases from Main Justice. Some inquiries are not logged into the system if they are considered <a href="https://www.justice.gov/usao/file/835096/dl?inline" target="_blank">“obviously trivial,”</a> as well. 
-
-Most information in the LIONS system is obtained during case intake and screening stages, <a href="https://www.justice.gov/usao/resources/making-foia-request/major-information-systems/prosecutors-management-information-system" target="_blank">according to the DOJ’s website.</a> Any additional information is filed as the matter moves through proceedings. 
-
-Program categories are sorted by “primary” based on the first-entered code, denoting the lead basis for referral. Additional information on user filing methodology can be found on <a href="https://www.justice.gov/usao/file/835096/dl?inline" target="_blank">the DOJ’s User Manual.</a> For more details on program definitions and the legal statutes they include, <a href="https://www.justice.gov/usao/file/787346/dl?inline" target="_blank">please refer to the DOJ’s LIONS Code List here.</a>
-There are 94 U.S. DOJ district offices;<a href="https://www.justice.gov/usao/find-your-united-states-attorney" target="_blank">a map of the district regions can be found here</a>and a <a href="https://www.justice.gov/usao/biographies" target="_blank">link to all district offices here.</a>
-
-Users have the ability to filter data by calendar year or fiscal year. The federal government’s fiscal calendar runs from October 1 to September 30 of the next year. Fiscal quarters, therefore are Oct. 1 to Dec. 31; Jan. 1 to March 31; April 1 to June 30 and July 1 to Sept. 30.
+</div>
+  <div class="foot" id="footnote"></div>
+  <p><a href="documentation.html">More information on data documentation can be found here</a>.</p>
 
 </div>
 </div>
