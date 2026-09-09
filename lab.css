@@ -21,12 +21,12 @@ body.doc-page .wrap > section{
 }
 body.doc-page .wrap > section.accordion > h2,
 body.doc-page .wrap > section.accordion > h1{
-	margin:0;
-	padding:0.8em 44px 0.8em 12px; /* extra right padding for chevron */
+	margin:.5rem;
+	padding:0.22em 44px 0.22em 12px; /* reduced vertical spacing */
 	cursor:pointer;
-	font-size:1.05rem;
-	line-height:1.4;
-	min-height:2.2em; /* ensure header area isn't clipped */
+	font-size:1.25rem;
+	line-height:1.75;
+	max-height:1.2em; /* smaller header height */
 	position:relative;
 	white-space:pre-line;
 }
@@ -44,11 +44,22 @@ body.doc-page .wrap > section.accordion > h1::after{
 body.doc-page .wrap > section.accordion:not(.open) > *:not(h1):not(h2){
     display:none;
 }
+/* closed sections size to their header height (allow wrapping) */
+body.doc-page .wrap > section.accordion:not(.open){
+	/* no fixed max-height so header can wrap naturally */
+	overflow:visible;
+}
+/* vertically center header content */
+body.doc-page .wrap > section.accordion > h1,
+body.doc-page .wrap > section.accordion > h2{
+	display:flex;
+	align-items:center;
+}
 /* when opened, ensure content shows with standard padding */
 body.doc-page .wrap > section.accordion.open > *:not(h1):not(h2){
 	display:block;
-	padding:0.6em 12px 12px 12px;
-	white-space:pre-line;
+    margin-left: 1rem; 
+    margin-right: .5rem;
 }
 body.doc-page .wrap > section > p{margin:0}
 

@@ -4,7 +4,6 @@
 [hidden]{display:none!important}
 body{
   margin:0;
-  white-space: pre-line;
   background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 .wrap{max-width:1120px;margin:0 auto;padding:18px 16px 44px}
 .sub{color:var(--mut);font-size:12.5px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}
@@ -72,4 +71,5 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .preserve-breaks {
   white-space: pre-line; /* Keeps your manual line breaks and wraps text normally */
 }
+
 @media(max-width:600px){.dashnav{display:none}.dashsel{display:block}}
