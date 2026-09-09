@@ -69,11 +69,18 @@ For example, if you filter for criminal cases filed in fiscal year 2025, the das
 
  <p><u> A civil matter and a civil case are two stages of the same work, not two words for it</u>
 
-DOJ’s definition, <a href=”https://www.justice.gov/usao/media/1443941/dl?inline” target=”_blank”>as outlined in the annual report</a>, is that matters are “proceedings not yet in court.” The dashboard splits cases and matters similarly. A civil record counts as a matter until a court appears on it, meaning the same issue can be counted as a matter received in one month and as a case filed in a later one. The two data points are not alternatives and they should not be added together. </p>
+DOJ’s definition, <a href=”https://www.justice.gov/usao/media/1443941/dl?inline” target=”_blank”>as outlined in the annual report</a>, is that matters are “proceedings not yet in court.” The dashboard splits cases and matters similarly. A civil record counts as a matter until a court appears on it, meaning the same issue can be counted as a matter received in one month and as a case filed in a later one. The two data points are not alternatives and they should not be added together. 
+
+<b> Case dates as pending </b>
+A civil case joins the pending case count on the earliest filing date recorded in court records. If a case has court records but none of them has a filing date, it is added to the count on the date the matter was received instead.
+
+A matter is usually filed in LIONS before it reaches court, so those cases join the count earlier than they otherwise would, and every month in between is counted one higher.
+</p>
  </section>
 
  <section> 
   <h2> Data validation </h2>
+
 <p><b>Criminal cases and defendants filed</b>
 
  DOJ publishes a comparable count once a year in its annual report; the criminal case dashboard does not reproduce it exactly.
@@ -84,7 +91,26 @@ Note this analysis is not replicable across other years. Data validation shows o
 
 <b>Civil cases filed and terminated</b>
 
-DOJ publishes the civil caseload once a year. Compared against its five annual reports for fiscal years 2021 to 2025, this site’s counts differ from DOJ’s every year on both counts.  </p>
+DOJ publishes the civil caseload once a year. Compared against its five annual reports for fiscal years 2021 to 2025, this site’s counts differ from DOJ’s every year on both counts. Our team is still exploring the reasons for these differences. 
+
+<b> Civil cases pending</b>
+The total dashboard count differs from DOJ's published count, sometimes due to a greater number of cases, sometimes fewer. 
+
+Cases pending is a count taken at the end of each month of the civil cases that had a court record by that date and no recorded ending. It is not a running balance of arrivals minus departures, and it does not include events that happened after the published date.
+
+Part of the discrepancies can be accounted for by later data that will retroactively change the count of cases pending at the end of a given month. One trend we've noticed is the U.S. as a plantiff accounts for almost none of the difference; why is not clear.
+
+<b>Civil matters pending</b>
+
+Our dashboard count for civil matters pending varies from the DOJ published figures to a greater extent than cases. The variance is not normalized nor directional. Matters, similar to cases, is a count taken at the end of each month of all civil matters that have not reached court and have no recorded closure. We caution against using a single month's matters pending to signify events in that month.  
+
+<b> Differences between Criminal Cases and Cases by Referring Agency</b>
+
+The Criminal Cases dashboard and the Referring Agency dashboard are built from the same records and their criminal totals differ by a handful of cases. For fiscal year 2025, the Referring Agency dashboard counts 61,666 criminal cases filed.
+
+We have yet to establish a cause but the difference is small enough that it will not change any reading of a trend, and large enough that two figures quoted side by side will not match.
+
+</p>
  </section>
     <section>
       <h2>Reproducibility</h2>
