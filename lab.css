@@ -13,3 +13,44 @@
 .nv-body{display:none;padding:10px 14px 12px;border-top:1px solid var(--line)}
 .nv-acc.open .nv-body{display:block}
 .nv-body .dashnav{margin:0}
+
+/* Documentation page: collapse sections into accordion panels */
+body.doc-page .wrap > section{
+	border-bottom:1px solid var(--line);
+	padding:0.2em 0 0.2em 0;
+}
+body.doc-page .wrap > section.accordion > h2,
+body.doc-page .wrap > section.accordion > h1{
+	margin:0;
+	padding:0.8em 44px 0.8em 12px; /* extra right padding for chevron */
+	cursor:pointer;
+	font-size:1.05rem;
+	line-height:1.4;
+	min-height:2.2em; /* ensure header area isn't clipped */
+	position:relative;
+	white-space:pre-line;
+}
+body.doc-page .wrap > section.accordion > h2::after,
+body.doc-page .wrap > section.accordion > h1::after{
+	content:"▾";
+	position:absolute;
+	right:12px;
+	top:50%;
+	transform:translateY(-50%);
+	transition:transform .2s ease;
+	color:var(--mut);
+}
+/* hide everything except header when closed to avoid clipping */
+body.doc-page .wrap > section.accordion:not(.open) > *:not(h1):not(h2){
+    display:none;
+}
+/* when opened, ensure content shows with standard padding */
+body.doc-page .wrap > section.accordion.open > *:not(h1):not(h2){
+	display:block;
+	padding:0.6em 12px 12px 12px;
+	white-space:pre-line;
+}
+body.doc-page .wrap > section > p{margin:0}
+
+/* also ensure plain paragraphs respect preserved newlines */
+body.doc-page .wrap > section > p{white-space:pre-line}

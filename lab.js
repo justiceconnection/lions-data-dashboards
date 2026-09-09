@@ -16,3 +16,4 @@
  }catch(e){ console.error('[lab-nav] non-fatal:',e); } }
  if(document.readyState!=='loading') run(); else document.addEventListener('DOMContentLoaded',run);
 })();
+
