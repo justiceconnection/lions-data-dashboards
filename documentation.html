@@ -60,7 +60,7 @@
 
 The word "filed" has different meanings on the dashboard versus Case Lookup function.
 
-The dashboard dates a case by its earliest filing in a U.S. District Court across cases that reached that court. Case Look-Up dates a case by its earliest filing in any real court, across every record with a real court proceeding, which includes magistrate court prosecutions and proceedings that happen after a case has been decided. Therefore Case Look-Up always returns a larger number. Both are accurate. 
+The dashboard dates a case by its earliest filing in a U.S. District Court across cases that reached that court. Case Look-Up dates a case by its earliest filing in any real court, across every record with a real court proceeding, which includes magistrate court prosecutions and proceedings that happen after a case has been decided. Therefore Case Look-Up always returns a larger number. Both are accurate.
 
 For example, if you filter for criminal cases filed in fiscal year 2025, the dashboard shows 61,671 and Case Look-Up shows 101,284. Because the two count different populations, a Case Look-Up search is not the detail behind a dashboard figure and the two will not reconcile. For more detailed breakdowns of the dashboard, use the table feature at the bottom of that page. 
 </p>
@@ -75,13 +75,37 @@ DOJ’s definition, <a href=”https://www.justice.gov/usao/media/1443941/dl?inl
 A civil case joins the pending case count on the earliest filing date recorded in court records. If a case has court records but none of them has a filing date, it is added to the count on the date the matter was received instead.
 
 A matter is usually filed in LIONS before it reaches court, so those cases join the count earlier than they otherwise would, and every month in between is counted one higher.
+
+<b>Differences between Civil Cases and Cases by Referring Agency </b>
+
+The Civil dashboard shows the civil caseload organized by cause of action. The Referring Agency dashboard uses the same data to show workload by federal client agency. The two are built as separate files and they do not arrive at identical totals.
+
+Across the whole dataset, the referring agency totals run between 0.03% and 4% higher than the cause of action totals, depending on how you filter U.S. role. The widest gaps are on matters terminated. While the exact underlying reason is not clear, the individual dashboard totals are true, making it clear the difference is between the two files and not a miscount on either dashboard.
+
+<b> Occasional zero months </b>
+
+It is possible for the dashboard to return no data if you filter for one district, one cause of action and one role in the Civil Matters and Cases dashboard or the Cases by Referring Agency dashboard.
+
+These months are not errors, even if its pending cases, it just shows that a caseload was empty, not that a month is empty. The one exception is for provisional data, which may be empty because they're incomplete. For more information about provisional data, read below. </p>
+
+<h3> Case Lookup data </h3>
+
+<p> As noted above, Case Lookup data is organized by the earliest filing date in any real court, so there may be cases that date earlier than the dashboard dates or outside of your filtered range. 
+
+Another discrepancy is the court type; court type is the first court that a record appeared in. For example, a case might show Magistrate Court but still have a U.S. District office filing date later. 
 </p>
  </section>
 
  <section> 
   <h2> Data validation </h2>
 
-<p><b>Criminal cases and defendants filed</b>
+<p><b>DOJ's annual reports are not consistent</b>
+
+  In the process of completing data validation, it became clear that the DOJ's annual reports do not always align with their own data from one year to the next. 
+  
+  In each of the five annual reports for fiscal years 2021 to 2025, the civil caseload table provides a caseload pending number at the start of the year, the cases filed, the cases terminated and the caseload pending at the end. The four figures do not agree with one another: the published end of year figure is between 3.5% and 7.6% smaller than the other three imply. The criminal tables in the same five reports are inconsistent in the same way. The reports do not say why and it's not clear if the discrepancy is due to a reporting error, a change in methodology or some other reason.
+  
+  <b>Criminal cases and defendants filed</b>
 
  DOJ publishes a comparable count once a year in its annual report; the criminal case dashboard does not reproduce it exactly.
 
@@ -110,10 +134,29 @@ The Criminal Cases dashboard and the Referring Agency dashboard are built from t
 
 We have yet to establish a cause but the difference is small enough that it will not change any reading of a trend, and large enough that two figures quoted side by side will not match.
 </p>
+
+<section> <h2> Additional user notes </h2>
+  <p> <b> Topline percentage calculations </b>
+
+  The four dashboards provides some general topline calculations based on the filtered data. All displayed percentages are analyzed from the whole sample, even if data is visualized in quarters or years, never averaging the monthly data. 
+
+  <b> Table functionality </b>
+
+  The data table and the CSV download have fixed columns that are not affected by the filters you select. The table and download will always show the same columns, even if you have filtered for a single district or cause of action. However, the data you download will be filtered, so there may be empty columns in the table. 
+
+  Additionally, the total number displayed is only the total of the filtered data, not the entire dataset, unless you have selected all districts, causes of action, and roles.
+
+  <b> Declinations in Case Lookup </b>
+
+In Case Lookup, the disposition column is only recorded for matters that reached a court and were declined. However, it is not representative of all declined cases, because many of them do not reach a real court. In addition, some matters are declined and later prosecuted, and these would not be visible in the data. 
+
+To see declined matters only, you can filter by "declination" and set "declined matters only." To visualize and filter immediate case declinations terminated by U.S. District Offices, visit our declination dashboard.
+</p>
+</section>
 <section>
   <h2> Explaining settled versus provisional data</h2>
-  <p>
-    LIONS newest months are always incomplete but the variance is not steady. 
+
+  <p> LIONS newest months are always incomplete but the variance is not steady. 
 
     Every monthly data upload is re-reported more completely in later updates, which we are referring to as “settling” the data. The most recent months on any chart are the least complete, and they are marked on the chart, in the table and in the download as "provisional".
 
