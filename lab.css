@@ -60,6 +60,7 @@ body.doc-page .wrap > section.accordion.open > *:not(h1):not(h2){
 	display:block;
     margin-left: 1rem; 
     margin-right: .5rem;
+    padding-bottom: .5rem;
 }
 body.doc-page .wrap > section > p{margin:0}
 

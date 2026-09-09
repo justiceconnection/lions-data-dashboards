@@ -12,7 +12,7 @@
 
     <section>
       <h2>Source files</h2>
-      <p>Justice Connection’s DOJ National Caseload dashboard is sourced and cleaned from monthly filings from the Department of Justice’s Legal Information Office Network System (LIONS). 
+      <p>Justice Connection’s DOJ National Caseload dashboard is sourced and cleaned from <a href="https://www.justice.gov/usao/resources/foia-library/national-caseload-data" target="blank">monthly filings from the Department of Justice’s Legal Information Office Network System (LIONS)</a>. 
       
       LIONS data, also known as the DOJ Case Management System (CMS), is aggregated into a redacted annual fiscal year report at the close of the year. Monthly data is provided in an 88-gigabyte file available to the public, with some categories and identifying information redacted.</p>
     </section>
@@ -21,10 +21,9 @@
       <h2>Data processing</h2>
       <p>Justice Connection lightly cleans the data but does not conduct any analysis of the data. More detailed breakdowns about term definitions and how data is organized into data visuals are below under the respective dashboard categories.  
 
-      Data validation is possible by comparing the DOJ’s annual filings to monthly data downloads. However, given the manual input processes of the LIONS system and lack of information due to redaction or sealed cases, it’s important to note that all data cannot be independently validated. 
-      See the data validation section below for more detailed notes about the discrepancies between monthly filings and annual reports. 
+      Data validation is possible by comparing the DOJ’s annual filings to monthly data downloads. However, given the manual input processes of the LIONS system and lack of information due to redaction or sealed cases, it’s important to note that all data cannot be independently validated. See the data validation section below for more detailed notes about the discrepancies between monthly filings and annual reports. 
 
-      LIONS data updates monthly. Monthly updates include revised data from previous months, meaning updates may differ from previously posted numbers. 
+      LIONS data updates monthly and our dashboard will be updated accordingly. Monthly updates include revised data from previous months, meaning updates may differ from previously posted numbers. See below under "Additional user notes" in the section "Explaining settled versus provisional data" for more information about how to account for the monthly updates.
 
       Based on data analysis, Justice Connection estimates that a near-complete picture of monthly filings can be assumed after a three-month lag, which we categorize as "settled". In other words, for the most accurate monthly filing data, users should only analyze data from three months prior, because more cases data will be added in the subsequent two updates. More recent data outside the settled period is labeled as "provisional." Terminations generally take more time to settle, compared to filings – as much as six months – so the provisional marking on termination and disposition series covers a wider window.</p>
     </section>
@@ -57,7 +56,6 @@
       By counting only district court filings, this dashboard is comparable with the figures that DOJ publishes at the end of the year. Using this smaller case count, our dashboard visualizes 96.4% of DOJ’s published count of criminal cases filed and 100.6% of its published defendants. The wider count, taking in magistrate court prosecutions, matches no published DOJ table at all, making data validation nearly impossible.
 
  <b> Definitions of filed </b>
-
 The word "filed" has different meanings on the dashboard versus Case Lookup function.
 
 The dashboard dates a case by its earliest filing in a U.S. District Court across cases that reached that court. Case Look-Up dates a case by its earliest filing in any real court, across every record with a real court proceeding, which includes magistrate court prosecutions and proceedings that happen after a case has been decided. Therefore Case Look-Up always returns a larger number. Both are accurate.
@@ -77,13 +75,11 @@ A civil case joins the pending case count on the earliest filing date recorded i
 A matter is usually filed in LIONS before it reaches court, so those cases join the count earlier than they otherwise would, and every month in between is counted one higher.
 
 <b>Differences between Civil Cases and Cases by Referring Agency </b>
-
 The Civil dashboard shows the civil caseload organized by cause of action. The Referring Agency dashboard uses the same data to show workload by federal client agency. The two are built as separate files and they do not arrive at identical totals.
 
 Across the whole dataset, the referring agency totals run between 0.03% and 4% higher than the cause of action totals, depending on how you filter U.S. role. The widest gaps are on matters terminated. While the exact underlying reason is not clear, the individual dashboard totals are true, making it clear the difference is between the two files and not a miscount on either dashboard.
 
 <b> Occasional zero months </b>
-
 It is possible for the dashboard to return no data if you filter for one district, one cause of action and one role in the Civil Matters and Cases dashboard or the Cases by Referring Agency dashboard.
 
 These months are not errors, even if its pending cases, it just shows that a caseload was empty, not that a month is empty. The one exception is for provisional data, which may be empty because they're incomplete. For more information about provisional data, read below. </p>
@@ -100,13 +96,11 @@ Another discrepancy is the court type; court type is the first court that a reco
   <h2> Data validation </h2>
 
 <p><b>DOJ's annual reports are not consistent</b>
-
   In the process of completing data validation, it became clear that the DOJ's annual reports do not always align with their own data from one year to the next. 
   
   In each of the five annual reports for fiscal years 2021 to 2025, the civil caseload table provides a caseload pending number at the start of the year, the cases filed, the cases terminated and the caseload pending at the end. However, the four figures do not agree with one another: the published end of year figure is between 3.5% and 7.6% smaller than the other three imply. The criminal tables in the same five reports are inconsistent in the same way. The reports do not say why and it's not clear if the discrepancy is due to a reporting error, a change in methodology or some other reason.
   
   <b>Criminal cases and defendants filed</b>
-
  DOJ publishes a comparable count once a year in its annual report; the criminal case dashboard does not reproduce it exactly.
 
 For <a href=”https://www.justice.gov/usao/media/1443941/dl?inline” target=”_blank”>fiscal year 2025</a>, this dashboard counts 61,671 criminal cases filed against the 63,954 DOJ prints, or 96.4% of DOJ’s figure. On defendants, the dashboard counts 76,836 against DOJ’s 76,409, which is 100.6%. 
@@ -114,7 +108,6 @@ For <a href=”https://www.justice.gov/usao/media/1443941/dl?inline” target=�
 Note this analysis is not replicable across other years. Data validation shows our dashboard matches, on average, 98% of the DOJ’s total reported criminal cases and 103% of their total defendants.
 
 <b>Civil cases filed and terminated</b>
-
 DOJ publishes the civil caseload once a year. Compared against its five annual reports for fiscal years 2021 to 2025, this site’s counts differ from DOJ’s every year on both counts. Our team is still exploring the reasons for these differences. 
 
 <b> Civil cases pending</b>
@@ -125,54 +118,44 @@ Cases pending is a count taken at the end of each month of the civil cases that 
 Part of the discrepancies can be accounted for by later data that will retroactively change the count of cases pending at the end of a given month. One trend we've noticed is the U.S. as a plantiff accounts for almost none of the difference; why is not clear.
 
 <b>Civil matters pending</b>
-
 Our dashboard count for civil matters pending varies from the DOJ published figures to a greater extent than cases. The variance is not normalized nor directional. Matters, similar to cases, is a count taken at the end of each month of all civil matters that have not reached court and have no recorded closure. We caution against using a single month's matters pending to signify events in that month.  
 
 <b> Differences between Criminal Cases and Cases by Referring Agency</b>
-
 The Criminal Cases dashboard and the Referring Agency dashboard are built from the same records and their criminal totals differ by a handful of cases. For fiscal year 2025, the Referring Agency dashboard counts 61,666 criminal cases filed.
 
 We have yet to establish a cause but the difference is small enough that it will not change any reading of a trend, and large enough that two figures quoted side by side will not match.
 </p>
-
+</section>
 <section> <h2> Additional user notes </h2>
-  <p> <b> Topline percentage calculations </b>
 
+  <p> <b> Topline percentage calculations </b>
   The four dashboards provides some general topline calculations based on the filtered data. All displayed percentages are analyzed from the whole sample, even if data is visualized in quarters or years, never averaging the monthly data. 
 
   <b> Table functionality </b>
-
   The data table and the CSV download have fixed columns that are not affected by the filters you select. The table and download will always show the same columns, even if you have filtered for a single district or cause of action. However, the data you download will be filtered, so there may be empty columns in the table. 
 
   Additionally, the total number displayed is only the total of the filtered data, not the entire dataset, unless you have selected all districts, causes of action, and roles.
 
   <b> Declinations in Case Lookup </b>
-
 In Case Lookup, the disposition column is only recorded for matters that reached a court and were declined. However, it is not representative of all declined cases, because many of them do not reach a real court. In addition, some matters are declined and later prosecuted, and these would not be visible in the data. 
 
 To see declined matters only, you can filter by "declination" and set "declined matters only." To visualize and filter immediate case declinations terminated by U.S. District Offices, visit our declination dashboard.
 </p>
-</section>
-<section>
-  <h2> Explaining settled versus provisional data</h2>
+  <h3> Explaining settled versus provisional data</h3>
 
-  <p> LIONS newest months are always incomplete but the variance is not steady. 
-
-    Every monthly data upload is re-reported more completely in later updates, which we are referring to as “settling” the data. The most recent months on any chart are the least complete, and they are marked on the chart, in the table and in the download as "provisional".
+  <p> LIONS newest months are always incomplete but the variance is not steady. Every monthly data upload is re-reported more completely in later updates, which we are referring to as “settling” the data. The most recent months on any chart are the least complete, and they are marked on the chart, in the table and in the download as "provisional".
 
     The scope of missing data is not a constant factor, so we can’t provide an estimation of what’s missing. For example, between the May and June 2026 updates, the newest month of criminal terminations grew by a factor of 2.9. Between the June and July 2026 updates the same measurement gave 5.4. Critically, we still do not believe that this is the final figure, just one step closer. 
 
     Users should note that a sharp decline at the most recent month on the chart is not evidence of a decline, but rather another indicator of incomplete filing data.
 
     <b>Incomplete data</b>
-
     All provisional data is shaded on charts, denoting that they are incomplete. The scope of provisional data depends on the dataset: three months for criminal filings, four for civil filings and six for anything related to terminations, dispositions, declinations or pending issues. Note that figures still move outside of the provisional range, but this is smaller and smaller as the months pass. We've noticed that civil caseload data continues to move for cases two years or older, but by smaller than 1 percentage point. 
 
     <b>Changes over months</b>
     Each monthly update is not clean new figures added to the end, but the same data reported more completely, so a figure for a month years in the past can still change. If you use a figure from this dashboard, include the dashboard visit date.
   </p>
 </section>
- </section>
     <section>
       <h2>Reproducibility</h2>
       <p>For questions about methodology or to request the data processing scripts, please see the <a href="https://github.com/justiceconnection/lions-data-dashboards" target="_blank">project repository</a> or <a href="https://www.thejusticeconnection.org/contact" target="_blank">contact the Justice Connection team via the project's contact links.</a></p>
