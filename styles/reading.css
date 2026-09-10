@@ -1,0 +1,90 @@
+/* "Reading the data" - the reference page's own styles (L-144).
+ *
+ * Loaded ONLY by web/reading-the-data.html, after shared/shared.css, which already
+ * supplies :root, body, .wrap, h1, .sub, .foot, .dashnav and .dashsel. Everything here is
+ * the notes component and the Back control.
+ *
+ * Four properties this component is not free to give up, from the spec's section 13:
+ *   - nothing uses --accent and there is no alpha anywhere. Yellow is 1.19:1 on white,
+ *     so there is nothing to composite away and no contrast argument to re-run.
+ *   - the pressed filter chip is a SHAPE change (filled vs outlined) as well as a colour
+ *     one, so it does not rely on hue. Charcoal on white is 16.07:1.
+ *   - every table sits in .doc-tblwrap with role="region" and tabindex="0". The page must
+ *     never scroll sideways: in a Framer auto-height iframe there is no viewport to
+ *     scroll it back.
+ *   - this is NOT section 5b's caution shape (#fff9c4 plus a 4px charcoal rule). That
+ *     shape was argued for on contrast arithmetic for a warning; reusing it for a
+ *     reference section dilutes it (style guide 5c's precedent).
+ *
+ * Buttons here set their own box because shared/shared.css styles `button` with nothing
+ * but `cursor:pointer`.
+ */
+button.doc-chip,button.doc-expand{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 10px;cursor:pointer}
+/* the back affordance. history.back() where we came from one of our own surfaces,
+   because that often restores the reader's filters from the back/forward cache;
+   a plain link otherwise, which does not. Never guesses: if there is no referrer
+   and no ?from, it is not rendered at all. */
+.doc-back{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;
+  color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:8px 13px;text-decoration:none;margin-bottom:14px}
+.doc-back:hover{background:#f4f4f2;border-color:#d7d7d3}
+.doc-back:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* ── the notes. Same component as revision B minus the panel wrapper: this IS the
+      page now, so there is no outer <details> and no card around everything.
+      Nothing is colour-coded, nothing uses --accent, no alpha anywhere. ── */
+.doc-page{max-width:78ch}
+.doc-stand{margin:0 0 8px;font-size:14px}
+.doc-where{margin:0 0 14px;color:var(--mut);font-size:13px}
+.doc-filter{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px;
+  padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.doc-filter-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);margin-right:4px}
+.doc-chip{font-size:12.5px;padding:5px 11px;border-radius:999px;background:var(--panel);
+  border:1px solid var(--line);color:var(--ink);cursor:pointer}
+.doc-chip:hover{border-color:#c9c9c4;background:#f4f4f2}
+/* the pressed chip is charcoal fill with light text: 16.07:1, and it is a SHAPE
+   change (filled vs outlined) as well as a colour one, so it does not rely on hue */
+.doc-chip.on{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+.doc-chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.doc-filter-note{margin:0 0 10px;font-size:12.5px;color:var(--mut);min-height:0}
+.doc-filter-note:empty{display:none}
+.doc-linkish{appearance:none;background:none;border:0;padding:0;font:inherit;font-size:12.5px;
+  font-weight:600;color:var(--ink);text-decoration:underline;cursor:pointer}
+.doc-linkish:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.doc-retired{margin:0 0 12px;border-left:4px solid var(--ink);background:var(--panel);
+  border-radius:0 8px 8px 0;padding:9px 12px;font-size:13px}
+.doc-expand{font-size:12px;padding:5px 9px;border-radius:8px;margin:0 0 6px}
+.doc-expand:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.doc-body{font-size:13px}
+h2.doc-grp{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);
+  margin:20px 0 6px;padding-top:12px;border-top:1px solid var(--line);font-weight:600}
+.doc-grpsec:first-of-type h2.doc-grp{border-top:0;padding-top:0;margin-top:14px}
+details.doc-entry{border-bottom:1px solid var(--line);scroll-margin-top:12px}
+summary.doc-esum{cursor:pointer;color:var(--ink);font-size:13px;font-weight:600;
+  list-style:none;display:flex;align-items:flex-start;gap:7px;padding:8px 0}
+summary.doc-esum::-webkit-details-marker{display:none}
+summary.doc-esum::before{content:"\25B8";color:var(--mut);font-size:11px;line-height:1.6;
+  transition:transform .15s;display:inline-block;flex:none}
+details.doc-entry[open]>summary.doc-esum::before{transform:rotate(90deg)}
+summary.doc-esum:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+details.doc-entry:target>summary.doc-esum{outline:2px solid var(--ink);outline-offset:2px}
+.doc-ebody{padding:0 0 12px 18px}
+.doc-ebody p{margin:0 0 8px}
+.doc-applies{color:var(--mut);font-size:11.5px}
+.doc-src{color:var(--mut);font-size:11.5px;line-height:1.45}
+.doc-loading{color:var(--mut);font-size:12px;font-style:normal}
+.doc-fig{font-variant-numeric:tabular-nums;font-weight:600}
+.doc-tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:2px 0 10px;max-width:100%}
+.doc-tblwrap:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+table.doc-tbl{border-collapse:collapse;width:100%;min-width:min-content;font-size:12px;margin:0;
+  font-variant-numeric:tabular-nums}
+table.doc-tbl caption{caption-side:top;text-align:left;color:var(--mut);font-size:11px;
+  text-transform:uppercase;letter-spacing:.04em;padding-bottom:4px}
+table.doc-tbl th,table.doc-tbl td{border-bottom:1px solid var(--line);padding:4px 8px 4px 0;text-align:left}
+table.doc-tbl th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+table.doc-tbl td.n,table.doc-tbl th:nth-child(n+2){text-align:right}
+table.doc-tbl tr.tot td{font-weight:700;border-top:1px solid var(--ink)}
+@media(max-width:560px){ table.doc-tbl{font-size:11.5px} table.doc-tbl th,table.doc-tbl td{padding:4px 6px 4px 0} }
+.doc-stamp{margin:20px 0 0;padding-top:10px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:11.5px;line-height:1.45}
+.doc-stamp b{color:var(--ink);font-weight:600}

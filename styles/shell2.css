@@ -87,3 +87,21 @@
    width: 100%;
    box-sizing: border-box;
 }
+
+/* ── L-144: the "Reading the data" bar control and the inline marker ────────────
+   The control is an <a>, not a <button>, because it NAVIGATES while the two beside it
+   open a panel in place. It takes the same .dw-btn box so the bar still reads as one
+   row, and THREE channels separate it, none of them colour: the element itself, the
+   arrow where Filters and User guide carry a chevron, and a link's underline. It never
+   takes the .on state, because it has no state. */
+a.dw-btn{text-decoration:underline;text-underline-offset:3px}
+a.dw-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.dw-arrow{font-weight:800;font-size:13px}
+/* The marker. 16px, aria-hidden glyph inside a link that carries the warning in words
+   for a screen reader. Measured at 0px of table-header height in Chromium: the row is
+   29px with it and 29px without. */
+.docmark{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;
+  margin:0 0 0 5px;line-height:1;font-size:12px;color:var(--ink);text-decoration:none;
+  border-radius:50%;flex:none;vertical-align:baseline}
+.docmark:hover{background:#f0f0ee}
+.docmark:focus-visible{outline:2px solid var(--ink);outline-offset:2px}

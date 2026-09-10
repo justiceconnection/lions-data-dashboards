@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-store">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading the data - LIONS</title>
+<link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
+<link rel="stylesheet" href="shared/shared.css?v=20260903a">
+<link rel="stylesheet" href="styles/reading.css?v=20260904a">
+</head><body><div class="wrap">
+  <!-- The sixth surface (L-144). It is NOT a dashboard and must not grow the dashboard
+       chain: no Chart.js, no head.js globals, no shared.js, no provisional.js, no
+       multipliers.js, no lab.js, no shell2.js and no scripts/<page>.page.js. It has no
+       chart, no data table, no filters over data and no CSV export.
+       Its load order is in invariant 9, amended in the same change that added this page. -->
+  <nav class="dashnav" id="dashnav"></nav>
+  <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
+  <a class="doc-back" id="docback" hidden><span aria-hidden="true">&#8592;</span><span id="docbacklbl"></span></a>
+  <h1>Reading the data</h1>
+  <div class="sub" id="docsub"></div>
+  <div id="reading"></div>
+  <div class="foot"><b>About this data:</b> where the data comes from, who publishes it, and the DOJ links,
+    are on each dashboard at the foot of the page.</div>
+</div>
+<script src="shared/config.js?v=20260904a"></script>
+<script src="shared/documentation.js?v=20260904a"></script>
+<script>
+/* Boot. Short by design: this page has no page script, so anything here is either nav
+   (which needs DASHBOARDS, not shared.js) or the Back control. All copy comes from
+   LIONS_DOC.HEAD so the prose hash covers it. */
+(function () {
+  "use strict";
+  var Q = new URLSearchParams(location.search);
+
+  /* Nav, from shared/config.js (invariant 8). Replicated here rather than pulled in with
+     shared/shared.js, because shared.js brings the whole dashboard layer with it and this
+     page loads none of it. Case Look-Up replicates the same selector for the same reason.
+     No entry is marked `.on`: this page is not one of the five dashboards. */
+  var nav = document.getElementById('dashnav'), sel = document.getElementById('dashsel');
+  var opt0 = document.createElement('option'); opt0.value = ''; opt0.textContent = 'Choose dashboard';
+  sel.appendChild(opt0);
+  DASHBOARDS.forEach(function (d) {
+    /* Built through the DOM rather than an innerHTML string on purpose: docs-check's
+       "every referenced asset exists" scan reads src=/href= literals out of the HTML, and
+       a template string carrying one would be scanned as a broken asset reference. */
+    var a = document.createElement('a'); a.setAttribute('href', './' + d.file); a.textContent = d.name;
+    nav.appendChild(a);
+    var o = document.createElement('option'); o.value = d.file; o.textContent = d.name;
+    sel.appendChild(o);
+  });
+  sel.onchange = function () { if (sel.value) location.href = './' + sel.value; };
+
+  /* The Back control. Rendered ONLY when ?from= names one of our own surfaces: a Back
+     control that guesses where a reader came from is worse than none, so with no ?from=
+     it is not rendered at all.
+     It is a real link with a real href. The click handler calls history.back() instead
+     when there is a referrer and something to go back to, because returning to the exact
+     previous document is what lets a browser restore that dashboard from its
+     back/forward cache with its filter state intact. That is NOT guaranteed, which is
+     why the href is the fallback and why no copy promises it. */
+  var from = Q.get('from'), surf = from && REFERENCES.surfaces[from];
+  if (surf) {
+    var b = document.getElementById('docback');
+    document.getElementById('docbacklbl').textContent = LIONS_DOC.HEAD.backTo + surf.name;
+    b.href = './' + surf.file;
+    b.hidden = false;
+    b.addEventListener('click', function (ev) {
+      if (document.referrer && history.length > 1) { ev.preventDefault(); history.back(); }
+    });
+  }
+
+  document.getElementById('docsub').textContent = LIONS_DOC.HEAD.title;
+  LIONS_DOC.mountPage(document.getElementById('reading'), { from: from });
+})();
+</script>
+<!-- Not optional, and the one thing a page outside the dashboard chain is most likely to
+     be missing. The reporter measures `.wrap` rather than documentElement because once
+     Framer grows the iframe the documentElement is pinned to the grown height and never
+     shrinks back when the user collapses something. This page's whole interaction is
+     expanding and collapsing 25 entries, so without it the embed grows on the first
+     expand and stays grown. Every toggle in the component dispatches `resize`, which is
+     what the reporter listens for. Case Look-Up loads no reporter at all, which is the
+     evidence that this is easy to forget (spec section 8.4). -->
+<script src="shared/height-reporter.js?v=20260903a"></script>
+</body></html>

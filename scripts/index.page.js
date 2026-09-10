@@ -34,6 +34,9 @@ const PV=window.LIONS_PROV;
 const PVOPT={civil:false};
 // The data table and CSV are always monthly and always show every metric, so they take
 // the widest window across the columns they print (spec §3.5, the same envelope rule).
+const DOC_SURFACE='index';
+// The table header is static markup on this page, so the markers are attached by label.
+const DOC_TH_KEYS={'Cases filed':'cases_filed','Def. filed':'defendants_filed'};
 const TBL_METRICS=["cases_filed","cases_terminated","clearance","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"];
 
 function parseCSV(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Object.fromEntries(H.map((h,i)=>[h,i]));
@@ -405,7 +408,12 @@ async function init(){ renderNav();
   CATKEYS=[...UMB]; for(const u of UMB) CATKEYS.push(...SPECS[u]);
   CATMAP={ALL:{grp:'ALL',subcat:'ALL'}};
   for(const u of UMB){ CATMAP[u]={grp:u,subcat:'ALL'}; for(const s of SPECS[u]) CATMAP[s]={grp:u,subcat:s}; }
-  document.getElementById("metric").innerHTML=METRICS.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join("");
+  // L-144: the marker rule is an INDEX into "Reading the data", not a severity signal.
+  // On this page it flags `cases_filed` and `defendants_filed` only - the two series the
+  // DOJ Table 3B entry names. Not `clearance`, not the termination series: a caveat that
+  // covers every metric on a surface is carried by the bar link, not by a glyph on each.
+  document.getElementById("metric").innerHTML=METRICS.map(m=>`<option value="${m[0]}">${docMetricLabel(DOC_SURFACE,m[0],m[1])}</option>`).join("");
+  mountDocMarkers(DOC_SURFACE,document.querySelector('#tablePanel thead'),DOC_TH_KEYS);
   dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,fmt:fmtDist,
     onChange:async v=>{ state.dists=new Set(v); if(!(state.dists.has('National')||state.dists.size===0)) await ensureFull(); render(); }});
   cMS=groupedCatSelect("category",{umbrellas:UMB,specs:SPECS,initial:state.cats,onChange:v=>{ state.cats=new Set(v); render(); }});

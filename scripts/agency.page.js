@@ -22,6 +22,27 @@ const SUB_ORDER_R={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"
 const DEPT_ORDER_V=["Social Security Admin","DOJ","DHS","Treasury","HUD","HHS","Education","Veterans Affairs","Small Business Admin","Agriculture","Defense","Labor","Interior","State","EPA","OPM","Energy","Commerce","USPS","Other"];
 const SUB_ORDER_V={"DOJ":["Bureau of Prisons","FBI","DEA","ATF","USMS","Other DOJ"],"DHS":["ICE","HSI","CBP","Secret Service","Other DHS"],"Treasury":["IRS","Other Treasury"],"Defense":["Army","Navy","Air Force","Army Corps of Engineers","Other Defense"],"HHS":["FDA","HHS-OIG","Other HHS"]};
 const CURRENT="agency.html";
+// L-144: this page is TWO flag sets over one surface. `agencyCivil` is the Civil mode of
+// the same page, so REFERENCES.modes maps it back to `agency` for `?from=`.
+const docMode=()=>isCiv()?'agencyCivil':'agency';
+const DOC_TH_KEYS_R={'Cases filed':'cases_filed','Def. filed':'defendants_filed'};
+
+// ── L-155: `cases_pending` is a COUNTED column, read from its own cube ───────────
+// `civil_agency_pending_cube_national.csv` / `civil_agency_pending_cube.csv`:
+//   ym [, district], department, subagency, role, cases_pending.
+// Not a column on `civil_agency_cube`, and not accumulated in the browser any more: the
+// old running net plotted Bureau of Prisons at -368 where this page's own table said
+// 5,955 (L-126). A caseload cannot be negative.
+//
+// THE ZERO-SUPPRESSION CONTRACT, AND IT RUNS THE WHOLE SPINE. The cube omits zero rows -
+// the full-spine build measured 127.55 MiB, over GitHub's per-file block - so a month
+// with no row ANYWHERE INSIDE THE LOADED CUBE'S OWN min(ym)..max(ym) is a zero. Interior
+// gaps are only half of it: 4,712 of 9,306 agency-grain series END BEFORE THE VINTAGE
+// EDGE, so an interior-only fill would leave half of them simply stopping, and a line
+// that ends in 2019 reads as "no data after 2019" rather than "none after 2019". Outside
+// the spine there is nothing, so the value is null and nothing is drawn. Every read goes
+// through pendingArrC(). `docs/DASHBOARD_STYLE_GUIDE.md` section 6a.
+let PCNAT=null,PCFULL=null,PSP_N=null,PSP_F=null,pcnatLoading=false,pcfullLoading=false;
 // Provisional (right-censored) data - L-014, revised to rev B in L-021.
 // Spec: ops/handoffs/L-003-design-spec.md (revision B).
 // All the logic lives in shared/provisional.js; this page only makes calls.
@@ -78,6 +99,27 @@ function aggR(dists, ags){
   for(const ym of SPINE){ const o=idx.get(ym); R.filed.push(o?o.filed:0);R.term.push(o?o.term:0);R.df.push(o?o.df:0);R.dt.push(o?o.dt:0);R.guilty.push(o?o.guilty:0);R.dismissed.push(o?o.dismissed:0); }
   return R;
 }
+function parsePendC(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Object.fromEntries(H.map((h,i)=>[h,i]));
+  const rows=new Array(L.length-1); let lo=null,hi=null;
+  for(let i=1;i<L.length;i++){ const c=L[i].split(","); const ym=c[I.ym];
+    if(lo===null||ym<lo) lo=ym; if(hi===null||ym>hi) hi=ym;
+    rows[i-1]={ym,grp:c[I.subagency],dept:c[I.department],role:c[I.role],district:I.district!==undefined?c[I.district]:"National",v:+c[I.cases_pending]||0}; }
+  return {rows,spine:{lo,hi}}; }
+// All agencies selected reads the cube's own `department='ALL' AND subagency='ALL'` total
+// row, never a sum of the parts (invariant 3). Only that one key carries subagency='ALL',
+// verified on the promoted cube, so the same filter shape as aggC is correct here.
+function pendingArrC(dists,ags,role){
+  const useNat=dists.has('National')||dists.size===0;
+  const src=useNat?PCNAT:PCFULL, sp=useNat?PSP_N:PSP_F;
+  if(!src||!sp) return SPINE.map(()=>null);            // not loaded yet, or the fetch failed
+  const agAll=ags.has('ALL'), idx=new Map();
+  for(const r of src){
+    if(r.role!==role) continue;
+    if(!useNat&&!dists.has(r.district)) continue;
+    if(agAll?(r.grp!=='ALL'):(r.grp==='ALL'||!ags.has(r.grp))) continue;
+    idx.set(r.ym,(idx.get(r.ym)||0)+r.v); }
+  return SPINE.map(ym=> (ym>=sp.lo&&ym<=sp.hi) ? (idx.get(ym)||0) : null);
+}
 // ---- civil aggregation ----
 function aggC(dists, ags, role){
   const useNat=dists.has('National')||dists.size===0, agAll=ags.has('ALL');
@@ -94,7 +136,11 @@ function aggC(dists, ags, role){
 const mean3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2])/3;
 const ratio3=(num,den,i)=>{ if(i<2)return null; const D=den[i]+den[i-1]+den[i-2],N=num[i]+num[i-1]+num[i-2]; return D>0?100*N/D:null; };
 function cumsum(a){ let acc=0; return a.map(v=>acc+=v); }
-function pendingSeries(R,kind){ const delta=kind==='matters'?R.mr.map((v,i)=>v-R.cf[i]-R.mt[i]):R.cf.map((v,i)=>v-R.ct[i]); return cumsum(delta); }
+// THE CASES BRANCH OF THIS FUNCTION IS DELETED (L-155): cases_pending reads the counted
+// column. What is left is matters only, and it is still a running net because
+// `matters_pending` is NOT in the promoted pending cube - it is held on L-149. Do not add
+// a cases-shaped branch back here.
+function mattersPendingSeries(R){ return cumsum(R.mr.map((v,i)=>v-R.cf[i]-R.mt[i])); }
 function metricArrR(R,m){ switch(m){
   case 'cases_filed': return R.filed.slice();
   case 'cases_filed_3mo': return R.filed.map((_,i)=>mean3(R.filed,i));
@@ -112,17 +158,20 @@ function metricArrC(R,m){ switch(m){
   case 'cases_filed_3mo': return R.cf.map((_,i)=>mean3(R.cf,i));
   case 'cases_terminated': return R.ct.slice();
   case 'cases_terminated_3mo': return R.ct.map((_,i)=>mean3(R.ct,i));
-  case 'cases_pending': return pendingSeries(R,'cases');
-  case 'cases_pending_3mo': { const p=pendingSeries(R,'cases'); return p.map((_,i)=>mean3(p,i)); }
+  case 'cases_pending': return R.cp?R.cp.slice():SPINE.map(()=>null);
+  case 'cases_pending_3mo': { const p=R.cp||SPINE.map(()=>null); return p.map((_,i)=>mean3(p,i)); }
   case 'matters_received': return R.mr.slice();
   case 'matters_received_3mo': return R.mr.map((_,i)=>mean3(R.mr,i));
   case 'matters_terminated': return R.mt.slice();
   case 'matters_terminated_3mo': return R.mt.map((_,i)=>mean3(R.mt,i));
-  case 'matters_pending': return pendingSeries(R,'matters');
-  case 'matters_pending_3mo': { const p=pendingSeries(R,'matters'); return p.map((_,i)=>mean3(p,i)); }
+  case 'matters_pending': return mattersPendingSeries(R);
+  case 'matters_pending_3mo': { const p=mattersPendingSeries(R); return p.map((_,i)=>mean3(p,i)); }
   } return R.cf.slice(); }
 // unified accessors
-function aggregate(dists,ags){ return isCiv()?aggC(dists,ags,state.role):aggR(dists,ags); }
+// aggC and aggR are left pure and are still what the module exports; the counted pending
+// series is attached here, in the one place every render path goes through.
+function aggregate(dists,ags){ if(!isCiv()) return aggR(dists,ags);
+  const R=aggC(dists,ags,state.role); R.cp=pendingArrC(dists,ags,state.role); return R; }
 function metricArray(R,m){ return isCiv()?metricArrC(R,m):metricArrR(R,m); }
 function shareFlow(R){ return isCiv()?R[primaryFlow()]:R.filed; }
 
@@ -136,7 +185,9 @@ let lastRows=[], lastCols=[];
 function renderKPIs(){
   const R=aggregate(state.dists,curAgs());
   const arr=metricArray(R,curMetric()); const idxs=visIdx(); if(!idxs.length) return;
-  const pct=isPct(); const isLevel=curMetric().includes('pending');
+  // A stock is decided by PV.family, the same map that drives the provisional window and
+  // the down-direction copy. A string sniff would mis-fire on any future `*_pending_rate`.
+  const pct=isPct(); const isLevel=PV.family(curMetric())==='stock';
   const set=(id,v)=>document.getElementById(id).textContent=v;
   const fmtVal=v=> v==null?'-':(pct?v.toFixed(1)+'%':Math.round(v).toLocaleString());
   const S=(a,ix)=>{ let s=0,any=false; for(const i of ix){ const v=a[i]; if(v!=null){s+=v;any=true;} } return any?s:null; };
@@ -189,6 +240,14 @@ const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.l
 }};
 
 const TT={enabled:false,external:extTooltip};
+// L-126 / L-155: a STOCK is a level, so a quarter or a fiscal year takes the level at the
+// bucket's LAST month. Summing a stock across a bucket, or cumulating one from the
+// window's first month, is what made this chart show Bureau of Prisons at -368 against
+// its own table's 5,955. A flow or a ratio is unchanged: bucket the component counts
+// first, then run the metric formula (invariant 4).
+function seriesFor(dists,ags,metric,B){ const R=aggregate(dists,ags);
+  return PV.family(metric)==='stock' ? bucketEnd(metricArray(R,metric),B)
+                                     : metricArray(bucketComp(R,B),metric); }
 function renderChart(){
   const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
   const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
@@ -198,7 +257,7 @@ function renderChart(){
   // Provisional: this chart plots one metric across agencies, so the zone and every
   // series share the same window. Anchored to the vintage edge, never to state.to.
   const nOwn=PV.n(curMetric(),pvopt()), flagsOwn=PV.bucketFlags(SPINE,B,nOwn);
-  const datasets=ags.map((ag)=>{ const arr=metricArray(bucketComp(aggregate(state.dists,new Set([ag])),B),curMetric()); const col=agColor(ag);
+  const datasets=ags.map((ag)=>{ const arr=seriesFor(state.dists,new Set([ag]),curMetric(),B); const col=agColor(ag);
     return PV.decorateLine({label:ag,data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:col,_pct:pct},flagsOwn,pr); });
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
      + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
@@ -328,7 +387,9 @@ function renderTable(){
         tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")};
       rows.push(row); sf+=filed; stt+=term; }
     lastRows=rows; lastCols=null;
-    document.getElementById("thead").innerHTML="<tr><th>Month</th><th>Cases filed</th><th>Cases term.</th><th>Clearance %</th><th>Def. filed</th><th>Def. term.</th><th>Guilty %</th><th>Dismissed %</th></tr>";
+    const theadR=document.getElementById("thead");
+    theadR.innerHTML="<tr><th>Month</th><th>Cases filed</th><th>Cases term.</th><th>Clearance %</th><th>Def. filed</th><th>Def. term.</th><th>Guilty %</th><th>Dismissed %</th></tr>";
+    mountDocMarkers(docMode(),theadR,DOC_TH_KEYS_R);
     document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
       return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
     }).join("");
@@ -340,7 +401,9 @@ function renderTable(){
     const rows=[];
     for(const i of visIdx()){ const ym=SPINE[i]; rows.push({ym,vals:arrs.map(a=>a[i]),prov:!!provM[i],tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")}); }
     lastRows=rows; lastCols=cols;
-    document.getElementById("thead").innerHTML="<tr><th>Month</th>"+metricsList().map(m=>`<th>${m[1]}</th>`).join("")+"</tr>";
+    const theadC=document.getElementById("thead");
+    theadC.innerHTML="<tr><th>Month</th>"+metricsList().map(m=>`<th>${m[1]}</th>`).join("")+"</tr>";
+    mountDocMarkers(docMode(),theadC,Object.fromEntries(metricsList().map(m=>[m[1],m[0]])));
     document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
       return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${v==null?"-":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
     }).join("");
@@ -443,6 +506,27 @@ async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; doc
   try{ const r=await fetch("./data/agency_cube.csv",{cache:"reload"}); FULL=parseCSV_R(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } fullLoading=false; }
 async function ensureFullC(){ if(CFULL||cfullLoading) return; cfullLoading=true; document.getElementById("status").textContent="loading district detail…";
   try{ const r=await fetch("./data/civil_agency_cube.csv",{cache:"reload"}); CFULL=parseCSV_C(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } cfullLoading=false; }
+// ── L-155: the pending cubes are fetched LAZILY, never at page load ─────────────
+// `cases_pending` is the only metric that needs them; `matters_pending` does not, because
+// it is not in the cube (L-149). The district file is 66.11 MiB - the third file on this
+// site over GitHub's 50 MiB warning - and is fetched only when a district selection
+// actually needs it.
+const NEEDS_PEND=m=>m==='cases_pending';
+function pendWanted(){ return isCiv()&&NEEDS_PEND(curMetric()); }
+async function ensurePendNat(){ if(PCNAT||pcnatLoading) return; pcnatLoading=true;
+  document.getElementById("status").textContent="loading pending caseload…";
+  try{ const r=await fetch("./data/civil_agency_pending_cube_national.csv",{cache:"reload"}); const p=parsePendC(await r.text()); PCNAT=p.rows; PSP_N=p.spine; }
+  catch(e){ console.error(e); } pcnatLoading=false; }
+async function ensurePendFull(){ if(PCFULL||pcfullLoading) return; pcfullLoading=true;
+  document.getElementById("status").textContent="loading district pending detail…";
+  try{ const r=await fetch("./data/civil_agency_pending_cube.csv",{cache:"reload"}); const p=parsePendC(await r.text()); PCFULL=p.rows; PSP_F=p.spine; }
+  catch(e){ console.error(e); } pcfullLoading=false; }
+// `force` is the data table and the CSV. Both print EVERY metric as a column whatever the
+// chart happens to be showing, so the pending column has to be real whenever a user can
+// actually see it - not only when pending is the selected metric.
+async function ensurePending(force){ if(!isCiv()) return; if(!(force||pendWanted())) return;
+  await ensurePendNat();
+  if(!(state.dists.has('National')||state.dists.size===0)) await ensurePendFull(); }
 async function ensureCivil(){ if(CNAT||civilLoading) return; civilLoading=true; document.getElementById("status").textContent="loading civil data…";
   try{ const r=await fetch("./data/civil_agency_cube_national.csv",{cache:"reload"}); CNAT=parseCSV_C(await r.text());
     const b=buildDepts(CNAT,DEPT_ORDER_V,SUB_ORDER_V); DEPTS_V=b.DEPTS; AGLIST_V=b.AGLIST; }catch(e){ console.error(e); } civilLoading=false; }
@@ -451,7 +535,11 @@ function buildAgencyPicker(){
   document.getElementById('agencyLabel').textContent=isCiv()?'Client agency (grouped)':'Referring agency (grouped)';
   groupedSelect("agency",curDepts(),curAgs(),v=>{ if(isCiv()) state.agsC=new Set(v); else state.ags=new Set(v); render(); });
 }
-function populateMetric(){ const sel=document.getElementById("metric"); sel.innerHTML=metricsList().map(m=>`<option value="${m[0]}">${m[1]}</option>`).join("");
+function populateMetric(){ const sel=document.getElementById("metric");
+  // L-144: the glyph is an INDEX into "Reading the data", not a severity signal. Which
+  // metrics carry it is REFERENCES.flags in shared/config.js, per mode, and a held entry
+  // (matters_pending, L-149) resolves to no marker at all.
+  sel.innerHTML=metricsList().map(m=>`<option value="${m[0]}">${docMetricLabel(docMode(),m[0],m[1])}</option>`).join("");
   if(!metricsList().some(m=>m[0]===curMetric())) setMetric(metricsList()[0][0]); sel.value=curMetric(); }
 
 async function render(){ const st=document.getElementById("status");
@@ -460,6 +548,7 @@ async function render(){ const st=document.getElementById("status");
   document.getElementById('civMasters').hidden=!isCiv();
   const needFull=!(state.dists.has('National')||state.dists.size===0);
   if(needFull){ if(isCiv()) await ensureFullC(); else await ensureFull(); }
+  await ensurePending();
   st.textContent=(isCiv()?'Civil · U.S. as '+state.role+' · '+state.basis+' · ':'Criminal · ')+(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+curAgs().size+" agencies";
   renderKPIs(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); renderTable();
 }
@@ -496,8 +585,11 @@ async function init(){ renderNav();
   state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
-  document.getElementById("dl").addEventListener("click",buildCSV);
-  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
+  // The CSV prints every metric, so it waits on the pending cube rather than exporting a
+  // column of dashes. Same reason the table below triggers the fetch when it is opened.
+  document.getElementById("dl").addEventListener("click",async()=>{ await ensurePending(true); renderTable(); buildCSV(); });
+  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden;
+    if(willOpen) ensurePending(true).then(render); p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
   // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
   // The district cube (agency_cube.csv, ~40 MB) is fetched on EVERY page load,
   // not on district selection. It is intentionally un-awaited, so it never blocks
@@ -509,4 +601,4 @@ async function init(){ renderNav();
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();
-if(typeof module!=='undefined') module.exports={aggR,aggC,metricArrR,metricArrC,buildDepts};
+if(typeof module!=='undefined') module.exports={aggR,aggC,metricArrR,metricArrC,buildDepts,mattersPendingSeries,pendingArrC,parsePendC};
