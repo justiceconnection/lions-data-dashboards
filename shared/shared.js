@@ -76,6 +76,15 @@ function grainBuckets(spine, idxs, grain){
 }
 function bucketSum(arr,B){ return B.map(b=>{ let s=0; for(const i of b.idxs){ const v=arr&&arr[i]; if(v!=null) s+=v; } return s; }); }
 function bucketComp(R,B){ const o={}; for(const k in R){ if(Array.isArray(R[k])) o[k]=bucketSum(R[k],B); } return o; }
+// A STOCK must never be summed across a bucket - L-126. A pending caseload is a level
+// measured at a month end, so a quarter's value is the level at the quarter's LAST month,
+// not the sum of its three months and not the net change across them. Pass the full-spine
+// metric array through this instead of running the metric formula over bucketComp'd
+// components. Which metrics are stocks is PV.family(m)==='stock' (shared/provisional.js),
+// which is already the authority for the provisional window and the down-direction copy;
+// do not invent a second predicate. Trailing nulls inside a bucket fall back to the last
+// non-null month in it, so a partial bucket still reports a real level.
+function bucketEnd(arr,B){ return B.map(b=>{ for(let k=b.idxs.length-1;k>=0;k--){ const v=arr&&arr[b.idxs[k]]; if(v!=null) return v; } return null; }); }
 function grainLabels(B){ return B.map(b=>b.label+(b.partial?'*':'')); }   // "*" flags an incomplete period
 function grainAnyPartial(B){ return B.some(b=>b.partial); }
 // grain-aware x-axis tick label: month keeps the "year at January" behavior; coarser grains show every label.
@@ -242,4 +251,31 @@ function downloadChartSVG(chart, filename, title){
     const a=document.createElement('a'); a.href=url; a.download=filename||'chart.svg';
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
   }catch(e){ console.error('SVG export failed',e); alert('SVG export failed: '+(e&&e.message||e)); }
+}
+
+// ── L-144: the inline "Reading the data" markers ────────────────────────────────
+// The rule and the marker-to-entry map live in `shared/config.js` (REFERENCES.flags):
+// a metric carries the glyph if, and only if, an entry names THAT metric. These two
+// helpers are only the rendering. Both are no-ops if config.js did not load, so a
+// missing marker never breaks a render.
+//
+// `docMetricLabel` is for a <select> option, which cannot hold a link, so the glyph is
+// appended to the option text. HOW A SCREEN READER ANNOUNCES A GLYPH INSIDE AN <option>
+// IS NOT PROVED (spec section 8.1); the fallback, if it reads badly, is the word form
+// "Cases pending (see note)" and it is still open.
+// `mountDocMarkers` is for a table header, where a real <a> can carry the warning in
+// words. It is idempotent, so a re-render that rebuilds the <th>s cannot double up.
+function docMetricLabel(surface,key,label){
+  if(typeof REFERENCES==='undefined') return label;
+  return REFERENCES.entryFor(surface,key)?(label+' '+REFERENCES.glyph):label;
+}
+function mountDocMarkers(surface,root,labelToKey,base){
+  if(typeof REFERENCES==='undefined'||!root) return;
+  for(const th of root.querySelectorAll('th')){
+    if(th.querySelector('.docmark')) continue;
+    const txt=th.textContent.trim().replace(new RegExp('\\s*'+REFERENCES.glyph+'$'),'');
+    const key=labelToKey[txt]; if(!key) continue;
+    const a=REFERENCES.markerFor(surface,key,REFERENCES.markerLabel(txt),base||'');
+    if(a) th.appendChild(a);
+  }
 }

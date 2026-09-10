@@ -11,6 +11,19 @@
   header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   header h1{font-size:18px;margin:0}
   header .tag{font-size:12px;color:var(--muted)}
+  /* L-144: the one link to "Reading the data". This page has no .dw-stick bar, so its
+     home is the header, beside the count - the one place always visible and always at
+     the top, and it already holds a small piece of chrome. A plain link with no target,
+     like every other link on this site. */
+  header .doclink{font-size:12px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+  header .doclink:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  /* the inline marker. The glyph is aria-hidden; the warning is carried in words on the
+     link's aria-label, so it is not vision-only. */
+  .docmark{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;
+    margin:0 0 0 5px;line-height:1;font-size:12px;color:var(--ink);text-decoration:none;
+    border-radius:50%;flex:none;vertical-align:baseline}
+  .docmark:hover{background:#f0f0ee}
+  .docmark:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   .wrap{padding:16px 20px;max-width:1440px}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
 
@@ -184,6 +197,7 @@
 <header>
   <h1>Case Look-Up</h1>
   <span class="tag" id="caseCount">7.51M cases included</span>
+  <a class="doclink" id="docLink" hidden></a>
 </header>
 
 <div class="wrap">
@@ -236,10 +250,10 @@
          inference from lead charges and 1,509 of the FY2025 subset carry neither a
          charge nor a category. The count sentence is filled by loadNoteCount(). -->
     <details class="note" id="recNote">
-      <summary id="recNoteSummary">Data note: record types</summary>
+      <summary id="recNoteSummary">Data note: record types, and what changed for post-disposition proceedings</summary>
       <div class="note-body">
 
-       <h4>The three record types</h4>
+        <h4>The three record types</h4>
         <dl>
           <dt>Case</dt>
           <dd> A case is when there is at least one proceeding in a real court that is not post-disposition. These records carry a <b>filed</b> date and a <b>court type</b>.</dd>
@@ -252,13 +266,13 @@
         <h4>Some caveats about record types</h4>
         <p>The name describes <i>where the record sits in the court history</i>. It is not a description of what the proceeding was about: if LIONS shows that the activity is post-disposition, it does not record what kind of proceeding it was. Most of these records carry a program category or a lead charge, some carry neither, and we have not labeled them beyond what is recorded.</p>
 
-        <dt>What changed</dt>
+        <h4>What changed</h4>
         <p>These records used to be counted as <b>cases</b>, and were given a <b>filed date</b> taken from the post-disposition proceeding. They are now their own record type. Nothing was removed and the total number of records is unchanged. <span class="note-count" id="pdCount" aria-live="polite"></span></p>
 
-        <dt>Use record type to exclude them</dt>
+        <h4>Use record type to exclude them</h4>
         <p>The <b>court type</b> filter  no longer offers the three post-disposition values, because these records no longer carry a court type at all. Use <b>record type</b> instead: choose <b>case</b> to exclude post-disposition proceedings, or <b>post-disposition proceeding</b> to see only them. Record type is the only filter that separates them from <b>matters</b> - <b>court type</b> is blank for both.</p>
 
-        <dt>Differences in dashboard display and data download</dt>
+        <h4>Differences in dashboard display and data download</h4>
         <p>Justice Connection did some data labeling to make the dashboard easier to read so there may be some slight changes if you choose to download data as a CSV. One example: dates are <code>MM/DD/YYYY</code> on screen and <code>YYYY-MM-DD</code> in the original data. Another change is the CSV&rsquo;s column headings match the underlying data field names rather than our table headings - for example <code>dc_filed_date</code> for &ldquo;U.S. District Court filing date&rdquo;.</p>
       </div>
     </details>
@@ -981,6 +995,16 @@ function renderTable(cols, rows){
   const thead=$('tbl').querySelector('thead'), tbody=$('tbl').querySelector('tbody');
   thead.innerHTML='<tr>'+cols.map(k=>`<th data-c="${k}">${labels[k]}${sortState.col===k?(sortState.dir<0?' ▼':' ▲'):''}</th>`).join('')+'</tr>';
   thead.querySelectorAll('th').forEach(th=>th.onclick=()=>{ const c=th.dataset.c; sortState={col:c,dir:sortState.col===c?-sortState.dir:1}; runSearch(); });
+  // L-144: the marker on the Filed column. `filed_date` is the one column on this page an
+  // entry names - "filed" means a wider thing here than on the Criminal dashboard, and
+  // this page always returns the larger number. Rebuilt with the header on every search,
+  // so it cannot go stale; a click on it must not sort, hence stopPropagation.
+  if(typeof REFERENCES!=='undefined'){
+    thead.querySelectorAll('th').forEach(th=>{
+      const a=REFERENCES.markerFor('lookup',th.dataset.c,REFERENCES.markerLabel(labels[th.dataset.c]||th.dataset.c),'../');
+      if(a){ a.addEventListener('click',e=>e.stopPropagation()); th.appendChild(a); }
+    });
+  }
   tbody.innerHTML=rows.map(r=>'<tr>'+cols.map(k=>`<td>${fmtCell(r[k],k)}</td>`).join('')+'</tr>').join('');
 }
 
@@ -1009,7 +1033,7 @@ init().catch(e=>console.error(e));
 </script>
 <!-- Dashboard selector: reads the shared DASHBOARDS list (single source of truth) and links back
      to the dashboards with the correct relative path. No Filters dropdown here by design. -->
-<script src="../shared/config.js?v=20260903a"></script>
+<script src="../shared/config.js?v=20260904a"></script>
 <script>
 (function(){
   var CUR='case-lookup/index.html';
@@ -1021,6 +1045,18 @@ init().catch(e=>console.error(e));
   sel.onchange=function(){ if(sel.value!==CUR) location.href=pathFor(sel.value); };
   var onA=nav.querySelector('a.on'); if(onA) onA.addEventListener('click',function(e){ e.preventDefault(); });
   var m=DASHBOARDS.filter(function(d){return d.file===CUR;})[0]; if(m) document.getElementById('dnavCur').textContent=m.name;
+  // L-144: the header link and the marker on the "Date range applies to" option. Both
+  // come from REFERENCES in shared/config.js, which this page already loads for the nav,
+  // so Case Look-Up gains NO new script and no new dependency. `../` because this page is
+  // one directory down.
+  if(typeof REFERENCES!=='undefined'){
+    var dl=document.getElementById('docLink');
+    dl.href=REFERENCES.href('lookup',null,'../');
+    dl.textContent=REFERENCES.label+' '+REFERENCES.arrow;
+    dl.hidden=false;
+    var bo=document.querySelector('#f_basis option[value="filed_date"]');
+    if(bo && REFERENCES.entryFor('lookup','filed_date')) bo.textContent=bo.textContent+' '+REFERENCES.glyph;
+  }
   var acc=document.getElementById('dnav'), head=document.getElementById('dnavHead');
   head.addEventListener('click',function(){ var o=acc.classList.toggle('open'); head.setAttribute('aria-expanded', o?'true':'false'); });
 })();

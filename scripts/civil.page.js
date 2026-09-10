@@ -4,6 +4,28 @@ const NUM=["matters_received","cases_filed","matters_terminated","cases_terminat
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
 const CATPAL=(window.LIONS_PAL||PALETTE);
 const RPAL=["#2a78d6","#c02d5a","#1d9e75","#7a4fc0","#0e8a8a","#d9622b"];
+const DOC_SURFACE='civil';
+
+// ── L-155: `cases_pending` is a COUNTED column, read from its own cube ───────────
+// `civil_pending_cube_national.csv` / `civil_pending_cube.csv`:
+//   ym [, district], category, role, cases_pending.
+// It is NOT a column on `civil_cube` and it is NOT accumulated in the browser any more.
+// The old running net (cumulative cases_filed - cases_terminated from 1994-10) was an
+// index of net change since October 1994, not a caseload: it went negative in 375 of 382
+// months for role Plaintiff, and the chart restarted the sum at the window's first month,
+// so it plotted 45,788 where this page's own table said 84,556. L-126.
+//
+// THE ZERO-SUPPRESSION CONTRACT, AND IT RUNS THE WHOLE SPINE. The cube omits zero rows,
+// because the full-spine build measured 127.55 MiB, over GitHub's per-file block. So a
+// month with no row, ANYWHERE INSIDE THE LOADED CUBE'S OWN min(ym)..max(ym), is a zero.
+// Interior gaps are only half of it: 1,364 of 3,726 civil-grain series and 4,712 of
+// 9,306 agency-grain series END BEFORE THE VINTAGE EDGE, and a line that stops in 2019
+// reads as "no data after 2019" rather than "none after 2019" - the worse of the two
+// wrong readings, because it invites a reader to think the series was discontinued.
+// Outside the spine there is genuinely nothing, so the value is null and nothing is
+// drawn. Every read goes through pendingArr(), so no call site can get it wrong.
+// `docs/DASHBOARD_STYLE_GUIDE.md` section 6a.
+let PNAT=null,PFULL=null,PSP_N=null,PSP_F=null,pnatLoading=false,pfullLoading=false;
 const MULT=(window.LIONS_MULT&&window.LIONS_MULT.civil)||{cases_filed:[1.6598,1.1815,1.0872,1.0611,1.0438,1.0358,1.0313,1.0273],cases_terminated:[1.7179,1.2881,1.1729,1.1248,1.0884,1.0563,1.0393,1.0305]};
 function hasPred(m){ return !!MULT[m]; }
 function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const last=SPINE.length-1;
@@ -40,6 +62,28 @@ function parseCSV(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Obje
   for(let i=1;i<L.length;i++){ const c=L[i].split(","); const o={ym:c[I.ym],grp:c[I.category],role:c[I.role],district:I.district!==undefined?c[I.district]:"National"};
     for(const k of NUM) o[k]=+c[I[k]]||0; out[i-1]=o; } return out; }
 
+function parsePend(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Object.fromEntries(H.map((h,i)=>[h,i]));
+  const rows=new Array(L.length-1); let lo=null,hi=null;
+  for(let i=1;i<L.length;i++){ const c=L[i].split(","); const ym=c[I.ym];
+    if(lo===null||ym<lo) lo=ym; if(hi===null||ym>hi) hi=ym;
+    rows[i-1]={ym,grp:c[I.category],role:c[I.role],district:I.district!==undefined?c[I.district]:"National",v:+c[I.cases_pending]||0}; }
+  return {rows,spine:{lo,hi}}; }
+// All causes selected reads the cube's own `category='ALL'` total row, never a sum of the
+// 14 causes (invariant 3). They do partition exactly here, but the total row is still the
+// right thing to read.
+function pendingArr(dists,cats,role){
+  const useNat=dists.has('National')||dists.size===0;
+  const src=useNat?PNAT:PFULL, sp=useNat?PSP_N:PSP_F;
+  if(!src||!sp) return SPINE.map(()=>null);            // not loaded yet, or the fetch failed
+  const catAll=cats.has('ALL')||cats.size===0;
+  const idx=new Map();
+  for(const r of src){
+    if(r.role!==role) continue;
+    if(!useNat&&!dists.has(r.district)) continue;
+    if(catAll?(r.grp!=='ALL'):(r.grp==='ALL'||!cats.has(r.grp))) continue;
+    idx.set(r.ym,(idx.get(r.ym)||0)+r.v); }
+  return SPINE.map(ym=> (ym>=sp.lo&&ym<=sp.hi) ? (idx.get(ym)||0) : null);
+}
 function aggregateRaw(nat, full, spine, dists, cats, role){
   const useNat = dists.has('National') || dists.size===0;
   const catAll = cats.has('ALL') || cats.size===0;
@@ -54,25 +98,33 @@ function aggregateRaw(nat, full, spine, dists, cats, role){
   for(const ym of spine){ const o=idx.get(ym); for(const k in R) R[k].push(o?o[k]:0); }
   return R;
 }
+// Every aggregation on this page goes through agg(), which is aggregateRaw plus the
+// counted pending series. aggregateRaw itself is left pure and is still what the module
+// exports, so it can be reasoned about without a second cube.
+function agg(dists,cats,role){ const R=aggregateRaw(NAT,FULL,SPINE,dists,cats,role); R.cp=pendingArr(dists,cats,role); return R; }
 const mean3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2])/3;
 function cumsum(arr){ let acc=0; return arr.map(v=>acc+=v); }
-function pendingSeries(R,kind){ // kind: 'matters' or 'cases'
-  const delta = kind==='matters' ? R.mr.map((v,i)=>v-R.cf[i]-R.mt[i]) : R.cf.map((v,i)=>v-R.ct[i]);
-  return cumsum(delta);
-}
+// THE CASES BRANCH OF THIS FUNCTION IS DELETED (L-155): cases_pending reads the counted
+// column. What is left is matters only, and it is still a running net because
+// `matters_pending` is NOT in the promoted pending cube - it is held on L-149. So that
+// series is an index of net change since October 1994 and not a stock; the entry that
+// says so on "Reading the data" is written, signed and does not render until the column
+// exists, and `matters_pending` carries no marker for the same reason. Do not add a
+// cases-shaped branch back here.
+function mattersPendingSeries(R){ return cumsum(R.mr.map((v,i)=>v-R.cf[i]-R.mt[i])); }
 function metricArray(R, metric){ switch(metric){
     case 'cases_filed': return R.cf.slice();
     case 'cases_filed_3mo': return R.cf.map((_,i)=>mean3(R.cf,i));
     case 'cases_terminated': return R.ct.slice();
     case 'cases_terminated_3mo': return R.ct.map((_,i)=>mean3(R.ct,i));
-    case 'cases_pending': return pendingSeries(R,'cases');
-    case 'cases_pending_3mo': { const p=pendingSeries(R,'cases'); return p.map((_,i)=>mean3(p,i)); }
+    case 'cases_pending': return R.cp?R.cp.slice():SPINE.map(()=>null);
+    case 'cases_pending_3mo': { const p=R.cp||SPINE.map(()=>null); return p.map((_,i)=>mean3(p,i)); }
     case 'matters_received': return R.mr.slice();
     case 'matters_received_3mo': return R.mr.map((_,i)=>mean3(R.mr,i));
     case 'matters_terminated': return R.mt.slice();
     case 'matters_terminated_3mo': return R.mt.map((_,i)=>mean3(R.mt,i));
-    case 'matters_pending': return pendingSeries(R,'matters');
-    case 'matters_pending_3mo': { const p=pendingSeries(R,'matters'); return p.map((_,i)=>mean3(p,i)); }
+    case 'matters_pending': return mattersPendingSeries(R);
+    case 'matters_pending_3mo': { const p=mattersPendingSeries(R); return p.map((_,i)=>mean3(p,i)); }
   } return R.cf.slice(); }
 function metricLabel(m){ const e=metricsList().find(x=>x[0]===m); return e?e[1]:m; }
 
@@ -96,9 +148,11 @@ const rint=x=>x==null?"-":Math.round(x).toLocaleString();
 let lastRows=[];
 
 function renderKPIs(){
-  const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role);
+  const R=agg(state.dists,state.cats,state.role);
   const arr=metricArray(R,state.metric); const idxs=visIdx(); if(!idxs.length) return;
-  const isLevel=state.metric.includes('pending');
+  // A stock is decided by PV.family, the same map that drives the provisional window and
+  // the down-direction copy. A string sniff would mis-fire on any future `*_pending_rate`.
+  const isLevel=PV.family(state.metric)==='stock';
   const set=(id,v)=>document.getElementById(id).textContent=v;
   const fmtVal=v=> v==null?'-':Math.round(v).toLocaleString();
   const S=(a,ix)=>{ let s=0,any=false; for(const i of ix){ const v=a[i]; if(v!=null){s+=v;any=true;} } return any?s:null; };
@@ -113,7 +167,7 @@ function renderKPIs(){
   const yoy=chg(avg3at(e),avg3at(e-12));
   set('kpi3', yoy==null?'-':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
   // KPI 4: cause share change (kept)
-  const sel=R[primaryFlow()], tot=aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL']),state.role)[primaryFlow()];
+  const sel=R[primaryFlow()], tot=agg(state.dists,new Set(['ALL']),state.role)[primaryFlow()];
   const sum3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2]);
   const shr=(i)=>{ const su=sum3(sel,i),t=sum3(tot,i); return (su!=null&&t)?100*su/t:null; };
   const comp=(shr(e)!=null&&shr(e-12)!=null)?shr(e)-shr(e-12):null;
@@ -136,7 +190,7 @@ function renderKPIs(){
 }
 
 function renderTable(){
-  const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role);
+  const R=agg(state.dists,state.cats,state.role);
   const cols=metricsList().map(([k,lbl])=>({key:k,label:lbl}));
   const arrs=cols.map(c=>metricArray(R,c.key));
   const rows=[];
@@ -147,7 +201,9 @@ function renderTable(){
   for(const i of visIdx()){ const ym=SPINE[i];
     rows.push({ym, vals:arrs.map(a=>a[i]), prov:!!provM[i], tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")}); }
   lastRows={head:cols.map(c=>c.key),rows};
-  document.getElementById("thead").innerHTML="<tr><th>Month</th>"+cols.map(c=>`<th>${c.label}</th>`).join("")+"</tr>";
+  const thead=document.getElementById("thead");
+  thead.innerHTML="<tr><th>Month</th>"+cols.map(c=>`<th>${c.label}</th>`).join("")+"</tr>";
+  mountDocMarkers(DOC_SURFACE,thead,Object.fromEntries(cols.map(c=>[c.label,c.key])));
   document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
     return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${v==null?"-":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
   }).join("");
@@ -169,6 +225,14 @@ function baseScales(pct,rightTitle,anyR){ return {x:{grid:{display:false,drawTic
   y1:{position:'right',display:anyR,beginAtZero:!pct,title:{display:anyR,text:rightTitle,color:'#212123',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{drawOnChartArea:false}}}; }
 
 const TT={enabled:false,external:extTooltip};
+// L-126 / L-155: a STOCK is a level, so a quarter or a fiscal year takes the level at the
+// bucket's LAST month. Summing a stock across a bucket, or cumulating one from the
+// window's first month, is exactly what made this chart disagree with its own table by a
+// constant 38,768. A flow or a ratio is unchanged: bucket the component counts first,
+// then run the metric formula (invariant 4).
+function seriesFor(dists,cats,metric,B){ const R=agg(dists,cats,state.role);
+  return PV.family(metric)==='stock' ? bucketEnd(metricArray(R,metric),B)
+                                     : metricArray(bucketComp(R,B),metric); }
 function renderChart(){
   const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
   const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]), pr=B.map(b=>b.partial?3.2:0), anyPartial=grainAnyPartial(B);
@@ -184,12 +248,12 @@ function renderChart(){
   const nZone=PV.nMax(plotted,PVOPT), nOwn=PV.n(state.metric,PVOPT);
   const flagsZone=PV.bucketFlags(SPINE,B,nZone), flagsOwn=PV.bucketFlags(SPINE,B,nOwn);
   const provDir=PV.dirAll(plotted);
-  const mk=(s,j,pal,dash)=>{ const arr=metricArray(bucketComp(aggregateRaw(NAT,FULL,SPINE,s.dists,s.cats,state.role),B),state.metric); const col=pal[j%pal.length];
+  const mk=(s,j,pal,dash)=>{ const arr=seriesFor(s.dists,s.cats,state.metric,B); const col=pal[j%pal.length];
     // borderDash still means "right axis" and is untouched; fade means provisional.
     return PV.decorateLine({label:s.label+(s.axis==='y1'?' (R)':''),data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,borderDash:dash?[5,4]:[],yAxisID:s.axis,_col:col},flagsOwn,pr); };
   const leftDs=left.map((s,j)=>mk(s,j,PALETTE,false));
   const datasets=[...leftDs, ...right.map((s,j)=>mk(s,j,RPAL,true))];
-  rMetrics.forEach((m2,j)=>{ const arr=metricArray(bucketComp(aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role),B),m2); const col=RPAL[j%RPAL.length];
+  rMetrics.forEach((m2,j)=>{ const arr=seriesFor(state.dists,state.cats,m2,B); const col=RPAL[j%RPAL.length];
     datasets.push(PV.decorateLine({label:metricLabel(m2)+' (R)',data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col},PV.bucketFlags(SPINE,B,PV.n(m2,PVOPT)),pr)); });
   const anyR=right.length>0||rMetrics.length>0;
   const rAxisTitle=(metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):metricLabel(state.metric))+' (Right)';
@@ -210,8 +274,8 @@ function renderChart2(){
   const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
   const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]); const pf=primaryFlow();
   const allSel=(state.cats.has('ALL')||state.cats.size===0); const cats=allSel?CATLIST:[...state.cats];
-  const totB=bucketSum(aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL']),state.role)[pf],B);
-  const cAB={}; for(const c2 of cats) cAB[c2]=bucketSum(aggregateRaw(NAT,FULL,SPINE,state.dists,new Set([c2]),state.role)[pf],B);
+  const totB=bucketSum(agg(state.dists,new Set(['ALL']),state.role)[pf],B);
+  const cAB={}; for(const c2 of cats) cAB[c2]=bucketSum(agg(state.dists,new Set([c2]),state.role)[pf],B);
   // Normalised on the primary flow -> inflow window. Under-reporting distorts the MIX.
   const mixMetric=state.basis==='cases'?'cases_filed':'matters_received';
   const nMix=PV.n(mixMetric,PVOPT), flagsMix=PV.bucketFlags(SPINE,B,nMix);
@@ -236,7 +300,7 @@ function renderChart3(){
   box.style.display=''; msg.style.display='none';
   const idxs=visIdx(); const B=grainBuckets(SPINE,idxs,state.grain);
   const labels=grainLabels(B), ymAxis=B.map(b=>SPINE[b.idxs[0]]);
-  const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats,state.role);
+  const R=agg(state.dists,state.cats,state.role);
   const ctB=bucketSum(R.ct,B);
   const datasets=DISP.map(([k,name,col],j)=>{ const key={d_judg_us:'ju',d_settle:'st',d_against:'ag',d_dismissed:'dm',d_other:'ot'}[k];
     const numB=bucketSum(R[key],B);
@@ -332,15 +396,42 @@ function multiSelect(mountId,opts){
 function districtList(){ return FULL?[...new Set(FULL.map(r=>r.district))].sort():[]; }
 function buildAx2Picker(){ state.ax2sel=new Set(); const mount=document.getElementById('ax2sel');
   if(state.ax2by==='metric'){ mount.classList.remove('ms'); mount.innerHTML='';
-    const sel=document.createElement('select'); sel.innerHTML='<option value="">- pick a metric -</option>'+metricsList().map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');
-    sel.addEventListener('change',()=>{ state.ax2sel=sel.value?new Set([sel.value]):new Set(); renderChart(); }); mount.append(sel);
+    const sel=document.createElement('select'); sel.innerHTML='<option value="">- pick a metric -</option>'+metricsList().map(m=>`<option value="${m[0]}">${docMetricLabel(DOC_SURFACE,m[0],m[1])}</option>`).join('');
+    sel.addEventListener('change',async()=>{ state.ax2sel=sel.value?new Set([sel.value]):new Set(); await ensurePending(); renderChart(); }); mount.append(sel);
   } else {
     ax2MS=multiSelect('ax2sel',{items:(state.seriesBy==='category'?CATLIST:districtList()),plain:true,emptyLabel:'pick series…',initial:state.ax2sel,searchable:state.seriesBy==='district',
       fmt:state.seriesBy==='district'?fmtDist:undefined, onChange:v=>{ state.ax2sel=new Set(v); renderChart(); }}); } }
+// ── L-155: the pending cubes are fetched LAZILY, never at page load ─────────────
+// `cases_pending` is the only metric that needs them; `matters_pending` does not, because
+// it is not in the cube (L-149). The district file is 33.74 MiB and is fetched only when
+// a district selection actually needs it.
+const NEEDS_PEND=m=>m==='cases_pending';
+function pendWanted(){ if(NEEDS_PEND(state.metric)) return true;
+  if(state.ax2by==='metric'){ for(const m of state.ax2sel) if(NEEDS_PEND(m)) return true; } return false; }
+async function ensurePendNat(){ if(PNAT||pnatLoading) return; pnatLoading=true;
+  document.getElementById("status").textContent="loading pending caseload…";
+  try{ const r=await fetch("./data/civil_pending_cube_national.csv",{cache:"reload"}); const p=parsePend(await r.text()); PNAT=p.rows; PSP_N=p.spine; }
+  catch(e){ console.error(e); } pnatLoading=false; }
+async function ensurePendFull(){ if(PFULL||pfullLoading) return; pfullLoading=true;
+  document.getElementById("status").textContent="loading district pending detail…";
+  try{ const r=await fetch("./data/civil_pending_cube.csv",{cache:"reload"}); const p=parsePend(await r.text()); PFULL=p.rows; PSP_F=p.spine; }
+  catch(e){ console.error(e); } pfullLoading=false; }
+// `force` is the data table and the CSV. Both print EVERY metric as a column whatever the
+// chart happens to be showing, so the pending column has to be real whenever a user can
+// actually see it - not only when pending is the selected metric. Nothing is fetched
+// until one of those three things happens.
+async function ensurePending(force){ if(!(force||pendWanted())) return;
+  await ensurePendNat();
+  if(!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district') await ensurePendFull(); }
 async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; document.getElementById("status").textContent="loading district detail…";
   try{ const r=await fetch("./data/civil_cube.csv",{cache:"reload"}); FULL=parseCSV(await r.text()); if(dMS) dMS.setItems(districtList()); }
   catch(e){ console.error(e); } fullLoading=false; }
-function populateMetric(){ const sel=document.getElementById("metric"); sel.innerHTML=metricsList().map(m=>`<option value="${m[0]}">${m[1]}</option>`).join(""); state.metric=metricsList()[0][0]; sel.value=state.metric; }
+function populateMetric(){ const sel=document.getElementById("metric");
+  // L-144: the glyph is an INDEX into "Reading the data", not a severity signal. Which
+  // metrics carry it is REFERENCES.flags in shared/config.js, and a held entry
+  // (matters_pending, L-149) resolves to no marker at all.
+  sel.innerHTML=metricsList().map(m=>`<option value="${m[0]}">${docMetricLabel(DOC_SURFACE,m[0],m[1])}</option>`).join("");
+  state.metric=metricsList()[0][0]; sel.value=state.metric; }
 
 async function init(){ renderNav();
   try{ const r=await fetch("./data/civil_cube_national.csv",{cache:"reload"}); NAT=parseCSV(await r.text()); }
@@ -349,17 +440,17 @@ async function init(){ renderNav();
   CATLIST=[...new Set(NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();
   populateMetric();
   dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,fmt:fmtDist,
-    onChange:async v=>{ state.dists=new Set(v); if(!(state.dists.has('National')||state.dists.size===0)) await ensureFull(); render(); }});
+    onChange:async v=>{ state.dists=new Set(v); if(!(state.dists.has('National')||state.dists.size===0)) await ensureFull(); await ensurePending(); render(); }});
   cMS=multiSelect("category",{items:CATLIST,allValue:"ALL",allLabel:"All causes",initial:state.cats,searchable:false,
     onChange:v=>{ state.cats=new Set(v); render(); }});
   buildAx2Picker();
-  document.getElementById("metric").addEventListener("change",e=>{ state.metric=e.target.value; render(); });
+  document.getElementById("metric").addEventListener("change",async e=>{ state.metric=e.target.value; await ensurePending(); render(); });
   document.querySelectorAll('#role button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#role button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.role=b.dataset.v; render(); }));
   document.querySelectorAll('#basis button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.basis=b.dataset.v; populateMetric(); if(state.ax2&&state.ax2by==='metric') buildAx2Picker(); render(); }));
-  document.querySelectorAll('#seriesBy button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#seriesBy button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.seriesBy=b.dataset.v; if(state.seriesBy==='district') await ensureFull(); if(state.ax2by==='series') buildAx2Picker(); render(); }));
+  document.querySelectorAll('#seriesBy button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#seriesBy button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.seriesBy=b.dataset.v; if(state.seriesBy==='district') await ensureFull(); await ensurePending(); if(state.ax2by==='series') buildAx2Picker(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); updateChartAccessibility(); }));
   document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); renderChart3(); }));
-  document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); buildAx2Picker(); renderChart(); }));
+  document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); await ensurePending(); buildAx2Picker(); renderChart(); }));
   document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
     const ns=new Set(state.admins); ns.has(k)?ns.delete(k):ns.add(k);
@@ -370,8 +461,11 @@ async function init(){ renderNav();
   state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
-  document.getElementById("dl").addEventListener("click",buildCSV);
-  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
+  // The CSV prints every metric, so it waits on the pending cube rather than exporting a
+  // column of dashes. Same reason the table below triggers the fetch when it is opened.
+  document.getElementById("dl").addEventListener("click",async()=>{ await ensurePending(true); renderTable(); buildCSV(); });
+  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden;
+    if(willOpen) ensurePending(true).then(render); p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
   // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
   // The district cube (civil_cube.csv, ~31 MB) is fetched on EVERY page load,
   // not on district selection. It is intentionally un-awaited, so it never blocks
@@ -383,4 +477,4 @@ async function init(){ renderNav();
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();
-if(typeof module!=='undefined') module.exports={aggregateRaw,metricArray,pendingSeries};
+if(typeof module!=='undefined') module.exports={aggregateRaw,metricArray,mattersPendingSeries,pendingArr,parsePend};

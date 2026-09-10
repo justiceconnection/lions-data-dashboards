@@ -49,6 +49,22 @@
   var gbtn=document.createElement('button'); gbtn.type='button'; gbtn.className='dw-btn dw-guide-btn';
   gbtn.setAttribute('aria-expanded','false'); gbtn.innerHTML=book+'<span>User guide</span> <span class="dw-chev">▾</span>';
   bar.appendChild(gbtn);
+  /* ── L-144: the third control, "Reading the data". A LINK, not a button: it navigates
+     to the reference page rather than opening a panel here. Built only if
+     shared/config.js loaded and only if we can name which surface we are on - a control
+     that guesses the surface would send `?from=` a lie. It is deliberately NOT in
+     DASHBOARDS and NOT inside .dashnav, which lab.js folds into a collapsed accordion. */
+  try{
+    var cur=(typeof CURRENT!=='undefined'&&CURRENT)||(location.pathname.split('/').pop()||'index.html');
+    var skey=null;
+    if(typeof REFERENCES!=='undefined'){ for(var k in REFERENCES.surfaces){ if(REFERENCES.surfaces[k].file===cur) skey=k; } }
+    if(skey){
+      var dbtn=document.createElement('a'); dbtn.className='dw-btn dw-doc-btn';
+      dbtn.href=REFERENCES.href(skey,null,'');
+      dbtn.innerHTML='<span>'+REFERENCES.label+'</span> <span class="dw-arrow" aria-hidden="true">'+REFERENCES.arrow+'</span>';
+      bar.appendChild(dbtn);
+    }
+  }catch(e){ console.error('[shell2 doc link]',e); }
    var panel=document.createElement('div'); panel.className='dw-panel';
   var gpanel=document.createElement('div'); gpanel.className='dw-guide-panel';
    wrap.insertBefore(stick, anchor);                                                             // insert wrapper BEFORE moving tools
@@ -58,11 +74,11 @@
    var phead=document.createElement('div'); phead.className='dw-phead';                          // collapse control at BOTTOM of panel
    phead.innerHTML='<span class="dw-ptitle">'+gear+'<span>Filters</span></span><button type="button" class="dw-close">Collapse <span class="dw-cchev">▴</span></button>';
    panel.appendChild(phead);
-  // guide panel header + empty content container - DO NOT populate text here (user will provide)
+  // guide panel header + content container
   var ghead=document.createElement('div'); ghead.className='dw-phead';
   ghead.innerHTML='<span class="dw-ptitle">'+book+'<span>How to Use This Dashboard</span></span><button type="button" class="dw-close">Collapse <span class="dw-cchev">▴</span></button>';
   var gcontent=document.createElement('div'); gcontent.className='dw-guide-content';
-  gcontent.innerHTML = '<p class="dw-guide-par">This dashboard collects data published from the Department of Justice’s Legal Information Office Network System (LIONS). For more information about data collection, verification, categorization and timing, please see the <a href="/documentation.html" target="_blank">data documentation page</a>.<p class="dw-guide-par">Data can be filtered on a time basis by calendar date, presidential administration (starting from Obama’s second term to present), and the federal fiscal year. The federal government’s fiscal calendar runs from October 1 of the year prior to September 30 of the dated year. For example, fiscal year 2017 starts in October 2016 and ends in September 2017. Fiscal quarters, therefore are Oct. 1 to Dec. 31; Jan. 1 to March 31; April 1 to June 30 and July 1 to Sept. 30.</p><p class="dw-guide-par">Please note that complete monthly data lags by about 90 days due to DOJ processing, therefore the most accurate data will be three months old or older for criminal cases and six months or longer for declinations. Data that is assumed to be mostly complete will be labeled as "settled" while newer, possibly incomplete data will be labeled as "provisional."</p><p class="dw-guide-par">For more detailed information by states, users can select their state(s) district using the district filter. Please note our dashboard does not display data for the Northern Mariana Islands. Additional DOJ resources for district breakdowns can be found in <a href=/documentation.html>data documentation page</a> or the footnote below.</p><p class="dw-guide-par">To see case issues, filter by program categories, which includes a list of sub-categories or more specific legal concerns. Program categories can also be filtered to only see “primary” concerns, or the attorney’s first-ranked case law concern. Filtered data can be viewed as a table (collapsed below) or downloaded as a CSV (comma-separated value) file to be analyzed further.</p>'
+  gcontent.innerHTML = '<p class="dw-guide-par">This dashboard collects data published from the Department of Justice’s Legal Information Office Network System (LIONS). For more information about data collection, verification, categorization and timing, please see the <a href="documentation.html" target="_blank">data documentation page</a>.<p class="dw-guide-par">Data can be filtered on a time basis by calendar date, presidential administration (starting from Obama’s second term to present), and the federal fiscal year. The federal government’s fiscal calendar runs from October 1 of the year prior to September 30 of the dated year. For example, fiscal year 2017 starts in October 2016 and ends in September 2017. Fiscal quarters, therefore are Oct. 1 to Dec. 31; Jan. 1 to March 31; April 1 to June 30 and July 1 to Sept. 30.</p><p class="dw-guide-par">Please note that complete monthly data lags by about 90 days due to DOJ processing, therefore the most accurate data will be three months old or older for criminal cases and six months or longer for declinations. Data that is assumed to be mostly complete will be labeled as "settled" while newer, possibly incomplete data will be labeled as "provisional."</p><p class="dw-guide-par">For more detailed information by states, users can select their state(s) district using the district filter. Please note our dashboard does not display data for the Northern Mariana Islands. Additional DOJ resources for district breakdowns can be found in <a href=documentation.html>data documentation page</a> or the footnote below.</p><p class="dw-guide-par">To see case issues, filter by program categories, which includes a list of sub-categories or more specific legal concerns. Program categories can also be filtered to only see “primary” concerns, or the attorney’s first-ranked case law concern. Filtered data can be viewed as a table (collapsed below) or downloaded as a CSV (comma-separated value) file to be analyzed further.</p>'
   gpanel.appendChild(ghead); gpanel.appendChild(gcontent);
    function setOpen(o){ panel.classList.toggle('open',o); btn.classList.toggle('on',o); try{window.dispatchEvent(new Event('resize'));}catch(e){} }
    function isOpen(){ return panel.classList.contains('open'); }
