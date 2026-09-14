@@ -25,7 +25,7 @@ const ADMIN_SEQ=['obama2','trump1','biden','trump2'];
 // for a marker only where the page has the series, so the held entry never gets a marker
 // pointing at an anchor the page does not render.
 const REFERENCES={
-  page:"documentation.html",
+  page:"reading-the-data.html",
   label:"Data documentation",              // must equal LIONS_DOC.HEAD.button; docs-check asserts it
   glyph:"⚠",
   arrow:"→",

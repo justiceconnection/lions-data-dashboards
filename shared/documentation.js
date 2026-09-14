@@ -249,17 +249,15 @@
      ══════════════════════════════════════════════════════════════════════════ */
   var HEAD = {
     button:  'Reading the data',
-    title:   'Reading the data: what could make a number on this site mean something else',
-    stand:   'These notes set out every reason we know of that a figure on this site could be read to mean something it does not. They cover all five dashboards. Each note says which of them it affects, and you can narrow the list below.',
-    scope:   'The figures in these notes are always for the whole country and every category, whatever you had selected on the dashboard you came from.',
-    where:   'Each dashboard also carries a User guide, for how to work its controls, and an About this data note at the foot of the page, for where the data comes from and who publishes it.',
+    stand:   'Below, we’ve outlined some of the important facets of Justice Connection’s five dashboards and discrepancies or details to keep in mind as you review the dashboard',
+    scope:   'All below note analysis apply to national data and subcategories, regardless of the dashboard selected.',
     expand:  'Expand all',
     collapse: 'Collapse all',
-    stamp:   'Wording last reviewed ',
-    stamp2:  'Counts drawn from this site’s own data are worked out afresh when you open the note that uses them. Any figure quoted from somewhere else carries its source and its date in the same note.',
+    stamp:   'Last published update ',
+    stamp2:  'Dashboard numbers cited in this documentation update in real-time, reflecting the most recent data available.',
     applies: 'Applies to: ',
     /* the surface filter */
-    filterLbl: 'Show notes that affect',
+    filterLbl: 'Notes that affect',
     filterAll: 'Every dashboard',
     filterCount: function (n, t, name) { return 'Showing ' + n + ' of ' + t + ' notes, the ones that affect ' + name + '.'; },
     filterClear: 'Show all ' ,
@@ -273,258 +271,168 @@
   };
 
   var GROUPS = [
-  { id: 'g1', title: 'What these figures count', entries: [
+  { id: 'g1', title: 'Data Organization', entries: [
 
     { id: 'e-dc-only', surfaces: ['index', 'agency'],
-      title: 'The Criminal Cases dashboard counts filings in United States District Court and nothing else',
+      title: 'Criminal case exclusions',
       body: [
-        'A criminal case reaches this dashboard only if it has a recorded filing date in a United States District Court. Prosecutions handled entirely in a magistrate court are not late and not mis-dated. They are absent from every month of every chart.',
-        '[[In fiscal year {{crim_fy}} that leaves out {{mag_excl}} prosecutions, of which {{mag_1325}} are illegal entry cases under 8 U.S.C. 1325(a)(1). They are concentrated in the southern and western districts of Texas, in Arizona and in New Mexico, so those four districts are affected far more than the rest.]]',
-        '[[Across the whole record it is larger still: {{no_dc_n}} of {{no_dc_d}} criminal case records, {{no_dc_pct}}, have no United States District Court filing and appear in no month of this dashboard at all.]]',
-        'Declined matters and matters that never went to court are not here either. Declined matters have their own dashboard.',
-        'This is a deliberate choice and the reason is worth knowing, because the alternative would give a larger number. Counting only district court filings is what makes this dashboard comparable with the figures DOJ itself publishes. [[It comes to {{crim_case_pct}} of DOJ’s published count of criminal cases filed and {{crim_def_pct}} of its published defendants.]] The wider count, taking in magistrate court prosecutions, matches no published DOJ table at all, so there would be nothing to check it against.',
-        'Do not describe a chart built on this data as covering all federal criminal prosecutions.',
-        '[[In fiscal year {{crim_fy}} this dashboard counts {{crim_fy_cases}} criminal cases filed and {{crim_fy_defs}} defendants.]]',
-        { src: OURS_JUL + ' The two percentages in this entry are worked out live and are shown with DOJ’s own figures in the entry on DOJ’s published table.' }
+        'A criminal case reaches this dashboard only if it has a filing date recorded for a U.S. District Court. Some prosecutions handled entirely in a magistrate court may have dates that appear “late” or “misdated.” These cases are excluded from dashboard charts but will appear in the Case Look-Up feature. Any analysis or chart built on the dashboard should not be categorized as reflective of all federal criminal prosecutions, given these differences.',
+        '[[In fiscal year {{crim_fy}} there are approximately {{mag_excl}} prosecutions excluded from the visualization, {{mag_1325}} of which are illegal entry cases under 8 U.S.C. 1325(a)(1), many in the southern and western districts of Texas, in Arizona and in New Mexico.]]',
+        '[[There’s over {{no_dc_d}} criminal case records in this dataset but {{no_dc_n}} (or {{no_dc_pct}}), have no U.S. District Court filing and therefore are not visualized on the dashboard. In fiscal year {{crim_fy}} this dashboard counts {{crim_fy_cases}} criminal cases filed and {{crim_fy_defs}} defendants.]]',
+        'Declined matters and matters that never went to court are, similarly, not visualized. Declined matters have their own dashboard.',
+        'By counting only district court filings, this dashboard is comparable with the figures that DOJ publishes at the end of the year. Using this smaller case count, our dashboard visualizes {{crim_case_pct}} of DOJ’s published count of criminal cases filed and {{crim_def_pct}} of its published defendants. The wider count, taking in magistrate court prosecutions, matches no published DOJ table at all, making data validation nearly impossible.',
       ] },
 
     { id: 'e-filed-two', surfaces: ['index', 'lookup'],
-      title: 'The word "filed" means one thing on the dashboards and a wider thing in Case Look-Up',
+      title: 'Definition of filed',
       body: [
-        'The Criminal Cases dashboard and Case Look-Up answer different questions with the same word, and Case Look-Up always returns the larger number. Neither is wrong about the question it answers.',
-        'The dashboard dates a case by its earliest filing in a United States District Court, across cases that reached that court. Case Look-Up dates a case by its earliest filing in any real court, across every record with a real court proceeding, which brings in magistrate court prosecutions and proceedings that happen after a case has been decided.',
-        '[[Asked for criminal cases filed in fiscal year {{crim_fy}}, the dashboard answers {{crim_fy_cases}} and Case Look-Up answers {{cl_fy_cases}}.]]',
-        { table: 'filed-steps' },
-        'Because the two count different populations, a Case Look-Up search is not the detail behind a dashboard figure and the two will not reconcile. The fiscal year boundary alone moves a few thousand cases in each direction.',
-        { src: OURS_JUL + ' The steps above are a full reconciliation with nothing left over.' }
+        'The word "filed" has different meanings on the dashboard versus the Case Look-Up function.',
+        'The dashboard dates a case by its earliest filing in a U.S. District Court across cases that reached that court. Case Look-Up dates a case by its earliest filing in any court, across every record with a court proceeding, which includes magistrate court prosecutions and proceedings that happen after a case has been decided. Therefore Case Look-Up always returns a larger number. Both are accurate.',
+        '[[For example, if you filter for criminal cases filed in fiscal year {{crim_fy}}, the dashboard shows {{crim_fy_cases}} and Case Look-Up shows {{cl_fy_cases}}.]] Because the two count different populations, a Case Look-Up search is not the detail behind a dashboard figure and the two will not reconcile. For more detailed breakdowns of the dashboard, use the table feature at the bottom of that page.',
       ] },
 
     { id: 'e-matter-case', surfaces: ['civil', 'agency'],
-      title: 'A civil matter and a civil case are two stages of the same work, not two words for it',
+      title: 'Civil case data',
       body: [
-        'DOJ’s own definition, printed in its annual report, is that matters are proceedings not yet in court. This site splits them on exactly that: a civil record counts as a matter until a court appears on it and as a case afterwards.',
-        'So the two are not alternatives and they must not be added together. The same piece of work can be counted as a matter received in one month and as a case filed in a later one.',
-        { src: DOJ_FY25 + ' Table 5, footnote 1.' }
-      ] },
-
-    { id: 'e-decl-def', surfaces: ['declinations', 'lookup'],
-      title: 'What counts as a declined matter changed on 2 September 2026, and every figure on the declinations dashboard moved with it',
-      body: [
-        'Until that date this site counted only matters recorded with a later declination. It now also counts immediate declinations, which is what DOJ’s own table title covers, and it leaves out any matter that reached a real court.',
-        'The effect is not even across time. Older years grew far more than recent ones, so the shape of the series changed as well as its level: it now falls across the three decades where before it read as broadly flat.',
-        '[[The all time total went from {{decl_old_all}} to {{decl_all}}. The figure for fiscal year {{decl_fy_year}} went from {{decl_old_fy}} to {{decl_fy}}.]]',
-        'Whether that fall reflects a change in prosecution practice or a change in how declinations were recorded has not been established, and nobody has looked.',
-        'A chart or a figure taken from this dashboard before 2 September 2026 is not comparable with what is here now.',
-        'The reason categories are a scheme introduced after fiscal year 2014. Figures before then are approximate.',
-        { src: OURS_JUL + ' The two earlier figures are the totals this site published until 2 September 2026.' }
+        'A civil matter and a civil case are two stages of the same work. DOJ’s definition, as outlined in the annual report, is that matters are “proceedings not yet in court.” The dashboard splits cases and matters similarly. A civil record counts as a matter until a court appears on it, meaning the same issue can be counted as a matter received in one month and as a case filed in a later one. The two data points are not alternatives and they should not be added together.',
       ] },
 
     { id: 'e-usao-only', surfaces: ['index', 'civil', 'agency', 'declinations', 'lookup'],
-      title: 'This is the work of United States Attorneys’ offices only',
+      title: 'Data is limited to USAO work',
       body: [
-        'LIONS is the case management system used by the United States Attorneys’ offices. Work handled by other parts of the Department of Justice is not in it. Inquiries a U.S. Attorney’s office judged obviously trivial were never logged at all.',
-        'The data carries 93 district codes. DOJ names 94 offices. The difference has never been reconciled and we do not know what causes it.',
-        'Most of what is recorded is entered when a case is taken in and screened. Anything after that is added as the matter moves along, which is why the recent months are the thin ones.',
-        { src: OURS_JUL + ' The count of 93 is the number of district codes present in the published data.' }
+        'LIONS is the case management system used by the United States Attorneys’ offices, which means wrk handled by other parts of the Department of Justice, namely Main Justice, is not included in this data.',
+        'There are 94 U.S. Attorney’s offices. Our dataset does not specify cases filed in the Northern Mariana Islands, which shares a U.S. Attorney with Guam.',
       ] }
   ] },
 
-  { id: 'g2', title: 'How these figures compare with DOJ’s published reports', entries: [
+  { id: 'g2', title: 'Data validation', entries: [
 
-    { id: 'e-doj-3b', surfaces: ['index'],
-      title: 'Criminal cases and defendants filed, against DOJ’s published table',
+    { id: 'e-doj-identity', surfaces: ['index', 'civil', 'agency'],
+      title: 'DOJ’s annual reports are not consistent',
       body: [
-        'DOJ publishes a comparable count once a year. This dashboard does not reproduce it exactly.',
-        '[[For fiscal year {{crim_fy}} this dashboard counts {{crim_fy_cases}} criminal cases filed against the {{doj_3b_cases}} DOJ prints, which is {{crim_case_pct}} of DOJ’s figure. On defendants it counts {{crim_fy_defs}} against DOJ’s {{doj_3b_defs}}, which is {{crim_def_pct}}.]]',
-        'That is one year. One table for one year has been read, so nothing here shows whether the relationship holds in any other year. Do not treat either percentage as a correction to apply elsewhere.',
-        { src: DOJ_FY25 + ' Table 3B.' }
+        'In the process of completing data validation, it became clear that the DOJ’s annual reports do not always align with their own data from one year to the next.',
+        '[[In each of the five annual reports for fiscal years 2021 to 2025, the civil caseload table gives a caseload pending at the start of the year, the cases filed, the cases terminated and the caseload pending at the end. However, the four figures do not agree with one another: the published end of year figure is between {{doj_gap_lo}} and {{doj_gap_hi}} smaller than the other three imply. The criminal tables in the same five reports are inconsistent in the same way. The reports do not say why and it’s not clear if the discrepancy is due to a reporting error, a change in methodology or some other reason.]]',
+        'Nothing here connects this to anything else in these notes. It is a separate observation. No part of the difference between this site’s figures and DOJ’s published figures is explained by it, and nothing set out here claims that it is.',
+      ] },
+    { id: 'e-doj-3b', surfaces: ['index'],
+      title: 'Criminal cases and defendants filed',
+      body: [
+        'DOJ publishes a comparable count once a year in its annual report; the criminal case dashboard does not reproduce it exactly.',
+        '[[For fiscal year {{crim_fy}} this dashboard counts {{crim_fy_cases}} criminal cases filed, compared to {{doj_3b_cases}} that DOJ reports, or {{crim_case_pct}} of DOJ’s figure. Regarding the number of defendants, the dashboard counts {{crim_fy_defs}} against DOJ’s {{doj_3b_defs}}, which is {{crim_def_pct}}.]]',
+        { table: 'crim-flow' },
+        'Note this analysis is not replicable across other years. Data validation shows our dashboard matches, on average, 98% of the DOJ’s total reported criminal cases and 103% of their total defendants.',
       ] },
 
     { id: 'e-doj-t4', surfaces: ['civil', 'agency'],
-      title: 'Civil cases filed and terminated, against DOJ’s published civil caseload',
+      title: 'Civil cases filed and terminated',
       body: [
         'DOJ publishes the civil caseload once a year. Compared against its five annual reports for fiscal years 2021 to 2025, this site’s counts differ from DOJ’s in every one of the five years, on both counts.',
         { table: 'civ-flow' },
         'The reason has not been identified, and the difference is not the same size in each year, so it is not a fixed amount that can be added to or taken off. Part of it is that our most recent years are still being reported and will move; that cannot be the whole of it, because the oldest years here have long since settled and still differ.',
-        { src: DOJ_5YR }
       ] },
 
     { id: 'e-doj-t5-cases', surfaces: ['civil', 'agency'], needsColumn: 'cases_pending',
-      title: 'Civil cases pending, against DOJ’s published figures',
+      title: 'Civil cases pending',
       body: [
-        'This count differs from the figure DOJ publishes, and the direction is not the same for every role or in every year.',
-        'Cases pending here is a count, taken at the end of each month, of the civil cases that had a court record by that date and no recorded ending. It is not a running balance of arrivals minus departures, and it uses nothing that happened after the date it is counting.',
+        'The total dashboard count differs from DOJ’s published count, sometimes due to a greater number of cases, sometimes fewer.',
+        'Cases pending is a count taken at the end of each month of the civil cases that had a court record by that date and no recorded ending. It is not a running balance of arrivals minus departures, and it does not include events that happened after the published date.',
         { table: 'pending-cases' },
-        'Our own count for a past date does not stand still. Later data keeps arriving and a counted caseload keeps falling as it does, which is why the two most recent years read higher than they eventually will. That accounts for part of the difference in the recent years and not all of it, and for cases where the United States is the plaintiff it accounts for almost none. We cannot say why.',
-        'There is no single figure for the difference and none is given here. Do not take a percentage from one row and apply it to another.',
-        'The figures above are read from the breakdown this page uses. The Civil dashboard and the Referring Agency dashboard hold the civil caseload in two separate files, and on pending they do not always agree, so the same entry can show slightly different numbers on those two pages.',
-        'The date a case joins this count is not always the date it reached court. See the entry on that, above.',
-        { src: DOJ_T5_CITE }
+        'Part of the discrepancies can be accounted for by later data that will retroactively change the count of cases pending at the end of a given month. One trend we’ve noticed is the U.S. as a plaintiff accounts for almost none of the difference; why is not clear.',
       ] },
 
-    { id: 'e-pending-entry-date', surfaces: ['civil', 'agency'], needsColumn: 'cases_pending',
-      title: 'The date a civil case joins the pending count is not always the date it reached court',
+    { id: 'e-pending-entry-date', surfaces: ['civil', 'agency'], needsColumn: 'matters_pending',
+      title: 'Civil matters pending',
       body: [
-        'A civil case joins this count on the earliest filing date recorded against one of its court records. Where a case has court records but none of them carries a filing date, it joins on the date the matter was received instead.',
-        '[[That is {{pend_imp_n}} civil cases, {{pend_imp_pct}} of them. At the end of September 2025 it was {{pend_sep_n}} of the {{pend_sep_d}} cases counted as pending, close to a fifth.]]',
-        'A matter is usually received before it reaches court, so those cases join the count earlier than they otherwise would, and every month in between is counted one higher. It is not one wrong cell in a table; it moves the level of a run of months.',
-        'The same substitution is visible in Case Look-Up, in its Filed column. This is a limitation of how the underlying records are read, not of the records themselves.',
-        { src: OURS_JUL }
-      ] },
-
-    { id: 'e-doj-t5-matters', surfaces: ['civil', 'agency'], needsColumn: 'matters_pending',
-      title: 'Civil matters pending, against DOJ’s published figures',
-      body: [
-        'This count differs from the figure DOJ publishes, by more than the cases count does, and the direction is not the same for every role or in every year.',
-        'Matters pending here is a count, taken at the end of each month, of the civil matters that had been received, had not reached court, and had no recorded closure.',
+        'Our dashboard count for civil matters pending varies from the DOJ published figures to a greater extent than cases. The variance is not normalized nor directional. Matters, similar to cases, is a count taken at the end of each month of all civil matters that have not reached court and have no recorded closure. We caution against using a single month’s matters pending to signify events in that month.',
         { table: 'pending-matters' },
-        'Do not read the level in any single month as a count of the matters actually pending.',
-        'There is no single figure for the difference and none is given here.',
-        { src: DOJ_T5_CITE }
       ] },
 
     { id: 'e-two-crim', surfaces: ['index', 'agency'],
-      title: 'The two criminal dashboards do not give quite the same total',
+      title: 'Differences between Criminal Cases and Cases by Referring Agency',
       body: [
         'The Criminal Cases dashboard and the Referring Agency dashboard are built from the same records by two different builds, and their criminal totals differ by a handful of cases.',
         '[[For fiscal year {{crim_fy}} the Referring Agency dashboard counts {{ag_fy_cases}} criminal cases filed.]]',
-        'The cause has not been established. The difference is small enough that it will not change any reading of a trend, and large enough that two figures quoted side by side will not match.'
+        'We have yet to establish a cause but the difference is small enough that it will not change any reading of a trend, and large enough that two figures quoted side by side will not match.'
       ] }
   ] },
 
-  { id: 'g3', title: 'Why the most recent months are not final', entries: [
+  { id: 'g3', title: 'Explaining settled versus provisional data', entries: [
 
     { id: 'e-provisional', surfaces: ['index', 'civil', 'agency', 'declinations', 'lookup'],
-      title: 'The newest months are always incomplete, by an amount that is not steady',
+      title: 'The newest months are always incomplete',
       body: [
-        'Every month of this data is re-reported more completely in later updates. The most recent months on any chart are the least complete, and they are marked on the chart, in the table and in the download.',
-        'The size of what is missing is not a constant and cannot be corrected for. Between the May and June 2026 updates the newest month of criminal terminations grew by a factor of 2.9. Between the June and July 2026 updates the same measurement gave 5.4. Each of those measures one step of re-reporting, not the distance to a final figure.',
-        'A fall at the right hand edge of a chart is not evidence that anything fell.',
-        { src: OURS_JUL + ' The two factors are measured between named pairs of monthly updates and are not a completion multiplier.' }
+        'The most recent months in each data update from LIONS are always incomplete but the variance is not steady. Every monthly data upload is re-reported more completely in later updates, which we are referring to as “settling” the data. The most recent months on any chart are the least complete, and they are marked on the chart, in the table and in the download as "provisional.',
+        'The scope of missing data is not a constant factor, so we can’t provide an estimation of what’s missing. For example, between the May and June 2026 updates, the newest month of criminal terminations grew by a factor of 2.9. Between the June and July 2026 updates the same measurement gave 5.4. Critically, we still do not believe that this is the final figure, just one step closer.',
+        'Users should note that a sharp decline at the most recent month on the chart is not evidence of a decline, but rather another indicator of incomplete filing data.',
       ] },
 
     { id: 'e-not-final', surfaces: ['index', 'civil', 'agency', 'declinations'],
-      title: 'Marked provisional is not the same as unmarked and final',
+      title: 'Incomplete data',
       body: [
-        'The shaded band marks the months that are materially incomplete. How wide it is depends on the metric: three months for criminal filings, four for civil filings, and six for anything to do with terminations, dispositions, declinations or a pending stock.',
-        'Outside that band the figures still move, by smaller and smaller amounts, for years. The counted civil caseload still moved by about 0.5% over two months at nearly two years of age, and about 0.2% at nearly three years.',
-        'The direction differs by what is being counted. A flow, such as cases filed, is understated at the edge and will rise. A stock, such as cases pending, is overstated at the edge and will fall, because endings are reported later than beginnings.',
-        { src: OURS_JUL }
+        'All provisional data is shaded on charts, denoting that they are incomplete. The scope of provisional data depends on the dataset: three months for criminal filings, four for civil filings and six for anything related to terminations, dispositions, declinations or pending issues. Note that figures still move outside of the provisional range, but this is smaller and smaller as the months pass. We’ve noticed that civil caseload data continues to move for cases two years or older, but by smaller than 1 percentage point.',
       ] },
 
     { id: 'e-revision', surfaces: ['index', 'civil', 'agency', 'declinations', 'lookup'],
-      title: 'A figure you took from this site last month may not be the same figure this month',
+      title: 'Changes over months',
       body: [
-        'Each monthly update is not new rows added to the end. It is the same history reported more completely, so a figure for a month years in the past can still change.',
-        'If you quote a figure from this site, quote the date you took it.'
+        'Each monthly update does not simply add new figures for the most recent month, but reports the data from all previous months more completely, so a figure for a month years in the past can still change. If you use a figure from this dashboard, include the dashboard visit date.',
       ] }
   ] },
 
-  { id: 'g4', title: 'How the parts add up', entries: [
+  { id: 'g4', title: 'Additional user notes', entries: [
 
     { id: 'e-cat-overlap', surfaces: ['index'],
-      title: 'Criminal program categories overlap, so adding them up over-counts',
+      title: 'Criminal program categories overlap',
       body: [
-        'A criminal case can carry several program category codes and is counted under every one of them. The categories therefore do not add up to the total, by design. The total is a separate row in the data and that is what the "All categories" figure reads.',
+        'A criminal case can carry several program category codes and is counted under every one of them, so adding all categories will result in an overinflated total. To see total cases over a period of time, see the "all categories" figure.',
         '[[Over the whole period, adding the umbrella categories together gives {{oc_umb_all_parts}} criminal cases filed against a true total of {{oc_umb_all_total}}, which is {{oc_umb_all_pct}} too many. Within fiscal year {{crim_fy}} the same sum is {{oc_umb_fy_pct}} too many. Expanding every umbrella and adding all of the specific categories instead gives {{oc_spec_all_pct}} too many over the whole period and {{oc_spec_fy_pct}} within fiscal year {{crim_fy}}.]]',
-        'There is no single figure for this. It depends on the period you have chosen, on whether you are adding umbrellas or specifics, and on whether you are counting cases or defendants.',
-        'The "Primary only" setting counts each case once, under its first entered code. That is a different question, not a corrected version of the same one.'
+        'Another option is to filter by "Primary only", which counts each case once under its first entered code.'
       ] },
 
     { id: 'e-ag-overlap', surfaces: ['agency'],
-      title: 'Referring agencies overlap in the same way, and the two settings behave differently',
+      title: 'Referring agencies overlap',
       body: [
-        'A criminal case can name more than one investigative agency. On the "All agencies" setting it is counted under each of them, so the agencies add up to more than the total.',
-        '[[Over the whole period, adding the agencies together on that setting gives {{ag_all_pct}} more criminal cases filed than the true total.]]',
-        'On the "Lead agency" setting the agencies add up to the total exactly. The total itself is only recorded on that setting, which is why switching to "All agencies" changes what a total means as well as what the parts sum to.'
-      ] },
-
-    { id: 'e-partition', surfaces: ['civil', 'agency', 'declinations'],
-      title: 'Civil causes of action and declination reasons do not overlap',
-      body: [
-        'Every civil record carries one cause of action and every declined matter carries one reason, so on those dashboards the parts do add up to the total exactly.',
-        '[[There are {{civ_causes}} civil causes of action.]] [[There are {{decl_reasons}} declination reasons, including an explicit "Other" that is a real category and not a rounding residual.]]',
-        'This is not true of the criminal program categories or the criminal referring agencies. Do not carry the assumption from one dashboard to another.'
-      ] },
-
-    { id: 'e-two-civil', surfaces: ['civil', 'agency'],
-      title: 'The two civil breakdowns do not reach quite the same totals',
-      body: [
-        'The Civil dashboard breaks the civil caseload down by cause of action. The Referring Agency dashboard breaks the same caseload down by federal client agency. The two are built as separate files and they do not arrive at identical totals.',
-        '[[Over the whole period the client agency totals run between {{ca_min_pct}} and {{ca_max_pct}} above the cause of action totals, depending on the United States role and on which count you take. The widest gaps are on matters terminated.]]',
-        'The cause has not been established. Within each dashboard the parts do add up to that dashboard’s own total, so this is a difference between the two files and not a difference between a total and its parts.',
-        'If you have a figure from each of those two dashboards for the same thing, expect them to be close rather than equal, and say which one you took.'
+        'Similarly, there may be multiple referring agencies for a single case, so agencies should not be added up to reach a total. Instead, use "All agencies," or filter by "Lead agency," to see a reflective sum.',
       ] },
 
     { id: 'e-zero-months', surfaces: ['civil', 'agency'],
-      title: 'A month with no bar or no point is a month with none, not a month with no data',
+      title: 'Occasional zero months',
       body: [
-        'Narrow the selection far enough, to one district and one cause of action and one role, and some months will have nothing in them at all. Those months are counted as zero, and the chart draws them as zero.',
-        'This matters most on a pending count, where a series can fall to zero, stay there for years, and come back. A line that touches the bottom of the chart and runs along it is telling you the caseload was empty, not that the month is missing.',
-        'The months at the right hand edge are the exception, and they are marked. Those are incomplete, not empty.'
+        'It is possible for the dashboard to return no data if you filter for one district, one cause of action and one role in the Civil Matters and Cases dashboard or the Cases by Referring Agency dashboard.',
+        'These months are not errors, even if its pending cases, it just shows that a caseload was empty, not that a month is empty. The one exception is for provisional data, which may be empty because they’re incomplete. For more information about provisional data, read below.',
       ] },
 
     { id: 'e-ratio', surfaces: ['index', 'civil', 'agency', 'declinations'],
-      title: 'Percentages are worked out from the counts, never averaged',
+      title: 'Topline percentage calculations',
       body: [
-        'When you group by quarter or by fiscal year, a percentage on this site is worked out by adding up the counts for the whole period and then dividing. It is never the average of the monthly percentages. The two give different answers, and the second one weights a quiet month the same as a busy one.'
+        'The four dashboards provide some general topline calculations based on the filtered data. All displayed percentages are analyzed from the whole sample, even if data is visualized in quarters or years, never averaging the monthly data.'
       ] },
 
     { id: 'e-selection', surfaces: ['index', 'civil', 'agency', 'declinations'],
-      title: 'A table shows the rows you have selected',
+      title: 'Table functionality',
       body: [
-        'The data table and the CSV download always print every metric as a column, whatever the chart happens to be showing. So a column can carry a caveat that has nothing to do with the chart in front of you.',
-        'A total column in a table is the total of the rows you have selected. It is not the total of everything in the data, and it will not match the "all" figure unless you have everything selected.'
+        'The data table and the CSV download have fixed columns that are not affected by the filters you select. The table and download will always show the same columns, even if you have filtered for a single district or cause of action. However, the data you download will be filtered, so there may be empty columns in the table.',
+        'Additionally, the total number displayed is only the total of the filtered data, not the entire dataset, unless you have selected all districts, causes of action, and roles.',
       ] }
   ] },
 
   { id: 'g5', title: 'Case Look-Up', entries: [
 
     { id: 'e-cl-imputed', surfaces: ['lookup'],
-      title: 'The Filed date is sometimes the date the matter was received',
+      title: 'Filed dates',
       body: [
-        'Where a record reached a real court but has no filing date recorded, Case Look-Up puts the date the matter was received into the Filed column, with nothing to tell you which is which.',
+        'As noted above, Case Look-Up data is organized by the earliest filing date in any real court, so there may be cases that date earlier than the dashboard dates or outside of your filtered range.',
+        'Another discrepancy is the court type; court type is the first court that a record appeared in. For example, a case might show Magistrate Court but still have a U.S. District court filing date later',
         '[[In the most recent full fiscal year that affects about {{cl_imputed}} of the criminal cases a search returns.]]',
-        'This is a limitation of how the search file is built, not of the underlying records.',
-        { src: OURS_JUL }
       ] },
 
     { id: 'e-cl-court', surfaces: ['lookup'],
-      title: 'Court type is the first court, not the only one',
+      title: 'Declinations in Case Look-Up',
       body: [
-        'The court type shown is the first court a record reached. A record can show Magistrate Court and still have a United States District Court filing later.',
-        '[[In the criminal cases filed in the most recent full fiscal year, most records show Magistrate Court even though {{cl_mag_dc}} of them also have a district court filing.]]',
-        'So a search filtered on court type is not a filter on where the case ended up.',
-        { src: OURS_JUL }
+        'In Case Look-Up, the disposition column is only recorded for matters that reached a court and were declined. However, it is not representative of all declined cases, because many of them do not reach a court. In addition, some matters are declined and later prosecuted, and these would not be visible in the data.',
+        'To see declined matters only, you can filter by "declination" and set "declined matters only." To visualize and filter immediate case declinations terminated by U.S. Attorney’s Offices, visit our declination dashboard.',
       ] },
-
-    { id: 'e-cl-disp', surfaces: ['lookup'],
-      title: 'The Disposition value "Declination or Referral" does not find declined matters',
-      body: [
-        'Almost all declined matters never reach a court, and the Disposition column is only recorded for records that did. The value is real and the records that carry it really carry it, but it finds a tiny fraction of the declined matters in the data.',
-        'The control that does find them is Declination, set to "Declined matters only". The page says so beside the Disposition filter as well.',
-        'Disposition also shows the latest outcome, so a matter that was declined and later prosecuted reads as its later outcome.'
-      ] },
-
-    { id: 'e-cl-order', surfaces: ['lookup'],
-      title: 'Two columns list their values in an order that can change between updates',
-      body: [
-        'The agencies column and the special project column list their values in an order that is not fixed. The set of values does not change and no value is added or lost. Only the order can move.',
-        'If you are comparing two downloads taken at different times, compare the values and not the text of the cell.'
-      ] }
   ] },
-
-  { id: 'g6', title: 'DOJ’s published tables are not consistent with themselves', entries: [
-
-    { id: 'e-doj-identity', surfaces: ['index', 'civil', 'agency'],
-      title: 'DOJ’s published tables are not consistent with themselves',
-      body: [
-        'This is an observation about DOJ’s own reports. It is set out here because anyone comparing this site against those reports should know it is there.',
-        '[[In each of the five annual reports for fiscal years 2021 to 2025, the civil caseload table gives a caseload pending at the start of the year, the cases filed, the cases terminated and the caseload pending at the end. The four figures do not agree with one another: the published end of year figure is between {{doj_gap_lo}} and {{doj_gap_hi}} smaller than the other three imply. The criminal tables in the same five reports are inconsistent in the same way. The reports do not say why.]]',
-        'Nothing here connects this to anything else in these notes. It is a separate observation. No part of the difference between this site’s figures and DOJ’s published figures is explained by it, and nothing set out here claims that it is.',
-        { src: DOJ_5YR }
-      ] }
-  ] }
   ];
   /* ═══════════════════════════ END OF COPY ═══════════════════════════════ */
 
@@ -802,8 +710,7 @@
     head.className = 'doc-head';
     head.innerHTML =
       '<p class="doc-stand">' + esc(HEAD.stand) + '</p>' +
-      '<p class="doc-stand">' + esc(HEAD.scope) + '</p>' +
-      '<p class="doc-where">' + esc(HEAD.where) + '</p>';
+      '<p class="doc-stand">' + esc(HEAD.scope) + '</p>' 
     el.appendChild(head);
 
     /* the surface filter. Six chips plus "every dashboard". Client side, hides
@@ -982,7 +889,7 @@
 
   function stampDate() {
     var p = REVISED.split('-');
-    return p[1] + '.' + p[2] + '.' + p[0].slice(2);
+    return p[1] + '-' + p[2] + '-' + p[0];
   }
 
   function entryBody(e) {
