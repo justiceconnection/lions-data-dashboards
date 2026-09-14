@@ -19,8 +19,8 @@
   <div class="sub" id="docsub"></div>
   <div id="reading"></div>
 </div>
-<script src="shared/config.js?v=20260904a"></script>
-<script src="shared/documentation.js?v=20260904a"></script>
+<script src="shared/config.js?v=20260914a"></script>
+<script src="shared/documentation.js?v=20260914a"></script>
 <script>
 /* Boot. Short by design: this page has no page script, so anything here is either nav
    (which needs DASHBOARDS, not shared.js) or the Back control. All copy comes from
@@ -66,7 +66,10 @@
     });
   }
 
-  document.getElementById('docsub').textContent = LIONS_DOC.HEAD.title;
+  /* HEAD.title was removed from shared/documentation.js in the 13 September rewrite;
+     without the guard this printed the literal word "undefined" as the page subtitle.
+     Defensive only - no copy is supplied here (L-188). */
+  document.getElementById('docsub').textContent = LIONS_DOC.HEAD.title || '';
   LIONS_DOC.mountPage(document.getElementById('reading'), { from: from });
 })();
 </script>

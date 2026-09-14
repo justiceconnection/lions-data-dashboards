@@ -29,8 +29,8 @@
      PROSE_SHA is a hash over every copy string below, normalised. tests/docs-check.js
      recomputes it; a prose edit that does not touch this line goes red. It cannot
      force REVISED to be right - it can only make a silent prose edit impossible.  */
-  var REVISED   = '2026-09-04';
-  var PROSE_SHA = '66601e76';   /* filled by design-lab/l144-prose-sha.js */
+  var REVISED   = '2026-09-13';
+  var PROSE_SHA = '28922f8d';   /* filled by design-lab/l144-prose-sha.js */
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
   var SURFACES = {
@@ -248,7 +248,7 @@
      THE COPY. Everything a user can read is in this block and nowhere else.
      ══════════════════════════════════════════════════════════════════════════ */
   var HEAD = {
-    button:  'Reading the data',
+    button:  'Data documentation',
     stand:   'Below, we’ve outlined some of the important facets of Justice Connection’s five dashboards and discrepancies or details to keep in mind as you review the dashboard',
     scope:   'All below note analysis apply to national data and subcategories, regardless of the dashboard selected.',
     expand:  'Expand all',
@@ -280,7 +280,7 @@
         '[[In fiscal year {{crim_fy}} there are approximately {{mag_excl}} prosecutions excluded from the visualization, {{mag_1325}} of which are illegal entry cases under 8 U.S.C. 1325(a)(1), many in the southern and western districts of Texas, in Arizona and in New Mexico.]]',
         '[[There’s over {{no_dc_d}} criminal case records in this dataset but {{no_dc_n}} (or {{no_dc_pct}}), have no U.S. District Court filing and therefore are not visualized on the dashboard. In fiscal year {{crim_fy}} this dashboard counts {{crim_fy_cases}} criminal cases filed and {{crim_fy_defs}} defendants.]]',
         'Declined matters and matters that never went to court are, similarly, not visualized. Declined matters have their own dashboard.',
-        'By counting only district court filings, this dashboard is comparable with the figures that DOJ publishes at the end of the year. Using this smaller case count, our dashboard visualizes {{crim_case_pct}} of DOJ’s published count of criminal cases filed and {{crim_def_pct}} of its published defendants. The wider count, taking in magistrate court prosecutions, matches no published DOJ table at all, making data validation nearly impossible.',
+        'By counting only district court filings, this dashboard is comparable with the figures that DOJ publishes at the end of the year. [[Using this smaller case count, our dashboard visualizes {{crim_case_pct}} of DOJ’s published count of criminal cases filed and {{crim_def_pct}} of its published defendants.]] The wider count, taking in magistrate court prosecutions, matches no published DOJ table at all, making data validation nearly impossible.',
       ] },
 
     { id: 'e-filed-two', surfaces: ['index', 'lookup'],
@@ -606,17 +606,13 @@
   var ENTRY_CUBES = {
     'e-dc-only':            ['lions_cube'],
     'e-filed-two':          ['lions_cube'],
-    'e-decl-def':           ['decl_cat_cube'],
     'e-doj-3b':             ['lions_cube'],
     'e-doj-t4':             ['civil_cube'],
     'e-doj-t5-cases':       ['civil_pending_cube'],
-    'e-doj-t5-matters':     ['civil_pending_cube'],
     'e-pending-entry-date': [],
     'e-two-crim':           ['lions_cube', 'agency_cube'],
     'e-cat-overlap':        ['lions_cube'],
-    'e-ag-overlap':         ['agency_cube'],
-    'e-partition':          ['civil_cube', 'decl_cat_cube'],
-    'e-two-civil':          ['civil_agency_cube', 'civil_cube']
+    'e-ag-overlap':         ['agency_cube']
   };
   var CUBE_BASE = './data/';   /* the page sits at web/ root, beside data/ */
   var inflight = {};
@@ -656,12 +652,12 @@
         rather than scrolling to nothing. tests/docs-check.js asserts the rendered
         set equals ENTRY_IDS exactly.                                              */
   var ENTRY_IDS = [
-    'e-dc-only', 'e-filed-two', 'e-matter-case', 'e-decl-def', 'e-usao-only',
-    'e-doj-3b', 'e-doj-t4', 'e-doj-t5-cases', 'e-pending-entry-date', 'e-doj-t5-matters', 'e-two-crim',
+    'e-dc-only', 'e-filed-two', 'e-matter-case', 'e-usao-only',
+    'e-doj-identity',
+    'e-doj-3b', 'e-doj-t4', 'e-doj-t5-cases', 'e-pending-entry-date', 'e-two-crim',
     'e-provisional', 'e-not-final', 'e-revision',
-    'e-cat-overlap', 'e-ag-overlap', 'e-partition', 'e-two-civil', 'e-zero-months', 'e-ratio', 'e-selection',
-    'e-cl-imputed', 'e-cl-court', 'e-cl-disp', 'e-cl-order',
-    'e-doj-identity'
+    'e-cat-overlap', 'e-ag-overlap', 'e-zero-months', 'e-ratio', 'e-selection',
+    'e-cl-imputed', 'e-cl-court'
   ];
   var RETIRED = [];   /* ids that once existed. Never remove one from this list. */
 

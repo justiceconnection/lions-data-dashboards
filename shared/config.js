@@ -44,9 +44,9 @@ const REFERENCES={
   modes:{index:"index",civil:"civil",agency:"agency",agencyCivil:"agency",declinations:"declinations",lookup:"lookup"},
   flags:{
     index:{cases_filed:"e-doj-3b",defendants_filed:"e-doj-3b"},
-    civil:{cases_filed:"e-doj-t4",cases_terminated:"e-doj-t4",cases_pending:"e-doj-t5-cases",matters_pending:"e-doj-t5-matters"},
+    civil:{cases_filed:"e-doj-t4",cases_terminated:"e-doj-t4",cases_pending:"e-doj-t5-cases",matters_pending:"e-pending-entry-date"},
     agency:{cases_filed:"e-two-crim",defendants_filed:"e-two-crim"},
-    agencyCivil:{cases_filed:"e-doj-t4",cases_terminated:"e-doj-t4",cases_pending:"e-doj-t5-cases",matters_pending:"e-doj-t5-matters"},
+    agencyCivil:{cases_filed:"e-doj-t4",cases_terminated:"e-doj-t4",cases_pending:"e-doj-t5-cases",matters_pending:"e-pending-entry-date"},
     declinations:{},
     lookup:{filed_date:"e-filed-two"}
   },
@@ -63,7 +63,7 @@ const REFERENCES={
   // L-149. entryFor() returns null for a held entry, so a marker can never point at an
   // anchor the page does not publish - and the held set is stated once, here, rather
   // than re-derived in each page script.
-  held:["e-doj-t5-matters"],
+  held:["e-pending-entry-date"],
   entryFor(mode,key){
     const id=(this.flags[mode]||{})[key]||null;
     return (id&&this.held.indexOf(id)<0)?id:null;
