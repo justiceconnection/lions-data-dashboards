@@ -25,8 +25,7 @@ body.doc-page .wrap > section.accordion > h1{
 	padding:0.22em 44px 0.22em 12px; /* reduced vertical spacing */
 	cursor:pointer;
 	font-size:1.25rem;
-	line-height:1.75;
-	max-height:1.2em; /* smaller header height */
+	line-height:1.2; /* the compact header height the removed max-height clamped to */
 	position:relative;
 	white-space:pre-line;
 }
@@ -48,12 +47,6 @@ body.doc-page .wrap > section.accordion:not(.open) > *:not(h1):not(h2){
 body.doc-page .wrap > section.accordion:not(.open){
 	/* no fixed max-height so header can wrap naturally */
 	overflow:visible;
-}
-/* vertically center header content */
-body.doc-page .wrap > section.accordion > h1,
-body.doc-page .wrap > section.accordion > h2{
-	display:flex;
-	align-items:center;
 }
 /* when opened, ensure content shows with standard padding */
 body.doc-page .wrap > section.accordion.open > *:not(h1):not(h2){

@@ -30,7 +30,7 @@
      recomputes it; a prose edit that does not touch this line goes red. It cannot
      force REVISED to be right - it can only make a silent prose edit impossible.  */
   var REVISED   = '2026-09-13';
-  var PROSE_SHA = '28922f8d';   /* filled by design-lab/l144-prose-sha.js */
+  var PROSE_SHA = '28922f8d';   /* recomputed by tests/docs-check.js check 26(e); there is no generator script */
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
   var SURFACES = {
