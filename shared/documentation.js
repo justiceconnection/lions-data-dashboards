@@ -249,7 +249,7 @@
      ══════════════════════════════════════════════════════════════════════════ */
   var HEAD = {
     button:  'Data documentation',
-    stand:   'Below, we’ve outlined some of the important facets of Justice Connection’s five dashboards and discrepancies or details to keep in mind as you review the dashboard',
+    stand:   'Below, we’ve outlined some of the important facets of Justice Connection’s five dashboards and discrepancies or details to keep in mind as you review the dashboard. For more information about the LIONS system, <a href="https://www.justice.gov/usao/resources/foia-library/national-caseload-data/frequently-asked-questions" target="_blank">please visit the DOJ’s website.</a>',
     scope:   'All below note analysis apply to national data and subcategories, regardless of the dashboard selected.',
     expand:  'Expand all',
     collapse: 'Collapse all',
