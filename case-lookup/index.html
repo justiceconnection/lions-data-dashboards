@@ -5,21 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Case Look-Up - POC (Colorado)</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Ancizar+Sans:ital,wght@0,100..1000;1,100..1000&family=Ancizar+Serif:ital,wght@0,800;1,800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Ancizar+Sans:ital,wght@0,100..1000;1,100..1000&display=swap');
   :root{ --bg:#fbfbfb; --ink:#212123; --muted:#6b6b70; --line:#dcdce0; --accent:#eaf54c; --card:#fff; --err:#b00020; --ctl:38px; }
   *{box-sizing:border-box}
-  body{margin:0;font:14px/1.5em 'Ancizar Serif', 'Ancizar Sans', 'Times New Roman', serif,sans-serif;background:var(--bg);color:var(--ink)}
+body{
+  margin:0;
+  background:var(--bg);color:var(--ink);
+  font-weight: 400;
+  font-family: 'Ancizar Sans', 'Arial', sans-serif;
+  font:14px/1.5em;
+  color: var(--ink)
+}
   header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   header h1{font-size:18px;margin:0}
   header .tag{font-size:14px;color:var(--muted)}
-  /* L-144: the one link to "Reading the data". This page has no .dw-stick bar, so its
-     home is the header, beside the count - the one place always visible and always at
-     the top, and it already holds a small piece of chrome. A plain link with no target,
-     like every other link on this site. */
+  /* L-144: the one link to "Reading the data". */
   header .doclink{font-size:13px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
   header .doclink:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  /* the inline marker. The glyph is aria-hidden; the warning is carried in words on the
-     link's aria-label, so it is not vision-only. */
+  /* the inline marker. */
   .docmark{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;
     margin:0 0 0 5px;line-height:1;font-size:13px;color:var(--ink);text-decoration:none;
     border-radius:50%;flex:none;vertical-align:baseline}
@@ -60,23 +63,13 @@
   .muted{color:var(--muted)}
   details.cols{margin-top:12px}
   details.cols summary{cursor:pointer;color:var(--muted);font-size:14px}
+  .ancizar-sans {
+  font-family: "Ancizar Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
 
-  /* ===================== L-078: the record-type note ======================
-     Copy, placement and behaviour are ops/handoffs/L-078-design-spec.md.
-     Two rules matter beyond appearance:
-       (1) the note lives OUTSIDE .filters. That grid is align-items:end, so
-           prose in a cell makes its row taller and drops the other controls
-           in that row to the new bottom - the select bar stops reading as a
-           bar. Measured by the designer in Chromium; do not put it back.
-       (2) nothing here uses --accent. #eaf54c is 1.19:1 on #fff and 1.15:1
-           on --bg, below WCAG 1.4.11's 3:1, so it cannot carry a focus ring.
-           These two new controls ring in charcoal (16.07:1). The nine EXISTING
-           filter controls still ring in yellow and still fail - that is L-098,
-           a live pre-existing defect, deliberately not fixed here. */
-
-  /* Label-level info affordance. Scoped to .withhint so the shared `.fld label`
-     rule is untouched, and 16px so it fits inside the 11px x 1.5 = 16.5px label
-     line box - that is what keeps all nine control baselines aligned. */
   .fld label.withhint{display:flex;align-items:center;gap:6px}
   .hint{appearance:none;border:0;background:none;padding:0;margin:0;line-height:1;
         font:inherit;font-size:13px;color:var(--muted);cursor:pointer;
@@ -102,25 +95,9 @@
   .note-count[data-state="loading"]{color:var(--muted)}
   .note-count[data-state="zero"]{color:var(--err)}
 
-  /* ===================== L-111: the declination parity block ===============
-     Spec: ops/handoffs/L-111-design-spec.md §5 / §12; style guide §5c.
-     Three rules that are arithmetic, not taste:
-       (1) This is NOT a #fff9c4 banner. §5b reserves that fill plus the 4px
-           charcoal left rule for a CAUTION; a factual comparison is not one,
-           and reusing the shape dilutes a signal that had to be argued for.
-           So: the page's own card idiom.
-       (2) The hairline is #dcdce0 on #ffffff = 1.37:1. It is DECORATIVE. Every
-           meaning in this block is a word, a number or a glyph - the difference
-           reads "= Exact match" / "− 7 fewer here" / "+ 731 more here", never a
-           hue. Ink 16.07:1, muted 5.30:1 on white.
-       (3) NO ALPHA anywhere in these rules, so there is no compositing that can
-           annihilate a channel (the L-003 failure).
-     Nothing here uses --accent (1.19:1 on #fff). */
   .parity{border:1px solid var(--line);border-radius:8px;background:#fff;
           padding:11px 13px;margin-bottom:10px;font-size:13px}
-  /* [hidden] is spelled out because an author display rule beats the UA sheet.
-     .parity has no flex/grid rule of its own, so this is sufficient here - but
-     it is written !important deliberately: this has bitten twice. */
+
   .parity[hidden]{display:none !important}
   .parity .ttl{font-size:11px;text-transform:uppercase;letter-spacing:.04em;
                color:var(--muted);font-weight:600;margin-bottom:6px}
@@ -132,10 +109,6 @@
   .parity .why{margin-top:7px;color:var(--muted);line-height:1.45}
   .parity .why b{color:var(--ink);font-weight:600}
 
-  /* The contradiction notice (Declination=Exclude + a reason ticked). This one
-     IS a caution shape - 4px var(--ink) left rule on #fff9c4, 15.00:1 on the
-     fill and 15.53:1 on the page ground, both far over WCAG 1.4.11's 3:1.
-     role="status", never role="alert": nothing here is an error. */
   .selnotice{margin-top:12px;border-left:4px solid var(--ink);background:#fff9c4;
              border-radius:0 8px 8px 0;padding:9px 12px;font-size:13px}
   .selnotice[hidden]{display:none !important}
@@ -278,23 +251,7 @@
       </div>
     </details>
 
-    <!-- ==================== L-111: the Disposition note =====================
-         Copy is binding - ops/handoffs/L-111-design-spec.md §9.2.
-
-         BRANCH A. L-106's data-fidelity caution was specified but never
-         implemented: this page has never carried DECL_DISPS, isFlagged, the
-         ⚠ prefix on the Disposition button, the selection notice or the
-         results caution. So there is nothing to delete and L-106 §8's
-         retirement steps 1–4 are moot. What lands instead is the part of §5b
-         that SURVIVES a retirement - the definition, not the alarm.
-
-         And the definition really does survive L-110: `arg_max(disposition,
-         disp_date)` still takes the LATEST outcome, so a matter that was
-         declined and later convicted still reads Guilty. Disposition remains
-         the wrong control for finding declinations - it is simply no longer
-         0.2% wrong, so the note carries no figures at all. Every number
-         L-106's note would have carried was about the size of the defect;
-         once the defect is fixed they are about nothing. -->
+    <!-- ==================== L-111: the Disposition note ===================== -->
     <details class="note" id="dispNote">
       <summary id="dispNoteSummary">Data note: dispositions versus declinations</summary>
       <div class="note-body">
@@ -306,21 +263,7 @@
       </div>
     </details>
 
-    <!-- L-120, 2 Sep 2026 (Cary): the L-111 declination note (#declNote,
-         "Declined matters: what this filter finds, and how it compares with the
-         dashboard") was REMOVED from here, along with the two ⓘ hint buttons on
-         the Declination and Declination reason labels that opened it. The
-         dashboard it compared against has never been live to any member of the
-         public. The FILTER, the parity block and the cube loader all stay -
-         only the prose went.
-         KEPT DELIBERATELY, and put to Cary explicitly: #dispNote above and
-         #recNote further up. #dispNote is what became of L-106's warning and is
-         the only thing stopping a user picking "Declination or Referral" from
-         the Disposition list and getting ~1,250 rows where the real declined
-         population is 904,628. Do not remove it, fold it in, or shorten it.
-         The cube is still fetched LAZILY - this note's expand was one of four
-         triggers and the other three cover every path to the parity block; see
-         ensureCube()'s header comment. -->
+    <!-- L-120, 2 Sep 2026 (Cary): the L-111 declination note (#declNote, -->
 
     <!-- L-111 §7.3: the contradiction notice. role="status", NEVER role="alert"
          - nothing here is an error. Neither control is disabled and neither is
@@ -543,22 +486,7 @@ async function init(){
 
 
 /* ------------------------------------------------------------------ L-078 --
-   The record-type note. Additive by construction: it reads no filter, writes
-   no filter, runs no search and changes no result. Wired from init() so it can
-   only be reachable once `conn` exists - #filterPanel is display:none until
-   then, so there is no "not ready" state to design.
-
-   The one figure the copy quotes is QUERIED, lazily, on first expand, and is
-   never hard-coded: a literal 297,198 goes silently wrong at the next vintage.
-   Four states, all of them specified rather than incidental -
-     loading  "Counting…", muted, in an aria-live span; the prose never blocks
-     value    the class size and its share of the loaded file
-     zero     stated in words, NEVER "0 records". A zero here means the page is
-              being served against Parquets that predate L-079, which is a real
-              deploy hazard (invariant 11 / the deploy-ordering rule), and a
-              plain sentence beats a dead filter option nobody can explain.
-     failed   the clause disappears entirely - no error text, no red. The
-              paragraph is written to read correctly with no number in it.        */
+   The record-type note.  */
 function setupNote(){
   const note=$('recNote'), summary=$('recNoteSummary');
   if(!note || !summary) return;
