@@ -490,7 +490,8 @@
     'e-cl-imputed', 'e-cl-court',
     /* the FAQ block, authored in the page. One id each: they used to share id="faq" */
     'e-faq-source', 'e-faq-why', 'e-faq-how-to-use', 'e-faq-how-not-to-use',
-    'e-faq-cleaning', 'e-faq-provisional', 'e-faq-usao', 'e-faq-reproduce'
+    'e-faq-cleaning', 'e-faq-provisional', 'e-faq-categories', 'e-faq-usao',
+    'e-faq-reproduce'
   ];
   var RETIRED = [];   /* ids that once existed. Never remove one from this list. */
 
