@@ -16,7 +16,11 @@ const DISP=[["ju","Judgment For U.S.","#1d9e75"],["st","Settlements","#2a78d6"],
 const METRICS_R=[["cases_filed","Cases filed"],["cases_terminated","Cases terminated"],["clearance","Clearance %"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
 const METRICS_CASES=[["cases_filed","Cases filed"],["cases_pending","Cases pending"],["cases_terminated","Cases terminated"]];
 const METRICS_MATTERS=[["matters_received","Matters received"],["matters_pending","Matters pending"],["matters_terminated","Matters terminated"]];
-const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
+// Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
+// (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
+// of "2021-01" put January 2021 - Biden's first month - inside the Trump I range and made
+// it 49 months against the band's 48 (L-221).
+const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const DEPT_ORDER_R=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER_R={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const DEPT_ORDER_V=["Social Security Admin","DOJ","DHS","Treasury","HUD","HHS","Education","Veterans Affairs","Small Business Admin","Agriculture","Defense","Labor","Interior","State","EPA","OPM","Energy","Commerce","USPS","Other"];
@@ -205,7 +209,13 @@ function renderTopline(){
   const ags=curAgs(), all=ags.has('ALL');
   const selName = all ? 'all agencies' : (ags.size===1 ? [...ags][0] : 'the selected agencies');
   const series=metricArray(R,m);
-  window.LIONS_TOPLINE.render({
+  // Invariant 7: the topline engine is additive. A browser holding an old cached
+  // shared/shared.js against this page script has no LIONS_TOPLINE, so a missing or
+  // throwing engine logs and leaves the chart to render.
+  if(!window.LIONS_TOPLINE){ console.warn('LIONS_TOPLINE unavailable - topline section skipped'); return; }
+  // L-222: facts here, sentence in the engine. See index.page.js.
+  const C=window.LIONS_TOPLINE.COPY;
+  try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:m, metricLabel:metricLabel(m),
     kind: pct?'rate':(stock?'stock':'count'), series, rate,
     share:{ sel:shareFlow(R), tot:shareFlow(TOT),
@@ -216,12 +226,16 @@ function renderTopline(){
                    :'All-occurrences basis: a case referred by several agencies is counted under each.') },
     allSelected:all,
     districtSel:!(state.dists.has('National')||state.dists.size===0),
+    filters:{ mode: isCiv()?C.capModeCiv:C.capModeCrim, districts:distClause(state.dists),
+              role: isCiv()?state.role:null,
+              selection: all?null:{items:[...ags], noun:C.capNounAgencies},
+              occ: isCiv()?C.capOccClient:(state.occ==='lead'?C.capOccLead:C.capOccAll) },
     provN:PV.n(m,pvopt()),
     caption: isCiv()?'U.S. as '+state.role+'.':'Counts U.S. District Court filings only.',
     notOffered: m==='matters_pending',
     loading: isCiv()?!CNAT:!NAT,
     empty: !series.some(v=>v)
-  });
+  }); }catch(e){ console.warn('LIONS_TOPLINE.render failed - topline section skipped', e); }
 }
 
 const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;

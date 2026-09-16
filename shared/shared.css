@@ -10,7 +10,7 @@ body{
   background:var(--bg);color:var(--ink);
   font-weight: 400;
   font-family: 'Ancizar Sans', 'Arial', sans-serif;
-  font:14px/1.5em;
+  font:14px/1.5em 'Ancizar Sans', 'Arial', sans-serif;
 }
 .wrap{max-width:1120px;margin:0 auto;padding:18px 16px 44px}
 .sub{color:var(--mut);font-size:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}

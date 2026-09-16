@@ -36,6 +36,11 @@ function extTooltip(context){ const {chart,tooltip}=context; let el=document.get
 // browser's [hidden]{display:none}. The mark's own bubble is the exception that proves
 // it - it is never display:none at all, because it is an aria-describedby target.
 function fmtDist(c){ if(c&&c.length===3&&'NSEWMC'.includes(c[2])){ const P={N:'Northern',S:'Southern',E:'Eastern',W:'Western',M:'Middle',C:'Central'}; return c.slice(0,2)+'-'+P[c[2]]; } return c; }
+// L-222: the district clause of the topline caption, in one place because all four
+// dashboards carry the same 'National' sentinel and the same fmtDist labels. An EMPTY
+// array means the national read - the page fetches the national cube rather than summing
+// 93 districts, and the engine prints 'National' for it, never nothing.
+function distClause(dists){ return (dists.has('National')||dists.size===0) ? [] : [...dists].map(fmtDist); }
 function fmtMMYYYY(x){ const p=(x||'').split('-'); return p.length===2?p[1]+'-'+p[0]:x; }
 function months(a,b){ const r=[]; let [y,m]=a.split("-").map(Number); const [Y,M]=b.split("-").map(Number);
   while(y<Y||(y===Y&&m<=M)){ r.push(y+"-"+String(m).padStart(2,"0")); m++; if(m>12){m=1;y++;} } return r; }
@@ -292,8 +297,55 @@ function mountDocMarkers(surface,root,labelToKey,base){
        of two, and it is now the only one. The four channels of the two-truths marker and
        its return control are STRUCK (spec 4.1), copy and all - not disabled, because a
        marker left in the code with no trigger is the thing a later reader restores by
-       accident, and copy left in the source is how it gets restored word for word. */
-    caption: 'These figures follow the chart\'s filters and date range.',
+       accident, and copy left in the source is how it gets restored word for word.
+       L-222, 16 September 2026: the caption is now COMPUTED. Its lead-in is the first six
+       words of the sentence Cary signed on 15 September - kept on his ruling of 16
+       September (spec 10.1) - and what follows the colon is the chart's own state: the
+       metric, the date range with its fiscal or calendar convention, and every filter the
+       user has narrowed. Both claims are still made, and the reader can now check the
+       first against the controls instead of taking it on trust. The sentence this
+       replaced is NOT quoted here - copy left in the source is how a later reader
+       restores it word for word, the same reason the eight struck provisional strings
+       are not quoted either. It is in the L-222 spec and in section 9h's diff.
+       NO VINTAGE CONSTANT AND NO DATA FIGURE (spec section 6): the range is computed from
+       the loaded spine and every clause from the page's own filter state. */
+    captionTpl: 'These figures follow the chart: {metric}, {range}{filters}.',
+    /* the range's convention, computed from the months rather than written: a range that
+       begins in an October and ends in a September IS whole fiscal years and says so;
+       anything else is calendar months. That is the FY convention at shared.js:55, not a
+       threshold anyone chose. The SAME label prints under every glance figure and in every
+       look-up heading, because buildPeriods() calls the same function, so the section
+       cannot read "fiscal" in one line and "calendar" in the next. */
+    capConvCal: 'calendar months',
+    capConvFy: 'FY{a} to FY{b}',
+    capConvFy1: 'FY{a}',
+    /* the filter clauses. Every one is a noun phrase, never a bare adjective, so the
+       reader can tell which control produced it. The district clause is never silent:
+       'National' is a different READ from a sum over districts - the page fetches the
+       national cube for it - and a clause that vanishes when unset cannot be told from a
+       page that has no such filter. */
+    capNational: 'National',
+    capMany: '{n} {noun}',
+    capRole: 'U.S. as {role}',
+    capModeCrim: 'criminal',
+    capModeCiv: 'civil',
+    capByCat: 'by program category',
+    capByAgency: 'by referring agency',
+    /* the four occurrence-basis clauses, lower-cased from the basis sentences the model
+       already carries, so the caption introduces no new vocabulary. They are noun phrases
+       and not the toggle's own button labels on purpose: Agency's occurrence button reads
+       "All agencies", which in a comma-separated list beside an agency selection would
+       read as a selection of all agencies. */
+    capOccAll: 'all-occurrences basis',
+    capOccPrimary: 'primary category basis',
+    capOccLead: 'lead agency basis',
+    capOccClient: 'client agency basis',
+    /* the four selection nouns, one per dashboard, used when more than one is picked */
+    capNounCats: 'categories',
+    capNounCauses: 'causes of action',
+    capNounAgencies: 'agencies',
+    capNounReasons: 'reasons',
+    capNounDistricts: 'districts',
     /* THE SECTION'S ONE PROVISIONAL MARK (L-207, signed by Cary 15 September 2026).
        It replaces EIGHT per-figure provisional strings and the section footer's second
        sentence; the footer keeps the page's own caption and nothing else. Two strings and
@@ -516,6 +568,68 @@ function mountDocMarkers(surface,root,labelToKey,base){
   }
   function fmtRate(M, v) { return M.kind === 'rate' ? n2(v) + '%' : n1(v); }
 
+  /* ══ THE RANGE LABEL AND THE CAPTION (L-222) ════════════════════════════════════
+     ONE function labels a range, and it is used by the caption AND by the chart period
+     every glance figure and every look-up heading prints. That is not a tidiness point:
+     with two of them the section reads "(FY2016 to FY2025)" in its caption and
+     "(calendar months)" for the same months three lines below (spec section 2).
+     A range from an October to a September is exactly a whole number of fiscal years -
+     the FY convention at shared.js:55, labelled by the year it ENDS - and nothing else
+     is. There is no window, no tolerance and no judgement in the test, and a user who
+     types those months into From and To gets the same label as one who clicks the FY
+     preset, which is the point of computing it.
+     NAMED labelRange and not rangeLabel because rangeLabel(M, idxs) already exists lower
+     down, for a COMPARISON's two sides; a second `function rangeLabel` here hoists over it
+     and every comparison label goes undefined. */
+  function labelRange(a, b) {
+    var conv;
+    /* the first render happens before the cube has arrived, and the page's view indices
+       can point past an empty spine. monthName() has always returned '' for a missing
+       month; this keeps that exact behaviour rather than throwing inside the caption. */
+    if (!a || !b) return monthName(a) + ' to ' + monthName(b) + ' (' + COPY.capConvCal + ')';
+    if (a.slice(5, 7) === '10' && b.slice(5, 7) === '09') {
+      var fa = fyOf(a), fb = fyOf(b);
+      conv = fa === fb ? COPY.capConvFy1.replace('{a}', String(fa))
+                       : COPY.capConvFy.replace('{a}', String(fa)).replace('{b}', String(fb));
+    } else conv = COPY.capConvCal;
+    return monthName(a) + ' to ' + monthName(b) + ' (' + conv + ')';
+  }
+  function rangeIsFy(a, b) { return a.slice(5, 7) === '10' && b.slice(5, 7) === '09'; }
+
+  /* ONE selection clause, and the rule is: name it when the user picked exactly one,
+     count it when they picked more. Naming five is unbounded width - the longest specific
+     category in the July cube is 56 characters - and the caption sits ABOVE the figures,
+     so every line it gains pushes the chart down. The cost is that the caption says how
+     many and not which; the picker that set it is one click away. */
+  function listClause(items, noun) {
+    return items.length === 1 ? String(items[0])
+      : COPY.capMany.replace('{n}', String(items.length)).replace('{noun}', noun);
+  }
+
+  /* THE CAPTION. One sentence, built in one place, from the chart state and nothing else
+     (spec section 8 item 3: not four times in four page scripts). Clause order is fixed
+     on every dashboard, so a reader who learns it on one page keeps it on the next: what
+     is counted (mode, breakdown), where (district), for whom (role), which parts
+     (selection), how counted (occurrence basis). It reads NO data - only the user's own
+     filter state and the loaded spine. */
+  function captionFor(M) {
+    var f = M.filters || {}, cl = [];
+    if (f.mode) cl.push(f.mode);
+    if (f.breakdown) cl.push(f.breakdown);
+    var ds = f.districts || [];
+    cl.push(ds.length ? listClause(ds, COPY.capNounDistricts) : COPY.capNational);
+    if (f.role) cl.push(COPY.capRole.replace('{role}', f.role));
+    if (f.selection && f.selection.items && f.selection.items.length)
+      cl.push(listClause(f.selection.items, f.selection.noun));
+    if (f.occ) cl.push(f.occ);
+    var sp = M.spine || [], v = M.view || [];
+    var range = v.length ? labelRange(sp[v[0]], sp[v[v.length - 1]]) : '';
+    return COPY.captionTpl
+      .replace('{metric}', M.metricLabel || '')
+      .replace('{range}', range)
+      .replace('{filters}', cl.length ? ', ' + cl.join(', ') : '');
+  }
+
   /* ══ PERIODS. Every one is computed from the loaded spine; no window is a constant
      and no label carries a figure written into a string (spec section 6). ═══════── */
   function buildPeriods(M) {
@@ -532,9 +646,14 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
     /* the chart's own range is the default and is always first */
     if (M.view.length) {
+      /* L-222: the chart's own period is labelled by labelRange(), the same function the
+         caption uses, so the two can never disagree about the convention. This label was
+         a hard-coded '(calendar months)' and printed three times on the glance strip and
+         once in every look-up heading. */
+      var ca = sp[M.view[0]], cb = sp[M.view[M.view.length - 1]];
       out.push({
-        k: 'chart', idxs: M.view.slice(), conv: 'cal',
-        label: monthName(sp[M.view[0]]) + ' to ' + monthName(sp[M.view[M.view.length - 1]]) + ' (calendar months)'
+        k: 'chart', idxs: M.view.slice(), conv: (ca && cb && rangeIsFy(ca, cb)) ? 'fy' : 'cal',
+        label: labelRange(ca, cb)
       });
     }
     /* FY presets run to the last CLOSED fiscal year, computed from the vintage edge */
@@ -1433,7 +1552,11 @@ function mountDocMarkers(surface,root,labelToKey,base){
      so the marker has no true trigger and the control has nothing to return from. They are
      REMOVED rather than disabled: a marker sitting in the code with no trigger is the thing
      a later reader restores by accident. `shownPeriods` went with them.
-     The caption is now unconditional, which is what makes it true on every state.
+     The caption is now unconditional, which is what makes it true on every state, and
+     since L-222 it also STATES that state: captionFor() substitutes the metric, the
+     chart's range with its convention and every narrowed filter into one template. It is
+     the same sentence shape on loading, on zero, on partial data and on a refusal,
+     because the chart's state is known before the cube arrives; only the figures wait.
      THE CAPTION ROW carries the caption on the left and the section's ONE provisional
      mark on the right (L-207): a flex row rather than an absolutely positioned icon, so
      the caption wraps into the space the mark leaves instead of running under it. The
@@ -1443,7 +1566,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
      lives on inside the mark's body, which is the only place it now appears. ────────── */
   function paintChrome(M, els) {
     els.cap.className = 'tf-cap';
-    els.cap.innerHTML = '<span class="tf-captxt">' + esc(COPY.caption) + '</span>' +
+    els.cap.innerHTML = '<span class="tf-captxt">' + esc(captionFor(M)) + '</span>' +
       provMarkHTML(monthName(M.spine[M.spine.length - 1]), M.provN);
     wireMark(els.cap);
     els.foot.textContent = M.caption || '';

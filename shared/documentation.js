@@ -25,12 +25,18 @@
 (function () {
   "use strict";
 
-  /* ── the stamp. Covers WORDING only. ─────────────────────────────────────
-     PROSE_SHA is a hash over every copy string below, normalised. tests/docs-check.js
-     recomputes it; a prose edit that does not touch this line goes red. It cannot
-     force REVISED to be right - it can only make a silent prose edit impossible.  */
+  /* ── the stamps. They cover WORDING only. ────────────────────────────────
+     PROSE_SHA hashes this module's own strings: HEAD, the GROUPS walk, and each QUOTED
+     figure's value beside its source. COPY_SHA hashes the copy authored in the page,
+     #doc-copy-html in web/reading-the-data.html, which is what a visitor reads.
+     tests/docs-check.js check 26(e) recomputes both; an edit that does not move the
+     matching stamp goes red. Neither can force REVISED to be right - they can only make
+     a silent prose edit impossible.
+     PROSE_SHA covered `src` and never `v`, and GROUPS is empty, so until 16 September
+     2026 (L-217) it covered no figure and no page copy at all.  */
   var REVISED   = '2026-09-16';
-  var PROSE_SHA = '3f27a84f';   /* recomputed by tests/docs-check.js check 26(e); there is no generator script */
+  var PROSE_SHA = 'bf13437a';   /* recomputed by tests/docs-check.js check 26(e); there is no generator script */
+  var COPY_SHA  = 'c28dffcd';   /* same check, over #doc-copy-html in reading-the-data.html */
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
   var SURFACES = {
@@ -868,7 +874,7 @@
   }
 
   window.LIONS_DOC = {
-    REVISED: REVISED, PROSE_SHA: PROSE_SHA,
+    REVISED: REVISED, PROSE_SHA: PROSE_SHA, COPY_SHA: COPY_SHA,
     HEAD: HEAD, GROUPS: GROUPS, SURFACES: SURFACES,
     QUOTED: QUOTED, LIVE: LIVE,
     ENTRY_IDS: ENTRY_IDS, RETIRED: RETIRED, ENTRY_CUBES: ENTRY_CUBES, PAGE: PAGE,

@@ -16,7 +16,11 @@ const state={dim:'category',dists:new Set(['National']),cats:new Set(['ALL']),ag
 let CAT_NAT=null,CAT_FULL=null,AG_NAT=null,AG_FULL=null,SPINE=[],
   catFullLoading=false,agLoading=false,agFullLoading=false,dMS=null,chart=null,chart2=null;
 let CATLIST=[],DEPTS_AG=[],AGLIST=[];
-const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
+// Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
+// (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
+// of "2021-01" put January 2021 - Biden's first month - inside the Trump I range and made
+// it 49 months against the band's 48 (L-221).
+const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const DEPT_ORDER=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const CURRENT="declinations.html";
@@ -217,19 +221,27 @@ function renderTopline(){
   const tot=allReasonTotal();
   const all=sel.length===REASON_ORDER.length;
   const selName = all ? 'all reasons' : (sel.length===1 ? sel[0] : 'the selected reasons');
-  window.LIONS_TOPLINE.render({
+  // Invariant 7: the topline engine is additive. A browser holding an old cached
+  // shared/shared.js against this page script has no LIONS_TOPLINE, so a missing or
+  // throwing engine logs and leaves the chart to render.
+  if(!window.LIONS_TOPLINE){ console.warn('LIONS_TOPLINE unavailable - topline section skipped'); return; }
+  // L-222: facts here, sentence in the engine. See index.page.js.
+  const C=window.LIONS_TOPLINE.COPY;
+  try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:PROV_METRIC, metricLabel:'Matters declined',
     kind:'count', series, rate:null,
     share:{ sel:series, tot, label:(sel.length===1?sel[0]+' share':'Selected reasons\' share'),
             selName, basis:'Share of all eight declination reasons in the same period.' },
     allSelected:all,
     districtSel:!(state.dists.has('National')||state.dists.size===0),
+    filters:{ breakdown: isAg()?C.capByAgency:C.capByCat, districts:distClause(state.dists),
+              selection: all?null:{items:sel, noun:C.capNounReasons} },
     provN:PV.n(PROV_METRIC,PVOPT),
     caption:'Counts criminal matters declined by U.S. Attorney offices.',
     flags:{armD:true, scheme:true, declTrend:true},
     loading:!(isAg()?AG_NAT:CAT_NAT),
     empty:!series.some(v=>v)
-  });
+  }); }catch(e){ console.warn('LIONS_TOPLINE.render failed - topline section skipped', e); }
 }
 
 function buildCSV(){

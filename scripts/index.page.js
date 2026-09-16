@@ -16,7 +16,11 @@ function predMetric(R, metric){
 function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const last=SPINE.length-1;
   return arr.map((v,i)=>{ if(v==null) return null; const age=last-i; return v*(age>=0&&age<mm.length?mm[age]:1); }); }
 const METRICS=[["cases_filed","Cases filed"],["cases_terminated","Cases terminated"],["clearance","Clearance %"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
-const PRESETS={obama2:["2013-01","2017-01"],trump1:["2017-01","2021-01"],biden:["2021-01","2025-01"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
+// Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
+// (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
+// of "2021-01" put January 2021 - Biden's first month - inside the Trump I range and made
+// it 49 months against the band's 48 (L-221).
+const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const CURRENT="index.html";
 // Provisional (right-censored) data - L-014, revised to rev B in L-021.
 // Spec: ops/handoffs/L-003-design-spec.md (revision B).
@@ -125,7 +129,15 @@ function renderTopline(){
   const selName = all ? 'all categories'
                 : (state.cats.size===1 ? [...state.cats][0] : 'the selected categories');
   const series=metricArray(R,m);
-  window.LIONS_TOPLINE.render({
+  // Invariant 7: the topline engine is additive. A browser holding an old cached
+  // shared/shared.js against this page script has no LIONS_TOPLINE, so a missing or
+  // throwing engine logs and leaves the chart to render.
+  if(!window.LIONS_TOPLINE){ console.warn('LIONS_TOPLINE unavailable - topline section skipped'); return; }
+  // L-222: the caption states the chart's state, so the page hands over the FACTS and the
+  // engine owns the SENTENCE. Every string below is the engine's own COPY, so the signed
+  // wording lives in one place and cannot drift four ways across four page scripts.
+  const C=window.LIONS_TOPLINE.COPY;
+  try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:m, metricLabel:metricLabel(m),
     kind: pct?'rate':'count', series, rate,
     share:{ sel:R.filed, tot:TOT.filed, label:'Share of all criminal cases',
@@ -135,11 +147,13 @@ function renderTopline(){
               : 'All-occurrences basis: a case is counted in every category it touches.' },
     allSelected:all,
     districtSel:!(state.dists.has('National')||state.dists.size===0),
+    filters:{ districts:distClause(state.dists), occ: state.occ==='primary'?C.capOccPrimary:C.capOccAll,
+              selection: all?null:{items:[...state.cats], noun:C.capNounCats} },
     provN:PV.n(m,PVOPT),
     caption:'Counts U.S. District Court filings only.',
     loading:!NAT,
     empty:!!NAT && !series.some(v=>v)
-  });
+  }); }catch(e){ console.warn('LIONS_TOPLINE.render failed - topline section skipped', e); }
 }
 
 function renderTable(){
