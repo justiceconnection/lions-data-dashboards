@@ -244,197 +244,42 @@
     ['Cases brought back in at the start of the fiscal year', '+3,292']
   ];
 
-  /* ══════════════════════════════════════════════════════════════════════════
-     THE COPY. Everything a user can read is in this block and nowhere else.
-     ══════════════════════════════════════════════════════════════════════════ */
-  var HEAD = {
-    button:  'Data documentation',
-    stand:   'Below, we’ve outlined some of the important facets of Justice Connection’s five dashboards and discrepancies or details to keep in mind as you review the dashboard. For more information about the LIONS system, <a href="https://www.justice.gov/usao/resources/foia-library/national-caseload-data/frequently-asked-questions" target="_blank">please visit the DOJ’s website.</a>',
-    scope:   'All below note analysis apply to national data and subcategories, regardless of the dashboard selected.',
-    expand:  'Expand all',
-    collapse: 'Collapse all',
-    stamp:   'Last published update ',
-    stamp2:  'Dashboard numbers cited in this documentation update in real-time, reflecting the most recent data available.',
-    applies: 'Applies to: ',
-    /* the surface filter */
-    filterLbl: 'Notes that affect',
-    filterAll: 'Every dashboard',
-    filterCount: function (n, t, name) { return 'Showing ' + n + ' of ' + t + ' notes, the ones that affect ' + name + '.'; },
-    filterClear: 'Show all ' ,
-    /* lazy figure loading */
-    figLoading: 'working out the figures',
-    /* returning to where you came from */
-    backTo:  'Back to ',
-    backGeneric: 'Back',
-    /* a citation that no longer resolves */
-    retired: function (id) { return 'The note you followed a link to has been retired and is no longer on this page. Nothing else has moved. The reference was ' + id + '.'; }
-  };
+  /* Copy is authored in the page as HTML when present (see #doc-copy-html).
+     The build below will fall back to empty defaults when no page-supplied
+     HTML is available. */
 
-  var GROUPS = [
-  { id: 'g1', title: 'Data Organization', entries: [
+  function loadCopyFromPage() {
+    try {
+      if (typeof document === 'undefined') return null;
+      var el = document.getElementById('doc-copy-json');
+      if (!el) return null;
+      return JSON.parse(el.textContent || el.innerText || '{}');
+    } catch (e) {
+      return null;
+    }
+  }
 
-    { id: 'e-dc-only', surfaces: ['index', 'agency'],
-      title: 'Criminal case exclusions',
-      body: [
-        'A criminal case reaches this dashboard only if it has a filing date recorded for a U.S. District Court. Some prosecutions handled entirely in a magistrate court may have dates that appear “late” or “misdated.” These cases are excluded from dashboard charts but will appear in the Case Look-Up feature. Any analysis or chart built on the dashboard should not be categorized as reflective of all federal criminal prosecutions, given these differences.',
-        '[[In fiscal year {{crim_fy}} there are approximately {{mag_excl}} prosecutions excluded from the visualization, {{mag_1325}} of which are illegal entry cases under 8 U.S.C. 1325(a)(1), many in the southern and western districts of Texas, in Arizona and in New Mexico.]]',
-        '[[There’s over {{no_dc_d}} criminal case records in this dataset but {{no_dc_n}} (or {{no_dc_pct}}), have no U.S. District Court filing and therefore are not visualized on the dashboard. In fiscal year {{crim_fy}} this dashboard counts {{crim_fy_cases}} criminal cases filed and {{crim_fy_defs}} defendants.]]',
-        'Declined matters and matters that never went to court are, similarly, not visualized. Declined matters have their own dashboard.',
-        'By counting only district court filings, this dashboard is comparable with the figures that DOJ publishes at the end of the year. [[Using this smaller case count, our dashboard visualizes {{crim_case_pct}} of DOJ’s published count of criminal cases filed and {{crim_def_pct}} of its published defendants.]] The wider count, taking in magistrate court prosecutions, matches no published DOJ table at all, making data validation nearly impossible.',
-      ] },
+  var __PAGE_COPY = loadCopyFromPage() || {};
 
-    { id: 'e-filed-two', surfaces: ['index', 'lookup'],
-      title: 'Definition of filed',
-      body: [
-        'The word "filed" has different meanings on the dashboard versus the Case Look-Up function.',
-        'The dashboard dates a case by its earliest filing in a U.S. District Court across cases that reached that court. Case Look-Up dates a case by its earliest filing in any court, across every record with a court proceeding, which includes magistrate court prosecutions and proceedings that happen after a case has been decided. Therefore Case Look-Up always returns a larger number. Both are accurate.',
-        '[[For example, if you filter for criminal cases filed in fiscal year {{crim_fy}}, the dashboard shows {{crim_fy_cases}} and Case Look-Up shows {{cl_fy_cases}}.]] Because the two count different populations, a Case Look-Up search is not the detail behind a dashboard figure and the two will not reconcile. For more detailed breakdowns of the dashboard, use the table feature at the bottom of that page.',
-      ] },
+  /* populate the copy structures from the page-supplied JSON */
+  var HEAD = __PAGE_COPY.HEAD || { button: 'Documentation', stand: '', scope: '', expand: 'Expand all', collapse: 'Collapse all', stamp: 'Last published update ', stamp2: '', applies: 'Applies to: ', filterLbl: 'Notes that affect', filterAll: 'Every dashboard', filterCount: function (n, t, name) { return 'Showing ' + n + ' of ' + t + ' notes, the ones that affect ' + name + '.'; }, filterClear: 'Show all ', backTo: 'Back to ', backGeneric: 'Back', retired: function (id) { return 'The note you followed a link to has been retired and is no longer on this page. Nothing else has moved. The reference was ' + id + '.'; } };
 
-    { id: 'e-matter-case', surfaces: ['civil', 'agency'],
-      title: 'Civil case data',
-      body: [
-        'A civil matter and a civil case are two stages of the same work. DOJ’s definition, as outlined in the annual report, is that matters are “proceedings not yet in court.” The dashboard splits cases and matters similarly. A civil record counts as a matter until a court appears on it, meaning the same issue can be counted as a matter received in one month and as a case filed in a later one. The two data points are not alternatives and they should not be added together.',
-      ] },
+  var GROUPS = __PAGE_COPY.GROUPS || [];
+  var PAGE_SURFACES = __PAGE_COPY.SURFACES || null;
+  if (PAGE_SURFACES && Object.keys(PAGE_SURFACES).length) { SURFACES = PAGE_SURFACES; }
+  var PAGE_QUOTED = __PAGE_COPY.QUOTED || {};
+  if (PAGE_QUOTED && Object.keys(PAGE_QUOTED).length) {
+    Object.keys(PAGE_QUOTED).forEach(function(k){ QUOTED[k] = PAGE_QUOTED[k]; });
+  }
+  var ENTRY_IDS = __PAGE_COPY.ENTRY_IDS || [];
+  var RETIRED = __PAGE_COPY.RETIRED || [];
 
-    { id: 'e-usao-only', surfaces: ['index', 'civil', 'agency', 'declinations', 'lookup'],
-      title: 'Data is limited to USAO work',
-      body: [
-        'LIONS is the case management system used by the United States Attorneys’ offices, which means wrk handled by other parts of the Department of Justice, namely Main Justice, is not included in this data.',
-        'There are 94 U.S. Attorney’s offices. Our dataset does not specify cases filed in the Northern Mariana Islands, which shares a U.S. Attorney with Guam.',
-      ] }
-  ] },
-
-  { id: 'g2', title: 'Data validation', entries: [
-
-    { id: 'e-doj-identity', surfaces: ['index', 'civil', 'agency'],
-      title: 'DOJ’s annual reports are not consistent',
-      body: [
-        'In the process of completing data validation, it became clear that the DOJ’s annual reports do not always align with their own data from one year to the next.',
-        '[[In each of the five annual reports for fiscal years 2021 to 2025, the civil caseload table gives a caseload pending at the start of the year, the cases filed, the cases terminated and the caseload pending at the end. However, the four figures do not agree with one another: the published end of year figure is between {{doj_gap_lo}} and {{doj_gap_hi}} smaller than the other three imply. The criminal tables in the same five reports are inconsistent in the same way. The reports do not say why and it’s not clear if the discrepancy is due to a reporting error, a change in methodology or some other reason.]]',
-        'Nothing here connects this to anything else in these notes. It is a separate observation. No part of the difference between this site’s figures and DOJ’s published figures is explained by it, and nothing set out here claims that it is.',
-      ] },
-    { id: 'e-doj-3b', surfaces: ['index'],
-      title: 'Criminal cases and defendants filed',
-      body: [
-        'DOJ publishes a comparable count once a year in its annual report; the criminal case dashboard does not reproduce it exactly.',
-        '[[For fiscal year {{crim_fy}} this dashboard counts {{crim_fy_cases}} criminal cases filed, compared to {{doj_3b_cases}} that DOJ reports, or {{crim_case_pct}} of DOJ’s figure. Regarding the number of defendants, the dashboard counts {{crim_fy_defs}} against DOJ’s {{doj_3b_defs}}, which is {{crim_def_pct}}.]]',
-        { table: 'crim-flow' },
-        'Note this analysis is not replicable across other years. Data validation shows our dashboard matches, on average, 98% of the DOJ’s total reported criminal cases and 103% of their total defendants.',
-      ] },
-
-    { id: 'e-doj-t4', surfaces: ['civil', 'agency'],
-      title: 'Civil cases filed and terminated',
-      body: [
-        'DOJ publishes the civil caseload once a year. Compared against its five annual reports for fiscal years 2021 to 2025, this site’s counts differ from DOJ’s in every one of the five years, on both counts.',
-        { table: 'civ-flow' },
-        'The reason has not been identified, and the difference is not the same size in each year, so it is not a fixed amount that can be added to or taken off. Part of it is that our most recent years are still being reported and will move; that cannot be the whole of it, because the oldest years here have long since settled and still differ.',
-      ] },
-
-    { id: 'e-doj-t5-cases', surfaces: ['civil', 'agency'], needsColumn: 'cases_pending',
-      title: 'Civil cases pending',
-      body: [
-        'The total dashboard count differs from DOJ’s published count, sometimes due to a greater number of cases, sometimes fewer.',
-        'Cases pending is a count taken at the end of each month of the civil cases that had a court record by that date and no recorded ending. It is not a running balance of arrivals minus departures, and it does not include events that happened after the published date.',
-        { table: 'pending-cases' },
-        'Part of the discrepancies can be accounted for by later data that will retroactively change the count of cases pending at the end of a given month. One trend we’ve noticed is the U.S. as a plaintiff accounts for almost none of the difference; why is not clear.',
-      ] },
-
-    { id: 'e-pending-entry-date', surfaces: ['civil', 'agency'], needsColumn: 'matters_pending',
-      title: 'Civil matters pending',
-      body: [
-        'Our dashboard count for civil matters pending varies from the DOJ published figures to a greater extent than cases. The variance is not normalized nor directional. Matters, similar to cases, is a count taken at the end of each month of all civil matters that have not reached court and have no recorded closure. We caution against using a single month’s matters pending to signify events in that month.',
-        { table: 'pending-matters' },
-      ] },
-
-    { id: 'e-two-crim', surfaces: ['index', 'agency'],
-      title: 'Differences between Criminal Cases and Cases by Referring Agency',
-      body: [
-        'The Criminal Cases dashboard and the Referring Agency dashboard are built from the same records by two different builds, and their criminal totals differ by a handful of cases.',
-        '[[For fiscal year {{crim_fy}} the Referring Agency dashboard counts {{ag_fy_cases}} criminal cases filed.]]',
-        'We have yet to establish a cause but the difference is small enough that it will not change any reading of a trend, and large enough that two figures quoted side by side will not match.'
-      ] }
-  ] },
-
-  { id: 'g3', title: 'Explaining settled versus provisional data', entries: [
-
-    { id: 'e-provisional', surfaces: ['index', 'civil', 'agency', 'declinations', 'lookup'],
-      title: 'The newest months are always incomplete',
-      body: [
-        'The most recent months in each data update from LIONS are always incomplete but the variance is not steady. Every monthly data upload is re-reported more completely in later updates, which we are referring to as “settling” the data. The most recent months on any chart are the least complete, and they are marked on the chart, in the table and in the download as "provisional.',
-        'The scope of missing data is not a constant factor, so we can’t provide an estimation of what’s missing. For example, between the May and June 2026 updates, the newest month of criminal terminations grew by a factor of 2.9. Between the June and July 2026 updates the same measurement gave 5.4. Critically, we still do not believe that this is the final figure, just one step closer.',
-        'Users should note that a sharp decline at the most recent month on the chart is not evidence of a decline, but rather another indicator of incomplete filing data.',
-      ] },
-
-    { id: 'e-not-final', surfaces: ['index', 'civil', 'agency', 'declinations'],
-      title: 'Incomplete data',
-      body: [
-        'All provisional data is shaded on charts, denoting that they are incomplete. The scope of provisional data depends on the dataset: three months for criminal filings, four for civil filings and six for anything related to terminations, dispositions, declinations or pending issues. Note that figures still move outside of the provisional range, but this is smaller and smaller as the months pass. We’ve noticed that civil caseload data continues to move for cases two years or older, but by smaller than 1 percentage point.',
-      ] },
-
-    { id: 'e-revision', surfaces: ['index', 'civil', 'agency', 'declinations', 'lookup'],
-      title: 'Changes over months',
-      body: [
-        'Each monthly update does not simply add new figures for the most recent month, but reports the data from all previous months more completely, so a figure for a month years in the past can still change. If you use a figure from this dashboard, include the dashboard visit date.',
-      ] }
-  ] },
-
-  { id: 'g4', title: 'Additional user notes', entries: [
-
-    { id: 'e-cat-overlap', surfaces: ['index'],
-      title: 'Criminal program categories overlap',
-      body: [
-        'A criminal case can carry several program category codes and is counted under every one of them, so adding all categories will result in an overinflated total. To see total cases over a period of time, see the "all categories" figure.',
-        '[[Over the whole period, adding the umbrella categories together gives {{oc_umb_all_parts}} criminal cases filed against a true total of {{oc_umb_all_total}}, which is {{oc_umb_all_pct}} too many. Within fiscal year {{crim_fy}} the same sum is {{oc_umb_fy_pct}} too many. Expanding every umbrella and adding all of the specific categories instead gives {{oc_spec_all_pct}} too many over the whole period and {{oc_spec_fy_pct}} within fiscal year {{crim_fy}}.]]',
-        'Another option is to filter by "Primary only", which counts each case once under its first entered code.'
-      ] },
-
-    { id: 'e-ag-overlap', surfaces: ['agency'],
-      title: 'Referring agencies overlap',
-      body: [
-        'Similarly, there may be multiple referring agencies for a single case, so agencies should not be added up to reach a total. Instead, use "All agencies," or filter by "Lead agency," to see a reflective sum.',
-      ] },
-
-    { id: 'e-zero-months', surfaces: ['civil', 'agency'],
-      title: 'Occasional zero months',
-      body: [
-        'It is possible for the dashboard to return no data if you filter for one district, one cause of action and one role in the Civil Matters and Cases dashboard or the Cases by Referring Agency dashboard.',
-        'These months are not errors, even if its pending cases, it just shows that a caseload was empty, not that a month is empty. The one exception is for provisional data, which may be empty because they’re incomplete. For more information about provisional data, read below.',
-      ] },
-
-    { id: 'e-ratio', surfaces: ['index', 'civil', 'agency', 'declinations'],
-      title: 'Topline percentage calculations',
-      body: [
-        'The four dashboards provide some general topline calculations based on the filtered data. All displayed percentages are analyzed from the whole sample, even if data is visualized in quarters or years, never averaging the monthly data.'
-      ] },
-
-    { id: 'e-selection', surfaces: ['index', 'civil', 'agency', 'declinations'],
-      title: 'Table functionality',
-      body: [
-        'The data table and the CSV download have fixed columns that are not affected by the filters you select. The table and download will always show the same columns, even if you have filtered for a single district or cause of action. However, the data you download will be filtered, so there may be empty columns in the table.',
-        'Additionally, the total number displayed is only the total of the filtered data, not the entire dataset, unless you have selected all districts, causes of action, and roles.',
-      ] }
-  ] },
-
-  { id: 'g5', title: 'Case Look-Up', entries: [
-
-    { id: 'e-cl-imputed', surfaces: ['lookup'],
-      title: 'Filed dates',
-      body: [
-        'As noted above, Case Look-Up data is organized by the earliest filing date in any real court, so there may be cases that date earlier than the dashboard dates or outside of your filtered range.',
-        'Another discrepancy is the court type; court type is the first court that a record appeared in. For example, a case might show Magistrate Court but still have a U.S. District court filing date later',
-        '[[In the most recent full fiscal year that affects about {{cl_imputed}} of the criminal cases a search returns.]]',
-      ] },
-
-    { id: 'e-cl-court', surfaces: ['lookup'],
-      title: 'Declinations in Case Look-Up',
-      body: [
-        'In Case Look-Up, the disposition column is only recorded for matters that reached a court and were declined. However, it is not representative of all declined cases, because many of them do not reach a court. In addition, some matters are declined and later prosecuted, and these would not be visible in the data.',
-        'To see declined matters only, you can filter by "declination" and set "declined matters only." To visualize and filter immediate case declinations terminated by U.S. Attorney’s Offices, visit our declination dashboard.',
-      ] },
-  ] },
-  ];
-  /* ═══════════════════════════ END OF COPY ═══════════════════════════════ */
+  if (typeof HEAD.filterCount !== 'function') {
+    HEAD.filterCount = function (n, t, name) { return 'Showing ' + n + ' of ' + t + ' notes, the ones that affect ' + name + '.'; };
+  }
+  if (typeof HEAD.retired !== 'function') {
+    HEAD.retired = function (id) { return 'The note you followed a link to has been retired and is no longer on this page. The reference was ' + id + '.'; };
+  }
 
   /* ── figure resolution ────────────────────────────────────────────────── */
   function figure(key) {
@@ -635,22 +480,7 @@
     return out;
   }
 
-  /* ── which metrics carry the inline marker ─────────────────────────────
-     The marker rule lives in `shared/config.js` as REFERENCES.flags, NOT here: the four
-     dashboards and Case Look-Up render the markers and none of them loads this file, so a
-     copy here would be a second source that could drift. tests/docs-check.js asserts that
-     every entry id named in REFERENCES.flags is in ENTRY_IDS below, so a marker can never
-     point at an anchor this page does not publish.
-     The rule itself, for the reader of this file: a metric carries the glyph if, and only
-     if, an entry names THAT metric. It is an index into these notes, not a severity
-     signal, and no copy may imply that it is.                                          */
-
-  /* ── THE ANCHOR CONTRACT. These ids are published: a marker on a dashboard and a
-        citation in someone else's document both point at them, so an id is never
-        renamed and never reused. An entry that is retired keeps its id here, in
-        RETIRED, and the page tells a reader who follows an old link what happened
-        rather than scrolling to nothing. tests/docs-check.js asserts the rendered
-        set equals ENTRY_IDS exactly.                                              */
+  /* ── THE ANCHOR CONTRACT. */
   var ENTRY_IDS = [
     'e-dc-only', 'e-filed-two', 'e-matter-case', 'e-usao-only',
     'e-doj-identity',
@@ -667,18 +497,9 @@
     return !!(r && Object.prototype.hasOwnProperty.call(r, col));
   }
   /* ── THE GUARD, and revision C had to change how it is answered ────────────
-     A gated entry must not render when the series it describes does not exist.
-     On a dashboard the page had already loaded the cube, so the guard was free.
-     On a standalone page with lazy fetching the cube is never loaded until an
-     entry is opened, so the guard would have answered "absent" forever and the
-     entry could never have appeared. Found by running it, not by reading it.
+     A gated entry must not render when the series it describes does not exist. On a dashboard the page had already loaded the cube, so the guard was free.  On a standalone page with lazy fetching the cube is never loaded until an entry is opened, so the guard would have answered "absent" forever and the entry could never have appeared. Found by running it, not by reading it.
 
-     The question is only "does this cube have this column", so it is answered by
-     a RANGE request for the first kilobyte, which is the header line. That is the
-     same capability Case Look-Up already depends on for its Parquets. If the host
-     ignores the Range header it returns the whole file instead, which is 0.56 MiB
-     and still correct, so this degrades to slow rather than to wrong. If the
-     request fails outright the column is treated as ABSENT, which is the
+     The question is only "does this cube have this column", so it is answered by a RANGE request for the first kilobyte, which is the header line. That is the same capability Case Look-Up already depends on for its Parquets. If the host ignores the Range header it returns the whole file instead, which is 0.56 MiB and still correct, so this degrades to slow rather than to wrong. If the    request fails outright the column is treated as ABSENT, which is the
      conservative direction: no claim about data we cannot see. */
   var PROBED = {};
   function probeHeader(name) {
@@ -700,60 +521,97 @@
 
   function mountPage(el, opts) {
     opts = opts || {};
-    MOUNT = el; el.innerHTML = ''; el.className = 'doc-page';
+    MOUNT = el; el.className = 'doc-page';
 
-    var head = document.createElement('div');
-    head.className = 'doc-head';
-    head.innerHTML =
-      '<p class="doc-stand">' + esc(HEAD.stand) + '</p>' +
-      '<p class="doc-stand">' + esc(HEAD.scope) + '</p>' 
-    el.appendChild(head);
+    // If page supplies HTML copy in #doc-copy-html, use it; otherwise build from JS copy structures.
+    var pageCopy = (typeof document !== 'undefined') ? document.getElementById('doc-copy-html') : null;
+    if (pageCopy) {
+      // clone the supplied HTML into the mount point
+      el.innerHTML = pageCopy.innerHTML;
+      // ensure the surface filter and controls exist even when page copy is provided
+      if (!el.querySelector('.doc-filter')) {
+        var bar = document.createElement('div');
+        bar.className = 'doc-filter';
+        bar.setAttribute('role', 'group');
+        bar.setAttribute('aria-label', HEAD.filterLbl);
+        var chips = [['', HEAD.filterAll]].concat(Object.keys(SURFACES).map(function (k) { return [k, SURFACES[k]]; }));
+        bar.innerHTML = '<span class="doc-filter-lbl">' + esc(HEAD.filterLbl) + '</span>' +
+          chips.map(function (c) { return '<button type="button" class="doc-chip" data-s="' + c[0] + '" aria-pressed="false">' + esc(c[1]) + '</button>'; }).join('');
+        // insert the filter bar at the top of the mounted copy (after doc-head if present)
+        var head = el.querySelector('.doc-head');
+        if (head && head.parentNode) head.parentNode.insertBefore(bar, head.nextSibling);
+        else el.insertBefore(bar, el.firstChild);
+      }
+      if (!el.querySelector('.doc-filter-note')) {
+        var note = document.createElement('p'); note.className = 'doc-filter-note'; note.setAttribute('role', 'status');
+        var after = el.querySelector('.doc-filter');
+        if (after && after.parentNode) after.parentNode.insertBefore(note, after.nextSibling);
+        else el.appendChild(note);
+      }
+      if (!el.querySelector('.doc-expand')) {
+        XB = document.createElement('button'); XB.type = 'button'; XB.className = 'doc-expand'; XB.textContent = HEAD.expand;
+        XB.setAttribute('aria-expanded', 'false');
+        el.appendChild(XB);
+      }
+      // Immediately render placeholders in the cloned HTML so quoted figures
+      // and in-page tables appear without requiring the user to open each entry.
+      try {
+        // Render the whole mount (for any head-level figures) and each entry
+        renderHtmlEntry(el);
+        [].slice.call(el.querySelectorAll('details.doc-entry')).forEach(function(d){ renderHtmlEntry(d); });
+      } catch (e) { /* fail safe: don't break the page if something unexpected */ }
+    } else {
+      el.innerHTML = '';
+      var head = document.createElement('div');
+      head.className = 'doc-head';
+      head.innerHTML =
+        '<p class="doc-stand">' + esc(HEAD.stand) + '</p>' +
+        '<p class="doc-stand">' + esc(HEAD.scope) + '</p>';
+      el.appendChild(head);
 
-    /* the surface filter. Six chips plus "every dashboard". Client side, hides
-       nothing a citation points at: a hash always wins (see applyHash). */
-    var bar = document.createElement('div');
-    bar.className = 'doc-filter';
-    bar.setAttribute('role', 'group');
-    bar.setAttribute('aria-label', HEAD.filterLbl);
-    var chips = [['', HEAD.filterAll]].concat(Object.keys(SURFACES).map(function (k) { return [k, SURFACES[k]]; }));
-    bar.innerHTML = '<span class="doc-filter-lbl">' + esc(HEAD.filterLbl) + '</span>' +
-      chips.map(function (c) {
-        return '<button type="button" class="doc-chip" data-s="' + c[0] + '" aria-pressed="false">' + esc(c[1]) + '</button>';
-      }).join('');
-    el.appendChild(bar);
+      /* the surface filter. Six chips plus "every dashboard". Client side, hides
+         nothing a citation points at: a hash always wins (see applyHash). */
+      var bar = document.createElement('div');
+      bar.className = 'doc-filter';
+      bar.setAttribute('role', 'group');
+      bar.setAttribute('aria-label', HEAD.filterLbl);
+      var chips = [['', HEAD.filterAll]].concat(Object.keys(SURFACES).map(function (k) { return [k, SURFACES[k]]; }));
+      bar.innerHTML = '<span class="doc-filter-lbl">' + esc(HEAD.filterLbl) + '</span>' +
+        chips.map(function (c) {
+          return '<button type="button" class="doc-chip" data-s="' + c[0] + '" aria-pressed="false">' + esc(c[1]) + '</button>';
+        }).join('');
+      el.appendChild(bar);
 
-    var note = document.createElement('p');
-    note.className = 'doc-filter-note'; note.setAttribute('role', 'status');
-    el.appendChild(note);
+      XB = document.createElement('button');
+      XB.type = 'button'; XB.className = 'doc-expand'; XB.textContent = HEAD.expand;
+      XB.setAttribute('aria-expanded', 'false');
+      el.appendChild(XB);
 
-    XB = document.createElement('button');
-    XB.type = 'button'; XB.className = 'doc-expand'; XB.textContent = HEAD.expand;
-    XB.setAttribute('aria-expanded', 'false');
-    el.appendChild(XB);
-
-    var body = document.createElement('div');
-    body.className = 'doc-body';
-    GROUPS.forEach(function (g) {
-      var live = g.entries.filter(function (e) { return entryLive(e) !== false; });
-      if (!live.length) return;
-      var sec = document.createElement('section');
-      sec.className = 'doc-grpsec'; sec.dataset.g = g.id;
-      var h = document.createElement('h2'); h.className = 'doc-grp'; h.textContent = g.title;
-      sec.appendChild(h);
-      live.forEach(function (e) {
-        var d = entryEl(e);
-        if (entryLive(e) === null) { d.dataset.gated = e.needsColumn; d.hidden = true; }
-        sec.appendChild(d);
+      var body = document.createElement('div');
+      body.className = 'doc-body';
+      GROUPS.forEach(function (g) {
+        var live = g.entries.filter(function (e) { return entryLive(e) !== false; });
+        if (!live.length) return;
+        var sec = document.createElement('section');
+        sec.className = 'doc-grpsec'; sec.dataset.g = g.id;
+        var h = document.createElement('h2'); h.className = 'doc-grp'; h.textContent = g.title;
+        sec.appendChild(h);
+        live.forEach(function (e) {
+          var d = entryEl(e);
+          if (entryLive(e) === null) { d.dataset.gated = e.needsColumn; d.hidden = true; }
+          sec.appendChild(d);
+        });
+        body.appendChild(sec);
       });
-      body.appendChild(sec);
-    });
-    el.appendChild(body);
+      el.appendChild(body);
 
-    var st = document.createElement('p');
-    st.className = 'doc-stamp';
-    st.innerHTML = '<b>' + esc(HEAD.stamp) + stampDate() + '.</b> ' + esc(HEAD.stamp2);
-    el.appendChild(st);
+      var st = document.createElement('p');
+      st.className = 'doc-stamp';
+      st.innerHTML = '<b>' + esc(HEAD.stamp) + stampDate() + '.</b> ' + esc(HEAD.stamp2);
+      el.appendChild(st);
+    }
 
+    XB = el.querySelector('.doc-expand') || XB;
     XB.addEventListener('click', function () {
       var opening = XB.getAttribute('aria-expanded') !== 'true';
       visibleEntries().forEach(function (d) { d.open = opening; if (opening) hydrate(d); });
@@ -761,14 +619,20 @@
       XB.textContent = opening ? HEAD.collapse : HEAD.expand;
       ping();
     });
-    bar.addEventListener('click', function (ev) {
-      var b = ev.target.closest ? ev.target.closest('.doc-chip') : null;
-      if (!b) return;
-      setFilter(b.dataset.s || null);
-    });
-    note.addEventListener('click', function (ev) {
-      if (ev.target.tagName === 'BUTTON') setFilter(null);
-    });
+    var bar = el.querySelector('.doc-filter');
+    if (bar) {
+      bar.addEventListener('click', function (ev) {
+        var b = ev.target.closest ? ev.target.closest('.doc-chip') : null;
+        if (!b) return;
+        setFilter(b.dataset.s || null);
+      });
+    }
+    var note = el.querySelector('.doc-filter-note');
+    if (note) {
+      note.addEventListener('click', function (ev) {
+        if (ev.target.tagName === 'BUTTON') setFilter(null);
+      });
+    }
     el.addEventListener('toggle', function (ev) {
       var d = ev.target;
       if (d && d.classList && d.classList.contains('doc-entry') && d.open) hydrate(d);
@@ -808,11 +672,15 @@
     var all = [].slice.call(MOUNT.querySelectorAll('details.doc-entry')).filter(function (d) { return !d.hidden; });
     var shown = 0;
     all.forEach(function (d) {
-      var on = !FILTER || (d.dataset.surfaces || '').split(' ').indexOf(FILTER) >= 0;
+      // Entries explicitly marked static (id="faq" or data-static="1") remain visible
+      var isStatic = (d.id === 'faq') || (d.getAttribute && d.getAttribute('data-static') === '1');
+      var on = isStatic || !FILTER || (d.dataset.surfaces || '').split(' ').indexOf(FILTER) >= 0;
       d.style.display = on ? '' : 'none';
       if (on) shown++;
     });
     [].slice.call(MOUNT.querySelectorAll('.doc-grpsec')).forEach(function (sec) {
+      // Keep any explicitly marked FAQ/static groups visible regardless of filter.
+      if (sec.classList && sec.classList.contains('doc-faq')) { sec.style.display = ''; return; }
       var any = [].slice.call(sec.querySelectorAll('details.doc-entry')).some(function (d) { return d.style.display !== 'none' && !d.hidden; });
       sec.style.display = any ? '' : 'none';
     });
@@ -856,7 +724,9 @@
   /* ── lazy figures: nothing is fetched until an entry that needs one is opened ── */
   function rerender(d) {
     var e = entryById(d.id), b = d.querySelector('.doc-ebody');
-    if (e && b) b.innerHTML = entryBody(e);
+    if (e && b) { b.innerHTML = entryBody(e); return; }
+    // If the entry was authored as HTML in the page, process its placeholders.
+    if (d) renderHtmlEntry(d);
   }
   function hydrate(d) {
     if (d.dataset.hydrated === '1' || d.dataset.hydrating === '1') return;
@@ -881,6 +751,44 @@
     var f = null;
     GROUPS.forEach(function (g) { g.entries.forEach(function (e) { if (e.id === id) f = e; }); });
     return f;
+  }
+
+  // Render an entry that was provided as static HTML in the page.
+  function renderHtmlEntry(d) {
+    if (!d) return;
+    var b = d.querySelector('.doc-ebody') || d;
+    // tables: placeholders for table kinds
+    var tables = [].slice.call(b.querySelectorAll('[data-table]'));
+    tables.forEach(function (tb) {
+      var kind = tb.dataset.table;
+      var html = table(kind);
+      if (!html) { tb.parentNode && tb.parentNode.removeChild(tb); return; }
+      tb.innerHTML = html;
+    });
+
+    // clauses: elements that should only appear when all keys are available
+    var clauses = [].slice.call(b.querySelectorAll('[data-clause-keys]'));
+    clauses.forEach(function (cl) {
+      var keys = (cl.dataset.clauseKeys || '').split(/\s*,\s*|\s+/).filter(function (x) { return !!x; });
+      var ok = true, vals = {};
+      keys.forEach(function (k) { var f = figure(k); if (!f) ok = false; else vals[k] = f; });
+      if (!ok) { cl.parentNode && cl.parentNode.removeChild(cl); return; }
+      [].slice.call(cl.querySelectorAll('[data-fig]')).forEach(function (sp) {
+        var key = sp.dataset.fig;
+        if (!key || !vals[key]) return;
+        sp.innerHTML = esc(vals[key].v);
+        sp.classList.add('doc-fig'); if (vals[key].quoted) sp.classList.add('doc-q');
+      });
+    });
+    // standalone figures
+    [].slice.call(b.querySelectorAll('[data-fig]')).forEach(function (sp) {
+      if (sp.closest('[data-clause-keys]')) return; // already handled
+      var key = sp.dataset.fig;
+      if (!key) return;
+      var f = figure(key);
+      if (!f) { sp.style.display = 'none'; return; }
+      sp.innerHTML = esc(f.v); sp.classList.add('doc-fig'); if (f.quoted) sp.classList.add('doc-q');
+    });
   }
 
   function stampDate() {

@@ -7,11 +7,8 @@
 <link rel="stylesheet" href="shared/shared.css?v=20260903a">
 <link rel="stylesheet" href="styles/reading.css?v=20260904a">
 </head><body><div class="wrap">
-  <!-- The sixth surface (L-144). It is NOT a dashboard and must not grow the dashboard
-       chain: no Chart.js, no head.js globals, no shared.js, no provisional.js, no
-       multipliers.js, no lab.js, no shell2.js and no scripts/<page>.page.js. It has no
-       chart, no data table, no filters over data and no CSV export.
-       Its load order is in invariant 9, amended in the same change that added this page. -->
+
+
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
   <a class="doc-back" id="docback" hidden><span aria-hidden="true">&#8592;</span><span id="docbacklbl"></span></a>
@@ -19,6 +16,254 @@
   <div class="sub" id="docsub"></div>
   <div id="reading"></div>
 </div>
+<div id="doc-copy-html" hidden>
+  <div class="doc-head">
+    <p class="doc-stand">Below, we’ve outlined some of the important facets of Justice Connection’s five dashboards and discrepancies or details to keep in mind as you review the dashboard. For more information about the LIONS system, please visit the DOJ’s website</p>
+    <p class="doc-stand">All below note analysis apply to national data and subcategories, regardless of the dashboard selected.</p>
+  </div>
+
+  <div class="doc-body">
+    <section class="doc-grpsec" data-g="g1">
+      <h2 class="doc-grp">Data Organization</h2>
+
+      <details class="doc-entry" id="e-dc-only" data-surfaces="index agency">
+        <summary class="doc-esum">Criminal case exclusions</summary>
+        <div class="doc-ebody">
+          <p>A criminal case reaches this dashboard only if it has a filing date recorded for a U.S. District Court. Some prosecutions handled entirely in a magistrate court may have dates that appear “late” or “misdated.” These cases are excluded from dashboard charts but will appear in the Case Look-Up feature. Any analysis or chart built on the dashboard should not be categorized as reflective of all federal criminal prosecutions, given these differences.</p>
+          <p data-clause-keys="crim_fy mag_excl mag_1325">In fiscal year <span data-fig="crim_fy"></span> there are approximately <span data-fig="mag_excl"></span> prosecutions excluded from the visualization, <span data-fig="mag_1325"></span> of which are illegal entry cases under 8 U.S.C. 1325(a)(1), many in the southern and western districts of Texas, in Arizona and in New Mexico.</p>
+          <p data-clause-keys="no_dc_d no_dc_n no_dc_pct crim_fy crim_fy_cases crim_fy_defs">There’s over <span data-fig="no_dc_d"></span> criminal case records in this dataset but <span data-fig="no_dc_n"></span> (or <span data-fig="no_dc_pct"></span>), have no U.S. District Court filing and therefore are not visualized on the dashboard. In fiscal year <span data-fig="crim_fy"></span> this dashboard counts <span data-fig="crim_fy_cases"></span> criminal cases filed and <span data-fig="crim_fy_defs"></span> defendants.</p>
+          <p>Declined matters and matters that never went to court are, similarly, not visualized. Declined matters have their own dashboard.</p>
+          <p>By counting only district court filings, this dashboard is comparable with the figures that DOJ publishes at the end of the year. <span data-clause-keys="crim_case_pct crim_def_pct">Using this smaller case count, our dashboard visualizes <span data-fig="crim_case_pct"></span> of DOJ’s published count of criminal cases filed and <span data-fig="crim_def_pct"></span> of its published defendants.</span> The wider count, taking in magistrate court prosecutions, matches no published DOJ table at all, making data validation nearly impossible.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-filed-two" data-surfaces="index lookup">
+        <summary class="doc-esum">Definition of filed</summary>
+        <div class="doc-ebody">
+          <p>The word "filed" has different meanings on the dashboard versus the Case Look-Up function.</p>
+          <p>The dashboard dates a case by its earliest filing in a U.S. District Court across cases that reached that court. Case Look-Up dates a case by its earliest filing in any court, across every record with a court proceeding, which includes magistrate court prosecutions and proceedings that happen after a case has been decided. Therefore Case Look-Up always returns a larger number. Both are accurate.</p>
+          <p data-clause-keys="cl_fy_cases crim_fy">For example, if you filter for criminal cases filed in fiscal year <span data-fig="crim_fy"></span>, the dashboard shows <span data-fig="crim_fy_cases"></span> and Case Look-Up shows <span data-fig="cl_fy_cases"></span>. Because the two count different populations, a Case Look-Up search is not the detail behind a dashboard figure and the two will not reconcile. For more detailed breakdowns of the dashboard, use the table feature at the bottom of that page.</p>
+        </div>
+      </details>
+
+    </section>
+
+    <section class="doc-grpsec" data-g="g2">
+      <h2 class="doc-grp">Data validation</h2>
+
+      <details class="doc-entry" id="e-doj-identity" data-surfaces="index civil agency">
+        <summary class="doc-esum">DOJ’s annual reports are not consistent</summary>
+        <div class="doc-ebody">
+          <p>In the process of completing data validation, it became clear that the DOJ’s annual reports do not always align with their own data from one year to the next.</p>
+          <p data-clause-keys="doj_gap_lo doj_gap_hi">In each of the five annual reports for fiscal years 2021 to 2025, the civil caseload table gives a caseload pending at the start of the year, the cases filed, the cases terminated and the caseload pending at the end. However, the four figures do not agree with one another: the published end of year figure is between <span data-fig="doj_gap_lo"></span> and <span data-fig="doj_gap_hi"></span> smaller than the other three imply. The criminal tables in the same five reports are inconsistent in the same way. The reports do not say why and it’s not clear if the discrepancy is due to a reporting error, a change in methodology or some other reason.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-doj-3b" data-surfaces="index">
+        <summary class="doc-esum">Criminal cases and defendants filed</summary>
+        <div class="doc-ebody">
+          <p>DOJ publishes a comparable count once a year in its annual report; the criminal case dashboard does not reproduce it exactly.</p>
+          <p data-clause-keys="crim_fy crim_fy_cases doj_3b_cases crim_case_pct crim_fy_defs doj_3b_defs crim_def_pct">For fiscal year <span data-fig="crim_fy"></span> this dashboard counts <span data-fig="crim_fy_cases"></span> criminal cases filed, compared to <span data-fig="doj_3b_cases"></span> that DOJ reports, or <span data-fig="crim_case_pct"></span> of DOJ’s figure. Regarding the number of defendants, the dashboard counts <span data-fig="crim_fy_defs"></span> against DOJ’s <span data-fig="doj_3b_defs"></span>, which is <span data-fig="crim_def_pct"></span>.</p>
+          <div data-table="crim-flow"></div>
+          <p>Note this analysis is not replicable across other years. Data validation shows our dashboard matches, on average, 98% of the DOJ’s total reported criminal cases and 103% of their total defendants.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-doj-t4" data-surfaces="civil agency">
+        <summary class="doc-esum">Civil cases filed and terminated</summary>
+        <div class="doc-ebody">
+          <p>DOJ publishes the civil caseload once a year. Compared against its five annual reports for fiscal years 2021 to 2025, this site’s counts differ from DOJ’s in every one of the five years, on both counts.</p>
+          <div data-table="civ-flow"></div>
+          <p>The reason has not been identified, and the difference is not the same size in each year, so it is not a fixed amount that can be added to or taken off. Part of it is that our most recent years are still being reported and will move; that cannot be the whole of it, because the oldest years here have long since settled and still differ.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-doj-t5-cases" data-surfaces="civil agency" data-gated="cases_pending">
+        <summary class="doc-esum">Civil cases pending</summary>
+        <div class="doc-ebody">
+          <p>The total dashboard count differs from DOJ’s published count, sometimes due to a greater number of cases, sometimes fewer.</p>
+          <p>Cases pending is a count taken at the end of each month of the civil cases that had a court record by that date and no recorded ending. It is not a running balance of arrivals minus departures, and it does not include events that happened after the published date.</p>
+          <div data-table="pending-cases"></div>
+          <p>Part of the discrepancies can be accounted for by later data that will retroactively change the count of cases pending at the end of a given month. One trend we’ve noticed is the U.S. as a plaintiff accounts for almost none of the difference; why is not clear.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-pending-entry-date" data-surfaces="civil agency" data-gated="matters_pending">
+        <summary class="doc-esum">Civil matters pending</summary>
+        <div class="doc-ebody">
+          <p>Our dashboard count for civil matters pending varies from the DOJ published figures to a greater extent than cases. The variance is not normalized nor directional. Matters, similar to cases, is a count taken at the end of each month of all civil matters that have not reached court and have no recorded closure. We caution against using a single month’s matters pending to signify events in that month.</p>
+          <div data-table="pending-matters"></div>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-two-crim" data-surfaces="index agency">
+        <summary class="doc-esum">Differences between Criminal Cases and Cases by Referring Agency</summary>
+        <div class="doc-ebody">
+          <p>The Criminal Cases dashboard and the Referring Agency dashboard are built from the same records by two different builds, and their criminal totals differ by a handful of cases.</p>
+          <p data-clause-keys="crim_fy ag_fy_cases">For fiscal year <span data-fig="crim_fy"></span> the Referring Agency dashboard counts <span data-fig="ag_fy_cases"></span> criminal cases filed.</p>
+          <p>We have yet to establish a cause but the difference is small enough that it will not change any reading of a trend, and large enough that two figures quoted side by side will not match.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="doc-grpsec" data-g="g3">
+      <h2 class="doc-grp">Explaining settled versus provisional data</h2>
+
+      <details class="doc-entry" id="e-provisional" data-surfaces="index civil agency declinations lookup">
+        <summary class="doc-esum">The newest months are always incomplete</summary>
+        <div class="doc-ebody">
+          <p>The most recent months in each data update from LIONS are always incomplete but the variance is not steady. Every monthly data upload is re-reported more completely in later updates, which we are referring to as “settling” the data. The most recent months on any chart are the least complete, and they are marked on the chart, in the table and in the download as "provisional.</p>
+          <p data-clause-keys="dev_lo dev_hi">The scope of missing data is not a constant factor, so we can’t provide an estimation of what’s missing. For example, between the May and June 2026 updates, the newest month of criminal terminations grew by a factor of <span data-fig="dev_lo"> </span>. Between the June and July 2026 updates the same measurement gave <span data-fig="dev_hi"> </span>. Critically, we still do not believe that this is the final figure, just one step closer.</p>
+          <p>Users should note that a sharp decline at the most recent month on the chart is not evidence of a decline, but rather another indicator of incomplete filing data.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-not-final" data-surfaces="index civil agency declinations">
+        <summary class="doc-esum">Incomplete data</summary>
+        <div class="doc-ebody">
+          <p>All provisional data is shaded on charts, denoting that they are incomplete. The scope of provisional data depends on the dataset: three months for criminal filings, four for civil filings and six for anything related to terminations, dispositions, declinations or pending issues. Note that figures still move outside of the provisional range, but this is smaller and smaller as the months pass. We’ve noticed that civil caseload data continues to move for cases two years or older, but by smaller than 1 percentage point.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-revision" data-surfaces="index civil agency declinations lookup">
+        <summary class="doc-esum">Changes over months</summary>
+        <div class="doc-ebody">
+          <p>Each monthly update does not simply add new figures for the most recent month, but reports the data from all previous months more completely, so a figure for a month years in the past can still change. If you use a figure from this dashboard, include the dashboard visit date.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="doc-grpsec" data-g="g4">
+      <h2 class="doc-grp">Additional user notes</h2>
+
+      <details class="doc-entry" id="e-cat-overlap" data-surfaces="index">
+        <summary class="doc-esum">Criminal program categories overlap</summary>
+        <div class="doc-ebody">
+          <p>A criminal case can carry several program category codes and is counted under every one of them, so adding all categories will result in an overinflated total. To see total cases over a period of time, see the "all categories" figure.</p>
+          <p data-clause-keys="oc_umb_all_parts oc_umb_all_total oc_umb_all_pct oc_umb_fy_pct oc_spec_all_pct oc_spec_fy_pct crim_fy">Over the whole period, adding the umbrella categories together gives <span data-fig="oc_umb_all_parts"></span> criminal cases filed against a true total of <span data-fig="oc_umb_all_total"></span>, which is <span data-fig="oc_umb_all_pct"></span> too many. Within fiscal year <span data-fig="crim_fy"></span> the same sum is <span data-fig="oc_umb_fy_pct"></span> too many. Expanding every umbrella and adding all of the specific categories instead gives <span data-fig="oc_spec_all_pct"></span> too many over the whole period and <span data-fig="oc_spec_fy_pct"></span> within fiscal year <span data-fig="crim_fy"></span>.</p>
+          <p>Another option is to filter by "Primary only", which counts each case once under its first entered code.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-ag-overlap" data-surfaces="agency">
+        <summary class="doc-esum">Referring agencies overlap</summary>
+        <div class="doc-ebody">
+          <p>Similarly, there may be multiple referring agencies for a single case, so agencies should not be added up to reach a total. Instead, use "All agencies," or filter by "Lead agency," to see a reflective sum.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-zero-months" data-surfaces="civil agency">
+        <summary class="doc-esum">Occasional zero months</summary>
+        <div class="doc-ebody">
+          <p>It is possible for the dashboard to return no data if you filter for one district, one cause of action and one role in the Civil Matters and Cases dashboard or the Cases by Referring Agency dashboard.</p>
+          <p>These months are not errors, even if its pending cases, it just shows that a caseload was empty, not that a month is empty. The one exception is for provisional data, which may be empty because they’re incomplete. For more information about provisional data, read below.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-ratio" data-surfaces="index civil agency declinations">
+        <summary class="doc-esum">Topline percentage calculations</summary>
+        <div class="doc-ebody">
+          <p>The four dashboards provide some general topline calculations based on the filtered data. All displayed percentages are analyzed from the whole sample, even if data is visualized in quarters or years, never averaging the monthly data.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-selection" data-surfaces="index civil agency declinations">
+        <summary class="doc-esum">Table functionality</summary>
+        <div class="doc-ebody">
+          <p>The data table and the CSV download have fixed columns that are not affected by the filters you select. The table and download will always show the same columns, even if you have filtered for a single district or cause of action. However, the data you download will be filtered, so there may be empty columns in the table.</p>
+          <p>Additionally, the total number displayed is only the total of the filtered data, not the entire dataset, unless you have selected all districts, causes of action, and roles.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="doc-grpsec" data-g="g5">
+      <h2 class="doc-grp">Case Look-Up</h2>
+
+      <details class="doc-entry" id="e-cl-imputed" data-surfaces="lookup">
+        <summary class="doc-esum">Filed dates</summary>
+        <div class="doc-ebody">
+          <p>As noted above, Case Look-Up data is organized by the earliest filing date in any real court, so there may be cases that date earlier than the dashboard dates or outside of your filtered range.</p>
+          <p>Another discrepancy is the court type; court type is the first court that a record appeared in. For example, a case might show Magistrate Court but still have a U.S. District court filing date later</p>
+          <p data-clause-keys="cl_imputed">In the most recent full fiscal year that affects about <span data-fig="cl_imputed"></span> of the criminal cases a search returns.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-cl-court" data-surfaces="lookup">
+        <summary class="doc-esum">Declinations in Case Look-Up</summary>
+        <div class="doc-ebody">
+          <p>In Case Look-Up, the disposition column is only recorded for matters that reached a court and were declined. However, it is not representative of all declined cases, because many of them do not reach a court. In addition, some matters are declined and later prosecuted, and these would not be visible in the data.</p>
+          <p>To see declined matters only, you can filter by "declination" and set "declined matters only." To visualize and filter immediate case declinations terminated by U.S. Attorney’s Offices, visit our declination dashboard.</p>
+        </div>
+      </details>
+    </section>
+    
+    <section class="doc-grpsec doc-faq" data-g="faq">
+      <h1 class="doc-grp">Frequently asked questions</h1>
+
+     <details class="doc-entry" id="faq" data-surfaces="lookup">
+        <summary class="doc-esum">Where does this data come from?</summary>
+        <div class="doc-ebody">
+        <p>The DOJ National Caseload data dashboard is sourced and cleaned from monthly filings from <a href="https://www.justice.gov/usao/resources/foia-library/national-caseload-data" target="blank">the Department of Justice’s Legal Information Office Network System (LIONS)</a>, which is available as a text file each month under FOIA laws. Monthly data is provided in an 88-gigabyte file, with some categories and identifying information redacted.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry"id="faq" data-surfaces="lookup">
+        <summary class="doc-esum">Why did Justice Connection build this dashboard?</summary>
+        <div class="doc-ebody">
+        <p>This data has been public for years and is <a href="https://www.justice.gov/usao/media/1443941/dl?inline" target="_blank">aggregated into a redacted annual fiscal year report at the close of the year</a>, but there are few easy ways for the public to open, view and understand the monthly data up until now. Syracuse University’s TRAC is the best known example of another organization doing this work, but their reports provide a limited view of the data and are only available as a paid service.</p>
+        <p>This dashboard, in addition to being free and the internal data available to anyone who wants to visit our GitHub, provides users a way to make data actionable and understood over time from 1994 to 2026.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry"id="faq" data-surfaces="lookup">
+        <summary class="doc-esum">How should I use this dashboard?</summary>
+        <div class="doc-ebody">
+        <p>We have written a handy user guide to help people understand the basic principles of the dashboard, as well as a <a href="reading-the-data.html" target="_blank">detailed data documentation page</a> to point out some of the caveats in the data.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="faq"data-surfaces="lookup">
+        <summary class="doc-esum">How should I<u>not</u>use this dashboard?</summary>
+        <div class="doc-ebody">
+        <p>This dashboard is <u>not</u> reflective of all cases handled by the DOJ nor does it include every case filed or received by U.S. Attorney's Offices. However, it is the best picture of publicly available data to glean insights into DOJ actions. Therefore conclusions drawn from data should be properly cited and hedged, given the limitations.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="faq" data-surfaces="lookup">
+        <summary class="doc-esum">How is data cleaned?</summary>
+        <div class="doc-ebody">
+        <p>Justice Connection lightly cleans the data but does not conduct any analysis of the data. Examples of cleaned data include providing a more complete district name (TX-Southern instead of TX-S) or aligning a case's filing date to when it lands in the District Court.</p>
+        <p>Because some data is redacted, some fields are missing or incomplete. We have not modified or tried to render any additional data to cases, this is exactly what is provided by the DOJ.</p>
+        <p>Not all cases in the Case Look-Up feature are included in the Civil or Criminal dashboards, and this is primarily due to filing date. A case's filing date in Case Look-Up begins at a magistrate court but the dashboard exclusively displays District Court filings.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="faq" data-surfaces="lookup">
+        <summary class="doc-esum">What is settled versus provisional data?</summary>
+        <div class="doc-ebody">
+        <p>Each monthly data update from LIONS is a snapshot of the data at that time. The most recent months are always incomplete and difficult to predict how incomplete they are. Every monthly data upload is re-reported more completely in later updates, which we are referring to as “settling” the data. The most recent months for all dashboards are the least complete, and they are marked on the chart, in the table and in the download as "provisional". These terms are our own and are not reflected in DOJ documentation or LIONS data but rather are helpful ways to note that there's likely more data to come.</p>
+        <p>With this in mind, nearly all of the charts have a sharp drop at the end where the data is lagging. This should not be read as a decline but rather another indicator that of incomplete filing data.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="faq" data-surfaces="lookup">
+        <summary class="doc-esum">What are U.S. Attorney Offices, where are they located?</summary>
+        <div class="doc-ebody">
+        <p>U.S. Attorney Offices are the local offices of the Department of Justice that prosecute federal crimes and represent the United States in civil litigation. There are <a href="https://www.justice.gov/usao/find-your-united-states-attorney" target="_blank">94 U.S. Attorney Offices across the country,</a> with locations in every state including U.S. territories. Note our dashboard only shows 93 offices because Guam shares an Attorney with the Northern Mariana Islands. The offices are located in major cities and are responsible for handling cases within their respective districts. For a full list of U.S. Attorney Offices and their locations, please visit the <a href="https://www.justice.gov/usao" target="_blank">Department of Justice website</a>.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="faq" data-surfaces="lookup">
+        <summary class="doc-esum">Can I reproduce this dashboard?</summary>
+        <div class ="doc-ebody">
+        <p>Yes! This is an open-source code project that can be duplicated for a variety of reasons. For questions about methodology or to request the data processing scripts, please see the <a href="https://github.com/justiceconnection/lions-data-dashboards" target="_blank">project repository</a> or <a href="https://www.thejusticeconnection.org/contact" target="_blank">contact the Justice Connection team via the project's contact links.</a></p>
+        </div>
+      </details>
+      <p><a href="index.html">← Back to dashboard</a></p>
+    </section>
+  </div>
+</div>
+
 <script src="shared/config.js?v=20260914a"></script>
 <script src="shared/documentation.js?v=20260915a"></script>
 <script>

@@ -1055,7 +1055,9 @@ init().catch(e=>console.error(e));
     dl.textContent=REFERENCES.label+' '+REFERENCES.arrow;
     dl.hidden=false;
     var bo=document.querySelector('#f_basis option[value="filed_date"]');
-    if(bo && REFERENCES.entryFor('lookup','filed_date')) bo.textContent=bo.textContent+' '+REFERENCES.glyph;
+    if(bo && REFERENCES.entryFor('lookup','filed_date')) {
+      /* marker glyph removed site-wide; keep the option text unchanged */
+    }
   }
   var acc=document.getElementById('dnav'), head=document.getElementById('dnavHead');
   head.addEventListener('click',function(){ var o=acc.classList.toggle('open'); head.setAttribute('aria-expanded', o?'true':'false'); });

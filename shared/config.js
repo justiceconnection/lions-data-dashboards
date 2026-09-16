@@ -14,20 +14,9 @@ const ADMIN_SEQ=['obama2','trump1','biden','trump2'];
 // page is a dashboard; and `lab.js` folds `#dashnav` into a `.nv-acc` accordion inserted
 // WITHOUT the `open` class, so anything rendered inside `.dashnav` is one click away on
 // every dashboard at every width. The control stays visible in the bar.
-//
-// FLAGS is the marker rule, and the rule is: a metric carries the glyph if, and only if,
-// an entry names THAT metric. A caveat that applies to every metric on a surface is
-// carried by the one link, not by a glyph on every metric. The glyph is an index into the
-// notes; it is NOT a severity signal and no copy may imply that it is.
-// `declinations` deliberately flags nothing - the definition change applies to every
-// series on it, so it is the link's job.
-// `matters_pending` is listed and points at a HELD entry (L-149). `markerFor()` is asked
-// for a marker only where the page has the series, so the held entry never gets a marker
-// pointing at an anchor the page does not render.
 const REFERENCES={
   page:"reading-the-data.html",
-  label:"Data documentation",              // must equal LIONS_DOC.HEAD.button; docs-check asserts it
-  glyph:"⚠",
+  label:"Documentation",              // must equal LIONS_DOC.HEAD.button; docs-check asserts it
   arrow:"→",
   // surface key -> the dashboard it names. `name` must match LIONS_DOC.SURFACES exactly
   // (docs-check asserts it); `file` is what the Back control on the notes page links to.
@@ -68,15 +57,10 @@ const REFERENCES={
     const id=(this.flags[mode]||{})[key]||null;
     return (id&&this.held.indexOf(id)<0)?id:null;
   },
-  // A link carrying the glyph. `srText` is the screen-reader sentence: the glyph itself is
-  // aria-hidden, so the warning has to be carried in words here or it is vision-only.
+ 
   markerFor(mode,key,srText,base){
-    const id=this.entryFor(mode,key); if(!id) return null;
-    const a=document.createElement('a');
-    a.className='docmark'; a.href=this.href(mode,id,base);
-    a.setAttribute('aria-label',srText);
-    a.innerHTML='<span aria-hidden="true">'+this.glyph+'</span>';
-    return a;
+    // Glyph markers have been removed site-wide. Keep API but return null.
+    return null;
   },
   markerLabel(name){ return name+': read the note on how this figure compares and what it leaves out'; }
 };

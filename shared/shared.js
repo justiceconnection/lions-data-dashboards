@@ -253,29 +253,12 @@ function downloadChartSVG(chart, filename, title){
   }catch(e){ console.error('SVG export failed',e); alert('SVG export failed: '+(e&&e.message||e)); }
 }
 
-// ── L-144: the inline "Reading the data" markers ────────────────────────────────
-// The rule and the marker-to-entry map live in `shared/config.js` (REFERENCES.flags):
-// a metric carries the glyph if, and only if, an entry names THAT metric. These two
-// helpers are only the rendering. Both are no-ops if config.js did not load, so a
-// missing marker never breaks a render.
-//
-// `docMetricLabel` is for a <select> option, which cannot hold a link, so the glyph is
-// appended to the option text. HOW A SCREEN READER ANNOUNCES A GLYPH INSIDE AN <option>
-// IS NOT PROVED (spec section 8.1); the fallback, if it reads badly, is the word form
-// "Cases pending (see note)" and it is still open.
-// `mountDocMarkers` is for a table header, where a real <a> can carry the warning in
-// words. It is idempotent, so a re-render that rebuilds the <th>s cannot double up.
+
 function docMetricLabel(surface,key,label){
-  if(typeof REFERENCES==='undefined') return label;
-  return REFERENCES.entryFor(surface,key)?(label+' '+REFERENCES.glyph):label;
+ if(typeof REFERENCES==='undefined') return label;
+ return label;
 }
 function mountDocMarkers(surface,root,labelToKey,base){
-  if(typeof REFERENCES==='undefined'||!root) return;
-  for(const th of root.querySelectorAll('th')){
-    if(th.querySelector('.docmark')) continue;
-    const txt=th.textContent.trim().replace(new RegExp('\\s*'+REFERENCES.glyph+'$'),'');
-    const key=labelToKey[txt]; if(!key) continue;
-    const a=REFERENCES.markerFor(surface,key,REFERENCES.markerLabel(txt),base||'');
-    if(a) th.appendChild(a);
-  }
+  // Marker rendering removed: no-op to avoid inserting glyph markers into headers.
+  return;
 }
