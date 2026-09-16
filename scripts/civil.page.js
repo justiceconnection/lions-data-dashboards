@@ -147,46 +147,38 @@ const r1=x=>x==null?"-":x.toLocaleString(undefined,{maximumFractionDigits:1});
 const rint=x=>x==null?"-":Math.round(x).toLocaleString();
 let lastRows=[];
 
-function renderKPIs(){
+// ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
+// The four KPI cards and their renderKPIs() are retired. Two rules this page carries
+// that the others do not:
+//   `cases_pending` is a STOCK - a reading at a date, never a total over a period, and
+//   its provisional treatment is a truncation rather than a flag on the extrema.
+//   `matters_pending` is NOT offered at all (spec section 8 item 8): it is a running net
+//   since October 1994, not a published level, and the section says so rather than
+//   printing a number for it.
+// Invariant 3: the share denominator is the cube's own ALL total row over the same
+// period, never the sum of the selected causes.
+function renderTopline(){
   const R=agg(state.dists,state.cats,state.role);
-  const arr=metricArray(R,state.metric); const idxs=visIdx(); if(!idxs.length) return;
-  // A stock is decided by PV.family, the same map that drives the provisional window and
-  // the down-direction copy. A string sniff would mis-fire on any future `*_pending_rate`.
-  const isLevel=PV.family(state.metric)==='stock';
-  const set=(id,v)=>document.getElementById(id).textContent=v;
-  const fmtVal=v=> v==null?'-':Math.round(v).toLocaleString();
-  const S=(a,ix)=>{ let s=0,any=false; for(const i of ix){ const v=a[i]; if(v!=null){s+=v;any=true;} } return any?s:null; };
-  const avgOver=(ix)=>{ let s=0,n=0; for(const i of ix){ const v=arr[i]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
-  const e=idxs[idxs.length-1]; const last12=idxs.slice(-12);
-  // KPI 1 & 2: flows -> totals; stocks (pending) -> ending level / recent-average level
-  set('kpi1', fmtVal(isLevel?arr[e]:S(arr,idxs)));
-  set('kpi2', fmtVal(isLevel?avgOver(last12):S(arr,last12)));
-  // KPI 3: year-over-year change (kept)
-  const avg3at=(i)=>{ if(i<2) return null; let s=0,n=0; for(let k=0;k<3;k++){ const v=arr[i-k]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
-  const chg=(a,b)=> (a==null||b==null||b===0)?null:100*(a-b)/Math.abs(b);
-  const yoy=chg(avg3at(e),avg3at(e-12));
-  set('kpi3', yoy==null?'-':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
-  // KPI 4: cause share change (kept)
-  const sel=R[primaryFlow()], tot=agg(state.dists,new Set(['ALL']),state.role)[primaryFlow()];
-  const sum3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2]);
-  const shr=(i)=>{ const su=sum3(sel,i),t=sum3(tot,i); return (su!=null&&t)?100*su/t:null; };
-  const comp=(shr(e)!=null&&shr(e-12)!=null)?shr(e)-shr(e-12):null;
-  set('kpi4',comp==null?'-':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
-  // Provisional caveats (spec §7). No arithmetic changes.
-  const pcut=PV.cutIndex(SPINE,PV.n(state.metric,PVOPT));
-  const provIn=ix=>ix.some(i=>i>pcut);
-  const w3=i=>[i,i-1,i-2].filter(k=>k>=0);
-  const yoyProv=provIn(w3(e))&&!provIn(w3(e-12));
-  setKpiNote('kpi1',isLevel?(e>pcut):provIn(idxs),KPI_NOTE_INCLUDES);
-  setKpiNote('kpi2',provIn(last12),KPI_NOTE_INCLUDES);
-  setKpiNote('kpi3',yoy!=null&&yoyProv,KPI_NOTE_COMPARES);
-  setKpiNote('kpi4',comp!=null&&yoyProv,KPI_NOTE_COMPARES);
-  document.getElementById('kpiMetric').textContent=metricLabel(state.metric);
-  document.getElementById('kpi1lab').textContent=isLevel?'Latest (end of range)':'Total, selected range';
-  document.getElementById('kpi2lab').textContent=isLevel?'Avg, last 12 months':'Total, last 12 months';
-  document.getElementById('kpi1ym').textContent = idxs.length ? ('(' + fmtMMYYYY(SPINE[idxs[0]]) + ' – ' + fmtMMYYYY(SPINE[e]) + ')') : '';
-  document.getElementById('kpi2ym').textContent = last12.length ? ('(ending ' + fmtMMYYYY(SPINE[e]) + ')') : '';
-  document.getElementById('kpiScope').textContent='U.S. as '+state.role+' · '+(state.dists.has('National')||state.dists.size===0?'National':state.dists.size+' districts')+' · '+(state.cats.has('ALL')||state.cats.size===0?'all causes':state.cats.size+' selected');
+  const TOT=agg(state.dists,new Set(['ALL']),state.role);
+  const m=state.metric, stock=PV.family(m)==='stock';
+  const all=state.cats.has('ALL')||state.cats.size===0;
+  const selName = all ? 'all causes'
+                : (state.cats.size===1 ? [...state.cats][0] : 'the selected causes');
+  const series=metricArray(R,m);
+  window.LIONS_TOPLINE.render({
+    spine:SPINE, view:visIdx(), metricKey:m, metricLabel:metricLabel(m),
+    kind: stock?'stock':'count', series, rate:null,
+    share:{ sel:R[primaryFlow()], tot:TOT[primaryFlow()],
+            label:'Share of all civil '+primaryLabel().split(' ')[0], selName },
+    allSelected:all,
+    districtSel:!(state.dists.has('National')||state.dists.size===0),
+    provN:PV.n(m,PVOPT),
+    caption: stock?'Pending is a stock: it is read at a date, never totalled over a period.'
+                  :'U.S. as '+state.role+'.',
+    notOffered: m==='matters_pending',
+    loading:!NAT,
+    empty:!!NAT && !series.some(v=>v)
+  });
 }
 
 function renderTable(){
@@ -358,7 +350,7 @@ function render(){ const st=document.getElementById("status");
   const needFull=!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district';
   if(needFull && !FULL && fullLoading){ st.textContent="loading district detail…"; return; }
   st.textContent=(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · U.S. as "+state.role+" · "+state.basis;
-  renderKPIs(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); renderTable(); }
+  renderTopline(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); renderTable(); }
 
 function buildCSV(){
   const head=["month",...lastRows.head,"provisional"];

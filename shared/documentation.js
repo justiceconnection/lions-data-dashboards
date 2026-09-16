@@ -29,8 +29,8 @@
      PROSE_SHA is a hash over every copy string below, normalised. tests/docs-check.js
      recomputes it; a prose edit that does not touch this line goes red. It cannot
      force REVISED to be right - it can only make a silent prose edit impossible.  */
-  var REVISED   = '2026-09-13';
-  var PROSE_SHA = '28922f8d';   /* recomputed by tests/docs-check.js check 26(e); there is no generator script */
+  var REVISED   = '2026-09-16';
+  var PROSE_SHA = '3f27a84f';   /* recomputed by tests/docs-check.js check 26(e); there is no generator script */
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
   var SURFACES = {
@@ -75,7 +75,7 @@
   var QUOTED = {
     doj_3b_cases: { v: '63,954',  src: DOJ_FY25 },
     doj_3b_defs:  { v: '76,409',  src: DOJ_FY25 },
-    cl_fy_cases:  { v: '101,284', src: OURS_JUL },
+    cl_fy_cases:  { v: '87,560', src: OURS_JUL },
     decl_old_all: { v: '658,958', src: OURS_JUL },
     decl_old_fy:  { v: '25,855',  src: OURS_JUL },
     dev_lo:       { v: '2.9',     src: OURS_JUL },
@@ -487,7 +487,10 @@
     'e-doj-3b', 'e-doj-t4', 'e-doj-t5-cases', 'e-pending-entry-date', 'e-two-crim',
     'e-provisional', 'e-not-final', 'e-revision',
     'e-cat-overlap', 'e-ag-overlap', 'e-zero-months', 'e-ratio', 'e-selection',
-    'e-cl-imputed', 'e-cl-court'
+    'e-cl-imputed', 'e-cl-court',
+    /* the FAQ block, authored in the page. One id each: they used to share id="faq" */
+    'e-faq-source', 'e-faq-why', 'e-faq-how-to-use', 'e-faq-how-not-to-use',
+    'e-faq-cleaning', 'e-faq-provisional', 'e-faq-usao', 'e-faq-reproduce'
   ];
   var RETIRED = [];   /* ids that once existed. Never remove one from this list. */
 
@@ -528,6 +531,10 @@
     if (pageCopy) {
       // clone the supplied HTML into the mount point
       el.innerHTML = pageCopy.innerHTML;
+      /* and take the source out of the document. It is the copy's source, not a second
+         rendering of it: left in place every entry and every published id is on the page
+         twice, and an id that appears twice resolves to whichever came first (L-212). */
+      if (pageCopy.parentNode) pageCopy.parentNode.removeChild(pageCopy);
       // ensure the surface filter and controls exist even when page copy is provided
       if (!el.querySelector('.doc-filter')) {
         var bar = document.createElement('div');
@@ -553,12 +560,22 @@
         XB.setAttribute('aria-expanded', 'false');
         el.appendChild(XB);
       }
+      if (!el.querySelector('.doc-stamp')) {
+        var stampEl = document.createElement('p');
+        stampEl.className = 'doc-stamp';
+        stampEl.innerHTML = '<b>' + esc(HEAD.stamp) + stampDate() + '.</b> ' + esc(HEAD.stamp2);
+        el.appendChild(stampEl);
+      }
       // Immediately render placeholders in the cloned HTML so quoted figures
       // and in-page tables appear without requiring the user to open each entry.
       try {
-        // Render the whole mount (for any head-level figures) and each entry
+        // Render the whole mount (for any head-level figures) and each entry.
+        // An entry that is still waiting on a cube is NOT settled: its placeholders
+        // are left alone here and filled by rerender() once the cube lands (L-215).
         renderHtmlEntry(el);
-        [].slice.call(el.querySelectorAll('details.doc-entry')).forEach(function(d){ renderHtmlEntry(d); });
+        [].slice.call(el.querySelectorAll('details.doc-entry')).forEach(function(d){
+          renderHtmlEntry(d, !(ENTRY_CUBES[d.id] || []).length);
+        });
       } catch (e) { /* fail safe: don't break the page if something unexpected */ }
     } else {
       el.innerHTML = '';
@@ -672,8 +689,8 @@
     var all = [].slice.call(MOUNT.querySelectorAll('details.doc-entry')).filter(function (d) { return !d.hidden; });
     var shown = 0;
     all.forEach(function (d) {
-      // Entries explicitly marked static (id="faq" or data-static="1") remain visible
-      var isStatic = (d.id === 'faq') || (d.getAttribute && d.getAttribute('data-static') === '1');
+      // Entries explicitly marked static (data-static="1") remain visible
+      var isStatic = !!(d.getAttribute && d.getAttribute('data-static') === '1');
       var on = isStatic || !FILTER || (d.dataset.surfaces || '').split(' ').indexOf(FILTER) >= 0;
       d.style.display = on ? '' : 'none';
       if (on) shown++;
@@ -726,7 +743,7 @@
     var e = entryById(d.id), b = d.querySelector('.doc-ebody');
     if (e && b) { b.innerHTML = entryBody(e); return; }
     // If the entry was authored as HTML in the page, process its placeholders.
-    if (d) renderHtmlEntry(d);
+    if (d) renderHtmlEntry(d, true);
   }
   function hydrate(d) {
     if (d.dataset.hydrated === '1' || d.dataset.hydrating === '1') return;
@@ -743,6 +760,7 @@
     b.appendChild(ld);
     Promise.all(need.map(fetchCube)).then(function () {
       d.dataset.hydrating = ''; d.dataset.hydrated = '1';
+      if (ld.parentNode) ld.parentNode.removeChild(ld);   /* the wait is over either way */
       rerender(d);                            /* clauses appear, or stay absent */
       ping();
     });
@@ -753,8 +771,12 @@
     return f;
   }
 
-  // Render an entry that was provided as static HTML in the page.
-  function renderHtmlEntry(d) {
+  /* Render an entry that was provided as static HTML in the page.
+     `settled` says every cube this entry needs is in hand (or has failed), so a
+     placeholder that still cannot be filled never will be and is removed. Called
+     without it - at mount, before any cube is fetched - nothing is removed: the
+     placeholder waits for rerender(), which is the only thing that can fill it. */
+  function renderHtmlEntry(d, settled) {
     if (!d) return;
     var b = d.querySelector('.doc-ebody') || d;
     // tables: placeholders for table kinds
@@ -762,8 +784,13 @@
     tables.forEach(function (tb) {
       var kind = tb.dataset.table;
       var html = table(kind);
-      if (!html) { tb.parentNode && tb.parentNode.removeChild(tb); return; }
-      tb.innerHTML = html;
+      if (!html) { if (settled) { tb.parentNode && tb.parentNode.removeChild(tb); } return; }
+      /* in .doc-tblwrap, as the GROUPS path and reading.css both have it: the wrapper
+         is the horizontal scroll container, and without it a seven-column table
+         scrolls the whole page sideways at 390 (L-215). */
+      var ent = tb.closest ? tb.closest('details.doc-entry') : null;
+      var sum = ent && ent.querySelector('summary');
+      tb.innerHTML = wrapTable(html, (sum ? sum.textContent.trim() : kind) + ', table, scrollable sideways');
     });
 
     // clauses: elements that should only appear when all keys are available
@@ -772,7 +799,7 @@
       var keys = (cl.dataset.clauseKeys || '').split(/\s*,\s*|\s+/).filter(function (x) { return !!x; });
       var ok = true, vals = {};
       keys.forEach(function (k) { var f = figure(k); if (!f) ok = false; else vals[k] = f; });
-      if (!ok) { cl.parentNode && cl.parentNode.removeChild(cl); return; }
+      if (!ok) { if (settled) { cl.parentNode && cl.parentNode.removeChild(cl); } return; }
       [].slice.call(cl.querySelectorAll('[data-fig]')).forEach(function (sp) {
         var key = sp.dataset.fig;
         if (!key || !vals[key]) return;

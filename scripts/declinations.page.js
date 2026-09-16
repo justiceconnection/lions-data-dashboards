@@ -50,11 +50,14 @@ function parseAg(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Objec
   return out; }
 
 // per-reason time series (summed over selected districts + selected categories/agencies)
-function seriesByReason(){
+// `reasons` defaults to the page's own selection; the topline section passes all eight in
+// to build the share denominator without disturbing state (L-204).
+function seriesByReason(reasons){
+  const want=reasons||state.reasons;
   const useNat=state.dists.has('National')||state.dists.size===0;
   const rows=isAg()?(useNat?AG_NAT:AG_FULL):(useNat?CAT_NAT:CAT_FULL);
   const idxOf=new Map(SPINE.map((ym,i)=>[ym,i]));
-  const out={}; for(const r of state.reasons) out[r]=new Array(SPINE.length).fill(0);
+  const out={}; for(const r of want) out[r]=new Array(SPINE.length).fill(0);
   if(!rows) return out;
   const catAll=!isAg() && (state.cats.has('ALL')||state.cats.size===0);
   const wantVals=isAg()?state.ags:state.cats;
@@ -62,13 +65,25 @@ function seriesByReason(){
     if(!useNat && !state.dists.has(row.district)) continue;
     if(catAll){ if(row.grp!=='ALL') continue; }
     else { if(row.grp==='ALL'||!wantVals.has(row.grp)) continue; }
-    if(!state.reasons.has(row.reason)) continue;
+    if(!want.has(row.reason)) continue;
     const i=idxOf.get(row.ym); if(i==null) continue;
     out[row.reason][i]+=row.declined;
   }
   return out;
 }
 function selReasons(){ return REASON_ORDER.filter(r=>state.reasons.has(r)); }
+
+// Every reason under the SAME district and category/agency selection, whatever the
+// reason filter is. This is the share denominator for the topline section: invariant 3
+// says the total is the cube's own total row, and on the declination cubes the eight
+// reasons partition category='ALL' exactly (ratio 1.000000, D-039/D-040), so summing
+// all eight of them under one selection IS that row rather than an over-count.
+function allReasonTotal(){
+  const S=seriesByReason(new Set(REASON_ORDER)), out=new Array(SPINE.length).fill(0);
+  for(const r of REASON_ORDER){ const a=S[r]; if(!a) continue;
+    for(let i=0;i<out.length;i++) out[i]+=a[i]; }
+  return out;
+}
 
 const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
   const x=ch.scales.x,area=ch.chartArea,ctx=ch.ctx; const half=labels.length>1?Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))/2:10;
@@ -185,7 +200,36 @@ async function render(){ const st=document.getElementById("status");
   else if(needFull){ await ensureCatFull(); }
   SER=seriesByReason();
   st.textContent=(isAg()?'By referring agency · ':'By program category · ')+scopeText();
-  renderChart(); renderChart2(); updateChartAccessibility(); renderTable();
+  renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); renderTable();
+}
+
+// ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
+// THIS PAGE HAD NO TOPLINE AT ALL until now, and it gains one with three figures:
+// the total declined, the average per month, and the selected reasons' share of all
+// eight. Two flags ride on it and neither is optional: the arm-D definition note on any
+// total or change (D-039/D-040), and the reason-scheme note on a share comparison that
+// reaches before October 2014.
+function renderTopline(){
+  const sel=selReasons();
+  const series=new Array(SPINE.length).fill(0);
+  for(const r of sel){ const a=SER[r]; if(!a) continue;
+    for(let i=0;i<series.length;i++) series[i]+=a[i]; }
+  const tot=allReasonTotal();
+  const all=sel.length===REASON_ORDER.length;
+  const selName = all ? 'all reasons' : (sel.length===1 ? sel[0] : 'the selected reasons');
+  window.LIONS_TOPLINE.render({
+    spine:SPINE, view:visIdx(), metricKey:PROV_METRIC, metricLabel:'Matters declined',
+    kind:'count', series, rate:null,
+    share:{ sel:series, tot, label:(sel.length===1?sel[0]+' share':'Selected reasons\' share'),
+            selName, basis:'Share of all eight declination reasons in the same period.' },
+    allSelected:all,
+    districtSel:!(state.dists.has('National')||state.dists.size===0),
+    provN:PV.n(PROV_METRIC,PVOPT),
+    caption:'Counts criminal matters declined by U.S. Attorney offices.',
+    flags:{armD:true, scheme:true, declTrend:true},
+    loading:!(isAg()?AG_NAT:CAT_NAT),
+    empty:!series.some(v=>v)
+  });
 }
 
 function buildCSV(){

@@ -8,25 +8,8 @@
     color:var(--mut)}
 .occhint{
     font-size:11.5px;color:var(--mut);opacity:.8}
-.kpihdr{
-    display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12.5px;color:var(--mut)}
 .mini{
     font:inherit;font-size:12px;padding:5px 8px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:7px}
-.kpis{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
-    margin-bottom:14px}
-.kpi{
-    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.kpi .v{
-    font-size:25px;font-weight:700;color:var(--ink)}
-.kpi .l{
-    margin-top:3px;
-    font-size:12px;
-    color:var(--mut)}
-.kpi select.mini{
-    margin-top:6px;max-width:100%;font-size:11.5px;padding:3px 6px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px}
 .ax2row{
     display:flex;align-items:center;flex-wrap:wrap;gap:8px}
 .chk{
@@ -66,5 +49,3 @@
     margin:0 0 4px}
 .ms-sub label{
     display:flex;align-items:center;gap:7px;padding:3px 6px 3px 28px;font-size:12.5px;color:#333;cursor:pointer;white-space:nowrap}
-
-@media (max-width:620px){.kpis{grid-template-columns:repeat(2,1fr)}}

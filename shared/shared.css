@@ -48,7 +48,10 @@ tr.recent td{color:#9a7b2e}
                    repeating-linear-gradient(45deg,transparent 0 3px,rgba(33,33,35,.55) 3px 4px);
   background-position:0 0,2px 2px}
 td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
-.kpi .provnote{color:var(--mut);font-size:11px;margin-top:5px;display:flex;align-items:center;gap:5px;line-height:1.3}
+/* .provnote and .provnote .sw-prov are DELETED here (L-207). They styled the topline
+   section's eight per-figure and per-pair provisional lines, which are struck and
+   replaced by the one section mark below; nothing else in web/ used them. .sw-prov
+   itself is untouched and is live in the chart legends and inside the mark. */
 .bottombar{display:flex;justify-content:flex-end;margin-top:10px}
 .tabletoggle{margin:8px 0}
 .disc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
@@ -73,3 +76,140 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 }
 
 @media(max-width:600px){.dashnav{display:none}.dashsel{display:block}}
+
+/* ── THE TOPLINE SECTION - L-199 direction B, built under L-204, 15 September 2026 ──
+   Spec: ops/handoffs/L-199-spec-draft.md. Reference: design-lab/l199-common.css.
+   It lives here rather than in a new stylesheet because all four dashboards need it and
+   shared.css is already on all four, so no asset is added and invariant 9's load chain
+   is unchanged. The old .kpi card rules are gone from the four styles/<page>.css files,
+   and with them the .kpis media queries: L-016 is DISCHARGED rather than resolved to one
+   breakpoint, because there is no four-up grid left to switch. The strip is auto-fit and
+   re-columns itself continuously. D-042: no em dashes. */
+.kpis{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+
+/* THE CAPTION ROW. The caption tells a user this section is not the chart's filter bar;
+   it sits LEFT and the section's one provisional mark sits RIGHT, at the top right of the
+   .kpis box (L-207). A flex row rather than an absolutely positioned icon, so the caption
+   wraps into the space the mark leaves instead of running under it: at 390px the caption
+   is two lines and an absolute icon would sit on top of the second. */
+.tf-cap{font-size:12px;color:var(--mut);margin-bottom:10px;display:flex;
+  align-items:flex-start;justify-content:space-between;gap:10px}
+.tf-captxt{min-width:0}
+
+/* ── THE SECTION'S ONE PROVISIONAL MARK (L-207) ──────────────────────────────────────
+   One mark for the whole section, replacing eight per-figure provisional strings. It is
+   a BUTTON, not a bare glyph, because it must open on TAP as well as on hover: a phone
+   has no hover and invariant 6 says mark provisional periods and never hide them, so a
+   hover-only mark is hidden on touch.
+   The mark itself is the provisional HATCH, the same texture LIONS_PROV draws on a
+   right-censored chart band, so it is texture plus an accessible name and never colour
+   alone, and a reader who has seen the hatched band below has already met it. 26x26
+   matches shell2's own caret and clears WCAG 2.5.8's 24x24 target size. The hatch's dark
+   stripes composite to 4.61:1 on the card fill, computed rather than judged: the lower
+   gradient's rgba(33,33,35,.55) over #dcdcd8 is #757574, where the 1px --line border is
+   1.27:1 and the #dcdcd8 swatch base is 1.38:1 and neither could have carried the mark
+   on its own. The upper rgba(251,251,251,.90) layer lightens the alternate stripes to
+   #ececeb and does not annihilate the dark ones, which is the L-003 failure mode. */
+.tf-provwrap{position:relative;flex:none;display:inline-flex}
+.tf-prov{display:inline-flex;align-items:center;justify-content:center;width:26px;
+  height:26px;padding:0;background:var(--panel);border:1px solid var(--line);
+  border-radius:7px;cursor:pointer}
+.tf-prov:hover{border-color:var(--ink)}
+.tf-prov:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tf-prov .sw-prov{width:14px;height:14px}
+/* the bubble. NEVER `hidden` and never display:none: it is the button's
+   aria-describedby target, so it stays in the accessibility tree at every visual state
+   and a screen-reader user never depends on opening it. Closed, it is clipped to 1px by
+   the standard visually-hidden idiom; open, it is a popover below and left of the
+   button, right-aligned so it cannot overflow the section's right edge. */
+.tf-tip{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);
+  white-space:nowrap;margin:-1px;padding:0;border:0}
+.tf-provwrap:hover .tf-tip,.tf-prov:focus-visible~.tf-tip,.tf-prov[aria-expanded="true"]~.tf-tip{
+  position:absolute;top:calc(100% + 6px);right:0;left:auto;bottom:auto;
+  width:max-content;max-width:min(320px,calc(100vw - 56px));height:auto;
+  overflow:visible;clip-path:none;white-space:normal;margin:0;z-index:5;
+  border-left:4px solid var(--ink);border-top:1px solid var(--line);
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:var(--panel);border-radius:0 8px 8px 0;padding:8px 10px;
+  font-size:11.5px;line-height:1.4;color:var(--ink);text-align:left;
+  box-shadow:0 8px 24px rgba(0,0,0,.14)}
+/* The two-truths marker's three rules - the override block, its pill and its return
+   button - are DELETED here, with the control they marked (L-205, spec 4.1). The contrast
+   arithmetic they were written for is not withdrawn and still governs the two blocks
+   below: charcoal #212123 is 16.07:1 on the card fill and 15.53:1 on the page ground,
+   against a #e4e4e1 hairline at 1.27:1 and --accent at 1.19:1, neither of which could
+   carry a channel on its own. */
+
+/* the glance strip. A GRID rather than a flex row, because flex lets the last item on a
+   wrapped row grow to fill it: measured in Chromium at 620px, three flex items came out
+   279/279/558 and the third read as a different kind of thing. The divider is a
+   box-shadow rather than a border so the first column of EVERY row has no rule to its
+   left: at -1px it falls outside the strip's box and is clipped by overflow:hidden. */
+.tf-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:10px 0;overflow:hidden;margin:0 -14px}
+.tf-stat{padding:2px 14px;box-shadow:-1px 0 0 var(--line)}
+.tf-v{font-size:25px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.15}
+.tf-v.big{font-size:31px}
+.tf-v.muted-v{color:var(--mut)}
+.tf-k{color:var(--ink);font-size:12.5px;margin-top:2px}
+.tf-win{color:var(--mut);font-size:11.5px;margin-top:2px}
+.tf-def{color:var(--mut);font-size:11.5px;margin-top:5px;line-height:1.35}
+.tf-sub{color:var(--ink);font-size:13px;margin-top:2px}
+.tf-foot{color:var(--mut);font-size:11.5px;margin-top:12px;border-top:1px solid var(--line);
+  padding-top:9px;display:flex;align-items:flex-start;gap:6px}
+
+/* the ask line and the answer block */
+.tf-ask2{border-top:1px solid var(--line);margin-top:12px;padding-top:11px}
+.tf-ask{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;font-size:13px;
+  border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:0 0 10px}
+/* a <select> is as wide as its widest option and does not shrink in a flex row, so a
+   long option label pushes the section past the viewport. MEASURED at 390px before this
+   line: one element escaped the section and the page scrolled sideways. */
+.tf-ask select{font-size:12.5px;padding:6px 9px;max-width:100%;min-width:0}
+.tf-ask button{font-size:12.5px;padding:6px 10px}
+.tf-ask .lead{font-weight:600}
+.tf-askline{flex:1 1 100%;margin:0}
+.tf-addcmp{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;
+  font:inherit;font-size:12.5px;color:var(--ink)}
+.tf-addcmp:hover{border-color:var(--ink)}
+.tf-addcmp.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.tf-answer{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#fff}
+.tf-q{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);
+  font-weight:700;margin-bottom:6px}
+/* THE TWO PERIODS OF A COMPARISON ARE DIVIDED (L-207). The same grid-plus-box-shadow
+   idiom .tf-strip already uses, for the same reason: auto-fit re-columns with no media
+   query, and a box-shadow at -1px/-1px falls outside the container's own box and is
+   clipped by overflow:hidden, so the first cell of every ROW carries no rule. Side by
+   side that draws a vertical hairline between the two periods and before the change;
+   stacked on a phone the vertical rules are clipped at the left edge and the horizontal
+   ones appear instead. One rule, two behaviours, no media query and no new colour: it is
+   --line, the hairline the strip, the basis line and the answer border already use. The
+   -13px margin matches .tf-answer's own 13px padding. .tf-delta's rule is deleted with
+   the flex row it belonged to; the class stays on the change cell as a hook. */
+.tf-pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px 0;align-items:flex-start;margin:0 -13px 4px;overflow:hidden}
+.tf-side{padding:0 13px;box-shadow:-1px 0 0 var(--line),0 -1px 0 var(--line)}
+/* the figure's own label on each side of a pair (L-214). No new colour and no new size:
+   it is --mut at 11.5px, the same as .tf-win, which is the glance strip's equivalent
+   line. It is a separate selector rather than a reuse of .tf-win because .tf-win means
+   "the period" everywhere else, and a class that means two things is what a later reader
+   gets wrong. */
+.tf-side .tf-fig{color:var(--mut);font-size:11.5px;margin-top:2px}
+.tf-basis{font-size:12px;color:var(--ink);margin-top:8px;border-top:1px solid var(--line);padding-top:7px}
+.tf-basis b{font-weight:700}
+.tf-also{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.tf-alsohd{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);
+  font-weight:700;margin-bottom:5px}
+.tf-other{display:flex;justify-content:space-between;gap:14px;font-size:12.5px;padding:2px 0;
+  border-bottom:1px solid #f0f0ee}
+.tf-other .ok{color:var(--mut)}
+.tf-other .os{color:var(--mut);font-weight:400;font-size:11.5px}
+/* a flag that qualifies a figure: the fill encodes nothing (1.04:1 against the page) and
+   the 4px charcoal rule carries it at 15.00:1 on the fill. */
+.tf-flag{margin-top:8px;border-left:4px solid var(--ink);background:#fff9c4;
+  border-radius:0 6px 6px 0;padding:6px 9px;font-size:11.5px;line-height:1.35;color:var(--ink)}
+/* a refusal: the comparison asked for cannot be answered honestly on this period, so the
+   section says so in words instead of printing a figure. */
+.tf-refusal{margin-top:2px;border-left:4px solid var(--ink);background:#fff;
+  border-radius:0 6px 6px 0;padding:6px 10px;font-size:12.5px;line-height:1.4;color:var(--ink)}

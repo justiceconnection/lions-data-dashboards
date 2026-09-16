@@ -4,8 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Data Documentation - LIONS Data</title>
 <link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
-<link rel="stylesheet" href="shared/shared.css?v=20260903a">
-<link rel="stylesheet" href="styles/reading.css?v=20260904a">
+<link rel="stylesheet" href="shared/shared.css?v=20260915d">
+<link rel="stylesheet" href="styles/reading.css?v=20260915a">
 </head><body><div class="wrap">
 
 
@@ -42,7 +42,7 @@
         <div class="doc-ebody">
           <p>The word "filed" has different meanings on the dashboard versus the Case Look-Up function.</p>
           <p>The dashboard dates a case by its earliest filing in a U.S. District Court across cases that reached that court. Case Look-Up dates a case by its earliest filing in any court, across every record with a court proceeding, which includes magistrate court prosecutions and proceedings that happen after a case has been decided. Therefore Case Look-Up always returns a larger number. Both are accurate.</p>
-          <p data-clause-keys="cl_fy_cases crim_fy">For example, if you filter for criminal cases filed in fiscal year <span data-fig="crim_fy"></span>, the dashboard shows <span data-fig="crim_fy_cases"></span> and Case Look-Up shows <span data-fig="cl_fy_cases"></span>. Because the two count different populations, a Case Look-Up search is not the detail behind a dashboard figure and the two will not reconcile. For more detailed breakdowns of the dashboard, use the table feature at the bottom of that page.</p>
+          <p data-clause-keys="cl_fy_cases crim_fy crim_fy_cases">For example, if you filter for criminal cases filed in fiscal year <span data-fig="crim_fy"></span>, the dashboard shows <span data-fig="crim_fy_cases"></span> and Case Look-Up shows <span data-fig="cl_fy_cases"></span>. Because the two count different populations, a Case Look-Up search is not the detail behind a dashboard figure and the two will not reconcile. For more detailed breakdowns of the dashboard, use the table feature at the bottom of that page.</p>
         </div>
       </details>
 
@@ -69,6 +69,9 @@
         </div>
       </details>
 
+      <!-- e-matter-case is a published anchor (ENTRY_IDS) whose entry, "Civil case
+           data", is not in this copy. It lands here, on the nearest civil entry. -->
+      <span id="e-matter-case"></span>
       <details class="doc-entry" id="e-doj-t4" data-surfaces="civil agency">
         <summary class="doc-esum">Civil cases filed and terminated</summary>
         <div class="doc-ebody">
@@ -198,16 +201,16 @@
     </section>
     
     <section class="doc-grpsec doc-faq" data-g="faq">
-      <h1 class="doc-grp">Frequently asked questions</h1>
+      <h2 class="doc-grp">Frequently asked questions</h2>
 
-     <details class="doc-entry" id="faq" data-surfaces="lookup">
+     <details class="doc-entry" id="e-faq-source" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">Where does this data come from?</summary>
         <div class="doc-ebody">
-        <p>The DOJ National Caseload data dashboard is sourced and cleaned from monthly filings from <a href="https://www.justice.gov/usao/resources/foia-library/national-caseload-data" target="blank">the Department of Justice’s Legal Information Office Network System (LIONS)</a>, which is available as a text file each month under FOIA laws. Monthly data is provided in an 88-gigabyte file, with some categories and identifying information redacted.</p>
+        <p>The DOJ National Caseload data dashboard is sourced and cleaned from monthly filings from <a href="https://www.justice.gov/usao/resources/foia-library/national-caseload-data" target="_blank">the Department of Justice’s Legal Information Office Network System (LIONS)</a>, which is available as a text file each month under FOIA laws. Monthly data is provided in an 88-gigabyte file, with some categories and identifying information redacted.</p>
         </div>
       </details>
 
-      <details class="doc-entry"id="faq" data-surfaces="lookup">
+      <details class="doc-entry" id="e-faq-why" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">Why did Justice Connection build this dashboard?</summary>
         <div class="doc-ebody">
         <p>This data has been public for years and is <a href="https://www.justice.gov/usao/media/1443941/dl?inline" target="_blank">aggregated into a redacted annual fiscal year report at the close of the year</a>, but there are few easy ways for the public to open, view and understand the monthly data up until now. Syracuse University’s TRAC is the best known example of another organization doing this work, but their reports provide a limited view of the data and are only available as a paid service.</p>
@@ -215,21 +218,21 @@
         </div>
       </details>
 
-      <details class="doc-entry"id="faq" data-surfaces="lookup">
+      <details class="doc-entry" id="e-faq-how-to-use" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">How should I use this dashboard?</summary>
         <div class="doc-ebody">
         <p>We have written a handy user guide to help people understand the basic principles of the dashboard, as well as a <a href="reading-the-data.html" target="_blank">detailed data documentation page</a> to point out some of the caveats in the data.</p>
         </div>
       </details>
 
-      <details class="doc-entry" id="faq"data-surfaces="lookup">
+      <details class="doc-entry" id="e-faq-how-not-to-use" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">How should I<u>not</u>use this dashboard?</summary>
         <div class="doc-ebody">
         <p>This dashboard is <u>not</u> reflective of all cases handled by the DOJ nor does it include every case filed or received by U.S. Attorney's Offices. However, it is the best picture of publicly available data to glean insights into DOJ actions. Therefore conclusions drawn from data should be properly cited and hedged, given the limitations.</p>
         </div>
       </details>
 
-      <details class="doc-entry" id="faq" data-surfaces="lookup">
+      <details class="doc-entry" id="e-faq-cleaning" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">How is data cleaned?</summary>
         <div class="doc-ebody">
         <p>Justice Connection lightly cleans the data but does not conduct any analysis of the data. Examples of cleaned data include providing a more complete district name (TX-Southern instead of TX-S) or aligning a case's filing date to when it lands in the District Court.</p>
@@ -238,7 +241,7 @@
         </div>
       </details>
 
-      <details class="doc-entry" id="faq" data-surfaces="lookup">
+      <details class="doc-entry" id="e-faq-provisional" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">What is settled versus provisional data?</summary>
         <div class="doc-ebody">
         <p>Each monthly data update from LIONS is a snapshot of the data at that time. The most recent months are always incomplete and difficult to predict how incomplete they are. Every monthly data upload is re-reported more completely in later updates, which we are referring to as “settling” the data. The most recent months for all dashboards are the least complete, and they are marked on the chart, in the table and in the download as "provisional". These terms are our own and are not reflected in DOJ documentation or LIONS data but rather are helpful ways to note that there's likely more data to come.</p>
@@ -246,16 +249,20 @@
         </div>
       </details>
 
-      <details class="doc-entry" id="faq" data-surfaces="lookup">
+      <!-- e-usao-only is a published anchor (ENTRY_IDS) whose entry, "Data is limited
+           to USAO work", is not in this copy. It lands on the FAQ answer that carries
+           the same ground. -->
+      <span id="e-usao-only"></span>
+      <details class="doc-entry" id="e-faq-usao" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">What are U.S. Attorney Offices, where are they located?</summary>
         <div class="doc-ebody">
         <p>U.S. Attorney Offices are the local offices of the Department of Justice that prosecute federal crimes and represent the United States in civil litigation. There are <a href="https://www.justice.gov/usao/find-your-united-states-attorney" target="_blank">94 U.S. Attorney Offices across the country,</a> with locations in every state including U.S. territories. Note our dashboard only shows 93 offices because Guam shares an Attorney with the Northern Mariana Islands. The offices are located in major cities and are responsible for handling cases within their respective districts. For a full list of U.S. Attorney Offices and their locations, please visit the <a href="https://www.justice.gov/usao" target="_blank">Department of Justice website</a>.</p>
         </div>
       </details>
 
-      <details class="doc-entry" id="faq" data-surfaces="lookup">
+      <details class="doc-entry" id="e-faq-reproduce" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">Can I reproduce this dashboard?</summary>
-        <div class ="doc-ebody">
+        <div class="doc-ebody">
         <p>Yes! This is an open-source code project that can be duplicated for a variety of reasons. For questions about methodology or to request the data processing scripts, please see the <a href="https://github.com/justiceconnection/lions-data-dashboards" target="_blank">project repository</a> or <a href="https://www.thejusticeconnection.org/contact" target="_blank">contact the Justice Connection team via the project's contact links.</a></p>
         </div>
       </details>
@@ -264,8 +271,8 @@
   </div>
 </div>
 
-<script src="shared/config.js?v=20260914a"></script>
-<script src="shared/documentation.js?v=20260915a"></script>
+<script src="shared/config.js?v=20260915a"></script>
+<script src="shared/documentation.js?v=20260916b"></script>
 <script>
 /* Boot. Short by design: this page has no page script, so anything here is either nav
    (which needs DASHBOARDS, not shared.js) or the Back control. All copy comes from

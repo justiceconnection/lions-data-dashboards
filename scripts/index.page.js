@@ -103,50 +103,43 @@ const rint=x=>x==null?"-":Math.round(x).toLocaleString();
 const p1=x=>x==null?"-":x.toFixed(1);
 let lastRows=[];
 
-function renderKPIs(){
+// ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
+// The four KPI cards and their renderKPIs() are retired: this page now hands the
+// shared engine in shared/shared.js a model of the series it has already aggregated,
+// and the engine does the rest. Nothing here reads a cube a second time.
+// Invariant 3: the share denominator is the cube's own ALL total row, never the sum of
+// the selected categories - aggregateRaw() with cats={'ALL'} takes grp='ALL' AND
+// subcat='ALL', which exists only at occ='all'.
+// Invariant 4: a percent metric is handed over as its two component series, so the
+// engine computes a ratio of sums and never an average of monthly percentages.
+function renderTopline(){
   const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats);
-  const arr=metricArray(R,state.metric); const idxs=visIdx(); if(!idxs.length) return;
-  const pct=isPct(state.metric);
-  const set=(id,v)=>document.getElementById(id).textContent=v;
-  const fmtVal=v=> v==null?'-':(pct?v.toFixed(1)+'%':Math.round(v).toLocaleString());
-  const S=(a,ix)=>{ let s=0,any=false; for(const i of ix){ const v=a[i]; if(v!=null){s+=v;any=true;} } return any?s:null; };
-  const rateOver=(ix)=>{ const m=state.metric;
-    if(m==='clearance'){ const f=S(R.filed,ix),t=S(R.term,ix); return (f&&f>0)?100*t/f:null; }
-    if(m==='guilty_pct'){ const d=S(R.dt,ix),g=S(R.guilty,ix); return (d&&d>0)?100*g/d:null; }
-    if(m==='dismissed_pct'){ const d=S(R.dt,ix),x=S(R.dismissed,ix); return (d&&d>0)?100*x/d:null; }
-    return null; };
-  const aggOver=(ix)=> pct?rateOver(ix):S(arr,ix);
-  const e=idxs[idxs.length-1]; const last12=idxs.slice(-12);
-  // KPI 1 & 2: total (or blended rate) over the selected range and the last 12 months
-  set('kpi1',fmtVal(aggOver(idxs))); set('kpi2',fmtVal(aggOver(last12)));
-  // KPI 3: year-over-year change (kept) - 3-mo avg vs the same 3 months a year earlier
-  const avg3at=(i)=>{ if(i<2) return null; let s=0,n=0; for(let k=0;k<3;k++){ const v=arr[i-k]; if(v!=null){s+=v;n++;} } return n?s/n:null; };
-  const chg=(a,b)=> (a==null||b==null||b===0)?null:100*(a-b)/Math.abs(b);
-  const yoy=chg(avg3at(e),avg3at(e-12));
-  set('kpi3', yoy==null?'-':((yoy>=0?'+':'')+yoy.toFixed(1)+'%'));
-  // KPI 4: category share change (kept)
-  const sel=R.filed, tot=aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL'])).filed;
-  const sum3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2]);
-  const shr=(i)=>{ const su=sum3(sel,i),t=sum3(tot,i); return (su!=null&&t)?100*su/t:null; };
-  const comp=(shr(e)!=null&&shr(e-12)!=null)?shr(e)-shr(e-12):null;
-  set('kpi4',comp==null?'-':(comp>=0?'+':'')+comp.toFixed(1)+' pts');
-  // Provisional caveats (spec §7). No arithmetic changes: cards 1 and 2 say their
-  // window reaches into provisional months; cards 3 and 4 are year-over-year and so
-  // compare a provisional window against a settled one.
-  const pcut=PV.cutIndex(SPINE,PV.n(state.metric,PVOPT));
-  const provIn=ix=>ix.some(i=>i>pcut);
-  const w3=i=>[i,i-1,i-2].filter(k=>k>=0);
-  const yoyProv=provIn(w3(e))&&!provIn(w3(e-12));
-  setKpiNote('kpi1',provIn(idxs),KPI_NOTE_INCLUDES);
-  setKpiNote('kpi2',provIn(last12),KPI_NOTE_INCLUDES);
-  setKpiNote('kpi3',yoy!=null&&yoyProv,KPI_NOTE_COMPARES);
-  setKpiNote('kpi4',comp!=null&&yoyProv,KPI_NOTE_COMPARES);
-  document.getElementById('kpiMetric').textContent=metricLabel(state.metric);
-  document.getElementById('kpi1lab').textContent=pct?'Overall rate, selected range':'Total, selected range';
-  document.getElementById('kpi2lab').textContent=pct?'Overall rate, last 12 mo':'Total, last 12 months';
-  document.getElementById('kpi1ym').textContent = idxs.length ? ('(' + fmtMMYYYY(SPINE[idxs[0]]) + ' – ' + fmtMMYYYY(SPINE[e]) + ')') : '';
-  document.getElementById('kpi2ym').textContent = last12.length ? ('(ending ' + fmtMMYYYY(SPINE[e]) + ')') : '';
-  document.getElementById('kpiScope').textContent=(state.dists.has('National')||state.dists.size===0?'National':state.dists.size+' districts')+' · '+(state.cats.has('ALL')||state.cats.size===0?'all categories':state.cats.size+' selected');
+  const TOT=aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL']));
+  const m=state.metric, pct=isPct(m);
+  // denLabel names the series the rate divides BY, for the glance's second slot: the
+  // page already has the name, so the slot costs no new string (spec §5.1).
+  const rate = m==='clearance' ? {num:R.term,den:R.filed,denLabel:metricLabel('cases_filed')}
+             : m==='guilty_pct' ? {num:R.guilty,den:R.dt,denLabel:metricLabel('defendants_terminated')}
+             : m==='dismissed_pct' ? {num:R.dismissed,den:R.dt,denLabel:metricLabel('defendants_terminated')} : null;
+  const all=state.cats.has('ALL')||state.cats.size===0;
+  const selName = all ? 'all categories'
+                : (state.cats.size===1 ? [...state.cats][0] : 'the selected categories');
+  const series=metricArray(R,m);
+  window.LIONS_TOPLINE.render({
+    spine:SPINE, view:visIdx(), metricKey:m, metricLabel:metricLabel(m),
+    kind: pct?'rate':'count', series, rate,
+    share:{ sel:R.filed, tot:TOT.filed, label:'Share of all criminal cases',
+            selName, occ: state.occ==='primary'?'primary category':'all occurrences',
+            basis: state.occ==='primary'
+              ? 'Primary category basis: each case counted once, under its first code.'
+              : 'All-occurrences basis: a case is counted in every category it touches.' },
+    allSelected:all,
+    districtSel:!(state.dists.has('National')||state.dists.size===0),
+    provN:PV.n(m,PVOPT),
+    caption:'Counts U.S. District Court filings only.',
+    loading:!NAT,
+    empty:!!NAT && !series.some(v=>v)
+  });
 }
 
 function renderTable(){
@@ -298,7 +291,7 @@ function render(){ const st=document.getElementById("status");
   const needFull=!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district';
   if(needFull && !FULL && fullLoading){ st.textContent="loading district detail…"; return; }
   st.textContent=(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+(state.cats.has('ALL')||state.cats.size===0?"all categories":[...state.cats].join(', '));
-  renderKPIs(); renderChart(); renderChart2(); updateChartAccessibility(); renderTable(); }
+  renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); renderTable(); }
 
 function buildCSV(){
   const head=["month","cases_filed","cases_terminated","clearance_pct","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct","provisional"];
