@@ -8,10 +8,10 @@ body{
   margin:0;
   background:var(--bg);color:var(--ink);
   font-weight: 400;
-  font:14px/1, 'Ancizar Serif', 'Ancizar Sans', 'Times New Roman', serif, sans-serif;
+  font:14px/1.5em, 'Ancizar Serif', 'Ancizar Sans', 'Times New Roman', serif, sans-serif;
 }
 .wrap{max-width:1120px;margin:0 auto;padding:18px 16px 44px}
-.sub{color:var(--mut);font-size:12.5px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}
+.sub{color:var(--mut);font-size:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}
 .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
 .ctl{display:flex;flex-direction:column;gap:5px}
 .ctl label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);white-space:nowrap;height:14px;line-height:14px}
