@@ -264,12 +264,6 @@ function mountDocMarkers(surface,root,labelToKey,base){
    Spec: ops/handoffs/L-199-spec-draft.md (copy signed by Cary, section 9).
    Reference implementation: design-lab/l199-b.html + l199-common.js + l199-shell.js.
 
-   It lives here rather than in a file of its own because all four dashboards need it
-   and shared.js is already on all four: spec section 8 requires that no asset is added
-   or removed, so invariant 9's load chain is UNCHANGED by this change and invariant
-   10's inventory does not grow by a site. Stated because invariant 9 carries its own
-   amendment rule and "nothing to do" is a conclusion, not an assumption.
-
    THREE JOBS, THREE SHAPES (spec section 1): a permanent glance strip, a look-up
    answer and a comparison answer, with ONE ask line covering the last two.
 
@@ -289,41 +283,17 @@ function mountDocMarkers(surface,root,labelToKey,base){
 (function (g) {
   'use strict';
 
-  /* ══ COPY. Section 9 of the spec, signed by Cary on 15 September 2026. One place, so
-     the spec and the page cannot drift. {...} is substituted at render time. ═══════ */
+  /* ══ COPY═══════ */
   var COPY = {
-    /* ONE caption, true on every state. Under L-205 the section has no period control,
-       so it cannot be on a period the chart is not on: this was the DEFAULT caption, one
-       of two, and it is now the only one. The four channels of the two-truths marker and
-       its return control are STRUCK (spec 4.1), copy and all - not disabled, because a
-       marker left in the code with no trigger is the thing a later reader restores by
-       accident, and copy left in the source is how it gets restored word for word.
-       L-222, 16 September 2026: the caption is now COMPUTED. Its lead-in is the first six
-       words of the sentence Cary signed on 15 September - kept on his ruling of 16
-       September (spec 10.1) - and what follows the colon is the chart's own state: the
-       metric, the date range with its fiscal or calendar convention, and every filter the
-       user has narrowed. Both claims are still made, and the reader can now check the
-       first against the controls instead of taking it on trust. The sentence this
-       replaced is NOT quoted here - copy left in the source is how a later reader
-       restores it word for word, the same reason the eight struck provisional strings
-       are not quoted either. It is in the L-222 spec and in section 9h's diff.
-       NO VINTAGE CONSTANT AND NO DATA FIGURE (spec section 6): the range is computed from
-       the loaded spine and every clause from the page's own filter state. */
-    captionTpl: 'These figures follow the chart: {metric}, {range}{filters}.',
-    /* the range's convention, computed from the months rather than written: a range that
-       begins in an October and ends in a September IS whole fiscal years and says so;
-       anything else is calendar months. That is the FY convention at shared.js:55, not a
-       threshold anyone chose. The SAME label prints under every glance figure and in every
+    /* ONE caption, true on every state.
+    captionTpl: 'Viewing: {metric}, {range}{filters}.',
+    /* the range's convention, computed from the months rather than written
        look-up heading, because buildPeriods() calls the same function, so the section
        cannot read "fiscal" in one line and "calendar" in the next. */
     capConvCal: 'calendar months',
     capConvFy: 'FY{a} to FY{b}',
     capConvFy1: 'FY{a}',
-    /* the filter clauses. Every one is a noun phrase, never a bare adjective, so the
-       reader can tell which control produced it. The district clause is never silent:
-       'National' is a different READ from a sum over districts - the page fetches the
-       national cube for it - and a clause that vanishes when unset cannot be told from a
-       page that has no such filter. */
+    /* the filter clauses. */
     capNational: 'National',
     capMany: '{n} {noun}',
     capRole: 'U.S. as {role}',
@@ -332,21 +302,18 @@ function mountDocMarkers(surface,root,labelToKey,base){
     capByCat: 'by program category',
     capByAgency: 'by referring agency',
     /* the four occurrence-basis clauses, lower-cased from the basis sentences the model
-       already carries, so the caption introduces no new vocabulary. They are noun phrases
-       and not the toggle's own button labels on purpose: Agency's occurrence button reads
-       "All agencies", which in a comma-separated list beside an agency selection would
-       read as a selection of all agencies. */
-    capOccAll: 'all-occurrences basis',
-    capOccPrimary: 'primary category basis',
-    capOccLead: 'lead agency basis',
-    capOccClient: 'client agency basis',
+       already carries */
+    capOccAll: 'measured against all-occurrences',
+    capOccPrimary: 'filtered by primary category filing',
+    capOccLead: 'organized by lead agency',
+    capOccClient: 'organized by client agency',
     /* the four selection nouns, one per dashboard, used when more than one is picked */
     capNounCats: 'categories',
     capNounCauses: 'causes of action',
     capNounAgencies: 'agencies',
     capNounReasons: 'reasons',
     capNounDistricts: 'districts',
-    /* THE SECTION'S ONE PROVISIONAL MARK (L-207, signed by Cary 15 September 2026).
+    /* THE SECTION'S ONE PROVISIONAL MARK 
        It replaces EIGHT per-figure provisional strings and the section footer's second
        sentence; the footer keeps the page's own caption and nothing else. Two strings and
        not one, because an icon needs an accessible NAME as well as a body: the name is
@@ -356,11 +323,11 @@ function mountDocMarkers(surface,root,labelToKey,base){
        {month}`, which is the only thing the struck footer said that nothing else did.
        {n} is COMPUTED, never written: it is model.provN, LIONS_PROV.n() for the page's
        SELECTED metric, so it follows a metric change (spec section 6, section 8 item 28). */
-    provMarkName: 'Why the most recent months are incomplete',
-    provMarkBody: 'Data runs to {month}. The most recent {n} months are still being reported, so any figure here that reaches them will change.',
+    provMarkName: 'Why recent months are incomplete',
+    provMarkBody: 'Data runs to {month}. The most recent {n} months are still being reported, so figures may change.',
 
     /* controls */
-    askLead: 'Find',
+    askLead: 'Calculate',
     askCompare: 'Compare with a second period',
     jobCompare: 'Compare two periods',
     measureLabel: 'Figure',
@@ -370,8 +337,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
     windowBLabelStock: 'Second date',
     formLabel: 'Comparison',
     eraLabel: 'Administration',
-    basisLabel: 'Basis',
-    alsoHead: 'Other figures for this period',
+    basisLabel: 'Calculation:',
+    alsoHead: 'Other topline calculations',
 
     /* DEFINITIONS - FIVE, and only in the look-up answer (Cary, 15 September 2026,
        spec section 3). A definition appears only where the label is not already the
@@ -387,8 +354,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
        the glance strip as well as in the answer. The settled-months half of three struck
        definitions survives as COPY.noteSettledOnly, which still prints on all three. */
     defMedian: 'The middle value of {n} monthly totals.',
-    defMedianFew: 'The middle value of {n} monthly totals. With so few, leaving out any single month moves it by up to {jack}%, so read it as an indication rather than a settled figure.',
-    defShare: 'The selection divided by the total row for the same period, not by the categories added together.',
+    defMedianFew: 'The middle value of {n} monthly totals. Note, few months are selected, so read it as an indication rather than a settled figure.',
+    defShare: 'Note this figure is calculated as a share of the total of the selected time period.',
     defStockAvg: 'The average of the {n} month-end readings in the period. Not the same as the year-end reading.',
     defStockMedian: 'The middle value of the {n} month-end readings.',
 
@@ -412,12 +379,12 @@ function mountDocMarkers(surface,root,labelToKey,base){
     /* notes that qualify a figure */
     noteBestCause: 'This names the month, not its cause. A single month can reflect a court closure or a one-off batch, and this project has not established which.',
     noteSettledOnly: 'Computed over settled months only, so a month that is still being reported cannot win by default.',
-    noteSeasonal: 'This period is not a whole number of years, so some calendar months are counted more often than others. Filings vary by up to {seas}% across the calendar year.',
+    noteSeasonal: '',
     noteMeanMedian: 'The average and the middle month differ by {gap}% here. At district level the months are far more uneven than nationally.',
     noteStockPeakEdge: 'Over all months the peak is the newest month, {edge}, which is an artifact of incomplete reporting rather than a high.',
     noteStockSelected: 'Pending is a stock. A total over a period adds up month-end balances and counts nothing, so this section offers a reading at a date instead.',
     noteStockNoPrior: 'A stock has no prior period of the same length. It has a reading at one date and a reading at another.',
-    noteShareWhole: 'All categories are selected, so a share of the total would read 100%. The middle month is shown instead.',
+    noteShareWhole: '',
     noteHalfSeasonal: 'The two halves do not contain the same calendar months, and this series has a strong seasonal cycle. Part of the difference shown is that difference in composition rather than a change in caseload.',
     noteStockHalves: 'A stock has no half total. Each half is read as its average month-end level over that half, not as a sum.',
     /* forms 3, 4 and 5 on a stock. Signed in the 9e delta (gap 4). STRUCK in the same
