@@ -46,7 +46,7 @@ button.doc-chip,button.doc-expand{font:inherit;color:var(--ink);background:var(-
    change (filled vs outlined) as well as a colour one, so it does not rely on hue */
 .doc-chip.on{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
 .doc-chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.doc-filter-note{margin:0 0 10px;font-size:12.5px;color:var(--mut);min-height:0}
+.doc-filter-note{margin:0 0 10px;font-size:13px;color:var(--mut);min-height:0}
 .doc-filter-note:empty{display:none}
 .doc-linkish{appearance:none;background:none;border:0;padding:0;font:inherit;font-size:12.5px;
   font-weight:600;color:var(--ink);text-decoration:underline;cursor:pointer}
@@ -55,12 +55,12 @@ button.doc-chip,button.doc-expand{font:inherit;color:var(--ink);background:var(-
   border-radius:0 8px 8px 0;padding:9px 12px;font-size:13px}
 .doc-expand{font-size:12px;padding:5px 9px;border-radius:8px;margin:0 0 6px}
 .doc-expand:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.doc-body{font-size:13px}
-h2.doc-grp{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);
+.doc-body{font-size:14px}
+h2.doc-grp{font-size:16px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);
   margin:20px 0 6px;padding-top:12px;border-top:1px solid var(--line);font-weight:600}
 .doc-grpsec:first-of-type h2.doc-grp{border-top:0;padding-top:0;margin-top:14px}
 details.doc-entry{border-bottom:1px solid var(--line);scroll-margin-top:12px}
-summary.doc-esum{cursor:pointer;color:var(--ink);font-size:13px;font-weight:600;
+summary.doc-esum{cursor:pointer;color:var(--ink);font-size:14px;font-weight:600;
   list-style:none;display:flex;align-items:flex-start;gap:7px;padding:8px 0}
 summary.doc-esum::-webkit-details-marker{display:none}
 summary.doc-esum::before{content:"\25B8";color:var(--mut);font-size:11px;line-height:1.6;
@@ -74,7 +74,8 @@ details.doc-entry:target>summary.doc-esum{outline:2px solid var(--ink);outline-o
 .doc-src{color:var(--mut);font-size:11.5px;line-height:1.45}
 .doc-loading{color:var(--mut);font-size:12px;font-style:normal}
 .doc-fig{font-variant-numeric:tabular-nums;font-weight:600}
-.doc-tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:2px 0 10px;max-width:100%}
+.doc-tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:2px 0 10px;max-width:100%;
+font-size:14px}
 .doc-tblwrap:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 table.doc-tbl{border-collapse:collapse;width:100%;min-width:min-content;font-size:12px;margin:0;
   font-variant-numeric:tabular-nums}

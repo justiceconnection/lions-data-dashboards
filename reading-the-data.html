@@ -201,7 +201,7 @@
     </section>
     
     <section class="doc-grpsec doc-faq" data-g="faq">
-      <h2 class="doc-grp">Frequently asked questions</h2>
+      <h1 class="doc-grp">Frequently asked questions</h1>
 
      <details class="doc-entry" id="e-faq-source" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">Where does this data come from?</summary>
@@ -221,7 +221,7 @@
       <details class="doc-entry" id="e-faq-how-to-use" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">How should I use this dashboard?</summary>
         <div class="doc-ebody">
-        <p>We have written a handy user guide to help people understand the basic principles of the dashboard, as well as a <a href="reading-the-data.html" target="_blank">detailed data documentation page</a> to point out some of the caveats in the data.</p>
+        <p>We have written a handy user guide to help people understand the basic principles of the dashboard, which is viewable on the dashboard pages. You can also use this detailed data documentation page to learn about some of the caveats in the data.</p>
         </div>
       </details>
 
@@ -256,14 +256,18 @@
         </div>
       </details>
 
-      <!-- e-usao-only is a published anchor (ENTRY_IDS) whose entry, "Data is limited
-           to USAO work", is not in this copy. It lands on the FAQ answer that carries
-           the same ground. -->
       <span id="e-usao-only"></span>
       <details class="doc-entry" id="e-faq-usao" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">What are U.S. Attorney Offices, where are they located?</summary>
         <div class="doc-ebody">
         <p>U.S. Attorney Offices are the local offices of the Department of Justice that prosecute federal crimes and represent the United States in civil litigation. There are <a href="https://www.justice.gov/usao/find-your-united-states-attorney" target="_blank">94 U.S. Attorney Offices across the country,</a> with locations in every state including U.S. territories. Note our dashboard only shows 93 offices because Guam shares an Attorney with the Northern Mariana Islands. The offices are located in major cities and are responsible for handling cases within their respective districts. For a full list of U.S. Attorney Offices and their locations, please visit the <a href="https://www.justice.gov/usao" target="_blank">Department of Justice website</a>.</p>
+        </div>
+      </details>
+
+     <details class="doc-entry" data-surfaces="lookup" data-static="1">
+        <summary class="doc-esum"> How are topline metrics numbers calculated?</summary>
+        <div class="doc-ebody">
+        <p>On each of the dashboards you have the option to configure the topline metrics, getting fast and understandable data trends. We have programmed some basic calculations you can choose from including averages, high and low months, and percent change over time. You also have the option to compare one time frame against another. All of these calculations are run depending on what data you have filtered in the dashboard. We've also included some notes to dissuade improper or guide away from common mistakes in data analysis.</p> <p>For more support on how to understand and analyze the data, please refer to the documentation provided above or reach out to Justice Connection directly.</p>
         </div>
       </details>
 
@@ -281,9 +285,7 @@
 <script src="shared/config.js?v=20260915a"></script>
 <script src="shared/documentation.js?v=20260916d"></script>
 <script>
-/* Boot. Short by design: this page has no page script, so anything here is either nav
-   (which needs DASHBOARDS, not shared.js) or the Back control. All copy comes from
-   LIONS_DOC.HEAD so the prose hash covers it. */
+
 (function () {
   "use strict";
   var Q = new URLSearchParams(location.search);
@@ -332,13 +334,6 @@
   LIONS_DOC.mountPage(document.getElementById('reading'), { from: from });
 })();
 </script>
-<!-- Not optional, and the one thing a page outside the dashboard chain is most likely to
-     be missing. The reporter measures `.wrap` rather than documentElement because once
-     Framer grows the iframe the documentElement is pinned to the grown height and never
-     shrinks back when the user collapses something. This page's whole interaction is
-     expanding and collapsing 25 entries, so without it the embed grows on the first
-     expand and stays grown. Every toggle in the component dispatches `resize`, which is
-     what the reporter listens for. Case Look-Up loads no reporter at all, which is the
-     evidence that this is easy to forget (spec section 8.4). -->
+
 <script src="shared/height-reporter.js?v=20260903a"></script>
 </body></html>
