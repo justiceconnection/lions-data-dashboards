@@ -29,3 +29,38 @@
     margin:0 0 4px}
 .ms-sub label{
     display:flex;align-items:center;gap:7px;padding:3px 6px 3px 28px;font-size:12.5px;color:#333;cursor:pointer;white-space:nowrap}
+/* L-257: the first-open placeholder inside #tblwrap. It is never display:none and never
+   toggled with [hidden] - taking a live region out of the tree defeats the point of its
+   being static. Empty, a block box with no content and no padding has zero height, so it
+   takes no space; the padding only applies once it has words in it. It lives here rather
+   than beside .tbl-basis and .tbl-refusal in shared/shared.css because only index.html
+   carries the element today: one stamp site instead of six. L-258 generalises the table
+   to the other three dashboards and that is the moment to move this rule. */
+.tbl-pending{margin:0;padding:0;color:var(--mut);font-size:12.5px;line-height:1.4}
+.tbl-pending:not(:empty){padding:10px 12px}
+/* L-249: the auto-deselect note, under the group row that fired. NOT a .ms-list label -
+   those are white-space:nowrap with no max-width on the panel, which is the mechanism
+   that pushes this panel off a 390px viewport. This wraps and caps at 34ch, so it can
+   never be what widens the panel. Colour is not a channel: the lead clause is --ink on
+   --panel at 16.07:1, the body --mut at 5.29:1, the rule --ink at 16.07:1. It is not
+   --line, which is 1.27:1 on --panel. */
+.ms-note{margin:1px 6px 4px 28px;padding:4px 0 4px 8px;border-left:2px solid var(--ink);
+  font-size:11.5px;line-height:1.35;color:var(--mut);white-space:normal;max-width:34ch}
+.ms-note b{color:var(--ink);font-weight:600}
+/* the persistent polite live region - created once, outside .ms-list, textContent only */
+.ms-live{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+/* L-249 D-A: the grouped picker's cell takes a full row below 760px. The category
+   dropdown hangs 216px off a 390px viewport and 122px off 320px today, because
+   .ms-list label is white-space:nowrap (shared.css:267) and .ms-panel has no max-width
+   (:258), with the widest option label at 395px - so group and sub-category labels are
+   cut off on a phone. Right-aligning the panel was measured and fails at 320 (left -70).
+   THE MEDIA QUERY IS LOAD-BEARING and matches shell2.js's own min-width:760px: .dw-panel
+   exists and is OPEN at desktop, so an unscoped rule would take a whole row there too and
+   max-width:100% would SHRINK the 409px desktop panel. Proven identical at 1280.
+   :has() degrades safely - an engine without it drops the rule and gets today's layout. */
+@media(max-width:759px){
+  .dw-panel .ctl:has(.ms-grouped){flex:1 1 100%}
+  .ms-grouped .ms-panel{max-width:100%}
+  .ms-grouped .ms-list label{white-space:normal}
+}

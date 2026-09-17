@@ -41,7 +41,23 @@ th:first-child,td:first-child{text-align:left}
 thead th{position:sticky;top:0;background:var(--panel);color:var(--mut);font-size:11px;text-transform:uppercase;z-index:2}
 tbody tr:hover{background:#f5f5f3}
 tr.edge td{color:#b0b1ac}
-tr.recent td{color:#9a7b2e}
+/* Provisional rows. #9a7b2e was 4.00:1 on #ffffff and 3.67:1 on the tbody tr:hover fill
+   #f5f5f3 - both under WCAG 1.4.3's 4.5:1. #846826 is 5.26 / 5.09 / 4.82 on white, --bg
+   and the hover fill. Computed, not judged. Colour is never the only channel here: the
+   row also carries LIONS_PROV.tableMark()'s dagger. RULED by Cary 16 September 2026
+   (L-233 design spec section 10, D-2), which also carries tr.edge above forward UNTOUCHED
+   - its 2.16:1 colour-only failure and its undocumented 1996-09 threshold are L-236. */
+tr.recent td{color:#846826}
+/* key columns read left, metrics read right */
+th.k,td.k{text-align:left}
+/* the first key column stays put while the metrics scroll sideways. thead th is already
+   sticky-top, so the corner cell needs both axes and the highest z-index of the three. */
+th.k:first-child,td.k:first-child{position:sticky;left:0;background:var(--panel);z-index:1}
+td.k:first-child{box-shadow:1px 0 0 var(--line)}
+thead th.k:first-child{z-index:3}
+/* the cube's own total row anchors each block: a rule, not a fill - a fill would be a
+   second colour channel doing work the label already does */
+tr.rowtotal td{font-weight:600;border-top:2px solid var(--line)}
 /* Provisional (right-censored) data - L-021 rev B, spec ops/handoffs/L-003-design-spec.md.
    .sw-prov is the legend/KPI swatch. REVISION B: it is TWO-TONE - one light stroke and
    one dark one - because that is the mark that is actually on the stacked charts, which
@@ -63,7 +79,9 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .tabletoggle{margin:8px 0}
 .disc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
 .disc:hover{border-color:var(--accent)}
-#dl{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+#dl,#dl2{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+/* a refused download must not go on reading as a live yellow call to action */
+#dl:disabled,#dl2:disabled{background:var(--panel);border-color:var(--line);color:var(--mut);font-weight:400;cursor:not-allowed}
 .foot{
     color:var(--mut);
     font-size:12px;
@@ -210,7 +228,7 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
   font-weight:700;margin-bottom:5px}
 .tf-other{display:flex;justify-content:space-between;gap:14px;font-size:12.5px;padding:2px 0;
   border-bottom:1px solid #f0f0ee}
-.tf-other .ok{color:var(--mut);font-weight:400;font-size:12px}g
+.tf-other .ok{color:var(--mut);font-weight:400;font-size:12px}
 .tf-value {font-size:13px}
 .tf-other .os{color:var(--mut);font-weight:400;font-size:12px}
 /* a flag that qualifies a figure: the fill encodes nothing (1.04:1 against the page) and
@@ -252,10 +270,53 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 #legend,#legend2,#legend3{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;font-size:12px;color:var(--mut)}
 .chartbox{position:relative;width:100%}
 #summary{color:var(--mut);font-size:12.5px;margin:2px 2px}
-.tblwrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+.tblwrap{overflow:auto;border:1px solid var(--line);border-radius:12px;position:relative}
 /* L-229: restored verbatim from styles/index.css and styles/agency.css, which carried
    these two rules identically until db2e5da moved the rest of the block here and dropped
    these. The basis control row - "Program-category basis:" on index.html, "Agency basis:"
    on agency.html - is the only user of either. */
 .occbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;font-size:12.5px;color:var(--mut)}
 .occhint{font-size:11.5px;color:var(--mut);opacity:.8}
+
+/* ── The wide data table (L-233, built under L-237) ──────────────────────────────────
+   Style guide section 5g. These rules live in the SHARED file, not in styles/index.css,
+   because the phase-2 row generalises the component to the other three dashboards and a
+   rule that has to move again is a second cache-stamp churn for no gain. Only
+   index.html carries the markup today, so nothing else renders differently for them.
+   ONE declaration of this block is deliberately NOT here: `.tblwrap{max-height:70vh}`
+   at phone width. `.tblwrap`'s max-height is per-page and lives in each page's own
+   stylesheet - index/agency/declinations 520px, civil 480px - and every page stylesheet
+   loads AFTER this file, so a media rule here at equal specificity would lose the
+   cascade and never apply. It is in styles/index.css, beside the value it overrides. */
+/* the two shape controls - INSIDE the table panel, never a .wrap child with a
+   controls/masters/master/occbar class, which shell2.js folds away below 760px */
+.tbl-shape{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:0 0 10px;font-size:12.5px}
+.tbl-shape .grp{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-width:0}
+.tbl-shape .seg{flex-wrap:wrap}
+.tbl-shape .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
+.tbl-shape button{font-size:12px;padding:5px 9px}
+.tbl-shape button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.tbl-shape button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* the basis line and the refusal reuse the topline section's idioms, so the page has one
+   vocabulary for "here is what this is" and "here is why there is no figure" */
+.tbl-basis{font-size:12px;color:var(--ink);margin:0 0 8px;border-left:4px solid var(--ink);padding:6px 9px;background:#fff;border-radius:0 6px 6px 0}
+.tbl-refusal{border-left:4px solid var(--ink);background:#fff;border-radius:0 6px 6px 0;padding:8px 10px;font-size:12.5px;line-height:1.4;color:var(--ink);margin:0 0 8px}
+/* the one-line screen/file difference note, next to the download button (style guide 9) */
+.csvline{color:var(--mut);font-size:11.5px;margin:8px 0 0;max-width:62ch}
+/* the table's own caveats, INSIDE the panel. Never #footnote: shell2.js replaces that
+   element's whole innerHTML with one shared string on all four dashboards. */
+.tbl-notes{color:var(--mut);font-size:11.5px;margin:8px 0 0;max-width:72ch}
+.tbl-notes div{margin-top:3px}
+.scrollhint{display:none;color:var(--mut);font-size:11.5px;margin:0 0 6px}
+/* below 560px the two trap columns FOLD INTO the category cell rather than disappearing */
+.kmeta{display:none}
+.topbar{display:none}
+@media(max-width:560px){
+  .topbar{display:flex;justify-content:flex-start;margin:0 0 10px}
+  .scrollhint{display:block}
+  th.b,td.b{display:none}
+  .kmeta{display:block;font-size:11px;color:var(--mut);font-weight:400}
+  th.k,td.k{white-space:normal}
+  td.k,th.k{max-width:120px}
+  td.k:first-child{white-space:nowrap;max-width:none}
+}

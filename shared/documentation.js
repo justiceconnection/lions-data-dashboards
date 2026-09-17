@@ -36,7 +36,7 @@
      2026 (L-217) it covered no figure and no page copy at all.  */
   var REVISED   = '2026-09-17';
   var PROSE_SHA = 'bf13437a';   /* recomputed by tests/docs-check.js check 26(e); there is no generator script */
-  var COPY_SHA  = 'f043cd3f';   /* same check, over #doc-copy-html in reading-the-data.html */
+  var COPY_SHA  = '2712fd4a';   /* same check, over #doc-copy-html in reading-the-data.html */
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
   var SURFACES = {

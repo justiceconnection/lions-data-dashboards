@@ -217,10 +217,21 @@ const TBL_COPY={
   addsTotal:'is the total', addsYes:'yes', addsNo:'no - overlaps',
   lineNoBreakoutAll:p=>'One row per '+p+'. The figures are the cube\'s own total row for all program categories, which counts each case once.',
   lineNoBreakoutSum:(p,n)=>'One row per '+p+'. The figures are '+n+' program categories added together, and a case in more than one of them is counted more than once.',
+  /* L-249 D-C, signed by Cary verbatim on 17 September 2026 (spec section 6.2). The SIXTH
+     basis-line state: breakout off with exactly ONE category selected. It fell through the
+     sel.length>1 test to lineNoBreakoutAll above, which then told the reader the figures
+     were the cube's own total row for all program categories while the table showed one.
+     Basis line 1 is unchanged - it was right for its own state and the ROUTING was wrong. */
+  lineNoBreakoutOne:(p,occ)=>'One row per '+p+'. The figures are one program category, counted '+(occ==='primary'?'once under each case\'s first code':'under every code it touches')+'.',
   lineBreakoutAllOcc:'Program category rows do not add up to the total row, because a case is counted in every category it touches. The total row is the cube\'s own total for all categories, counted once per case.',
   lineBreakoutPrimary:'Program category rows add up to the total row once "Other categories, and cases with none recorded" is included, because each case is counted once under its first code.',
   lineOverlap:'You have selected an umbrella category and one of its own sub-categories, so two of these rows count the same cases. Turn one of them off.',
   refusal:(n,cap)=>'This selection would draw '+n.toLocaleString()+' rows and the table draws up to '+cap.toLocaleString()+'. Narrow the date range, choose a coarser Group by, or select fewer districts or categories.',
+  /* L-257, signed by Cary verbatim on 17 September 2026 (design note section 7a). The
+     placeholder shown between the panel opening and the table landing. It names the ACT
+     and never a duration: the duration is a property of the reader's device and nobody
+     has measured a phone. The verb is this page's own - the refusal above says "draw". */
+  pending:'Drawing the table…',
   csvLine:'The CSV has the same rows and the same figures as the table, plus six columns that spell out in words what the table shows as marks: the period\'s grain, whether it is a part period, whether it is provisional and how many months that covers, and what each district and category cell is.',
   footProv:n=>'Rows marked † are provisional: the most recent '+n+' months are still being reported, so those figures will rise. The mark uses the widest window across the columns in this table, so a month marked here can still be settled for filings on their own.',
   partialNote:'* part period - fewer months than the period holds.',
@@ -276,9 +287,13 @@ const tblCatKey=name=>{ const t=CATMAP[name]; return t?t.grp+''+t.subcat:null; 
 const tblSelCats=()=> (state.cats.has('ALL')||state.cats.size===0)?[]:[...state.cats];
 const tblSelDists=()=> (state.dists.has('National')||state.dists.size===0)?[]:[...state.dists];
 /* An umbrella selected together with one of its own specifics double-counts even at
-   occ='primary', because the specifics partition their umbrella EXACTLY there. The current
-   UI allows it - groupedCatSelect()'s pick() sets umbrellas and specifics independently -
-   and nothing on the page says anything about it today. */
+   occ='primary', because the specifics partition their umbrella EXACTLY there.
+   groupedCatSelect()'s pick() has prevented that combination since L-242 (D-074, 17
+   September 2026), so no selection made through this picker can make the test below
+   return true. THAT GUARD IS ONE PICKER ON ONE PAGE AND NOT A PROPERTY OF THE CUBE:
+   nothing about lions_cube changed, and an analyst who sums an umbrella row and one of
+   its own subcat rows by hand gets the same exact double count. Invariant 3 governs
+   that, not this function. */
 function tblSelectionOverlaps(){
   const s=tblSelCats();
   return s.some(a=>s.some(b=>b!==a&&CATMAP[b]&&CATMAP[b].subcat!=='ALL'&&CATMAP[b].grp===a));
@@ -379,7 +394,12 @@ function tblBasisLine(){
   if(tblSelectionOverlaps()) return TBL_COPY.lineOverlap;
   if(!state.rowsBy.category){
     const sel=tblSelCats();
-    return sel.length>1?TBL_COPY.lineNoBreakoutSum(grainNoun(),sel.length):TBL_COPY.lineNoBreakoutAll(grainNoun());
+    if(sel.length>1) return TBL_COPY.lineNoBreakoutSum(grainNoun(),sel.length);
+    /* L-249 D-C: SIX states now, not five. This one used to fall through to the
+       all-categories line. The enumeration is the contract: a state missing from it does
+       not fall through to a neighbour, it gets its own line. */
+    if(sel.length===1) return TBL_COPY.lineNoBreakoutOne(grainNoun(),state.occ);
+    return TBL_COPY.lineNoBreakoutAll(grainNoun());
   }
   return state.occ==='primary'?TBL_COPY.lineBreakoutPrimary:TBL_COPY.lineBreakoutAllOcc;
 }
@@ -435,7 +455,30 @@ function renderTable(){
   el('scrollhint').textContent=TBL_COPY.scrollHint(cols.length-cols.filter(c=>c.fold).length);
   el('notesprov').textContent=TBL_COPY.footProv(built.provN);
   el('notespartial').textContent=TBL_COPY.partialNote;
-  el('csvline').textContent=TBL_COPY.csvLine;
+}
+
+/* ── L-257: the table is built on FIRST OPEN, and not while the disclosure is shut ──
+ * renderTable() used to run in the main render path whether or not #tablePanel was
+ * hidden, so the full price was paid and nothing was shown: measured at 6,494 rows,
+ * 356.7 ms of a 634.6 ms build, on every filter, date, preset, metric, occurrence-axis
+ * and grain change while the panel stayed closed. A dirty flag carries the staleness
+ * across the shut interval and the next open pays it once.
+ * TWO THINGS STAY EAGER, and both are state-derived and build no rows. tblRowCount() is
+ * three cheap counts, so an over-cap selection still disables Download CSV at the moment
+ * it goes over budget, panel open or shut, exactly as it did before this change; and
+ * tblBasisLine() reads state only, so the basis line is right and on screen in the same
+ * paint in which the panel opens, rather than arriving with the rows a frame later.
+ * #rowsby and #colgroups still build directly: both live INSIDE #tablePanel and are
+ * unreachable while it is hidden. */
+let tblDirty=true;
+const tblPanelOpen=()=>!document.getElementById('tablePanel').hidden;
+function tblBuild(){ document.getElementById('tblpending').textContent=''; renderTable(); tblDirty=false; }
+function tblInvalidate(){
+  tblDirty=true;
+  if(tblPanelOpen()){ tblBuild(); return; }
+  document.getElementById('basisline').textContent=tblBasisLine();
+  const over=tblRowCount()>ROW_CAP;
+  document.getElementById('dl').disabled=over; document.getElementById('dl2').disabled=over;
 }
 
 const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
@@ -563,7 +606,7 @@ function render(){ const st=document.getElementById("status");
   const needFull=!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district';
   if(needFull && !FULL && fullLoading){ st.textContent="loading district detail…"; return; }
   st.textContent=(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+(state.cats.has('ALL')||state.cats.size===0?"all categories":[...state.cats].join(', '));
-  renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); renderTable(); }
+  renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); tblInvalidate(); }
 
 /* ── THE CSV ────────────────────────────────────────────────────────────────────────
  * It MIRRORS the table: same rows, same order, same figures, same metric column set,
@@ -608,6 +651,13 @@ function buildCSVText(){
   return L.join("\n");
 }
 function buildCSV(){
+  /* L-257: #dl sits OUTSIDE the panel and is live with the table never built, so the
+     download does the build itself rather than going silently dead on the empty LAST
+     below. It costs the row-building share only, about 80 ms at 6,494 rows. Same button,
+     same rows, same cap: D-1 is not re-opened, and an over-cap selection still refuses,
+     because tblBuild() runs the same refusal branch the table does. civil.page.js does
+     the same thing on its own #dl. */
+  if(tblDirty) tblBuild();
   if(LAST.rows.length===0) return;   /* D-1: if the table refuses to draw, the download refuses too */
   const blob=new Blob([buildCSVText()],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
@@ -648,14 +698,33 @@ function buildAx2Picker(){ state.ax2sel=new Set(); const mount=document.getEleme
   } else {
     ax2MS=multiSelect('ax2sel',{items:(state.seriesBy==='category'?CATLIST:districtList()),plain:true,emptyLabel:'pick series…',initial:state.ax2sel,searchable:state.seriesBy==='district',
       fmt:state.seriesBy==='district'?fmtDist:undefined, onChange:v=>{ state.ax2sel=new Set(v); renderChart(); }}); } }
+/* L-249, signed by Cary verbatim on 17 September 2026 (spec section 6.1). The two forms
+   of the auto-deselect note, and there is no third. Every cleared sub-category is named,
+   however many there are: replacing the names with a count reproduces in miniature the
+   defect this repairs, so there is no threshold anywhere in it. No glyph - this is a
+   statement of what the control did, not a caution, and a warning mark would frame a
+   correct automatic action as the user's error. No figure from the data, ever. The words
+   "umbrella" and "sub-category" are taken from signed basis line 5. Never an em dash. */
+const CAT_COPY={
+  noteClearedOne:(child,umb)=>[child+' was turned off. ','It is a sub-category of '+umb+', and counting both would count the same cases twice.'],
+  noteClearedMany:(children,umb)=>[children.join(', ')+' were turned off. ','They are sub-categories of '+umb+', and counting them with it would count the same cases twice.']
+};
 // grouped program-category picker: umbrellas (each selectable as its own total) with
 // collapsible specific sub-categories. 'All categories' default; groups collapsed by default.
 function groupedCatSelect(mountId,opts){
   const wrap=document.getElementById(mountId); wrap.classList.add('ms'); wrap.innerHTML='';
+  /* L-249: one class, and it is the whole container decision for the CSS. It scopes every
+     new rule to the grouped picker, which exists on index.html alone, so nothing here can
+     reach the district picker beside it or the other five surfaces. */
+  wrap.classList.add('ms-grouped');
   const sel=opts.initial; const expanded=new Set();
   const btn=document.createElement('button'); btn.type='button'; btn.className='ms-btn';
   const panel=document.createElement('div'); panel.className='ms-panel'; panel.hidden=true;
   const list=document.createElement('div'); list.className='ms-list';
+  /* L-249: the persistent polite live region. Created ONCE and outside .ms-list, because
+     draw() replaces .ms-list's innerHTML wholesale and a live region born with its own
+     text is not reliably announced. Only its textContent ever changes. */
+  const live=document.createElement('div'); live.className='ms-live'; live.setAttribute('role','status');
   const label=()=> (sel.has('ALL')||sel.size===0)?'All categories':(sel.size===1?[...sel][0]:sel.size+' selected');
   const fire=()=>{ btn.textContent=label(); opts.onChange([...sel]); };
   // L-242, RULED BY CARY 17 September 2026: an umbrella and one of its own specifics can
@@ -671,38 +740,73 @@ function groupedCatSelect(mountId,opts){
   // 2026: 95 specific labels, one parent umbrella each, and no umbrella name is also a
   // specific label.
   const parentOf={}; for(const u of opts.umbrellas) for(const s of (opts.specs[u]||[])) parentOf[s]=u;
+  /* L-249: transient, and the ONLY new state this component carries.
+     { umbrella, cleared:[...] }, or null. Set by pick() in exactly one case; cleared by
+     the next interaction of any kind, before that interaction is processed. */
+  let notice=null;
+  const clearNotice=()=>{ notice=null; live.textContent=''; };
   const pick=(key,on)=>{ sel.delete('ALL');
     if(on){
-      if(opts.specs[key]) for(const s of opts.specs[key]) sel.delete(s);   // umbrella clears its own specifics
+      if(opts.specs[key]){
+        /* L-249: three conditions on top of "the box went on", and all of them are this
+           component's own state. (1) the key is an umbrella with specifics, (2) at least
+           one of them was actually selected, (3) its group is COLLAPSED, so the boxes
+           about to clear are not rendered and the user cannot see them go. With the group
+           expanded the user watches them untick and the button label is the only thing
+           that could mislead, which it does not - so no note there, on purpose. */
+        const cleared=opts.specs[key].filter(s=>sel.has(s));
+        for(const s of opts.specs[key]) sel.delete(s);                     // umbrella clears its own specifics
+        if(cleared.length && !expanded.has(key)) notice={umbrella:key,cleared};
+      }
       else if(parentOf[key]) sel.delete(parentOf[key]);                    // specific clears its parent
       sel.add(key);
     } else { sel.delete(key); if(sel.size===0) sel.add('ALL'); } };
+  /* L-249: the visible note. aria-hidden, because the live region says the same words and
+     a screen-reader user must not hear them twice. */
+  function noteEl(){
+    const parts = notice.cleared.length===1
+      ? CAT_COPY.noteClearedOne(notice.cleared[0],notice.umbrella)
+      : CAT_COPY.noteClearedMany(notice.cleared,notice.umbrella);
+    const d=document.createElement('div'); d.className='ms-note'; d.setAttribute('aria-hidden','true');
+    const b=document.createElement('b'); b.textContent=parts[0];
+    d.append(b,document.createTextNode(parts[1]));
+    live.textContent=parts[0]+parts[1];
+    return d;
+  }
   function draw(){ list.innerHTML='';
     const allRow=document.createElement('label'); allRow.className='ms-allrow';
     const acb=document.createElement('input'); acb.type='checkbox'; acb.checked=sel.has('ALL');
-    acb.addEventListener('change',()=>{ sel.clear(); sel.add('ALL'); draw(); fire(); });
+    acb.addEventListener('change',()=>{ clearNotice(); sel.clear(); sel.add('ALL'); draw(); fire(); });
     allRow.append(acb,document.createTextNode(' All categories')); list.append(allRow);
     for(const u of opts.umbrellas){ const specs=opts.specs[u]||[];
       const row=document.createElement('div'); row.className='ms-grp';
       const lab=document.createElement('label'); const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=sel.has(u);
-      cb.addEventListener('change',()=>{ pick(u,cb.checked); draw(); fire(); });
+      cb.addEventListener('change',()=>{ clearNotice(); pick(u,cb.checked); draw(); fire(); });
       lab.append(cb,document.createTextNode(' '+u));
       if(specs.length){ const cnt=document.createElement('span'); cnt.className='cnt'; cnt.textContent=' ('+specs.length+' categor'+(specs.length===1?'y':'ies')+')'; lab.append(cnt); }
       row.append(lab);
       if(specs.length){ const cv=document.createElement('span'); cv.className='cv'; cv.textContent=expanded.has(u)?'▾':'▸';
         cv.title=expanded.has(u)?'Collapse':'Expand sub-categories';
-        cv.addEventListener('click',e=>{ e.stopPropagation(); expanded.has(u)?expanded.delete(u):expanded.add(u); draw(); });
+        /* L-249: expanding the group clears the note - at that moment the unticked boxes
+           say it themselves and a note beside them is redundant. */
+        cv.addEventListener('click',e=>{ e.stopPropagation(); clearNotice(); expanded.has(u)?expanded.delete(u):expanded.add(u); draw(); });
         row.append(cv); }
       list.append(row);
+      /* L-249: directly under the group row that fired, which is the row the user has just
+         clicked, so it is on screen by construction, and it stands exactly where the
+         sub-list would be if the group were open. */
+      if(notice && notice.umbrella===u) list.append(noteEl());
       if(specs.length && expanded.has(u)){ const box=document.createElement('div'); box.className='ms-sub';
         for(const s of specs){ const sl=document.createElement('label'); const scb=document.createElement('input'); scb.type='checkbox'; scb.checked=sel.has(s);
-          scb.addEventListener('change',()=>{ pick(s,scb.checked); draw(); fire(); });
+          scb.addEventListener('change',()=>{ clearNotice(); pick(s,scb.checked); draw(); fire(); });
           sl.append(scb,document.createTextNode(' '+s)); box.append(sl); }
         list.append(box); } }
   }
-  panel.append(list); wrap.append(btn,panel); btn.textContent=label(); draw();
-  btn.addEventListener('click',e=>{ e.stopPropagation(); panel.hidden=!panel.hidden; });
-  document.addEventListener('click',e=>{ if(!wrap.contains(e.target)) panel.hidden=true; });
+  panel.append(live,list); wrap.append(btn,panel); btn.textContent=label(); draw();
+  /* L-249: closing the panel ends the note. It describes one interaction, not a standing
+     condition, and a note still sitting there on the next open would be claiming to be one. */
+  btn.addEventListener('click',e=>{ e.stopPropagation(); if(!panel.hidden){ clearNotice(); draw(); } panel.hidden=!panel.hidden; });
+  document.addEventListener('click',e=>{ if(!wrap.contains(e.target)){ if(!panel.hidden){ clearNotice(); draw(); } panel.hidden=true; } });
   return { setItems(){} };
 }
 // district cube is served gzip-compressed (specific categories make it large); decompress in-browser.
@@ -746,7 +850,7 @@ async function init(){ renderNav();
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); }));
   // The table follows Group by (spec section 4.2): its period column IS the chart's
   // bucket, so a grain change has to rebuild it as well as the two charts.
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); renderTable(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); tblInvalidate(); }));
   document.querySelectorAll('#occ button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#occ button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.occ=b.dataset.v; render(); }));
   document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); buildAx2Picker(); renderChart(); }));
   document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;
@@ -759,19 +863,40 @@ async function init(){ renderNav();
   state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
+  /* L-257 co-edit: the screen/file difference line is a CONSTANT and is set once here,
+     not from renderTable(). #csvline sits outside the panel, under a download button that
+     is live from page load, so writing it from the build would leave it blank until the
+     panel was first opened. It also closes a pre-existing defect: the refusal branch
+     returned before the line was written, leaving the previous text in place. */
+  document.getElementById('csvline').textContent=TBL_COPY.csvLine;
   document.getElementById("dl").addEventListener("click",buildCSV);
   // The phone copy of the download button: SAME handler, same file, no second format.
   document.getElementById("dl2").addEventListener("click",buildCSV);
   document.querySelectorAll('#rowsby button').forEach(b=>b.addEventListener('click',async()=>{
     const on=!state.rowsBy[b.dataset.v]; state.rowsBy[b.dataset.v]=on;
     b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');
-    if(b.dataset.v==='district'&&on) await ensureFull(); renderTable(); }));
+    if(b.dataset.v==='district'&&on) await ensureFull(); tblBuild(); }));
   document.querySelectorAll('#colgroups button').forEach(b=>b.addEventListener('click',()=>{
     const on=!state.tblCols[b.dataset.v];
     // never zero metric columns: a table of five key cells is not a narrower table
     if(!on && activeTblCols().filter(c=>c.g!=='key').length<=TBL_COLS.filter(c=>c.g===b.dataset.v).length) return;
-    state.tblCols[b.dataset.v]=on; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); renderTable(); }));
-  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
+    state.tblCols[b.dataset.v]=on; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); tblBuild(); }));
+  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize'));
+    if(!willOpen||!tblDirty) return;
+    /* Over cap there is nothing to build and no wait to explain, so the refusal shows at
+       once and WITHOUT the placeholder (design note section 5). renderTable() returns
+       straight out of its refusal branch, so this is cheap enough to run inline. */
+    if(tblRowCount()>ROW_CAP){ tblBuild(); return; }
+    /* ORDER MATTERS. The panel is already unhidden above, so this mutation lands in a
+       live region that is already visible: a role="status" that gains its text in the
+       same paint in which it appears is not reliably announced. */
+    document.getElementById('tblpending').textContent=TBL_COPY.pending;
+    /* NEVER synchronous in the handler. The browser paints nothing until a task returns,
+       so a build in here would leave the panel unopened and the disclosure looking dead
+       for the whole build. The first requestAnimationFrame callback still runs before the
+       frame's paint, so the work hangs off the second. */
+    requestAnimationFrame(()=>requestAnimationFrame(tblBuild));
+  });
   // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
   // The district cube (lions_cube.csv.gz, ~9.8 MB) is fetched on EVERY page load,
   // not on district selection. It is intentionally un-awaited, so it never blocks
