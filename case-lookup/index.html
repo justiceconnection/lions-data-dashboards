@@ -13,7 +13,11 @@ body{
   background:var(--bg);color:var(--ink);
   font-weight: 400;
   font-family: 'Ancizar Sans', 'Arial', sans-serif;
-  font:14px/1.5em;
+  /* L-229: longhand on purpose. `font:14px/1.5em` names no family, and the shorthand
+     requires one, so the whole declaration is dropped and this page falls back to
+     16px/normal - the D-069 defect, twice now. Do not fold these two back into `font:`. */
+  font-size:14px;
+  line-height:1.5em;
   color: var(--ink)
 }
   header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}

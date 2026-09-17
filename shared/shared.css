@@ -237,10 +237,24 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .chk label{font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--ink)}
 .ms-btn{min-width:150px;text-align:left}
 .ms-panel{position:absolute;z-index:30;top:calc(100% + 4px);left:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.14)}
-.ms-list label{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:6px;font-size:13px;color:var(--ink);cursor:pointer;white-space:nowrap}
+/* L-234: text-transform/letter-spacing restored verbatim from styles/index.css,
+   styles/agency.css and styles/declinations.css, which carried them until db2e5da
+   consolidated this rule here and dropped them. Without them .ctl label's uppercase
+   inherits down onto the option rows, and because these labels are white-space:nowrap
+   and .ms-panel has no max-width the panel sizes to its widest label and grows ~34%,
+   overflowing the viewport at 390 and 320 (L-229 test report D-1). civil.html never
+   carried them, so this moves civil's option labels to lowercase too - a knowing,
+   accepted change for consistency, not a regression. */
+.ms-list label{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:6px;font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer;white-space:nowrap}
 .ms-dept{font-weight:600;margin-top:4px}
 .ms-sub label{padding-left:22px;font-size:12.5px;color:#333}
 #legend,#legend2,#legend3{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;font-size:12px;color:var(--mut)}
 .chartbox{position:relative;width:100%}
 #summary{color:var(--mut);font-size:12.5px;margin:2px 2px}
 .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+/* L-229: restored verbatim from styles/index.css and styles/agency.css, which carried
+   these two rules identically until db2e5da moved the rest of the block here and dropped
+   these. The basis control row - "Program-category basis:" on index.html, "Agency basis:"
+   on agency.html - is the only user of either. */
+.occbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;font-size:12.5px;color:var(--mut)}
+.occhint{font-size:11.5px;color:var(--mut);opacity:.8}
