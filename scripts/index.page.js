@@ -1,4 +1,4 @@
-const state={dists:new Set(['National']),cats:new Set(['ALL']),metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),occ:'all',kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06',grain:'month'};
+const state={dists:new Set(['National']),cats:new Set(['ALL']),metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),occ:'all',kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06',grain:'month',rowsBy:{district:false,category:false},tblCols:{cases:true,defendants:true,dispositions:true,rates:true}};
 let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=null, chart=null, chart2=null, CATLIST=[];
 let UMB=[], SPECS={}, CATMAP={ALL:{grp:'ALL',subcat:'ALL'}}, CATKEYS=[];
 const NUM=["cases_filed","defendants_filed","cases_terminated","defendants_terminated","guilty","not_guilty","dismissed","rule_20_21","other"];
@@ -36,12 +36,12 @@ const CURRENT="index.html";
 // This dashboard is criminal throughout: inflow window 3 months, outflow 6.
 const PV=window.LIONS_PROV;
 const PVOPT={civil:false};
-// The data table and CSV are always monthly and always show every metric, so they take
-// the widest window across the columns they print (spec §3.5, the same envelope rule).
 const DOC_SURFACE='index';
-// The table header is static markup on this page, so the markers are attached by label.
-const DOC_TH_KEYS={'Cases filed':'cases_filed','Def. filed':'defendants_filed'};
-const TBL_METRICS=["cases_filed","cases_terminated","clearance","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"];
+// The table header is rebuilt on every render now, so the markers are re-attached after
+// each build rather than once at init. The labels are the ones renderTable() prints.
+// TBL_METRICS was removed with the fixed seven-column table: the window is computed from
+// whichever column groups are actually on, in tblProvWindow().
+const DOC_TH_KEYS={'Cases filed':'cases_filed','Defendants filed':'defendants_filed'};
 
 function parseCSV(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Object.fromEntries(H.map((h,i)=>[h,i]));
   const out=new Array(L.length-1);
@@ -105,7 +105,6 @@ function rightLabelText(){ return state.ax2&&state.ax2sel.size?[...state.ax2sel]
 const r1=x=>x==null?"-":x.toLocaleString(undefined,{maximumFractionDigits:1});
 const rint=x=>x==null?"-":Math.round(x).toLocaleString();
 const p1=x=>x==null?"-":x.toFixed(1);
-let lastRows=[];
 
 // ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
 // The four KPI cards and their renderKPIs() are retired: this page now hands the
@@ -156,28 +155,284 @@ function renderTopline(){
   }); }catch(e){ console.warn('LIONS_TOPLINE.render failed - topline section skipped', e); }
 }
 
+/* ── THE DATA TABLE AND CSV (L-233, built under L-237) ──────────────────────────────
+ * Spec: ops/handoffs/L-233-design-spec.md. Copy signed by Cary 16 September 2026.
+ *
+ * A row is ONE CELL of period x district-slot x category-slot. Every slot always names
+ * something: a member, or an aggregate that says what it aggregates. No slot is ever
+ * blank and no figure is ever headed a bare "Total" (L-139).
+ *
+ * The table follows the page's Group by control and has no period control of its own, so
+ * it can never be on a grain the chart is not on.
+ *
+ * What this replaced: a fixed seven-metric monthly table whose only caveat was one
+ * sentence in #note when several categories were selected at occ='all'. That sentence is
+ * now basis line state 2, directly above the table, so #note is no longer written to.
+ */
+const ROW_CAP=8000;   // a RENDERING budget, not a property of the data - spec section 8
+/* `g` is the column group a user can switch off; 'key' is never switchable, so a CSV
+   consumer parsing by name has a stable set of five key columns whatever the user does.
+   `w` is the provisional-window metric key the column takes: the table's own mark is the
+   WIDEST across the columns it is currently printing (the L-014 envelope rule).
+   `fold` marks the two columns that fold INTO the category cell below 560px. */
+const TBL_COLS=[
+  {k:'period',g:'key',h:'Period'},
+  {k:'district',g:'key',h:'District'},
+  {k:'category',g:'key',h:'Program category'},
+  {k:'counting_basis',g:'key',h:'Counting basis',fold:true},
+  {k:'additive',g:'key',h:'Adds up?',fold:true},
+  {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},
+  {k:'cases_terminated',g:'cases',h:'Cases terminated',t:'int',w:'cases_terminated'},
+  {k:'defendants_filed',g:'defendants',h:'Defendants filed',t:'int',w:'defendants_filed'},
+  {k:'defendants_terminated',g:'defendants',h:'Defendants terminated',t:'int',w:'defendants_terminated'},
+  {k:'guilty',g:'dispositions',h:'Guilty',t:'int',w:'guilty'},
+  {k:'not_guilty',g:'dispositions',h:'Not guilty',t:'int',w:'guilty'},
+  {k:'dismissed',g:'dispositions',h:'Dismissed',t:'int',w:'dismissed'},
+  {k:'rule_20_21',g:'dispositions',h:'Rule 20/21',t:'int',w:'guilty'},
+  {k:'other',g:'dispositions',h:'Other disposition',t:'int',w:'guilty'},
+  {k:'clearance_pct',g:'rates',h:'Clearance %',t:'pct',w:'clearance'},
+  {k:'guilty_pct',g:'rates',h:'Guilty %',t:'pct',w:'guilty_pct'},
+  {k:'not_guilty_pct',g:'rates',h:'Not guilty %',t:'pct',w:'guilty_pct'},
+  {k:'dismissed_pct',g:'rates',h:'Dismissed %',t:'pct',w:'dismissed_pct'},
+  {k:'rule_20_21_pct',g:'rates',h:'Rule 20/21 %',t:'pct',w:'guilty_pct'},
+  {k:'other_pct',g:'rates',h:'Other disposition %',t:'pct',w:'guilty_pct'}
+];
+/* The six columns the CSV carries and the screen does not. Each spells out in a word what
+   the table shows as a mark or as cell text. Declared to the user in TBL_COPY.csvLine,
+   beside the download button, because style guide section 9 requires any surviving
+   screen/file difference to be stated there. */
+const CSV_EXTRA=['period_grain','period_partial','provisional','provisional_window_months',
+  'district_level','category_level'];
+/* Every user-facing string the table and the CSV put on the page. Signed by Cary verbatim
+   on 16 September 2026 (spec section 6). Never an em dash (D-042). */
+const TBL_COPY={
+  totalLabel:'All categories (cube total)',
+  complementLabel:'Other categories, and cases with none recorded',
+  distSum:n=>n+' districts, added together',
+  catSum:n=>n+' categories, added together',
+  basisDistinct:'Distinct total', basisAll:'All occurrences', basisPrimary:'Primary category',
+  addsTotal:'is the total', addsYes:'yes', addsNo:'no - overlaps',
+  lineNoBreakoutAll:p=>'One row per '+p+'. The figures are the cube\'s own total row for all program categories, which counts each case once.',
+  lineNoBreakoutSum:(p,n)=>'One row per '+p+'. The figures are '+n+' program categories added together, and a case in more than one of them is counted more than once.',
+  lineBreakoutAllOcc:'Program category rows do not add up to the total row, because a case is counted in every category it touches. The total row is the cube\'s own total for all categories, counted once per case.',
+  lineBreakoutPrimary:'Program category rows add up to the total row once "Other categories, and cases with none recorded" is included, because each case is counted once under its first code.',
+  lineOverlap:'You have selected an umbrella category and one of its own sub-categories, so two of these rows count the same cases. Turn one of them off.',
+  refusal:(n,cap)=>'This selection would draw '+n.toLocaleString()+' rows and the table draws up to '+cap.toLocaleString()+'. Narrow the date range, choose a coarser Group by, or select fewer districts or categories.',
+  csvLine:'The CSV has the same rows and the same figures as the table, plus six columns that spell out in words what the table shows as marks: the period\'s grain, whether it is a part period, whether it is provisional and how many months that covers, and what each district and category cell is.',
+  footProv:n=>'Rows marked † are provisional: the most recent '+n+' months are still being reported, so those figures will rise. The mark uses the widest window across the columns in this table, so a month marked here can still be settled for filings on their own.',
+  partialNote:'* part period - fewer months than the period holds.',
+  scrollHint:n=>'Scroll the table sideways to see all '+n+' columns.'
+};
+let LAST={rows:[],cols:[],provN:6};
+let BYDIST=null;   // district -> its own rows; built once FULL is in. See tblDistRows().
+
+/* The district cube is 1.7M rows and a cross-tab asks for it once per district slot per
+   category slot. Indexing it once turns each of those scans from 1,696,968 rows into the
+   ~18,000 that district actually has. FULL is assigned once and never mutated, so the
+   index cannot go stale; it is built lazily so a national-only session never pays for it. */
+function tblDistRows(d){
+  if(!FULL) return [];
+  if(!BYDIST){ BYDIST=new Map();
+    for(const r of FULL){ let a=BYDIST.get(r.district); if(!a){ a=[]; BYDIST.set(r.district,a); } a.push(r); } }
+  return BYDIST.get(d)||[];
+}
+
+/* The table needs all NINE numeric columns the cube carries; aggregateRaw() carries the
+   six the charts and the topline compute with, under its own field names. Kept separate
+   rather than widened, because the chart path is the hot one.
+
+   target.kind:
+     'all'  - the cube's own total row, grp='ALL' AND subcat='ALL'. THE OCCURRENCE AXIS IS
+              NOT FILTERED ON THIS BRANCH, deliberately. That row exists ONLY at occ='all'
+              (382 of 382 national rows, 35,523 of 35,523 district rows), so honouring an
+              occ='primary' selection here would match no row at all: the table would read
+              zero, or fall through to summing the categories, and that fall-through IS
+              invariant 3's own failure mode. aggregateRaw()'s catAll branch is safe for
+              the same reason - it tests only grp and subcat - and both must stay that way
+              on purpose rather than by inheritance.
+     'keys' - one or more grp|subcat targets AT the selected occurrence axis. */
+function aggregateTable(dists,target){
+  const useNat = dists.has('National') || dists.size===0;
+  const occ=state.occ;
+  const sub=r=> r.subcat||'ALL';
+  const idx=new Map();
+  const add=r=>{
+    if(target.kind==='all'){ if(!(r.grp==='ALL'&&sub(r)==='ALL')) return; }
+    else { if(r.grp==='ALL'||r.occ!==occ) return; if(!target.keys.has(r.grp+''+sub(r))) return; }
+    let o=idx.get(r.ym);
+    if(!o){ o={}; for(const k of NUM) o[k]=0; idx.set(r.ym,o); }
+    for(const k of NUM) o[k]+=r[k]; };
+  if(useNat){ for(const r of NAT) add(r); }
+  else { for(const d of dists) for(const r of tblDistRows(d)) add(r); }
+  const R={}; for(const k of NUM) R[k]=[];
+  for(const ym of SPINE){ const o=idx.get(ym); for(const k of NUM) R[k].push(o?o[k]:0); }
+  return R;
+}
+
+const tblCatKey=name=>{ const t=CATMAP[name]; return t?t.grp+''+t.subcat:null; };
+const tblSelCats=()=> (state.cats.has('ALL')||state.cats.size===0)?[]:[...state.cats];
+const tblSelDists=()=> (state.dists.has('National')||state.dists.size===0)?[]:[...state.dists];
+/* An umbrella selected together with one of its own specifics double-counts even at
+   occ='primary', because the specifics partition their umbrella EXACTLY there. The current
+   UI allows it - groupedCatSelect()'s pick() sets umbrellas and specifics independently -
+   and nothing on the page says anything about it today. */
+function tblSelectionOverlaps(){
+  const s=tblSelCats();
+  return s.some(a=>s.some(b=>b!==a&&CATMAP[b]&&CATMAP[b].subcat!=='ALL'&&CATMAP[b].grp===a));
+}
+const activeTblCols=()=>TBL_COLS.filter(c=>c.g==='key'||state.tblCols[c.g]);
+function tblProvWindow(){
+  const keys=activeTblCols().filter(c=>c.w).map(c=>c.w);
+  return keys.length?PV.nMax(keys,PVOPT):PV.n('cases_filed',PVOPT);
+}
+const grainNoun=()=>({month:'month',cq:'calendar quarter',fq:'fiscal quarter',fy:'fiscal year'})[state.grain];
+const grainKey=()=>({month:'month',cq:'cal_quarter',fq:'fiscal_quarter',fy:'fiscal_year'})[state.grain];
+
+function tblDistrictSlots(){
+  const sel=tblSelDists();
+  if(!sel.length) return [{label:'National',level:'national',set:new Set(['National'])}];
+  if(state.rowsBy.district) return sel.slice().sort().map(d=>({label:fmtDist(d),level:'district',set:new Set([d])}));
+  if(sel.length===1) return [{label:fmtDist(sel[0]),level:'district',set:new Set(sel)}];
+  return [{label:TBL_COPY.distSum(sel.length),level:'selection_sum',set:new Set(sel)}];
+}
+function tblCategorySlots(){
+  const sel=tblSelCats();
+  const total={label:TBL_COPY.totalLabel,level:'cube_total',target:{kind:'all'},basis:TBL_COPY.basisDistinct,additive:TBL_COPY.addsTotal};
+  /* A complement row is honest only at occ='primary' with no umbrella-plus-own-specific in
+     the selection. At occ='all' the total minus the sum of overlapping parts can go
+     NEGATIVE, and a negative "other" row would be worse than no row. */
+  const adds=state.occ==='primary'&&!tblSelectionOverlaps();
+  const basis=state.occ==='primary'?TBL_COPY.basisPrimary:TBL_COPY.basisAll;
+  if(!sel.length){
+    if(!state.rowsBy.category) return [total];
+    const rows=[total].concat(UMB.map(u=>({label:u,level:'umbrella',target:{kind:'keys',keys:new Set([tblCatKey(u)])},
+      basis,additive:adds?TBL_COPY.addsYes:TBL_COPY.addsNo})));
+    if(adds) rows.push({label:TBL_COPY.complementLabel,level:'complement',complementOf:UMB.map(tblCatKey),basis,additive:TBL_COPY.addsYes});
+    return rows;
+  }
+  if(!state.rowsBy.category){
+    if(sel.length===1) return [{label:sel[0],level:CATMAP[sel[0]].subcat==='ALL'?'umbrella':'specific',
+      target:{kind:'keys',keys:new Set([tblCatKey(sel[0])])},basis,additive:TBL_COPY.addsTotal}];
+    return [{label:TBL_COPY.catSum(sel.length),level:'selection_sum',target:{kind:'keys',keys:new Set(sel.map(tblCatKey))},
+      basis,additive:adds?TBL_COPY.addsYes:TBL_COPY.addsNo}];
+  }
+  const rows=[total].concat(sel.map(c=>({label:c,level:CATMAP[c].subcat==='ALL'?'umbrella':'specific',
+    target:{kind:'keys',keys:new Set([tblCatKey(c)])},basis,additive:adds?TBL_COPY.addsYes:TBL_COPY.addsNo})));
+  if(adds) rows.push({label:TBL_COPY.complementLabel,level:'complement',complementOf:sel.map(tblCatKey),basis,additive:TBL_COPY.addsYes});
+  return rows;
+}
+function tblRowCount(){ return grainBuckets(SPINE,visIdx(),state.grain).length*tblDistrictSlots().length*tblCategorySlots().length; }
+
+function buildTblRows(){
+  const B=grainBuckets(SPINE,visIdx(),state.grain);
+  const ds=tblDistrictSlots(), cs=tblCategorySlots();
+  const nProv=tblProvWindow();
+  const flags=PV.bucketFlags(SPINE,B,nProv);
+  const out=[];
+  for(const d of ds){
+    const cache=new Map();
+    const comp=slot=>{
+      if(slot.complementOf){
+        if(!cache.has('__all')) cache.set('__all',bucketComp(aggregateTable(d.set,{kind:'all'}),B));
+        const tot=cache.get('__all');
+        const part=bucketComp(aggregateTable(d.set,{kind:'keys',keys:new Set(slot.complementOf)}),B);
+        const o={}; for(const k of NUM) o[k]=tot[k].map((v,i)=>v-part[k][i]);
+        return o;
+      }
+      const key=slot.level==='cube_total'?'__all':slot.label;
+      // Invariant 4: bucket the COMPONENT counts first (bucketComp), then apply the metric
+      // formula to the bucketed components below. Never average the monthly percentages.
+      if(!cache.has(key)) cache.set(key,bucketComp(aggregateTable(d.set,slot.target),B));
+      return cache.get(key);
+    };
+    for(const c of cs){
+      const R=comp(c);
+      for(let i=0;i<B.length;i++){
+        const r={period:B[i].label+(B[i].partial?'*':''),
+          period_grain:grainKey(), period_partial:B[i].partial?'yes':'',
+          provisional:flags[i]?'yes':'', provisional_window_months:nProv,
+          district:d.label, district_level:d.level,
+          category:c.label, category_level:c.level,
+          counting_basis:c.basis, additive:c.additive,
+          _prov:!!flags[i], _order:i};
+        for(const k of NUM) r[k]=R[k][i];
+        const dt=r.defendants_terminated;
+        r.clearance_pct  = r.cases_filed>0?100*r.cases_terminated/r.cases_filed:null;
+        r.guilty_pct     = dt>0?100*r.guilty/dt:null;
+        r.not_guilty_pct = dt>0?100*r.not_guilty/dt:null;
+        r.dismissed_pct  = dt>0?100*r.dismissed/dt:null;
+        r.rule_20_21_pct = dt>0?100*r.rule_20_21/dt:null;
+        r.other_pct      = dt>0?100*r.other/dt:null;
+        out.push(r);
+      }
+    }
+  }
+  /* period-major: the time series stays the primary reading, as it is on the chart */
+  out.sort((a,b)=>a._order-b._order);
+  return {rows:out,provN:nProv};
+}
+
+function tblBasisLine(){
+  if(tblSelectionOverlaps()) return TBL_COPY.lineOverlap;
+  if(!state.rowsBy.category){
+    const sel=tblSelCats();
+    return sel.length>1?TBL_COPY.lineNoBreakoutSum(grainNoun(),sel.length):TBL_COPY.lineNoBreakoutAll(grainNoun());
+  }
+  return state.occ==='primary'?TBL_COPY.lineBreakoutPrimary:TBL_COPY.lineBreakoutAllOcc;
+}
+
+const tesc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
 function renderTable(){
-  const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats);
-  const rows=[]; let sf=0,stt=0;
-  // Provisional rows were tagged by a hardcoded `ym>="2026-03"`, which would have meant
-  // the wrong thing the moment the next vintage promoted. Now computed from the vintage
-  // edge, and marked with a dagger as well as colour (colour alone fails WCAG 1.4.1).
-  const provM=PV.monthFlags(SPINE,PV.nMax(TBL_METRICS,PVOPT));
-  for(const i of visIdx()){ const ym=SPINE[i]; const filed=R.filed[i],term=R.term[i],dt=R.dt[i];
-    const row={ym,filed,term,df:R.df[i],dt,
-      clr:filed>0?100*term/filed:null,
-      gpct:dt>0?100*R.guilty[i]/dt:null,dpct:dt>0?100*R.dismissed[i]/dt:null,
-      prov:!!provM[i],
-      tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")};
-    rows.push(row); sf+=filed; stt+=term; }
-  lastRows=rows;
-  document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-    return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
-  }).join("");
-  const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"-";
-  document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b>`;
-  const multiCat=state.occ==='all'&&!(state.cats.has('ALL')||state.cats.size===0)&&state.cats.size>1;
-  document.getElementById("note").textContent=multiCat?"Note: multiple categories are summed (all-occurrences) - a case in several selected categories is counted more than once.":"";
+  const el=id=>document.getElementById(id);
+  const n=tblRowCount();
+  el('basisline').textContent=tblBasisLine();
+  /* NO SILENT TRUNCATION, ever: a truncated table that still offers a download is how a
+     user gets a file that is quietly missing half its rows. The basis line stays, because
+     it still describes what the rows would be; the summary line, the scroll hint and the
+     table's two caveat lines go, because a caveat about rows that were not drawn is noise.
+     D-1: the CSV mirrors the table, so the download refuses with it. */
+  if(n>ROW_CAP){
+    el('refusal').textContent=TBL_COPY.refusal(n,ROW_CAP); el('refusal').hidden=false;
+    el('tblwrap').hidden=true; el('dl').disabled=true; el('dl2').disabled=true;
+    el('summary').textContent=''; el('tblnotes').hidden=true; el('scrollhint').hidden=true;
+    el('thead').innerHTML=''; el('tbody').innerHTML='';
+    LAST={rows:[],cols:activeTblCols(),provN:tblProvWindow()};
+    return;
+  }
+  el('refusal').hidden=true; el('tblwrap').hidden=false;
+  el('dl').disabled=false; el('dl2').disabled=false;
+  el('tblnotes').hidden=false; el('scrollhint').hidden=false;
+  const built=buildTblRows(), cols=activeTblCols();
+  LAST={rows:built.rows,cols,provN:built.provN};
+  el('thead').innerHTML='<tr>'+cols.map(c=>`<th class="${c.g==='key'?'k':'m'}${c.fold?' b':''}" scope="col">${tesc(c.h)}</th>`).join('')+'</tr>';
+  el('tbody').innerHTML=built.rows.map(r=>{
+    const cls=[];
+    /* `edge` is CARRIED FORWARD UNCHANGED, hard-coded date and all. Its threshold is
+       undocumented and its styling fails WCAG 1.4.1 and 1.4.3. Cary RULED on 16 September
+       2026 (spec section 10, D-2) that it is carried forward exactly as it is and that
+       both defects go to the data-analyst as L-236: a remedy derived without knowing what
+       that date means would enshrine a threshold nobody can explain. */
+    if(r.period_grain==='month'&&r.period.slice(0,7)<="1996-09") cls.push('edge');
+    if(r._prov) cls.push('recent');
+    if(r.category_level==='cube_total') cls.push('rowtotal');
+    return '<tr'+(cls.length?` class="${cls.join(' ')}"`:'')+'>'+cols.map(c=>{
+      if(c.k==='period') return `<td class="k">${tesc(r.period)}${r._prov?PV.tableMark():''}</td>`;
+      /* The two trap columns FOLD INTO the category cell below 560px rather than being
+         dropped: their value differs between the total row and the category rows, and that
+         difference is the whole invariant-3 point. The meta span is display:none at desktop
+         width, so it is out of the accessibility tree there and nothing is read twice. */
+      if(c.k==='category') return `<td class="k">${tesc(r.category)}<span class="kmeta">${tesc(r.counting_basis)} &middot; adds up: ${tesc(r.additive)}</span></td>`;
+      if(c.g==='key') return `<td class="k${c.fold?' b':''}">${tesc(r[c.k])}</td>`;
+      return `<td>${c.t==='pct'?p1(r[c.k]):rint(r[c.k])}</td>`;
+    }).join('')+'</tr>';
+  }).join('');
+  mountDocMarkers(DOC_SURFACE,el('thead'),DOC_TH_KEYS);
+  el('summary').innerHTML=`<b>${built.rows.length.toLocaleString()}</b> rows &middot; <b>${cols.length+CSV_EXTRA.length}</b> columns in the CSV`;
+  el('scrollhint').textContent=TBL_COPY.scrollHint(cols.length-cols.filter(c=>c.fold).length);
+  el('notesprov').textContent=TBL_COPY.footProv(built.provN);
+  el('notespartial').textContent=TBL_COPY.partialNote;
+  el('csvline').textContent=TBL_COPY.csvLine;
 }
 
 const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
@@ -307,14 +562,54 @@ function render(){ const st=document.getElementById("status");
   st.textContent=(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+(state.cats.has('ALL')||state.cats.size===0?"all categories":[...state.cats].join(', '));
   renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); renderTable(); }
 
+/* ── THE CSV ────────────────────────────────────────────────────────────────────────
+ * It MIRRORS the table: same rows, same order, same figures, same metric column set,
+ * plus the six machine columns that carry the marks the screen draws. Headers are raw
+ * field names, not display labels (style guide section 9). A percentage is emitted at
+ * 2dp where the screen rounds to 1dp - that is presentation, not identity.
+ *
+ * Invariant 6 survives the export boundary as THREE columns, not one, and they may not
+ * be collapsed: `provisional` is the flag, `provisional_window_months` is what makes it
+ * interpretable away from this page, and `period_partial` is a DIFFERENT fact (a bucket
+ * holding fewer months than its period, not a bucket still being reported) that style
+ * guide section 6a says never to merge with it. Losing a mark at the export boundary is
+ * L-012 in another layer.
+ *
+ * ONE mark on the screen is NOT in the file and it is named here rather than left to be
+ * found: `tr.edge`, the grey tint at or before 1996-09. D-2 carries that class forward
+ * untouched, so the gap is carried forward with it; closing it means shipping a flag
+ * whose meaning nobody has written down (L-236). */
+function csvColumns(){
+  const cols=LAST.cols.length?LAST.cols:activeTblCols();
+  const out=[];
+  for(const c of cols){
+    out.push(c.k);
+    if(c.k==='period') out.push('period_grain','period_partial','provisional','provisional_window_months');
+    if(c.k==='district') out.push('district_level');
+    if(c.k==='category') out.push('category_level');
+  }
+  return out;
+}
+function buildCSVText(){
+  const keys=csvColumns();
+  const L=[keys.join(",")];
+  const q=v=>{ const s=v==null?'':String(v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  for(const r of LAST.rows){
+    L.push(keys.map(k=>{
+      const v=r[k];
+      if(k.endsWith('_pct')) return v==null?'':v.toFixed(2);
+      if(k==='period') return r.period.replace('*','');   /* the "*" is carried by period_partial */
+      return q(v);
+    }).join(","));
+  }
+  return L.join("\n");
+}
 function buildCSV(){
-  const head=["month","cases_filed","cases_terminated","clearance_pct","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct","provisional"];
-  const L=[head.join(",")];
-  for(const r of lastRows) L.push([r.ym,r.filed,r.term,r.clr==null?"":r.clr.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2),r.prov?"yes":""].join(","));
-  const blob=new Blob([L.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  if(LAST.rows.length===0) return;   /* D-1: if the table refuses to draw, the download refuses too */
+  const blob=new Blob([buildCSVText()],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
   const ct=(state.cats.has('ALL')||state.cats.size===0)?'ALL':(state.cats.size===1?[...state.cats][0].replace(/\W+/g,''):state.cats.size+'cats');
-  a.download=`lions_${dt}_${ct}_${state.from}_${state.to}.csv`; a.click();
+  a.download=`lions_${dt}_${ct}_${state.grain}_${state.from}_${state.to}.csv`; a.click();
 }
 
 function multiSelect(mountId,opts){
@@ -360,7 +655,25 @@ function groupedCatSelect(mountId,opts){
   const list=document.createElement('div'); list.className='ms-list';
   const label=()=> (sel.has('ALL')||sel.size===0)?'All categories':(sel.size===1?[...sel][0]:sel.size+' selected');
   const fire=()=>{ btn.textContent=label(); opts.onChange([...sel]); };
-  const pick=(key,on)=>{ sel.delete('ALL'); if(on) sel.add(key); else { sel.delete(key); if(sel.size===0) sel.add('ALL'); } };
+  // L-242, RULED BY CARY 17 September 2026: an umbrella and one of its own specifics can
+  // never be selected together. The specifics partition their umbrella EXACTLY at
+  // occ='primary' - 262,827 keys x 9 columns, 0 mismatches - so selecting both counts
+  // those cases PRECISELY twice, not approximately. This picker feeds aggregateRaw(),
+  // so the double count reached both charts, the topline section, the table and the CSV.
+  // He chose preventing the combination over warning about it, and accepted the cost:
+  // an umbrella and one of its own specifics cannot be viewed side by side.
+  // parentOf is built from opts.specs, because this component is handed its own
+  // hierarchy and reads no page global. It assumes a specific label has ONE parent -
+  // the same assumption CATMAP already makes. Checked against web/data/ on 17 September
+  // 2026: 95 specific labels, one parent umbrella each, and no umbrella name is also a
+  // specific label.
+  const parentOf={}; for(const u of opts.umbrellas) for(const s of (opts.specs[u]||[])) parentOf[s]=u;
+  const pick=(key,on)=>{ sel.delete('ALL');
+    if(on){
+      if(opts.specs[key]) for(const s of opts.specs[key]) sel.delete(s);   // umbrella clears its own specifics
+      else if(parentOf[key]) sel.delete(parentOf[key]);                    // specific clears its parent
+      sel.add(key);
+    } else { sel.delete(key); if(sel.size===0) sel.add('ALL'); } };
   function draw(){ list.innerHTML='';
     const allRow=document.createElement('label'); allRow.className='ms-allrow';
     const acb=document.createElement('input'); acb.type='checkbox'; acb.checked=sel.has('ALL');
@@ -420,7 +733,6 @@ async function init(){ renderNav();
   // DOJ Table 3B entry names. Not `clearance`, not the termination series: a caveat that
   // covers every metric on a surface is carried by the bar link, not by a glyph on each.
   document.getElementById("metric").innerHTML=METRICS.map(m=>`<option value="${m[0]}">${docMetricLabel(DOC_SURFACE,m[0],m[1])}</option>`).join("");
-  mountDocMarkers(DOC_SURFACE,document.querySelector('#tablePanel thead'),DOC_TH_KEYS);
   dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,fmt:fmtDist,
     onChange:async v=>{ state.dists=new Set(v); if(!(state.dists.has('National')||state.dists.size===0)) await ensureFull(); render(); }});
   cMS=groupedCatSelect("category",{umbrellas:UMB,specs:SPECS,initial:state.cats,onChange:v=>{ state.cats=new Set(v); render(); }});
@@ -429,7 +741,9 @@ async function init(){ renderNav();
   document.querySelectorAll('#seriesBy button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#seriesBy button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.seriesBy=b.dataset.v;
     if(state.seriesBy==='district') await ensureFull(); if(state.ax2by==='series') buildAx2Picker(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); }));
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); }));
+  // The table follows Group by (spec section 4.2): its period column IS the chart's
+  // bucket, so a grain change has to rebuild it as well as the two charts.
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); renderTable(); }));
   document.querySelectorAll('#occ button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#occ button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.occ=b.dataset.v; render(); }));
   document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); buildAx2Picker(); renderChart(); }));
   document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;
@@ -443,6 +757,17 @@ async function init(){ renderNav();
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
+  // The phone copy of the download button: SAME handler, same file, no second format.
+  document.getElementById("dl2").addEventListener("click",buildCSV);
+  document.querySelectorAll('#rowsby button').forEach(b=>b.addEventListener('click',async()=>{
+    const on=!state.rowsBy[b.dataset.v]; state.rowsBy[b.dataset.v]=on;
+    b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');
+    if(b.dataset.v==='district'&&on) await ensureFull(); renderTable(); }));
+  document.querySelectorAll('#colgroups button').forEach(b=>b.addEventListener('click',()=>{
+    const on=!state.tblCols[b.dataset.v];
+    // never zero metric columns: a table of five key cells is not a narrower table
+    if(!on && activeTblCols().filter(c=>c.g!=='key').length<=TBL_COLS.filter(c=>c.g===b.dataset.v).length) return;
+    state.tblCols[b.dataset.v]=on; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); renderTable(); }));
   document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
   // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
   // The district cube (lions_cube.csv.gz, ~9.8 MB) is fetched on EVERY page load,

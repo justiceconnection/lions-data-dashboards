@@ -285,7 +285,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
   /* ══ COPY═══════ */
   var COPY = {
-    /* ONE caption, true on every state.
+    /* ONE caption, true on every state. */
     captionTpl: 'Viewing: {metric}, {range}{filters}.',
     /* the range's convention, computed from the months rather than written
        look-up heading, because buildPeriods() calls the same function, so the section
@@ -691,7 +691,15 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
   /* ══ RENDER HELPERS ═════════════════════════════════════════════════════════════ */
   function defLine(t) { return '<div class="tf-def">' + esc(t) + '</div>'; }
+  /* An EMPTY string renders NOTHING. `.tf-flag` carries a 4px charcoal rule and a #fff9c4
+     fill and the glyph is written by this function rather than by the copy, so a blanked
+     flag string would otherwise paint a full-width yellow warning box containing a ⚠ and
+     no warning - measured at 1030x28 on declinations.html when COPY.armD was blanked.
+     Ruled by Cary 17 September 2026 (L-246) as the general fix rather than restoring that
+     one string: the next blanked flag string would do the same thing. This changes no
+     copy - no string is added, removed or reworded - and a flag with text is unaffected. */
   function flagLine(t) {
+    if (!t) return '';
     return '<div class="tf-flag"><span aria-hidden="true">⚠</span> ' + esc(t) + '</div>';
   }
 
