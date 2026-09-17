@@ -217,6 +217,9 @@ function renderTopline(){
   const C=window.LIONS_TOPLINE.COPY;
   try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:m, metricLabel:metricLabel(m),
+    // L-250: the section's period figures follow the page's Group by control, exactly
+    // as the chart and the data table do. No control is added inside the section.
+    grain:state.grain,
     kind: pct?'rate':(stock?'stock':'count'), series, rate,
     share:{ sel:shareFlow(R), tot:shareFlow(TOT),
             label:'Share of all referrals', selName,
@@ -582,7 +585,7 @@ async function init(){ renderNav();
   document.querySelectorAll('#role button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#role button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.role=x.dataset.v; render(); }));
   document.querySelectorAll('#basis button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.basis=x.dataset.v; populateMetric(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.mixMode=x.dataset.v; renderChart2(); updateChartAccessibility(); }));
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); renderChart3(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); renderChart3(); }));
   document.querySelectorAll('#presets button').forEach(btn=>btn.addEventListener('click',()=>{ const k=btn.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
     const ns=new Set(state.admins); ns.has(k)?ns.delete(k):ns.add(k);

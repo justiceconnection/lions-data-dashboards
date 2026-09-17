@@ -229,6 +229,9 @@ function renderTopline(){
   const C=window.LIONS_TOPLINE.COPY;
   try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:PROV_METRIC, metricLabel:'Matters declined',
+    // L-250: the section's period figures follow the page's Group by control, exactly
+    // as the charts do. No control is added inside the section.
+    grain:state.grain,
     kind:'count', series, rate:null,
     share:{ sel:series, tot, label:(sel.length===1?sel[0]+' share':'Selected reasons\' share'),
             selName, basis:'Share of all eight declination reasons in the same period.' },
@@ -349,7 +352,7 @@ async function init(){ renderNav();
     onChange:v=>{ state.reasons=new Set(v); render(); }});
   document.querySelectorAll('#dimSeg button').forEach(x=>x.addEventListener('click',async()=>{ document.querySelectorAll('#dimSeg button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.dim=x.dataset.v;
     if(isAg()) await ensureAgency(); buildDimPicker(); render(); }));
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); }));
   document.querySelectorAll('#presets button').forEach(btn=>btn.addEventListener('click',()=>{ const k=btn.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
     const ns=new Set(state.admins); ns.has(k)?ns.delete(k):ns.add(k);

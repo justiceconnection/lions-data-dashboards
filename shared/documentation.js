@@ -34,9 +34,9 @@
      a silent prose edit impossible.
      PROSE_SHA covered `src` and never `v`, and GROUPS is empty, so until 16 September
      2026 (L-217) it covered no figure and no page copy at all.  */
-  var REVISED   = '2026-09-16';
+  var REVISED   = '2026-09-17';
   var PROSE_SHA = 'bf13437a';   /* recomputed by tests/docs-check.js check 26(e); there is no generator script */
-  var COPY_SHA  = 'c28dffcd';   /* same check, over #doc-copy-html in reading-the-data.html */
+  var COPY_SHA  = 'f043cd3f';   /* same check, over #doc-copy-html in reading-the-data.html */
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
   var SURFACES = {
@@ -497,7 +497,7 @@
     /* the FAQ block, authored in the page. One id each: they used to share id="faq" */
     'e-faq-source', 'e-faq-why', 'e-faq-how-to-use', 'e-faq-how-not-to-use',
     'e-faq-cleaning', 'e-faq-provisional', 'e-faq-categories', 'e-faq-usao',
-    'e-faq-reproduce'
+    'e-faq-topline', 'e-faq-reproduce'
   ];
   var RETIRED = [];   /* ids that once existed. Never remove one from this list. */
 

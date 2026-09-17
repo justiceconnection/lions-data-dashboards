@@ -138,6 +138,9 @@ function renderTopline(){
   const C=window.LIONS_TOPLINE.COPY;
   try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:m, metricLabel:metricLabel(m),
+    // L-250: the section's period figures follow the page's Group by control, exactly
+    // as the chart and the data table do. No control is added inside the section.
+    grain:state.grain,
     kind: pct?'rate':'count', series, rate,
     share:{ sel:R.filed, tot:TOT.filed, label:'Share of all criminal cases',
             selName, occ: state.occ==='primary'?'primary category':'all occurrences',
@@ -743,7 +746,7 @@ async function init(){ renderNav();
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); }));
   // The table follows Group by (spec section 4.2): its period column IS the chart's
   // bucket, so a grain change has to rebuild it as well as the two charts.
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); renderTable(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); renderTable(); }));
   document.querySelectorAll('#occ button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#occ button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.occ=b.dataset.v; render(); }));
   document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); buildAx2Picker(); renderChart(); }));
   document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;

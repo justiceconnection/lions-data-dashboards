@@ -177,6 +177,9 @@ function renderTopline(){
   const C=window.LIONS_TOPLINE.COPY;
   try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:m, metricLabel:metricLabel(m),
+    // L-250: the section's period figures follow the page's Group by control, exactly
+    // as the chart and the data table do. No control is added inside the section.
+    grain:state.grain,
     kind: stock?'stock':'count', series, rate:null,
     share:{ sel:R[primaryFlow()], tot:TOT[primaryFlow()],
             label:'Share of all civil '+primaryLabel().split(' ')[0], selName },
@@ -453,7 +456,7 @@ async function init(){ renderNav();
   document.querySelectorAll('#basis button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.basis=b.dataset.v; populateMetric(); if(state.ax2&&state.ax2by==='metric') buildAx2Picker(); render(); }));
   document.querySelectorAll('#seriesBy button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#seriesBy button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.seriesBy=b.dataset.v; if(state.seriesBy==='district') await ensureFull(); await ensurePending(); if(state.ax2by==='series') buildAx2Picker(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); updateChartAccessibility(); }));
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderChart(); renderChart2(); renderChart3(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); renderChart3(); }));
   document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); await ensurePending(); buildAx2Picker(); renderChart(); }));
   document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }

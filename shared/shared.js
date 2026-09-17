@@ -274,7 +274,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
    NO VINTAGE-DEPENDENT CONSTANT IN ANY COPY STRING (spec section 6). Every number a
    user reads - the year ranges, the "data runs to" month, every provisional count, the
-   jackknife percentage, the seasonal amplitude, the mean-to-median gap, the length of
+   jackknife percentage, the mean-to-median gap, the bucket count, the length of
    the current administration - is computed here from the loaded cube at render time.
    The only digits allowed inside a string are fixed historical dates.
 
@@ -337,7 +337,17 @@ function mountDocMarkers(surface,root,labelToKey,base){
     windowBLabelStock: 'Second date',
     formLabel: 'Comparison',
     eraLabel: 'Administration',
-    basisLabel: 'Calculation:',
+    /* NO TRAILING COLON. The render appends its own, so this string carrying one printed
+       `Calculation:: ...` on every comparison card, on all four dashboards, at every grain
+       - live on the public site and pre-existing, not introduced by L-250. Found on 17
+       September 2026 while driving the comparison card in Chromium for the first time; no
+       gate reads this line, which is how it survived a signed spec, a re-baselined browser
+       gate and three QA rounds in one week.
+       CARY WAS OFFERED BOTH FIXES AND CHOSE THIS ONE: the string loses the colon, and the
+       render at the `.tf-basis` line keeps appending it. THE ALTERNATIVE WAS TO LEAVE THE
+       COLON HERE AND DROP IT FROM THE RENDER. Do not "fix" it that way later - the two
+       together reintroduce the defect, and this label has exactly one consumer. */
+    basisLabel: 'Calculation',
     alsoHead: 'Other topline calculations',
 
     /* DEFINITIONS - FIVE, and only in the look-up answer (Cary, 15 September 2026,
@@ -353,11 +363,16 @@ function mountDocMarkers(surface,root,labelToKey,base){
        so a share keeps its denominator sentence and a rate keeps what divides what, on
        the glance strip as well as in the answer. The settled-months half of three struck
        definitions survives as COPY.noteSettledOnly, which still prints on all three. */
-    defMedian: 'The middle value of {n} monthly totals.',
-    defMedianFew: 'The middle value of {n} monthly totals. Note, few months are selected making trend analysis difficult.',
+    /* THE NOUN SLOTS ARE L-250, and every one of them renders the SIGNED SENTENCE BACK
+       CHARACTER FOR CHARACTER at Group by = Month. {bucket} / {buckets} / {perBucket} /
+       {bucketEnd} fill from GRAIN below: month / months / monthly / month-end at the
+       default grain, and the calendar-quarter, fiscal-quarter and fiscal-year forms
+       otherwise. Nothing else in these sentences moves. */
+    defMedian: 'The middle value of {n} {perBucket} totals.',
+    defMedianFew: 'The middle value of {n} {perBucket} totals. Note, few {buckets} are selected making trend analysis difficult.',
     defShare: 'Note this figure is calculated as a share of the total of the selected time period.',
-    defStockAvg: 'The average of the {n} month-end readings in the period. Not the same as the year-end reading.',
-    defStockMedian: 'The middle value of {n} month-end readings.',
+    defStockAvg: 'The average of the {n} {bucketEnd} readings in the period. Not the same as the year-end reading.',
+    defStockMedian: 'The middle value of {n} {bucketEnd} readings.',
 
     /* PERCENT METRICS. Signed 15 September 2026 in the section 9e delta, which closed
        the first of the five gaps L-204 found: section 9's figure menus covered flows and
@@ -370,28 +385,64 @@ function mountDocMarkers(surface,root,labelToKey,base){
        grain can carry a handful of cases. */
     mRate: 'Overall rate',
     defRate: 'The period\'s component totals divided one by the other, not the average of the monthly percentages.',
-    defMedianRate: 'The middle value of {n} monthly percentages. It is not the period\'s overall rate, which divides the totals.',
+    defMedianRate: 'The middle value of {n} {perBucket} percentages. It is not the period\'s overall rate, which divides the totals.',
     /* the glance's second slot on a rate is the total the rate divides BY, labelled with
        that series' own metric name. Without this clause the strip reads as two unrelated
        figures side by side, which is what the 1200px shot showed before it was written. */
     basisRateDen: 'The total this rate divides by.',
 
     /* notes that qualify a figure */
-    noteBestCause: 'Note a single month may reflect a court closure or a one-off batch, not a spike at that period of time.',
-    noteSettledOnly: 'Analyzed over settled months only, so provisional months are not included.',
-    noteSeasonal: '',
-    noteMeanMedian: 'The average and the middle month differ by {gap}% here. District-level averages are more uneven than nationally.',
-    noteStockPeakEdge: 'Over all months the peak is the newest month, {edge}, which is an signal of incomplete reporting instead of a new high.',
+    noteBestCause: 'Note a single {bucket} may reflect a court closure or a one-off batch, not a spike at that period of time.',
+    noteSettledOnly: 'Analyzed over settled {buckets} only, so provisional {buckets} are not included.',
+    noteMeanMedian: 'The average and the middle {bucket} differ by {gap}% here. District-level averages are more uneven than nationally.',
+    /* `is an signal` -> `is a signal`. CARY RULED THE TYPO FIXED, 17 September 2026
+       (L-250 spec section 13 open question 4, which the spec left open and which he
+       answered during the build). This is the ONE string in the section that does NOT
+       render character for character as it did before L-250 at Group by = Month, and it
+       is a signed copy change by ruling rather than a slip: nothing else in the sentence
+       moves. The spec and design-lab/l250-copy.js still carry the old spelling. */
+    noteStockPeakEdge: 'Over all {buckets} the peak is the newest {bucket}, {edge}, which is a signal of incomplete reporting instead of a new high.',
     noteStockSelected: 'Pending is a sum of cases. A total over a period adds up month-end balances and counts nothing, so this section offers a reading at a date instead.',
     noteStockNoPrior: 'Pending cases cannot be compared over a prior period, only a figure at one date versus another.',
     noteShareWhole: '',
     noteHalfSeasonal: 'This series has a strong seasonal cycle, which may not be accounted for in raw computation. For richer analysis, compare similar calendar months.',
-    noteStockHalves: 'A sum, like pending cases, has no half total. Each half is read as its average month-end level over that half.',
+    /* THE {bucketEnd} SLOT HERE IS CARY'S RULING OF 17 September 2026, not spec section 11.
+       The spec's copy block does not carry this string at all, and the sentence renders
+       byte-identical at Month grain. It takes the slot because it prints on the SAME CARD
+       as basisFigStockHalves below, about the SAME figure: without it, fiscal-year grain
+       gave a basis line saying `fiscal-year-end` and a note beside it saying `month-end`.
+       See the form 2 stock branch in buildPair() for the half of this the comment there
+       used to argue against. */
+    noteStockHalves: 'A sum, like pending cases, has no half total. Each half is read as its average {bucketEnd} level over that half.',
+
+    /* ══ THE SIX NEW STRINGS OF L-250, and EVERY ONE IS SILENT AT GROUP BY = MONTH.
+       Signed by Cary 17 September 2026 (spec section 11.8). ═══════════════════════ */
+    /* the divisor, on the period line, beside the figure that divides by it. Without it
+       the glance reads `Average per fiscal year 55,004` over a range holding two part
+       fiscal years and nothing on the face says what it divided by. */
+    bucketCount: '{n} {buckets}',
+    bucketCountPart1: '{n} {buckets}, one of them a part period',
+    bucketCountPartN: '{n} {buckets}, {p} of them part periods',
+    /* the "*" key. VERBATIM the string the four page scripts already print under their
+       charts (web/scripts/index.page.js:475 and its three siblings), so the mark a reader
+       meets under the chart means the same thing above it. The L-237 table prints a
+       DIFFERENT sentence for the same mark; unifying the three is spec open question 3
+       and its own row, not this change. */
+    partKey: '* partial period (fewer months than the full period)',
+    /* on the highest and the lowest figure, and only where a part period was actually
+       dropped. Measured: `Lowest fiscal year` over the default Criminal range is 48,427
+       (FY2023) with the exclusion and 45,682 (FY2013*) without - a different year, 5.7%
+       low, on nine months. */
+    notePartExcluded: 'Part periods are excluded too: a {bucket} with fewer months than the period holds would be highest or lowest on its length alone.',
+    /* invariant 4 said out loud on the one figure a coarse grain makes newly
+       misreadable: a reader who sees `Middle calendar quarter 95.03%` can assume the
+       quarter is the average of its three monthly percentages. It is not. */
+    defBucketRate: 'Each {bucket}\'s percentage divides its own totals, not the average of its months.',
     /* forms 3, 4 and 5 on a stock. Signed in the 9e delta (gap 4). STRUCK in the same
        delta: 'This comparison starts from the current administration, so the period above
        does not apply.' Forms 3 and 4 printed it beside a period select they had disabled,
        and there is no period select to disable. */
-    basisStockPeriod: 'The average open caseload over each period. This period should be read as average month-end level rather than as a sum.',
+    basisStockPeriod: 'The average open caseload over each period. This period should be read as average {bucketEnd} level rather than as a sum.',
 
     /* ══ THE COMPARISON BASIS IS A FIGURE CLAUSE AND THEN A PERIOD CLAUSE (L-214, Cary's
        option A, 15 September 2026, spec 5.2e and the 9g delta). The figure drives the
@@ -402,21 +453,21 @@ function mountDocMarkers(surface,root,labelToKey,base){
        half - the PERIOD clause, also built per form - after its own first half, below.
        Nine of these are new wording; the three stock sentences above and beside them are
        MOVED from "the form's basis" to "this figure's clause" with no word changed. */
-    basisFigAvg: 'Per month, each period\'s total divided by monthly count.',
-    basisFigMedian: 'The middle month of each period.',
-    basisFigBest: 'The highest single month in each period, settled months only.',
-    basisFigWorst: 'The lowest single month in each period, settled months only.',
-    basisFigFirstLast: 'The first and last month of each period, with their dates.',
+    basisFigAvg: 'Per {bucket}, each period\'s total divided by {perBucket} count.',
+    basisFigMedian: 'The middle {bucket} of each period.',
+    basisFigBest: 'The highest single {bucket} in each period, settled {buckets} only.',
+    basisFigWorst: 'The lowest single {bucket} in each period, settled {buckets} only.',
+    basisFigFirstLast: 'The first and last {bucket} of each period, with their dates.',
     basisFigRate: 'Each period\'s totals divided one by the other.',
-    basisFigMedianRate: 'The middle of each period\'s monthly percentages.',
-    basisFigStockMedian: 'The middle month-end reading in each period.',
-    basisFigStockPeak: 'The highest month-end reading in each period, settled months only.',
+    basisFigMedianRate: 'The middle of each period\'s {perBucket} percentages.',
+    basisFigStockMedian: 'The middle {bucketEnd} reading in each period.',
+    basisFigStockPeak: 'The highest {bucketEnd} reading in each period, settled {buckets} only.',
     /* MOVED, not new: form 1's stock sentence and form 2's stock sentence were the FORM's
        basis and are now the clause of the figure the form used to choose on the user's
        behalf. Not one word of either changes. The third, basisStockPeriod above, moves the
        same way and is the `Average month-end reading` clause on forms 3, 4 and 5. */
     basisFigStockRead: 'Two readings, one date each. Both dates are settled. Pending cases have no prior period of the same length, so this form reads the same date a period earlier.',
-    basisFigStockHalves: 'The average month-end open caseload over each half. Pending cases have no half total, so a half is read as its average month-end level rather than as a sum.',
+    basisFigStockHalves: 'The average {bucketEnd} open caseload over each half. Pending cases have no half total, so a half is read as its average {bucketEnd} level rather than as a sum.',
     /* THE SHARE CLAUSE IS THE ONE AMENDED STRING (9g). It was form 4's basis, so it named
        an administration and unequal lengths; it now prints on every form, including form 1
        where both periods are the same length and neither is an administration. Two words:
@@ -425,7 +476,14 @@ function mountDocMarkers(surface,root,labelToKey,base){
        it carries the page's own selection name and occurrence basis. */
     /* a middle month over few values moves on any one of them (L-198 1.2). On a PAIR the
        span is computed over the two periods ACTUALLY compared and the wider is printed. */
-    notePairMedianFew: 'Note this analysis contains few months, so read this comparison as an indication rather than a settled figure.',
+    /* THE {buckets} SLOT AND THE BUCKET TRIGGER ARE CARY'S RULING of 17 September 2026,
+       not spec section 11, which does not carry this string. It renders byte-identical at
+       Month grain. Both halves moved together and the trigger is the half that mattered:
+       the look-up's own few-values caveat now counts BUCKETS, so a five-fiscal-year range
+       at Fiscal Year grain fired it on the look-up (5 buckets) and stayed silent on a
+       comparison of the same metric (form 2's halves are 30 months each) - the caveat went
+       missing exactly where a reader needs it. Wording it alone would have left that. */
+    notePairMedianFew: 'Note this analysis contains few {buckets}, so read this comparison as an indication rather than a settled figure.',
     /* THERE IS NO SETTLED-ONLY BASIS SENTENCE (L-207, spec section 8 item 30). The five
        that existed went with the settled-months control: a comparison that reaches into
        provisional months now computes over ALL months, which is what the default always
@@ -504,6 +562,110 @@ function mountDocMarkers(surface,root,labelToKey,base){
     if (!a.length) return null;
     var m = a.length >> 1;
     return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+  }
+
+  /* ══ GROUP BY - the section's period figures follow the page's grain (L-250) ══════
+     The section has NO period control of its own and gains none here (D-058, as amended
+     17 September 2026): Group by sits in the page's own .controls bar with From, To and
+     Administration, and this section follows it exactly as it follows those. Before
+     L-250 the engine did not read it at all, so the chart re-bucketed and the figures
+     above it went on saying `Average per month` off the same control.
+     grainBuckets() and bucketEnd() are at file scope, shared/shared.js:61-83, and the
+     charts and the L-237 table already use them. NO ASSET IS ADDED: invariant 9's chains
+     are unchanged. ═══════════════════════════════════════════════════════════════════ */
+  var GRAIN = {
+    month: { one: 'month',            many: 'months',            adj: 'monthly',          end: 'month-end' },
+    cq:    { one: 'calendar quarter', many: 'calendar quarters', adj: 'calendar-quarter', end: 'calendar-quarter-end' },
+    fq:    { one: 'fiscal quarter',   many: 'fiscal quarters',   adj: 'fiscal-quarter',   end: 'fiscal-quarter-end' },
+    fy:    { one: 'fiscal year',      many: 'fiscal years',      adj: 'fiscal-year',      end: 'fiscal-year-end' }
+  };
+  /* an unknown grain falls back to month, so a bad state cannot print an empty noun */
+  function gnoun(grain) { return GRAIN[grain] || GRAIN.month; }
+  function gfill(tpl, grain) {
+    var G = gnoun(grain);
+    return String(tpl)
+      .replace(/\{bucket\}/g, G.one)
+      .replace(/\{buckets\}/g, G.many)
+      .replace(/\{perBucket\}/g, G.adj)
+      .replace(/\{bucketEnd\}/g, G.end);
+  }
+  /* A NULLABLE bucket sum, and it is deliberately NOT the file-scope bucketSum() at :73.
+     That one returns 0 for a bucket whose every month is null, which is right for a chart
+     - a plotted 0 sits among its neighbours and reads as a gap - and wrong here, where one
+     bucket becomes a headline `Lowest calendar quarter` with nothing beside it. A series
+     that ends before the vintage edge would win every lowest reading with a zero it never
+     recorded, and 1,364 of 3,726 civil-grain series and 4,712 of 9,306 agency-grain series
+     do end early (web/scripts/civil.page.js:21). figureFor() already skips nulls at month
+     grain, so returning null PRESERVES the section's behaviour rather than adding one. */
+  function bucketVals(arr, B) {
+    return B.map(function (b) {
+      var s = 0, any = false;
+      for (var k = 0; k < b.idxs.length; k++) {
+        var v = arr && arr[b.idxs[k]];
+        if (v != null) { s += v; any = true; }
+      }
+      return any ? s : null;
+    });
+  }
+  /* ONE re-bucketing of ONE period. Called per period and never once per model: the
+     chart's range, each of buildPeriods()'s presets and each SIDE of a comparison have
+     different months and different edges, and grainBuckets() takes an index list for
+     exactly that reason. */
+  function periodGrain(M, idxs, grain) {
+    var B = grainBuckets(M.spine, idxs, grain), vals, i;
+    if (M.kind === 'rate') {
+      /* INVARIANT 4, and this is the whole of it: sum the NUMERATOR and the DENOMINATOR
+         inside the bucket and divide ONCE. Never the mean of the monthly percentages.
+         Measured on the shipped district cube: VT guilty disposition %, Q4 2022, is
+         78.79% done this way against 87.04% done as the mean of its three monthly rates -
+         10.47% relative, 8.25 percentage points. At month grain the two coincide exactly,
+         which is why the error is invisible until the grain changes. */
+      var num = bucketVals(M.rate.num, B), den = bucketVals(M.rate.den, B);
+      vals = num.map(function (n, j) { return (den[j] > 0) ? 100 * n / den[j] : null; });
+    } else if (M.kind === 'stock') {
+      /* A STOCK IS NEVER SUMMED ACROSS A BUCKET (L-126). A pending caseload is a level at
+         a month end, so a quarter reads the level at the quarter's LAST month. */
+      vals = bucketEnd(M.series, B);
+    } else {
+      vals = bucketVals(M.series, B);
+    }
+    /* A BUCKET IS PROVISIONAL IF ANY MONTH IN IT IS - shared/provisional.js:136's own
+       rule, which the four charts already use. At a coarse grain that is strictly MORE
+       conservative, and it is the same boundary the chart band draws. */
+    var prov = B.map(function (b) {
+      return b.idxs.some(function (j) { return j > M.cut; });
+    });
+    var eligible = [], nPart = 0;
+    for (i = 0; i < B.length; i++) {
+      if (B[i].partial) nPart++;
+      /* whole AND settled, in that order of reasons: a part period would be highest or
+         lowest on its LENGTH and a provisional one on its REPORTING. Neither is about the
+         caseload. The table MARKS a short bucket and prints it among its neighbours; the
+         topline prints one bucket as a headline with nothing to compare it to, so it
+         excludes instead. Measured: `Lowest fiscal year` over the default Criminal range
+         is 48,427 (FY2023) with the exclusion and 45,682 (FY2013*) without. */
+      if (!B[i].partial && !prov[i]) eligible.push(i);
+    }
+    return {
+      B: B, vals: vals, prov: prov, eligible: eligible, nPartial: nPart,
+      /* the bucket's own label, carrying the SAME trailing "*" grainLabels() puts on the
+         chart axis and the L-237 table puts in its Period column. One mark, one meaning.
+         A month bucket is named by monthName(), because every figure in this section that
+         puts a month on its face has always put `April 2026` there and not `2026-04`. */
+      labels: B.map(function (b) {
+        return ((!grain || grain === 'month') ? monthName(b.label) : b.label) + (b.partial ? '*' : '');
+      }),
+      /* the month a bucket ENDS on, which is the date a stock reading puts on its face */
+      endMonth: B.map(function (b) { return M.spine[b.idxs[b.idxs.length - 1]]; })
+    };
+  }
+  /* the LAST SETTLED bucket, which is D-060 one level up: a settled bucket has every
+     month settled, so its end month is a real settled month. Part periods are NOT
+     excluded here - a part period's end is still a real month-end level and the figure
+     names the month, which is D-060's own instruction. */
+  function lastSettledBucket(P) {
+    for (var i = P.B.length - 1; i >= 0; i--) if (!P.prov[i]) return i;
+    return P.B.length ? P.B.length - 1 : -1;
   }
 
   /* ══ THE MODEL. Each page builds one of these per render and hands it over. Nothing
@@ -669,25 +831,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
     return worst;
   }
-  /* the seasonal peak-to-trough of this series, over its settled months, by calendar
-     month. It is the {seas} a period that is not a whole number of years owes. */
-  function seasonalAmp(M) {
-    var by = [], cnt = [], i;
-    for (i = 0; i < 12; i++) { by.push(0); cnt.push(0); }
-    for (i = 0; i <= M.cut && i < M.spine.length; i++) {
-      var v = M.series[i]; if (v == null) continue;
-      var m = (+M.spine[i].slice(5, 7)) - 1;
-      by[m] += v; cnt[m]++;
-    }
-    var lo = null, hi = null;
-    for (i = 0; i < 12; i++) {
-      if (!cnt[i]) continue;
-      var a = by[i] / cnt[i];
-      if (lo == null || a < lo) lo = a;
-      if (hi == null || a > hi) hi = a;
-    }
-    return (hi && lo != null && hi > 0) ? 100 * (hi - lo) / hi : null;
-  }
+  /* seasonalAmp() STOOD HERE AND IS REMOVED (L-247). It averaged the settled months of
+     each calendar month and took the peak-to-trough spread, which is mean-of-ratios on a
+     rate metric and so an invariant 4 breach. Its only caller was the seasonal note in
+     figureFor(), struck by Cary on 17 September 2026; removing the call orphaned it and
+     it goes with the call rather than sitting unreferenced with a known defect in it.
+     R.seasonal and COPY.noteHalfSeasonal are a DIFFERENT thing, on form 2 only, and are
+     untouched: they test the half's length in months and carry no computed figure. */
 
   /* ══ RENDER HELPERS ═════════════════════════════════════════════════════════════ */
   function defLine(t) { return '<div class="tf-def">' + esc(t) + '</div>'; }
@@ -764,16 +914,21 @@ function mountDocMarkers(surface,root,labelToKey,base){
     if (M.share && M.kind !== 'stock') out.push('share');
     return out;
   }
+  /* EIGHT of these labels carry a noun slot and follow Group by (L-250); THREE do not,
+     and that is the point rather than an omission. `Total`, `Overall rate` and the share
+     name no period, and `Reading at a date` is a date at every grain - what moves is
+     WHICH date, and the figure prints it on its sub-line. */
   function measureLabel(M, k) {
+    var gr = M && M.grain;
     switch (k) {
       case 'total': return 'Total';
       case 'rate': return COPY.mRate;
-      case 'avg': return M.kind === 'stock' ? 'Average month-end reading' : 'Average per month';
-      case 'median': return M.kind === 'stock' ? 'Middle month-end reading' : 'Middle month';
-      case 'best': return 'Highest month';
-      case 'worst': return 'Lowest month';
-      case 'peak': return 'Highest month-end reading';
-      case 'firstlast': return 'First and last month';
+      case 'avg': return gfill(M.kind === 'stock' ? 'Average {bucketEnd} reading' : 'Average per {bucket}', gr);
+      case 'median': return gfill(M.kind === 'stock' ? 'Middle {bucketEnd} reading' : 'Middle {bucket}', gr);
+      case 'best': return gfill('Highest {bucket}', gr);
+      case 'worst': return gfill('Lowest {bucket}', gr);
+      case 'peak': return gfill('Highest {bucketEnd} reading', gr);
+      case 'firstlast': return gfill('First and last {bucket}', gr);
       case 'read': return 'Reading at a date';
       case 'share': return M.share.label;
       /* the glance-only denominator slot on a rate: the series' own metric name, which
@@ -792,11 +947,39 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return n;
   }
 
+  /* the period line's SECOND line, coarse grain only, and only on a figure that reads
+     EVERY bucket in the period: the average, the middle one and a stock's reading. It is
+     the divisor, on the face, beside the figure that divides by it. It is NOT printed
+     beside Total, Overall rate, Share or the rate's denominator slot, which are
+     grain-invariant and divide by nothing; NOT on the two extrema, which are computed
+     over a SUBSET and would contradict the exclusion note directly underneath; and NOT on
+     first-and-last, which names its two buckets on its own face. Empty at month grain,
+     which is what keeps the strip identical to the state the copy was signed for. */
+  var READS_EVERY_BUCKET = { avg: 1, median: 1, read: 1 };
+  function bucketCountLine(P, grain, k) {
+    if (!grain || grain === 'month') return '';
+    if (!READS_EVERY_BUCKET[k]) return '';
+    var tpl = P.nPartial === 0 ? COPY.bucketCount
+            : P.nPartial === 1 ? COPY.bucketCountPart1 : COPY.bucketCountPartN;
+    return gfill(tpl, grain).replace('{n}', String(P.B.length)).replace('{p}', String(P.nPartial));
+  }
+
   function figureFor(M, k, per) {
-    var idxs = per.idxs, vals = idxs.map(function (i) { return M.series[i]; });
-    var f = { key: k, label: measureLabel(M, k), period: per.label, notes: [] };
-    var sIdx, i, best, bi, v;
+    var idxs = per.idxs, grain = M.grain;
+    /* THE ONE RE-BUCKETING. P.vals are the bucket values, already computed the way each
+       kind requires: a count sums, a rate is a ratio of its summed components (invariant
+       4), a stock reads its last month (L-126). At month grain every bucket is one month
+       and P.vals is M.series over the period, so every figure below is arithmetically
+       what it was before L-250. */
+    var P = periodGrain(M, idxs, grain);
+    var f = { key: k, label: measureLabel(M, k), period: per.label, notes: [],
+              countLine: bucketCountLine(P, grain, k) };
+    var i, best, bi, v;
     switch (k) {
+      /* ── GRAIN-INVARIANT. Not one of these four reads P, and none of them may be made
+         to: a sum of sums is the same sum, and a ratio of two whole-period sums has no
+         bucket in it. Measured identical at all four grains on the default Criminal
+         range: 770,057 and 94.9604%. ─────────────────────────────────────────────── */
       case 'total':
         f.v = fmtLevel(M, levelOver(M, idxs));
         break;
@@ -804,55 +987,81 @@ function mountDocMarkers(surface,root,labelToKey,base){
         f.v = fmtLevel(M, levelOver(M, idxs));
         f.def = COPY.defRate;
         break;
+      /* ── RE-BUCKETED ──────────────────────────────────────────────────────────── */
       case 'avg':
         if (M.kind === 'stock') {
+          /* the mean of the BUCKET-END readings, not of the months inside them */
           var s = 0, c = 0;
-          for (i = 0; i < idxs.length; i++) if (M.series[idxs[i]] != null) { s += M.series[idxs[i]]; c++; }
+          for (i = 0; i < P.vals.length; i++) if (P.vals[i] != null) { s += P.vals[i]; c++; }
           f.v = c ? nInt(s / c) : '-';
-          f.def = COPY.defStockAvg.replace('{n}', String(idxs.length));
+          f.def = gfill(COPY.defStockAvg, grain).replace('{n}', String(P.B.length));
         } else {
+          /* the period total divided by the NUMBER OF BUCKETS, which is the mean of the
+             bucket values and so the mean of what the chart plots. A part period is one
+             bucket and counts as one; the divisor is on the face in f.countLine, which is
+             the whole reason that line exists. */
           var t = levelOver(M, idxs);
-          f.v = t == null ? '-' : n1(t / idxs.length);
+          f.v = t == null ? '-' : n1(t / P.B.length);
         }
         break;
       case 'median':
-        var md = median(vals);
+        var md = median(P.vals);
         f.v = M.kind === 'stock' ? nInt(md) : fmtRate(M, md);
-        f.def = M.kind === 'stock' ? COPY.defStockMedian.replace('{n}', String(idxs.length))
-              : M.kind === 'rate' ? COPY.defMedianRate.replace('{n}', String(idxs.length))
-              : (idxs.length <= 12
-                  ? COPY.defMedianFew.replace('{n}', String(idxs.length)).replace('{jack}', n2(jackknife(vals) || 0))
-                  : COPY.defMedian.replace('{n}', String(idxs.length)));
+        /* THE FEW-VALUES THRESHOLD IS NOW A COUNT OF BUCKETS, not of months. The caveat
+           exists because a median over few values moves on any one of them (L-198 1.2),
+           and the values medianed here are the buckets. At month grain the two readings
+           coincide, which is why 12 is unchanged. This is the one number in the L-250
+           spec the designer flagged as inherited rather than measured (spec 12.5); it
+           cannot produce a wrong figure, only a caveat that fires a little too often or
+           too rarely. */
+        f.def = M.kind === 'stock' ? gfill(COPY.defStockMedian, grain).replace('{n}', String(P.B.length))
+              : M.kind === 'rate' ? gfill(COPY.defMedianRate, grain).replace('{n}', String(P.B.length))
+              : (P.B.length <= 12
+                  ? gfill(COPY.defMedianFew, grain).replace('{n}', String(P.B.length)).replace('{jack}', n2(jackknife(P.vals) || 0))
+                  : gfill(COPY.defMedian, grain).replace('{n}', String(P.B.length)));
+        /* invariant 4 said out loud on the one figure a coarse grain makes newly
+           misreadable. Silent at month grain, where there is nothing new to misread. */
+        if (M.kind === 'rate' && grain && grain !== 'month') f.def2 = gfill(COPY.defBucketRate, grain);
         break;
       case 'best': case 'worst': case 'peak':
-        sIdx = settledOf(M, idxs);
         best = null; bi = null;
-        for (i = 0; i < sIdx.length; i++) {
-          v = M.series[sIdx[i]]; if (v == null) continue;
-          if (best == null || (k === 'worst' ? v < best : v > best)) { best = v; bi = sIdx[i]; }
+        /* WHOLE AND SETTLED. P.eligible is the settled buckets that are not part periods;
+           at month grain nothing is ever a part period, so this is settledOf() exactly. */
+        for (i = 0; i < P.eligible.length; i++) {
+          v = P.vals[P.eligible[i]]; if (v == null) continue;
+          if (best == null || (k === 'worst' ? v < best : v > best)) { best = v; bi = P.eligible[i]; }
         }
         f.v = nInt(best);              /* never a rate: a rate offers no extremum */
-        f.sub = bi == null ? '' : monthName(M.spine[bi]);
+        f.sub = bi == null ? '' : P.labels[bi];
         /* the DEFINITION is struck (the label says what it is) and the settled-months
            half of it is not lost with it: it is COPY.noteSettledOnly, its own line, and
            it still prints on all three. The extremum is the one place this section
            truncates, and it says so exactly as before (invariant 6). */
-        f.notes.push(COPY.noteSettledOnly);
-        if (k !== 'peak') f.notes.push(COPY.noteBestCause);
+        f.notes.push(gfill(COPY.noteSettledOnly, grain));
+        /* the second truncation, printed only where a part period was actually there to
+           drop. It is never there at month grain. */
+        if (P.nPartial > 0) f.notes.push(gfill(COPY.notePartExcluded, grain));
+        if (k !== 'peak') f.notes.push(gfill(COPY.noteBestCause, grain));
         /* on a stock, say when the UNTRUNCATED peak would have been the vintage edge */
         if (k === 'peak') {
           var top = null, ti = null;
-          for (i = 0; i < idxs.length; i++) {
-            v = M.series[idxs[i]]; if (v == null) continue;
-            if (top == null || v > top) { top = v; ti = idxs[i]; }
+          for (i = 0; i < P.vals.length; i++) {
+            v = P.vals[i]; if (v == null) continue;
+            if (top == null || v > top) { top = v; ti = i; }
           }
-          if (ti != null && ti > M.cut) f.notes.push(COPY.noteStockPeakEdge.replace('{edge}', monthName(M.spine[ti])));
+          if (ti != null && P.prov[ti]) f.notes.push(gfill(COPY.noteStockPeakEdge, grain).replace('{edge}', P.labels[ti]));
         }
+        /* a coarse grain can leave NOTHING both whole and settled - Last 12 months at
+           fiscal-year grain is two part periods, one of them provisional. The section
+           already owns a sentence for "there is no figure here" and it is reused, with
+           the two notes above saying which exclusion emptied the set. No new refusal
+           string is spent. */
+        if (bi == null) { f.unavailable = true; f.def = COPY.unavailable; }
         break;
       case 'firstlast':
-        var a0 = M.series[idxs[0]], b0 = M.series[idxs[idxs.length - 1]];
-        f.v = nInt(a0) + ' and ' + nInt(b0);   /* never a rate: see measureList */
-        f.sub = monthName(M.spine[idxs[0]]) + ' and ' + monthName(M.spine[idxs[idxs.length - 1]]);
+        f.v = nInt(P.vals[0]) + ' and ' + nInt(P.vals[P.vals.length - 1]);   /* never a rate: see measureList */
+        f.sub = P.labels[0] + ' and ' + P.labels[P.labels.length - 1];
+        if (P.B[0].partial || P.B[P.B.length - 1].partial) f.notes.push(COPY.partKey);
         break;
       case 'read':
         /* THE LAST SETTLED MONTH IN THE CHART'S RANGE, with its date on its face (Cary,
@@ -863,11 +1072,16 @@ function mountDocMarkers(surface,root,labelToKey,base){
            the civil pending stock rises 67.7% in ten months into the vintage edge and
            peaks there at 148,696 against a settled high of 110,090 in January 2015
            (L-198 section 1.4). The date names which month it is, which is that rule's own
-           instruction. Inside a COMPARISON the truncation is unchanged (spec 5.2). */
-        sIdx = settledOf(M, idxs);
-        var ri = sIdx.length ? sIdx[sIdx.length - 1] : idxs[idxs.length - 1];
-        f.v = nInt(M.series[ri]);
-        f.sub = monthName(M.spine[ri]);
+           instruction. Inside a COMPARISON the truncation is unchanged (spec 5.2).
+           AT A COARSE GRAIN this is the last settled BUCKET, read at the month it ends
+           on, and the label stays `Reading at a date` because a date is a date at every
+           grain - what moves is which date, and it is on the face. A part period is not
+           excluded: its end is a real month-end level and the sub-line names the bucket
+           so the reader can see it is short. */
+        var ri = lastSettledBucket(P);
+        f.v = nInt(P.vals[ri]);
+        f.sub = monthName(P.endMonth[ri]) + (P.B[ri].partial ? ' (' + P.labels[ri] + ')' : '');
+        if (P.B[ri].partial) f.notes.push(COPY.partKey);
         break;
       case 'share':
         f.v = n2(shareOver(M, idxs)) + '%';
@@ -881,16 +1095,24 @@ function mountDocMarkers(surface,root,labelToKey,base){
         f.basis = COPY.basisRateDen;
         break;
     }
-    /* the period is not a whole number of years, so the calendar months are unbalanced */
-    if (M.kind !== 'stock' && idxs.length % 12 !== 0 && k !== 'best' && k !== 'worst') {
-      var seas = seasonalAmp(M);
-      if (seas != null) f.notes.push(COPY.noteSeasonal.replace('{seas}', n1(seas)));
-    }
-    /* at district level the average and the middle month are genuinely far apart */
+    /* THE SEASONAL NOTE AND ITS CALL SITE ARE REMOVED (L-247, Cary, 17 September 2026).
+       Ashley struck the note by blanking COPY.noteSeasonal on 16 September and left the
+       call, so seasonalAmp() went on running and pushing an empty string through
+       defLine(), which painted an empty .tf-def carrying a 5px top margin on index.html
+       and civil.html. Cary ruled the call site out. COPY.noteSeasonal and seasonalAmp()
+       are removed with it rather than left unreferenced: an orphan function carrying a
+       known defect is L-011's shape, and this one averaged monthly percentages on a rate
+       metric - mean-of-ratios, invariant 4, immaterial nationally and about 12% relative
+       at district grain (VT guilty disposition %, 6.0% against a ratio-of-sums 6.7%,
+       L-243). The trigger was `idxs.length % 12 !== 0`, a test on MONTHS. */
+    /* at district level the average and the middle month are genuinely far apart.
+       BOTH SIDES MOVE TOGETHER OR THE GAP IS NONSENSE: a monthly mean against a quarterly
+       median prints a gap near 200% and reads as a data finding. Both are bucket
+       quantities here, and at month grain both are what they were. */
     if (M.districtSel && (k === 'avg' || k === 'median') && M.kind === 'count') {
-      var tot = levelOver(M, idxs), mm = median(vals);
+      var tot = levelOver(M, idxs), mm = median(P.vals);
       if (tot != null && mm) {
-        f.notes.push(COPY.noteMeanMedian.replace('{gap}', n1(Math.abs(tot / idxs.length - mm) / Math.abs(mm) * 100)));
+        f.notes.push(gfill(COPY.noteMeanMedian, grain).replace('{gap}', n1(Math.abs(tot / P.B.length - mm) / Math.abs(mm) * 100)));
       }
     }
     /* NO PER-FIGURE PROVISIONAL LINE (L-207, spec section 8 item 26). Invariant 6 is
@@ -927,6 +1149,9 @@ function mountDocMarkers(surface,root,labelToKey,base){
         if (f.sub) h += '<div class="tf-sub">' + esc(f.sub) + '</div>';
         h += '<div class="tf-k">' + esc(f.label) + '</div>';
         h += '<div class="tf-win">' + esc(per.label) + '</div>';
+        /* THE ONE ADDITION TO THE STRIP (L-250): the divisor, and how many of its buckets
+           are part periods. Empty at month grain, so the strip is byte-identical there. */
+        if (f.countLine) h += '<div class="tf-win">' + esc(f.countLine) + '</div>';
         /* NO DEFINITION ON THE STRIP, at any width, in any context (Cary, 15 September
            2026, spec section 3). The BASIS stays: invariants 3 and 4 live in it, and
            without `The total this rate divides by.` the rate strip reads as two
@@ -962,11 +1187,14 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
     h += '<div class="tf-v big">' + esc(f.v) + '</div>';
     if (f.sub) h += '<div class="tf-sub">' + esc(f.sub) + '</div>';
+    if (f.countLine) h += '<div class="tf-win">' + esc(f.countLine) + '</div>';
     /* THE ONLY PLACE A DEFINITION APPEARS, and only on the five figures whose label is
        not already their definition: Middle month, Overall rate, Share of the total, and
        the average and middle month-end readings (spec section 3). figureFor() sets f.def
        on those five and on nothing else, so this is the whole of the rule. */
     if (f.def) h += defLine(f.def);
+    /* invariant 4, on `Middle {bucket}` on a percent metric at a coarse grain only */
+    if (f.def2) h += defLine(f.def2);
     if (f.basis) h += defLine(f.basis);
     for (var j = 0; j < f.notes.length; j++) h += defLine(f.notes[j]);
     if (M.kind === 'stock') h += defLine(COPY.noteStockSelected);
@@ -998,25 +1226,34 @@ function mountDocMarkers(surface,root,labelToKey,base){
      `pts` says the figure is a percentage and is compared in percentage POINTS, never as a
      percent change of a percent (spec 5.2f note 3); a missing `v` says there is no single
      change to print at all, which is `First and last month` (Cary, 15 September 2026). */
+  /* EACH SIDE RE-BUCKETS OVER ITS OWN MONTHS (L-250). The FORMS still choose MONTHS - not
+     a line of buildPair()'s month arithmetic moves, all three refusals stay month tests,
+     and `Total`'s five signed basis sentences and every period clause still count months
+     and stay true. What follows the grain is each side's own figure VALUE, because D-061
+     shares the figure label between the look-up and the comparison and a monthly number
+     under a quarterly label is a wrong figure rather than an inconsistency. */
   function sideValue(M, idxs, mode, measure) {
-    var i, s, c, t, v;
+    var i, s, c, t, P;
     if (measure === 'share') return { v: shareOver(M, idxs), fmt: n2(shareOver(M, idxs)) + '%', pts: true };
+    P = periodGrain(M, idxs, M.grain);
     if (measure === 'best' || measure === 'worst' || measure === 'peak') {
-      /* over SETTLED MONTHS ONLY, on a flow as well as a stock: an extremum would
-         otherwise be won by a month whose reporting is not yet complete (invariant 6). */
-      var sIdx = settledOf(M, idxs), best = null, bi = null;
-      for (i = 0; i < sIdx.length; i++) {
-        v = M.series[sIdx[i]]; if (v == null) continue;
-        if (best == null || (measure === 'worst' ? v < best : v > best)) { best = v; bi = sIdx[i]; }
+      /* over WHOLE AND SETTLED buckets, on a flow as well as a stock: an extremum would
+         otherwise be won by a bucket whose reporting is not yet complete (invariant 6) or
+         by one that is short (L-250 section 5.2). At month grain nothing is ever a part
+         period, so this is the settled-months rule exactly as before. */
+      var best = null, bi = null;
+      for (i = 0; i < P.eligible.length; i++) {
+        var ev = P.vals[P.eligible[i]]; if (ev == null) continue;
+        if (best == null || (measure === 'worst' ? ev < best : ev > best)) { best = ev; bi = P.eligible[i]; }
       }
-      return { v: best, fmt: nInt(best), sub: bi == null ? '' : monthName(M.spine[bi]) };
+      return { v: best, fmt: nInt(best), sub: bi == null ? '' : P.labels[bi] };
     }
     if (measure === 'firstlast') {
-      return { v: null, fmt: nInt(M.series[idxs[0]]) + ' and ' + nInt(M.series[idxs[idxs.length - 1]]),
-               sub: monthName(M.spine[idxs[0]]) + ' and ' + monthName(M.spine[idxs[idxs.length - 1]]) };
+      return { v: null, fmt: nInt(P.vals[0]) + ' and ' + nInt(P.vals[P.vals.length - 1]),
+               sub: P.labels[0] + ' and ' + P.labels[P.labels.length - 1] };
     }
     if (measure === 'median') {
-      var md = median(idxs.map(function (j) { return M.series[j]; }));
+      var md = median(P.vals);
       return { v: md, fmt: M.kind === 'stock' ? nInt(md) : fmtRate(M, md), pts: M.kind === 'rate' };
     }
     if (M.kind === 'stock') {
@@ -1025,18 +1262,21 @@ function mountDocMarkers(surface,root,labelToKey,base){
          actually read - L-193 2.4's own "say which date it is". */
       if (measure === 'avg' || mode === 'avg') {
         s = 0; c = 0;
-        for (i = 0; i < idxs.length; i++) if (M.series[idxs[i]] != null) { s += M.series[idxs[i]]; c++; }
+        for (i = 0; i < P.vals.length; i++) if (P.vals[i] != null) { s += P.vals[i]; c++; }
         return { v: c ? s / c : null, fmt: c ? nInt(s / c) : '-' };
       }
-      var ri = idxs[idxs.length - 1];
-      return { v: M.series[ri], fmt: nInt(M.series[ri]), sub: monthName(M.spine[ri]) };
+      var ri = P.vals.length - 1;
+      return { v: P.vals[ri], fmt: nInt(P.vals[ri]), sub: monthName(P.endMonth[ri]) };
     }
     t = levelOver(M, idxs);
     if (measure === 'rate') return { v: t, fmt: fmtLevel(M, t), pts: true };
-    /* `Average per month` prints the bare per-month figure and carries no `in total`
+    /* `Average per {bucket}` prints the bare per-bucket figure and carries no `in total`
        sub-line: that sub-line is `Total`'s, and on the two forms that read per month by
        rule it is the only arithmetic difference between the two figures (spec 5.2f n.1). */
-    if (measure === 'avg') return { v: t == null ? null : t / idxs.length, fmt: t == null ? '-' : n1(t / idxs.length) };
+    if (measure === 'avg') return { v: t == null ? null : t / P.B.length, fmt: t == null ? '-' : n1(t / P.B.length) };
+    /* `Total`'s own per-month reading on the unequal-length forms stays PER MONTH, because
+       the length rule and the signed sentences that state it count months (spec section
+       7). This is the one divisor in the section that does not follow the grain. */
     if (mode === 'perMonth') return { v: t == null ? null : t / idxs.length, fmt: (t == null ? '-' : n1(t / idxs.length) + ' per month'), total: nInt(t) };
     return { v: t, fmt: fmtLevel(M, t) };
   }
@@ -1094,9 +1334,14 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return null;
   }
   function composeBasis(M, R, measure) {
+    /* `Total` keeps its WHOLE signed sentence, character for character, on all five
+       forms: it counts months and the forms still choose months. Every other figure's
+       clause takes the noun slot (L-250) and then the form's own period clause, which is
+       untouched and still counts months. */
     if (measure === 'total') return R.totalBasis;
     var c = figureClause(M, measure, R.form);
     if (!c) return R.totalBasis;
+    c = gfill(c, M.grain);
     return R.periods ? c + ' ' + R.periods : c;
   }
   function rangeLabel(M, idxs) {
@@ -1214,7 +1459,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
         R.totalBasis = COPY.basisFigStockHalves;
         /* NARROWED TO THE FIGURE IT DESCRIBES (L-214, spec 5.2g). Its trigger was "form 2
            on a stock", when a stock half had one reading; a stock half has three now and
-           the sentence is true of one of them. Not one word of it changes. */
+           the sentence is true of one of them.
+           THIS COMMENT USED TO END "Not one word of it changes", and that stopped being
+           true on 17 September 2026. One word does: `month-end` is now `{bucketEnd}`, by
+           Cary's ruling (L-250). The old reasoning was about WHY a stock has no half total,
+           which is still right and is not what the grain moved. Kept as the record of a
+           superseded argument rather than deleted, because a stale comment defending the
+           previous state is how the next reader gets talked out of a correct change. */
         if (measure === 'avg') R.note = COPY.noteStockHalves;
       } else {
         R.periods = 'The period is ' + H.length + ' months, split at the midpoint into ' +
@@ -1382,13 +1633,16 @@ function mountDocMarkers(surface,root,labelToKey,base){
        esc(pts != null ? signed(pts, ' pts') : (pct != null ? signed(pct, '%') : '-')) +
        '</div></div>') + '</div>';
     h += '<div class="tf-basis"><b>' + esc(COPY.basisLabel) + ':</b> ' + esc(R.basis) + '</div>';
-    if (R.note) h += defLine(R.note);
+    /* gfill'd at the render rather than at either assignment, so one point covers both of
+       them: noteStockNoPrior carries no slot and is unaffected, noteStockHalves carries
+       {bucketEnd} (L-250, Cary's ruling of 17 September 2026). */
+    if (R.note) h += defLine(gfill(R.note, M.grain));
     /* THE EXTREMUM KEEPS ITS NO-CAUSE NOTE ON A COMPARISON AND EARNS IT (spec 5.2f note
        5): the lowest month of any period containing 2020 is April or May 2020 on four of
        seven series, so the pairing invites a cause more strongly than a look-up does. The
        settled-months truncation is disclosed in the basis clause itself and is not printed
        twice. `peak` is excluded here for the same reason figureFor() excludes it. */
-    if (o.measure === 'best' || o.measure === 'worst') h += defLine(COPY.noteBestCause);
+    if (o.measure === 'best' || o.measure === 'worst') h += defLine(gfill(COPY.noteBestCause, M.grain));
     /* NO PAIR FLAG AND NO DIRECTION LINE (L-207). The seasonal flag and the arm-D flag
        below are not provisional strings and stay. */
     if (R.seasonal) h += flagLine(COPY.noteHalfSeasonal);
@@ -1400,15 +1654,26 @@ function mountDocMarkers(surface,root,labelToKey,base){
     var firstMonth = M.spine[Math.min(ixA[0], ixB[0])];
     var longest = Math.max(ixA.length, ixB.length);
     /* THE FEW-VALUES CAVEAT IS A PROPERTY OF THE PAIR (spec 5.2f, Middle month row). If
-       EITHER side has twelve months or fewer, the leave-one-out span is computed over the
+       EITHER side has twelve values or fewer, the leave-one-out span is computed over the
        two periods ACTUALLY compared and the WIDER of the two is printed - the pair is only
-       as settled as its less settled side. Count metrics only, which is where the look-up
-       answer carries the same caveat: a stock has its own definition and a rate's middle
-       month is a median of percentages. */
-    if (o.measure === 'median' && M.kind === 'count' && Math.min(ixA.length, ixB.length) <= 12) {
+       as settled as its less settled side. Count metrics only.
+       THIS COMMENT USED TO END "which is where the look-up answer carries the same caveat:
+       a stock has its own definition and a rate's middle month is a median of
+       percentages". The second half of that is still true and is why this is count metrics
+       only. The FIRST half stopped being true on 17 September 2026: the look-up's
+       defMedianFew moved to a count of BUCKETS with the grain, and for a few hours this
+       trigger still counted MONTHS, so the two caveats no longer said the same thing. Cary
+       ruled them aligned (L-250), so "twelve months" above is "twelve values" and the
+       count below is buckets. Kept as the record of a superseded argument rather than
+       deleted: it is the sentence that would otherwise talk the next reader out of the
+       alignment.
+       A MEDIAN IS TAKEN OVER THE BUCKETS, so "few values" is a count of buckets on both
+       sides. At Month grain a bucket is a month and this is the test it always was. */
+    var nbA = periodGrain(M, ixA, M.grain).B.length, nbB = periodGrain(M, ixB, M.grain).B.length;
+    if (o.measure === 'median' && M.kind === 'count' && Math.min(nbA, nbB) <= 12) {
       var jk = Math.max(jackknife(ixA.map(function (i) { return M.series[i]; })) || 0,
                         jackknife(ixB.map(function (i) { return M.series[i]; })) || 0);
-      h += defLine(COPY.notePairMedianFew.replace('{jack}', n2(jk)));
+      h += defLine(gfill(COPY.notePairMedianFew, M.grain).replace('{jack}', n2(jk)));
     }
     if (M.flags && M.flags.scheme && o.measure === 'share' && firstMonth < '2014-10') h += flagLine(COPY.scheme);
     if (M.flags && M.flags.declTrend && o.measure !== 'share' && longest >= 120) h += defLine(COPY.declTrend);
@@ -1595,6 +1860,12 @@ function mountDocMarkers(surface,root,labelToKey,base){
   function render(model) {
     var root = document.querySelector('.kpis'); if (!root) return;
     model.root = root;
+    /* the page's Group by state, one of the four keys on #grain's buttons. Normalised
+       here so gnoun() and grainBuckets() cannot disagree about an unrecognised value:
+       gnoun() falls back to month and grainBuckets() would fall through to fiscal year.
+       A page that hands over nothing gets month, which is the default and the state all
+       the signed copy was signed for. */
+    model.grain = GRAIN[model.grain] ? model.grain : 'month';
     if (!model.flags) model.flags = {};
     if (model.kind !== 'rate') model.rate = null;
     model.cut = model.spine && model.spine.length
@@ -1608,6 +1879,9 @@ function mountDocMarkers(surface,root,labelToKey,base){
     /* exported for the L-204 ported check, which asserts the arithmetic against the
        cubes rather than against the rendered strings */
     _internals: { buildPeriods: buildPeriods, buildCompare: buildCompare, figureFor: figureFor,
-                  levelOver: levelOver, shareOver: shareOver, eraRuns: eraRuns, state: S }
+                  levelOver: levelOver, shareOver: shareOver, eraRuns: eraRuns, state: S,
+                  /* L-250's ported check asserts the noun slots and the bucketing against
+                     the cubes rather than against the rendered strings */
+                  gfill: gfill, periodGrain: periodGrain }
   };
 })(typeof window !== 'undefined' ? window : globalThis);
