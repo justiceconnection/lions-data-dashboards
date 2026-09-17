@@ -354,10 +354,10 @@ function mountDocMarkers(surface,root,labelToKey,base){
        the glance strip as well as in the answer. The settled-months half of three struck
        definitions survives as COPY.noteSettledOnly, which still prints on all three. */
     defMedian: 'The middle value of {n} monthly totals.',
-    defMedianFew: 'The middle value of {n} monthly totals. Note, few months are selected, so read it as an indication rather than a settled figure.',
+    defMedianFew: 'The middle value of {n} monthly totals. Note, few months are selected making trend analysis difficult.',
     defShare: 'Note this figure is calculated as a share of the total of the selected time period.',
     defStockAvg: 'The average of the {n} month-end readings in the period. Not the same as the year-end reading.',
-    defStockMedian: 'The middle value of the {n} month-end readings.',
+    defStockMedian: 'The middle value of {n} month-end readings.',
 
     /* PERCENT METRICS. Signed 15 September 2026 in the section 9e delta, which closed
        the first of the five gaps L-204 found: section 9's figure menus covered flows and
@@ -377,21 +377,21 @@ function mountDocMarkers(surface,root,labelToKey,base){
     basisRateDen: 'The total this rate divides by.',
 
     /* notes that qualify a figure */
-    noteBestCause: 'This names the month, not its cause. A single month can reflect a court closure or a one-off batch, and this project has not established which.',
-    noteSettledOnly: 'Computed over settled months only, so a month that is still being reported cannot win by default.',
+    noteBestCause: 'Note a single month may reflect a court closure or a one-off batch, not a spike at that period of time.',
+    noteSettledOnly: 'Analyzed over settled months only, so provisional months are not included.',
     noteSeasonal: '',
-    noteMeanMedian: 'The average and the middle month differ by {gap}% here. At district level the months are far more uneven than nationally.',
-    noteStockPeakEdge: 'Over all months the peak is the newest month, {edge}, which is an artifact of incomplete reporting rather than a high.',
-    noteStockSelected: 'Pending is a stock. A total over a period adds up month-end balances and counts nothing, so this section offers a reading at a date instead.',
-    noteStockNoPrior: 'A stock has no prior period of the same length. It has a reading at one date and a reading at another.',
+    noteMeanMedian: 'The average and the middle month differ by {gap}% here. District-level averages are more uneven than nationally.',
+    noteStockPeakEdge: 'Over all months the peak is the newest month, {edge}, which is an signal of incomplete reporting instead of a new high.',
+    noteStockSelected: 'Pending is a sum of cases. A total over a period adds up month-end balances and counts nothing, so this section offers a reading at a date instead.',
+    noteStockNoPrior: 'Pending cases cannot be compared over a prior period, only a figure at one date versus another.',
     noteShareWhole: '',
-    noteHalfSeasonal: 'The two halves do not contain the same calendar months, and this series has a strong seasonal cycle. Part of the difference shown is that difference in composition rather than a change in caseload.',
-    noteStockHalves: 'A stock has no half total. Each half is read as its average month-end level over that half, not as a sum.',
+    noteHalfSeasonal: 'This series has a strong seasonal cycle, which may not be accounted for in raw computation. For richer analysis, compare similar calendar months.',
+    noteStockHalves: 'A sum, like pending cases, has no half total. Each half is read as its average month-end level over that half.',
     /* forms 3, 4 and 5 on a stock. Signed in the 9e delta (gap 4). STRUCK in the same
        delta: 'This comparison starts from the current administration, so the period above
        does not apply.' Forms 3 and 4 printed it beside a period select they had disabled,
        and there is no period select to disable. */
-    basisStockPeriod: 'The average month-end open caseload over each period. A stock has no total, so a period is read as its average month-end level rather than as a sum.',
+    basisStockPeriod: 'The average open caseload over each period. This period should be read as average month-end level rather than as a sum.',
 
     /* ══ THE COMPARISON BASIS IS A FIGURE CLAUSE AND THEN A PERIOD CLAUSE (L-214, Cary's
        option A, 15 September 2026, spec 5.2e and the 9g delta). The figure drives the
@@ -402,21 +402,21 @@ function mountDocMarkers(surface,root,labelToKey,base){
        half - the PERIOD clause, also built per form - after its own first half, below.
        Nine of these are new wording; the three stock sentences above and beside them are
        MOVED from "the form's basis" to "this figure's clause" with no word changed. */
-    basisFigAvg: 'Per month, each period\'s total divided by its own month count.',
+    basisFigAvg: 'Per month, each period\'s total divided by monthly count.',
     basisFigMedian: 'The middle month of each period.',
-    basisFigBest: 'The highest single month in each period, over settled months only.',
-    basisFigWorst: 'The lowest single month in each period, over settled months only.',
-    basisFigFirstLast: 'The first and last month of each period, with their dates. There is no single change between two pairs of endpoints, so none is shown.',
-    basisFigRate: 'Each period\'s component totals divided one by the other, not the average of the monthly percentages.',
-    basisFigMedianRate: 'The middle of each period\'s monthly percentages, not each period\'s overall rate.',
-    basisFigStockMedian: 'The middle month-end reading in each period. A stock has no total, so a period is read at its month-end levels rather than as a sum.',
-    basisFigStockPeak: 'The highest month-end reading in each period, over settled months only.',
+    basisFigBest: 'The highest single month in each period, settled months only.',
+    basisFigWorst: 'The lowest single month in each period, settled months only.',
+    basisFigFirstLast: 'The first and last month of each period, with their dates.',
+    basisFigRate: 'Each period\'s totals divided one by the other.',
+    basisFigMedianRate: 'The middle of each period\'s monthly percentages.',
+    basisFigStockMedian: 'The middle month-end reading in each period.',
+    basisFigStockPeak: 'The highest month-end reading in each period, settled months only.',
     /* MOVED, not new: form 1's stock sentence and form 2's stock sentence were the FORM's
        basis and are now the clause of the figure the form used to choose on the user's
        behalf. Not one word of either changes. The third, basisStockPeriod above, moves the
        same way and is the `Average month-end reading` clause on forms 3, 4 and 5. */
-    basisFigStockRead: 'Two readings, one date each. Both dates are settled. A stock has no prior period of the same length, so this form reads the same date a period earlier.',
-    basisFigStockHalves: 'The average month-end open caseload over each half. A stock has no half total, so a half is read as its average month-end level rather than as a sum.',
+    basisFigStockRead: 'Two readings, one date each. Both dates are settled. Pending cases have no prior period of the same length, so this form reads the same date a period earlier.',
+    basisFigStockHalves: 'The average month-end open caseload over each half. Pending cases have no half total, so a half is read as its average month-end level rather than as a sum.',
     /* THE SHARE CLAUSE IS THE ONE AMENDED STRING (9g). It was form 4's basis, so it named
        an administration and unequal lengths; it now prints on every form, including form 1
        where both periods are the same length and neither is an administration. Two words:
@@ -425,7 +425,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
        it carries the page's own selection name and occurrence basis. */
     /* a middle month over few values moves on any one of them (L-198 1.2). On a PAIR the
        span is computed over the two periods ACTUALLY compared and the wider is printed. */
-    notePairMedianFew: 'With so few months, leaving out any single month moves a middle month by up to {jack}%, so read this comparison as an indication rather than a settled figure.',
+    notePairMedianFew: 'Note this analysis contains few months, so read this comparison as an indication rather than a settled figure.',
     /* THERE IS NO SETTLED-ONLY BASIS SENTENCE (L-207, spec section 8 item 30). The five
        that existed went with the settled-months control: a comparison that reaches into
        provisional months now computes over ALL months, which is what the default always
@@ -442,17 +442,17 @@ function mountDocMarkers(surface,root,labelToKey,base){
        section 5.3a, and Cary signed knowing it. */
 
     /* THREE refusals. None carries a measured figure: section 6. */
-    refuseNoEarlier: 'The data begins in October 1994, so there is no earlier period of the same length as this one. Choose a second period instead, and the comparison will name its basis.',
-    refuseShortHalves: 'This period is shorter than two years. Its two halves would not contain the same calendar months, and on this series that difference alone can be larger than the movement a year usually shows, so the comparison is not offered below two years. Choose a longer period, or compare with a second period instead.',
+    refuseNoEarlier: 'The data begins in October 1994, so there is no earlier period of the same length as this one. Choose a second period instead.',
+    refuseShortHalves: 'This period is shorter than two years, which could produce wonky data due to the seasonal cycle of case data. Therefore the comparison is not offered below two years. Choose a longer period, or compare with a second period instead.',
     /* form 3 takes the FIRST N months of the chosen administration, N being the chart
        range's own length. When the administration is shorter there are not N months to
        take, and the form REFUSES rather than capping (spec 5.2d, Cary 15 September 2026,
        carve-out 10.6): capping answers form 4's question under a label that says "the
        same months", and form 4 is the next line of the same menu. */
-    refuseEraShort: '{name} covers {m} months of this data and the chart\'s date range is {n} months, so there are not that many months to take from it. Choose the whole of an earlier administration instead, or shorten the chart\'s date range.',
+    refuseEraShort: '{name} covers {m} months of this data and the chart\'s date range is {n} months, making an unequal comparison. Choose the whole of an earlier administration instead, or shorten the chart\'s date range.',
 
     /* declinations */
-    armD: 'Counted on the declination definition ratified in September 2026. A figure remembered from before that date will not match.',
+    armD: '',
     scheme: 'The declination reason scheme changed in fiscal year 2015. Reasons recorded before October 2014 are approximate, so this comparison is not like for like.',
     declTrend: 'This series now reads as falling over three decades. Whether that is a change in prosecution practice or in recording behaviour has not been established.',
 
@@ -461,7 +461,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     /* appended to the line above when matters_pending is selected. Section 3 asks the
        partial-data state for the sentence AND one clause naming what is missing; the
        signed block carried only the first, and this is the second (9e delta, gap 3). */
-    notOfferedMatters: 'Matters pending is not published as a level at any date, only as a running net since October 1994, so this section does not put a number on it.',
+    notOfferedMatters: 'Matters pending is not published as a single figure, only as a running total since October 1994, so this section does not put a number on it.',
     zero: 'None in this period.',
     loading: 'Still loading.'
   };
@@ -474,7 +474,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     { k: 'prev',     label: 'The previous period, same length',        cite: 'L-198 §2.1' },
     { k: 'halves',   label: 'First half against second half',          cite: 'L-198 §2.7' },
     { k: 'eraLike',  label: 'The same months of another administration', cite: 'L-198 §2.2 third basis, §2.4' },
-    { k: 'eraWhole', label: 'The whole of an earlier administration',   cite: 'L-198 §2.2 first basis' },
+    { k: 'eraWhole', label: 'The whole of another administration',   cite: 'L-198 §2.2 first basis' },
     { k: 'free',     label: 'A second period I choose',                cite: 'L-198 §2.1 when equal length, §2.2 when not' }
   ];
 
@@ -964,11 +964,11 @@ function mountDocMarkers(surface,root,labelToKey,base){
     if (M.kind === 'stock') h += defLine(COPY.noteStockSelected);
     if (M.flags && M.flags.armD) h += flagLine(COPY.armD);
 
-    /* job 1 is often "which number do I want", so the block offers the others */
+    /* produces other topline calculations */
     var keys = measureList(M).filter(function (k) { return k !== measure; }), list = '';
     for (var i = 0; i < keys.length; i++) {
       var o = figureFor(M, keys[i], per);
-      list += '<div class="tf-other"><span class="ok">' + esc(o.label) + '</span><b>' + esc(o.v) +
+      list += '<div class="tf-other"><span class="ok">' + esc(o.label) + '</span><b><span class="tf-val">' + esc(o.v) + '</span>' +
         (o.sub ? ' <span class="os">' + esc(o.sub) + '</span>' : '') + '</b></div>';
     }
     if (list) h += '<div class="tf-also"><div class="tf-alsohd">' + esc(COPY.alsoHead) + '</div>' + list + '</div>';

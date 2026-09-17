@@ -185,7 +185,7 @@ function renderTopline(){
     filters:{ districts:distClause(state.dists), role:state.role,
               selection: all?null:{items:[...state.cats], noun:C.capNounCauses} },
     provN:PV.n(m,PVOPT),
-    caption: stock?'Pending is a stock: it is read at a date, never totalled over a period.'
+    caption: stock?'Pending cases compound over time: it is read at a date, never totalled over a period.'
                   :'U.S. as '+state.role+'.',
     notOffered: m==='matters_pending',
     loading:!NAT,
