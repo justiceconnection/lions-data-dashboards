@@ -35,6 +35,7 @@ const CURRENT="index.html";
 //     Set per render, because the mix charts flip family at runtime.
 // This dashboard is criminal throughout: inflow window 3 months, outflow 6.
 const PV=window.LIONS_PROV;
+const SL=window.LIONS_STATUS;
 const PVOPT={civil:false};
 const DOC_SURFACE='index';
 // The table header is rebuilt on every render now, so the markers are re-attached after
@@ -611,7 +612,7 @@ function updateChartAccessibility(){
   );
 }
 
-function render(){ const st=document.getElementById("status");
+function render(){
   const needFull=!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district';
   /* The district cube can also finish and FAIL: FULL stays null with fullLoading back to
      false, and the old `&& fullLoading` guard fell straight through into aggregateRaw(),
@@ -619,8 +620,11 @@ function render(){ const st=document.getElementById("status");
      on "no FULL" whatever the reason. Two things this deliberately does NOT do: it does
      not overwrite the message ensureFull()'s catch wrote, and it does not fall back to
      the national rows, which would print national figures under a district label. */
-  if(needFull && !FULL){ if(fullLoading) st.textContent="loading district detail…"; return; }
-  st.textContent=(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+(state.cats.has('ALL')||state.cats.size===0?"all categories":[...state.cats].join(', '));
+  /* L-224: render() writes NOTHING to #status. The filter-state line this used to
+     print is deleted - the topline caption is a superset of it - and the progress and
+     failure messages belong to ensureFull(), which is the only thing that knows which
+     one is true. A render that wrote here would wipe a failure within one tick. */
+  if(needFull && !FULL) return;
   renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); tblInvalidate(); }
 
 /* ── THE CSV ────────────────────────────────────────────────────────────────────────
@@ -834,13 +838,20 @@ async function fetchText(url){ const r=await fetch(url,{cache:"reload"});
     return new TextDecoder().decode(buf); }
   return await r.text(); }
 async function ensureFull(){ if(FULL||fullLoading) return;
-  fullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ FULL=parseCSV(await fetchText("./data/lions_cube.csv.gz")); if(dMS) dMS.setItems(districtList()); }
-  catch(e){ console.error(e); document.getElementById("status").textContent="could not load district detail"; } fullLoading=false; }
+  fullLoading=true; SL.setLoading(SL.COPY.loadDistrict);
+  try{ FULL=parseCSV(await fetchText("./data/lions_cube.csv.gz")); if(dMS) dMS.setItems(districtList());
+    SL.setLoading(null); SL.clearLoadError(); }
+  catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } fullLoading=false; }
 
 async function init(){ renderNav();
+  /* L-224: the national cube is 1.5-3 MB and until it lands the page is a blank chart
+     with no explanation. The message is cleared by the same resource arriving, below;
+     the setup between here and the first render() is synchronous, so no paint happens
+     in between and clearing here is clearing at the first render. */
+  SL.setLoading(SL.COPY.loadInitial[CURRENT]);
   try{ const r=await fetch("./data/lions_cube_national.csv",{cache:"reload"}); NAT=parseCSV(await r.text()); }
-  catch(e){ document.getElementById("status").textContent="could not load lions_cube_national.csv - serve this folder over http"; return; }
+  catch(e){ SL.setLoadError(SL.COPY.errInitial); return; }
+  SL.setLoading(null); SL.clearLoadError();
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   UMB=[...new Set(NAT.filter(r=>r.grp!=='ALL').map(r=>r.grp))].sort((a,b)=>(a==='All Other')-(b==='All Other')||a.localeCompare(b));
   SPECS={}; for(const u of UMB) SPECS[u]=[];

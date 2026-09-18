@@ -97,7 +97,12 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
     padding-top:10px;
     white-space: pre-line;
 }
-#status{color:var(--mut);font-size:12px}
+/* The one status line (L-224). Never [hidden]: the rule above wins with !important, so
+   an author display here cannot reveal it and a live region out of the accessibility
+   tree is never announced. Empty at rest, which is a 0px box with no margin. */
+#status{display:block;color:var(--mut);font-size:12px}
+#status:not(:empty){margin-top:10px}
+#status.st-err{color:var(--ink);font-weight:600}
 /* The dashboard nav, presentation. shared/config.js is the single source of truth for
    this component's CONTENT; this block is the single source of truth for its LOOK, and it
    lives here because shared/shared.css is the only stylesheet the four dashboards and

@@ -56,6 +56,7 @@ const CURRENT="civil.html";
 // OVERSTATED at the edge and will fall. Telling a user it will rise is worse than
 // saying nothing, so the copy is direction-aware.
 const PV=window.LIONS_PROV;
+const SL=window.LIONS_STATUS;
 const PVOPT={civil:true};
 function metricsList(){ return state.basis==='cases'?METRICS_CASES:METRICS_MATTERS; }
 function primaryFlow(){ return state.basis==='cases'?'cf':'mr'; }
@@ -361,17 +362,25 @@ function updateChartAccessibility(){
   );
 }
 
-function render(){ const st=document.getElementById("status");
+function render(){
   const needFull=!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district';
   /* The district cube can also finish and FAIL: FULL stays null with fullLoading back to
      false, and the old `&& fullLoading` guard fell straight through into aggregateRaw(),
      which threw `full is not iterable` on a null and left the page dead (L-275). Return
      on "no FULL" whatever the reason. It deliberately does not fall back to the national
-     rows, which would print national figures under a district label. There is no failure
-     message to preserve here - ensureFull()'s catch on this page only logs - and writing
-     one is L-224's, not this guard's. */
-  if(needFull && !FULL){ if(fullLoading) st.textContent="loading district detail…"; return; }
-  st.textContent=(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · U.S. as "+state.role+" · "+state.basis;
+     rows, which would print national figures under a district label. It also does not
+     overwrite the message ensureFull()'s catch wrote - that catch only logged when this
+     guard was written and writes the failure string as of L-224. */
+  /* L-224: render() writes NOTHING to #status. The filter-state line this used to
+     print is deleted - the topline caption is a superset of it - and the progress and
+     failure messages belong to the ensure functions, which are the only things that know
+     which one is true. A render that wrote here would wipe a failure within one tick. */
+  if(needFull && !FULL) return;
+  /* L-283: the pending cubes are a SECOND source with their own failure, and the guard
+     above never reached them. pendingArr() returns a column of nulls when they are
+     missing, which the topline draws as "None in this period." under a district label -
+     an answer of zero where the cube has 1,081. Refuse the same way. */
+  if(pendWanted() && (!PNAT || (needFull && !PFULL))) return;
   renderTopline(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); renderTable(); }
 
 function buildCSV(){
@@ -423,13 +432,15 @@ const NEEDS_PEND=m=>m==='cases_pending';
 function pendWanted(){ if(NEEDS_PEND(state.metric)) return true;
   if(state.ax2by==='metric'){ for(const m of state.ax2sel) if(NEEDS_PEND(m)) return true; } return false; }
 async function ensurePendNat(){ if(PNAT||pnatLoading) return; pnatLoading=true;
-  document.getElementById("status").textContent="loading pending caseload…";
-  try{ const r=await fetch("./data/civil_pending_cube_national.csv",{cache:"reload"}); const p=parsePend(await r.text()); PNAT=p.rows; PSP_N=p.spine; }
-  catch(e){ console.error(e); } pnatLoading=false; }
+  SL.setLoading(SL.COPY.loadPending);
+  try{ const r=await fetch("./data/civil_pending_cube_national.csv",{cache:"reload"}); const p=parsePend(await r.text()); PNAT=p.rows; PSP_N=p.spine;
+    SL.setLoading(null); SL.clearLoadError(); }
+  catch(e){ console.error(e); SL.setLoadError(SL.COPY.errPending); } pnatLoading=false; }
 async function ensurePendFull(){ if(PFULL||pfullLoading) return; pfullLoading=true;
-  document.getElementById("status").textContent="loading district pending detail…";
-  try{ const r=await fetch("./data/civil_pending_cube.csv",{cache:"reload"}); const p=parsePend(await r.text()); PFULL=p.rows; PSP_F=p.spine; }
-  catch(e){ console.error(e); } pfullLoading=false; }
+  SL.setLoading(SL.COPY.loadDistrictPending);
+  try{ const r=await fetch("./data/civil_pending_cube.csv",{cache:"reload"}); const p=parsePend(await r.text()); PFULL=p.rows; PSP_F=p.spine;
+    SL.setLoading(null); SL.clearLoadError(); }
+  catch(e){ console.error(e); SL.setLoadError(SL.COPY.errPending); } pfullLoading=false; }
 // `force` is the data table and the CSV. Both print EVERY metric as a column whatever the
 // chart happens to be showing, so the pending column has to be real whenever a user can
 // actually see it - not only when pending is the selected metric. Nothing is fetched
@@ -437,9 +448,10 @@ async function ensurePendFull(){ if(PFULL||pfullLoading) return; pfullLoading=tr
 async function ensurePending(force){ if(!(force||pendWanted())) return;
   await ensurePendNat();
   if(!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district') await ensurePendFull(); }
-async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./data/civil_cube.csv",{cache:"reload"}); FULL=parseCSV(await r.text()); if(dMS) dMS.setItems(districtList()); }
-  catch(e){ console.error(e); } fullLoading=false; }
+async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; SL.setLoading(SL.COPY.loadDistrict);
+  try{ const r=await fetch("./data/civil_cube.csv",{cache:"reload"}); FULL=parseCSV(await r.text()); if(dMS) dMS.setItems(districtList());
+    SL.setLoading(null); SL.clearLoadError(); }
+  catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } fullLoading=false; }
 function populateMetric(){ const sel=document.getElementById("metric");
   // L-144: the glyph is an INDEX into "Reading the data", not a severity signal. Which
   // metrics carry it is REFERENCES.flags in shared/config.js, and a held entry
@@ -448,8 +460,14 @@ function populateMetric(){ const sel=document.getElementById("metric");
   state.metric=metricsList()[0][0]; sel.value=state.metric; }
 
 async function init(){ renderNav();
+  /* L-224: the national cube is 1.5-3 MB and until it lands the page is a blank chart
+     with no explanation. The message is cleared by the same resource arriving, below;
+     the setup between here and the first render() is synchronous, so no paint happens
+     in between and clearing here is clearing at the first render. */
+  SL.setLoading(SL.COPY.loadInitial[CURRENT]);
   try{ const r=await fetch("./data/civil_cube_national.csv",{cache:"reload"}); NAT=parseCSV(await r.text()); }
-  catch(e){ document.getElementById("status").textContent="could not load civil_cube_national.csv - serve this folder over http"; return; }
+  catch(e){ SL.setLoadError(SL.COPY.errInitial); return; }
+  SL.setLoading(null); SL.clearLoadError();
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   CATLIST=[...new Set(NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();
   populateMetric();

@@ -47,6 +47,86 @@ function months(a,b){ const r=[]; let [y,m]=a.split("-").map(Number); const [Y,M
 function renderNav(){ const nav=document.getElementById('dashnav'), sel=document.getElementById('dashsel');
   if(nav) nav.innerHTML=DASHBOARDS.map(d=>`<a href="./${d.file}"${d.file===CURRENT?' class="on" aria-current="page"':''}>${d.name}</a>`).join("");
   if(sel){ sel.innerHTML=DASHBOARDS.map(d=>`<option value="${d.file}"${d.file===CURRENT?' selected':''}>${d.name}</option>`).join(""); sel.onchange=()=>{ if(sel.value!==CURRENT) location.href='./'+sel.value; }; } }
+/* ── THE STATUS LINE (L-224) ────────────────────────────────────────
+ * One live region per dashboard - <span id="status" aria-live="polite">, the last child
+ * of .sub. It has exactly two jobs, a load in progress and a load that failed. It states
+ * no filters, because the topline caption does that, and nothing about provisional data,
+ * because the topline's one mark does that.
+ *
+ * IT IS NEVER [hidden], and that is the whole design. A live region that is out of the
+ * accessibility tree when its text is written is never announced, and shared.css's
+ * [hidden]{display:none!important} beats any display a component sets - so a builder who
+ * leaves the attribute on and adds CSS gets a silent no-op. The element is always in the
+ * tree, always empty at rest, and only its textContent changes.
+ *
+ * Precedence, highest first: an unresolved FAILURE, a load IN PROGRESS, empty. A failure
+ * is cleared by the next successful load of ANY resource - not only by the resource that
+ * failed - and NEVER by a render. On these pages render() runs immediately after an
+ * awaited fetch, so a failure written by that fetch's catch and not protected by the
+ * render half of this rule is gone within one tick.
+ *
+ * THE "ANY RESOURCE" HALF IS A RETREAT, NOT THE DESIGN - corrected 18 September 2026, and
+ * a later reader must not take it for the intended behaviour. This block asserted that a
+ * failure is cleared only by a later successful load of the failing resource itself - the
+ * wording is quoted verbatim in section 5i and in D-084 - and no such behaviour ships: ST
+ * below is ONE untagged error slot, clearLoadError() clears it unconditionally, and it
+ * has sixteen call sites across the four page scripts (twelve
+ * ensureX() success paths plus each page's boot path), so a message about one cube is
+ * wiped by a different cube arriving. The spec stated the same-resource rule in prose and
+ * contradicted it in its own reference implementation twenty lines below; QA caught it at
+ * the L-224/L-283 gate as defect D-1 and Cary ruled the same day that the prose is
+ * corrected and the build ships.
+ *
+ * THE REAL FIX IS ops/LEDGER.md L-292, AND IT IS TWO HALVES, NOT ONE: key the slot by
+ * resource, AND settle the relevance rule - whether a message that is still true but no
+ * longer describes what the reader is looking at should be shown at all. Keying alone
+ * would not discharge it, because QA's mirror finding F-2 is this same one slot in the
+ * other direction: on declinations.html a failure message sticks in bold over a correctly
+ * drawn view for the rest of the session, and a resource-keyed message whose resource
+ * never reloads sticks exactly as long. Build to L-292, not to this paragraph.
+ * See docs/DASHBOARD_STYLE_GUIDE.md section 5i and ops/DECISIONS.md D-084.
+ *
+ * Every string below is signed copy (L-224 spec section C). Do not write a new one, and
+ * do not add a glyph: textContent only, so there is no escaping discipline to get wrong.
+ */
+(function (g) {
+  'use strict';
+  var COPY = {
+    /* progress - muted, weight 400 */
+    loadInitial: {
+      'index.html':        'Loading criminal case data…',
+      'civil.html':        'Loading civil case data…',
+      'agency.html':       'Loading referring-agency data…',
+      'declinations.html': 'Loading declinations data…'
+    },
+    loadDistrict:        'Loading district detail…',
+    loadPending:         'Loading pending caseload…',
+    loadDistrictPending: 'Loading district pending caseload…',
+    loadCivil:           'Loading civil data…',
+    loadAgency:          'Loading referring-agency data…',
+    /* failure - ink, weight 600. Names what failed and one true next step, claims
+       nothing about what the charts are currently showing, promises no fix. */
+    errInitial:  'This dashboard\'s data could not be loaded. Please refresh the page.',
+    errDistrict: 'District detail could not be loaded. Please refresh the page.',
+    errPending:  'Pending caseload data could not be loaded. Please refresh the page.',
+    errCivil:    'Civil data could not be loaded. Please refresh the page.',
+    errAgency:   'Referring-agency data could not be loaded. Please refresh the page.'
+  };
+  var ST = { err: null, loading: null };
+  function paint() {
+    var e = document.getElementById('status'); if (!e) return;
+    var text = ST.err || ST.loading || '';
+    if (e.textContent !== text) e.textContent = text;
+    e.classList.toggle('st-err', !!ST.err);
+  }
+  g.LIONS_STATUS = {
+    COPY: COPY,
+    setLoading: function (t) { ST.loading = t || null; paint(); },
+    setLoadError: function (t) { ST.err = t || null; ST.loading = null; paint(); },
+    clearLoadError: function () { ST.err = null; paint(); }
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
 function visIdx(){ const r=[]; for(let i=0;i<SPINE.length;i++){ const ym=SPINE[i]; if(ym>=state.from&&ym<=state.to) r.push(i);} return r; }
 // Chart factory: every dashboard chart is created through this so a page can adjust the
 // config just before render (used by the Design-2 lab via window.LIONS_CHART_TWEAK).

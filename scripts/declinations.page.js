@@ -38,6 +38,7 @@ const CURRENT="declinations.html";
 // A declination is a disposition event on a criminal matter, so `declined` is criminal
 // OUTFLOW: window 6 months, on both charts, the table and the CSV.
 const PV=window.LIONS_PROV;
+const SL=window.LIONS_STATUS;
 const PVOPT={civil:false};
 const PROV_METRIC='declined';
 
@@ -197,13 +198,24 @@ function updateChartAccessibility(){
   );
 }
 
-async function render(){ const st=document.getElementById("status");
+async function render(){
   document.getElementById('dimLabel').textContent=isAg()?'Referring agency (multi)':'Program category (multi)';
-  const needFull=!(state.dists.has('National')||state.dists.size===0);
+  const useNat=state.dists.has('National')||state.dists.size===0;
+  const needFull=!useNat;
   if(isAg()){ if(!AG_NAT) await ensureAgency(); if(needFull) await ensureAgFull(); }
   else if(needFull){ await ensureCatFull(); }
+  /* L-283: seriesByReason()'s `if(!rows) return out;` is NOT a guard - `out` is already
+     zero-filled, so a missing cube is ANSWERED with zero under a district label: the
+     topline reads "None in this period." and the table prints 1,136 cells of 0 where the
+     cube has 2,702. Refuse instead, the way index.html and civil.html do (L-275): hold
+     the previous view and leave the message the failed ensure wrote. Falling back to the
+     national rows is not an option either - that prints national figures under a
+     district label.
+     L-224: render() writes NOTHING to #status. The filter-state line this used to print
+     is deleted, the topline caption being a superset of it, and a render that wrote here
+     would wipe a failure within one tick. */
+  if(!(isAg()?(useNat?AG_NAT:AG_FULL):(useNat?CAT_NAT:CAT_FULL))) return;
   SER=seriesByReason();
-  st.textContent=(isAg()?'By referring agency · ':'By program category · ')+scopeText();
   renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); renderTable();
 }
 
@@ -327,12 +339,15 @@ function buildDepts(rows){
   AGLIST=DEPTS_AG.flatMap(g=>g.subs);
 }
 function districtList(){ const src=CAT_FULL||AG_FULL; return src?[...new Set(src.map(r=>r.district))].sort():[]; }
-async function ensureCatFull(){ if(CAT_FULL||catFullLoading) return; catFullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./data/decl_cat_cube.csv",{cache:"reload"}); CAT_FULL=parseCat(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } catFullLoading=false; }
-async function ensureAgency(){ if(AG_NAT||agLoading) return; agLoading=true; document.getElementById("status").textContent="loading agency data…";
-  try{ const r=await fetch("./data/decl_agency_cube_national.csv",{cache:"reload"}); AG_NAT=parseAg(await r.text()); buildDepts(AG_NAT); if(!state.ags) state.ags=new Set(AGLIST); }catch(e){ console.error(e); } agLoading=false; }
-async function ensureAgFull(){ if(AG_FULL||agFullLoading) return; agFullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./data/decl_agency_cube.csv",{cache:"reload"}); AG_FULL=parseAg(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } agFullLoading=false; }
+async function ensureCatFull(){ if(CAT_FULL||catFullLoading) return; catFullLoading=true; SL.setLoading(SL.COPY.loadDistrict);
+  try{ const r=await fetch("./data/decl_cat_cube.csv",{cache:"reload"}); CAT_FULL=parseCat(await r.text()); if(dMS) dMS.setItems(districtList());
+    SL.setLoading(null); SL.clearLoadError(); }catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } catFullLoading=false; }
+async function ensureAgency(){ if(AG_NAT||agLoading) return; agLoading=true; SL.setLoading(SL.COPY.loadAgency);
+  try{ const r=await fetch("./data/decl_agency_cube_national.csv",{cache:"reload"}); AG_NAT=parseAg(await r.text()); buildDepts(AG_NAT); if(!state.ags) state.ags=new Set(AGLIST);
+    SL.setLoading(null); SL.clearLoadError(); }catch(e){ console.error(e); SL.setLoadError(SL.COPY.errAgency); } agLoading=false; }
+async function ensureAgFull(){ if(AG_FULL||agFullLoading) return; agFullLoading=true; SL.setLoading(SL.COPY.loadDistrict);
+  try{ const r=await fetch("./data/decl_agency_cube.csv",{cache:"reload"}); AG_FULL=parseAg(await r.text()); if(dMS) dMS.setItems(districtList());
+    SL.setLoading(null); SL.clearLoadError(); }catch(e){ console.error(e); SL.setLoadError(SL.COPY.errAgency); } agFullLoading=false; }
 
 function buildDimPicker(){
   if(!isAg()){ multiSelect("dimpick",{items:CATLIST,allValue:"ALL",allLabel:"All categories",initial:state.cats,searchable:false,
@@ -341,8 +356,14 @@ function buildDimPicker(){
 }
 
 async function init(){ renderNav();
+  /* L-224: the national cube is 1.5-3 MB and until it lands the page is a blank chart
+     with no explanation. The message is cleared by the same resource arriving, below;
+     the setup between here and the first render() is synchronous, so no paint happens
+     in between and clearing here is clearing at the first render. */
+  SL.setLoading(SL.COPY.loadInitial[CURRENT]);
   try{ const r=await fetch("./data/decl_cat_cube_national.csv",{cache:"reload"}); CAT_NAT=parseCat(await r.text()); }
-  catch(e){ document.getElementById("status").textContent="could not load decl_cat_cube_national.csv - serve this folder over http"; return; }
+  catch(e){ SL.setLoadError(SL.COPY.errInitial); return; }
+  SL.setLoading(null); SL.clearLoadError();
   const ms=[...new Set(CAT_NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   CATLIST=[...new Set(CAT_NAT.map(r=>r.grp))].filter(g=>g!=="ALL").sort();
   dMS=multiSelect("district",{items:[],allValue:"National",allLabel:"National (all)",initial:state.dists,searchable:true,fmt:fmtDist,

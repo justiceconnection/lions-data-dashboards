@@ -60,6 +60,7 @@ let PCNAT=null,PCFULL=null,PSP_N=null,PSP_F=null,pcnatLoading=false,pcfullLoadin
 //     Set per render, because the mix charts flip family at runtime.
 // This page is dual-mode, so the window set follows the mode: criminal 3/6, civil 4/6.
 const PV=window.LIONS_PROV;
+const SL=window.LIONS_STATUS;
 const pvopt=()=>({civil:isCiv()});
 // The share chart normalises on the mode's inflow; the table prints every metric and
 // so takes the widest window across its own columns (spec §3.5).
@@ -513,10 +514,15 @@ function buildDepts(rows,order,suborder){
 }
 function districtList(){ const src=FULL||CFULL; return src?[...new Set(src.map(r=>r.district))].sort():[]; }
 
-async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./data/agency_cube.csv",{cache:"reload"}); FULL=parseCSV_R(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } fullLoading=false; }
-async function ensureFullC(){ if(CFULL||cfullLoading) return; cfullLoading=true; document.getElementById("status").textContent="loading district detail…";
-  try{ const r=await fetch("./data/civil_agency_cube.csv",{cache:"reload"}); CFULL=parseCSV_C(await r.text()); if(dMS) dMS.setItems(districtList()); }catch(e){ console.error(e); } cfullLoading=false; }
+/* L-224: both of these used to leave "loading district detail" standing after the load
+   had already FAILED - the catch only logged - so the line said, indefinitely, something
+   that was not true. The failure message is now written where the failure happens. */
+async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; SL.setLoading(SL.COPY.loadDistrict);
+  try{ const r=await fetch("./data/agency_cube.csv",{cache:"reload"}); FULL=parseCSV_R(await r.text()); if(dMS) dMS.setItems(districtList());
+    SL.setLoading(null); SL.clearLoadError(); }catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } fullLoading=false; }
+async function ensureFullC(){ if(CFULL||cfullLoading) return; cfullLoading=true; SL.setLoading(SL.COPY.loadDistrict);
+  try{ const r=await fetch("./data/civil_agency_cube.csv",{cache:"reload"}); CFULL=parseCSV_C(await r.text()); if(dMS) dMS.setItems(districtList());
+    SL.setLoading(null); SL.clearLoadError(); }catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } cfullLoading=false; }
 // ── L-155: the pending cubes are fetched LAZILY, never at page load ─────────────
 // `cases_pending` is the only metric that needs them; `matters_pending` does not, because
 // it is not in the cube (L-149). The district file is 66.11 MiB - the third file on this
@@ -525,22 +531,25 @@ async function ensureFullC(){ if(CFULL||cfullLoading) return; cfullLoading=true;
 const NEEDS_PEND=m=>m==='cases_pending';
 function pendWanted(){ return isCiv()&&NEEDS_PEND(curMetric()); }
 async function ensurePendNat(){ if(PCNAT||pcnatLoading) return; pcnatLoading=true;
-  document.getElementById("status").textContent="loading pending caseload…";
-  try{ const r=await fetch("./data/civil_agency_pending_cube_national.csv",{cache:"reload"}); const p=parsePendC(await r.text()); PCNAT=p.rows; PSP_N=p.spine; }
-  catch(e){ console.error(e); } pcnatLoading=false; }
+  SL.setLoading(SL.COPY.loadPending);
+  try{ const r=await fetch("./data/civil_agency_pending_cube_national.csv",{cache:"reload"}); const p=parsePendC(await r.text()); PCNAT=p.rows; PSP_N=p.spine;
+    SL.setLoading(null); SL.clearLoadError(); }
+  catch(e){ console.error(e); SL.setLoadError(SL.COPY.errPending); } pcnatLoading=false; }
 async function ensurePendFull(){ if(PCFULL||pcfullLoading) return; pcfullLoading=true;
-  document.getElementById("status").textContent="loading district pending detail…";
-  try{ const r=await fetch("./data/civil_agency_pending_cube.csv",{cache:"reload"}); const p=parsePendC(await r.text()); PCFULL=p.rows; PSP_F=p.spine; }
-  catch(e){ console.error(e); } pcfullLoading=false; }
+  SL.setLoading(SL.COPY.loadDistrictPending);
+  try{ const r=await fetch("./data/civil_agency_pending_cube.csv",{cache:"reload"}); const p=parsePendC(await r.text()); PCFULL=p.rows; PSP_F=p.spine;
+    SL.setLoading(null); SL.clearLoadError(); }
+  catch(e){ console.error(e); SL.setLoadError(SL.COPY.errPending); } pcfullLoading=false; }
 // `force` is the data table and the CSV. Both print EVERY metric as a column whatever the
 // chart happens to be showing, so the pending column has to be real whenever a user can
 // actually see it - not only when pending is the selected metric.
 async function ensurePending(force){ if(!isCiv()) return; if(!(force||pendWanted())) return;
   await ensurePendNat();
   if(!(state.dists.has('National')||state.dists.size===0)) await ensurePendFull(); }
-async function ensureCivil(){ if(CNAT||civilLoading) return; civilLoading=true; document.getElementById("status").textContent="loading civil data…";
+async function ensureCivil(){ if(CNAT||civilLoading) return; civilLoading=true; SL.setLoading(SL.COPY.loadCivil);
   try{ const r=await fetch("./data/civil_agency_cube_national.csv",{cache:"reload"}); CNAT=parseCSV_C(await r.text());
-    const b=buildDepts(CNAT,DEPT_ORDER_V,SUB_ORDER_V); DEPTS_V=b.DEPTS; AGLIST_V=b.AGLIST; }catch(e){ console.error(e); } civilLoading=false; }
+    const b=buildDepts(CNAT,DEPT_ORDER_V,SUB_ORDER_V); DEPTS_V=b.DEPTS; AGLIST_V=b.AGLIST;
+    SL.setLoading(null); SL.clearLoadError(); }catch(e){ console.error(e); SL.setLoadError(SL.COPY.errCivil); } civilLoading=false; }
 
 function buildAgencyPicker(){
   document.getElementById('agencyLabel').textContent=isCiv()?'Client agency (grouped)':'Referring agency (grouped)';
@@ -553,7 +562,7 @@ function populateMetric(){ const sel=document.getElementById("metric");
   sel.innerHTML=metricsList().map(m=>`<option value="${m[0]}">${docMetricLabel(docMode(),m[0],m[1])}</option>`).join("");
   if(!metricsList().some(m=>m[0]===curMetric())) setMetric(metricsList()[0][0]); sel.value=curMetric(); }
 
-async function render(){ const st=document.getElementById("status");
+async function render(){
   // toggle mode-specific controls
   document.getElementById('occbar').hidden=isCiv();
   document.getElementById('civMasters').hidden=!isCiv();
@@ -565,10 +574,15 @@ async function render(){ const st=document.getElementById("status");
      to fall back on because render() awaits the fetch rather than racing it, so the only
      state to guard is "asked for a district and did not get one". It deliberately does
      not fall back to the national rows, which would print national figures under a
-     district label; telling the reader what happened is L-224's, not this guard's. */
+     district label, and it does not overwrite the message ensureFull()/ensureFullC()'s
+     catch wrote - both only logged when this guard was written, and both write the
+     failure string as of L-224. */
   if(needFull && !(isCiv()?CFULL:FULL)) return;
   await ensurePending();
-  st.textContent=(isCiv()?'Civil · U.S. as '+state.role+' · '+state.basis+' · ':'Criminal · ')+(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+curAgs().size+" agencies";
+  /* L-224: render() writes NOTHING to #status. The filter-state line this used to
+     print is deleted - the topline caption is a superset of it - and the progress and
+     failure messages belong to the ensure functions, which are the only things that know
+     which one is true. A render that wrote here would wipe a failure within one tick. */
   renderTopline(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); renderTable();
 }
 
@@ -579,8 +593,14 @@ async function switchClass(cls){
 }
 
 async function init(){ renderNav();
+  /* L-224: the national cube is 1.5-3 MB and until it lands the page is a blank chart
+     with no explanation. The message is cleared by the same resource arriving, below;
+     the setup between here and the first render() is synchronous, so no paint happens
+     in between and clearing here is clearing at the first render. */
+  SL.setLoading(SL.COPY.loadInitial[CURRENT]);
   try{ const r=await fetch("./data/agency_cube_national.csv",{cache:"reload"}); NAT=parseCSV_R(await r.text()); }
-  catch(e){ document.getElementById("status").textContent="could not load agency_cube_national.csv - serve this folder over http"; return; }
+  catch(e){ SL.setLoadError(SL.COPY.errInitial); return; }
+  SL.setLoading(null); SL.clearLoadError();
   const ms=[...new Set(NAT.map(r=>r.ym))].sort(); SPINE=months(ms[0],ms[ms.length-1]);
   const b=buildDepts(NAT,DEPT_ORDER_R,SUB_ORDER_R); DEPTS_R=b.DEPTS; AGLIST_R=b.AGLIST;
   populateMetric();
