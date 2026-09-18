@@ -559,6 +559,14 @@ async function render(){ const st=document.getElementById("status");
   document.getElementById('civMasters').hidden=!isCiv();
   const needFull=!(state.dists.has('National')||state.dists.size===0);
   if(needFull){ if(isCiv()) await ensureFullC(); else await ensureFull(); }
+  /* The ensure above can finish and FAIL, leaving FULL (or CFULL) null. Without this the
+     run fell into aggR()/aggC(), which threw `FULL is not iterable` / `CFULL is not
+     iterable` on a null and left the page dead (L-275). This page has no loading branch
+     to fall back on because render() awaits the fetch rather than racing it, so the only
+     state to guard is "asked for a district and did not get one". It deliberately does
+     not fall back to the national rows, which would print national figures under a
+     district label; telling the reader what happened is L-224's, not this guard's. */
+  if(needFull && !(isCiv()?CFULL:FULL)) return;
   await ensurePending();
   st.textContent=(isCiv()?'Civil · U.S. as '+state.role+' · '+state.basis+' · ':'Criminal · ')+(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+curAgs().size+" agencies";
   renderTopline(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); renderTable();

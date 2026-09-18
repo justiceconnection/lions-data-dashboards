@@ -613,7 +613,13 @@ function updateChartAccessibility(){
 
 function render(){ const st=document.getElementById("status");
   const needFull=!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district';
-  if(needFull && !FULL && fullLoading){ st.textContent="loading district detail…"; return; }
+  /* The district cube can also finish and FAIL: FULL stays null with fullLoading back to
+     false, and the old `&& fullLoading` guard fell straight through into aggregateRaw(),
+     which threw `full is not iterable` on a null and left the page dead (L-275). Return
+     on "no FULL" whatever the reason. Two things this deliberately does NOT do: it does
+     not overwrite the message ensureFull()'s catch wrote, and it does not fall back to
+     the national rows, which would print national figures under a district label. */
+  if(needFull && !FULL){ if(fullLoading) st.textContent="loading district detail…"; return; }
   st.textContent=(state.dists.has('National')||state.dists.size===0?"National":[...state.dists].map(fmtDist).join(', '))+" · "+(state.cats.has('ALL')||state.cats.size===0?"all categories":[...state.cats].join(', '));
   renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); tblInvalidate(); }
 
