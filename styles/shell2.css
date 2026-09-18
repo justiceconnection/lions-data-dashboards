@@ -58,14 +58,9 @@
 .dlsvg:hover{background:var(--accent);border-color:var(--accent);color:#000}
 .card h3 .dlsvg{margin-left:6px}
 
-/* ── item 1: dashboard nav - flat chips with an animated accent underline (no pills) ── */
-.dw-bar .nv-body .dashnav{gap:6px}
-.dw-bar .nv-body .dashnav a{position:relative;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-weight:600;padding:8px 14px;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease,background .15s ease}
-.dw-bar .nv-body .dashnav a::after{content:"";position:absolute;left:10px;right:10px;bottom:6px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .22s ease}
-.dw-bar .nv-body .dashnav a:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.10);border-color:#d7d7d3;background:var(--panel2);opacity:1}
-.dw-bar .nv-body .dashnav a:hover::after{transform:scaleX(1)}
-.dw-bar .nv-body .dashnav a.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-.dw-bar .nv-body .dashnav a.on::after{transform:scaleX(1);background:var(--accent)}
+/* item 1's dashboard-nav chips moved to shared/shared.css under L-263, so the notes
+   page - which loads no styles/shell2.css - renders the same component. The bar-specific
+   rule .dw-bar .nv-acc{flex:1...} above stays here; nothing about it is shared. */
 
 /* Small-view modal: shown on very narrow viewports (<=300px) */
 .smallview-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9999}

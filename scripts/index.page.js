@@ -215,6 +215,15 @@ const TBL_COPY={
   catSum:n=>n+' categories, added together',
   basisDistinct:'Distinct total', basisAll:'All occurrences', basisPrimary:'Primary category',
   addsTotal:'is the total', addsYes:'yes', addsNo:'no - overlaps',
+  /* L-267. The FOURTH value of the Adds up? column, and the reason it is a fourth rather
+     than a reuse: with breakout off and exactly ONE category selected the table holds one
+     row and no total row, so there is no sum in it and no second row to overlap with.
+     'yes' would claim the rows reach a total that is not on the table, 'no - overlaps'
+     would claim an overlap between rows that do not exist, and 'is the total' - which is
+     what this state carried until L-267 - is flatly false. It parallels addsTotal in
+     grammar for the same reason: both answer what the row IS, because the column's yes/no
+     question has no subject on a one-row table. */
+  addsOne:'is one category',
   lineNoBreakoutAll:p=>'One row per '+p+'. The figures are the cube\'s own total row for all program categories, which counts each case once.',
   lineNoBreakoutSum:(p,n)=>'One row per '+p+'. The figures are '+n+' program categories added together, and a case in more than one of them is counted more than once.',
   /* L-249 D-C, signed by Cary verbatim on 17 September 2026 (spec section 6.2). The SIXTH
@@ -330,7 +339,7 @@ function tblCategorySlots(){
   }
   if(!state.rowsBy.category){
     if(sel.length===1) return [{label:sel[0],level:CATMAP[sel[0]].subcat==='ALL'?'umbrella':'specific',
-      target:{kind:'keys',keys:new Set([tblCatKey(sel[0])])},basis,additive:TBL_COPY.addsTotal}];
+      target:{kind:'keys',keys:new Set([tblCatKey(sel[0])])},basis,additive:TBL_COPY.addsOne}];
     return [{label:TBL_COPY.catSum(sel.length),level:'selection_sum',target:{kind:'keys',keys:new Set(sel.map(tblCatKey))},
       basis,additive:adds?TBL_COPY.addsYes:TBL_COPY.addsNo}];
   }

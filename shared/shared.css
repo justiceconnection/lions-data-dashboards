@@ -23,6 +23,13 @@ button{cursor:pointer}
 .seg{display:flex;gap:6px}
 .seg button:hover{border-color:var(--accent)}
 .seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+/* .seg is flex-wrap:nowrap, so a seg wider than its container overflows the DOCUMENT
+   rather than wrapping. The five Administration buttons need 321px at their own
+   min-content widths; below 760px shell2.js folds .controls into the Filters panel,
+   which is 254px wide at a 320px viewport, so the row hung 34px off the right edge of
+   all four dashboards. Wrapping is the only fix that leaves the type size, the padding
+   and the labels alone. L-265. */
+#presets{flex-wrap:wrap}
 #presets button{padding:8px 12px;font-size:15px}
 .ms{position:relative}
 .ms-bar{display:flex;gap:14px;padding:2px 4px 6px;border-bottom:1px solid var(--line);margin-bottom:4px}
@@ -91,10 +98,30 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
     white-space: pre-line;
 }
 #status{color:var(--mut);font-size:12px}
-.dashnav{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 16px}
-.dashnav a{font-size:14.5px;padding:9px 18px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--accent);text-decoration:none;font-weight:600}
-.dashnav a:hover{opacity:.88}
-.dashnav a.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+/* The dashboard nav, presentation. shared/config.js is the single source of truth for
+   this component's CONTENT; this block is the single source of truth for its LOOK, and it
+   lives here because shared/shared.css is the only stylesheet the four dashboards and
+   reading-the-data.html all load. Moved here from styles/shell2.css:62-68 (the chip) and
+   lab.css:6-15 (the accordion) by L-263, verbatim, with the .dw-bar qualifier dropped.
+   case-lookup/index.html keeps its own inline copy because it loads no shared stylesheet;
+   this block is the master those rules track. */
+.dashnav{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 16px}
+.dashnav a{position:relative;font-size:14.5px;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);text-decoration:none;font-weight:600;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease,background .15s ease}
+.dashnav a::after{content:"";position:absolute;left:10px;right:10px;bottom:6px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .22s ease}
+.dashnav a:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.10);border-color:#d7d7d3;background:var(--panel2);opacity:1}
+.dashnav a:hover::after{transform:scaleX(1)}
+.dashnav a.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.dashnav a.on::after{transform:scaleX(1);background:var(--accent)}
+.nv-acc{border:1px solid var(--line);border-radius:12px;background:var(--panel);margin:0 0 12px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.nv-head{width:100%;display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--panel);border:0;cursor:pointer;font:inherit;text-align:left}
+.nv-head:hover{background:var(--panel2)}
+.nv-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);font-weight:700;flex:none}
+.nv-cur{flex:1;font-weight:700;color:var(--ink);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nv-chev{color:var(--mut);transition:transform .2s;flex:none}
+.nv-acc.open .nv-chev{transform:rotate(180deg)}
+.nv-body{display:none;padding:10px 14px 12px;border-top:1px solid var(--line)}
+.nv-acc.open .nv-body{display:block}
+.nv-body .dashnav{margin:0}
 .dashsel{display:none;font:inherit;font-size:14.5px;font-weight:600;color:var(--accent);background:var(--ink);border:1px solid var(--ink);border-radius:8px;padding:9px 12px;margin:2px 0 16px;width:100%;max-width:360px}
 .preserve-breaks {
   white-space: pre-line; /* Keeps your manual line breaks and wraps text normally */

@@ -4,13 +4,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Data Documentation - LIONS Data</title>
 <link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
-<link rel="stylesheet" href="shared/shared.css?v=20260917f">
+<link rel="stylesheet" href="shared/shared.css?v=20260917h">
 <link rel="stylesheet" href="styles/reading.css?v=20260917a">
 </head><body><div class="wrap">
 
 
-  <nav class="dashnav" id="dashnav"></nav>
-  <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
+  <!-- L-263: the same collapsed nav control the other five surfaces show. Authored here
+       rather than built by lab.js, because this page loads no lab.js and must not gain it
+       (invariant 9) - exactly as case-lookup/index.html authors its own. -->
+  <div class="nv-acc" id="dnav">
+    <button class="nv-head" id="dnavHead" type="button" aria-expanded="false">
+      <span class="nv-lbl">Dashboard</span>
+      <span class="nv-cur" id="dnavCur">Choose one</span>
+      <span class="nv-chev">▾</span>
+    </button>
+    <div class="nv-body">
+      <nav class="dashnav" id="dashnav" aria-label="Dashboards"></nav>
+      <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
+    </div>
+  </div>
   <a class="doc-back" id="docback" hidden><span aria-hidden="true">&#8592;</span><span id="docbacklbl"></span></a>
   <h1>Data documentation</h1>
   <div class="sub" id="docsub"></div>
@@ -201,7 +213,7 @@
     </section>
     
     <section class="doc-grpsec doc-faq" data-g="faq">
-      <h1 class="doc-grp">Frequently asked questions</h1>
+      <h2 class="doc-grp">Frequently asked questions</h2>
 
      <details class="doc-entry" id="e-faq-source" data-surfaces="lookup" data-static="1">
         <summary class="doc-esum">Where does this data come from?</summary>
@@ -307,6 +319,14 @@
     sel.appendChild(o);
   });
   sel.onchange = function () { if (sel.value) location.href = './' + sel.value; };
+
+  /* L-263: the disclosure. Same behaviour as case-lookup/index.html's, which is the
+     precedent for an authored accordion on a page outside the dashboard chain. */
+  var acc = document.getElementById('dnav'), head = document.getElementById('dnavHead');
+  head.addEventListener('click', function () {
+    var open = acc.classList.toggle('open');
+    head.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
 
   /* The Back control. Rendered ONLY when ?from= names one of our own surfaces: a Back
      control that guesses where a reader came from is worse than none, so with no ?from=
