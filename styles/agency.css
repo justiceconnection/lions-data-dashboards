@@ -14,3 +14,7 @@
 #summary{color:var(--mut);font-size:12.5px;margin:2px 2px}
 #note{color:#8a6d1f;font-size:12px;margin:2px 2px 8px;min-height:14px}
 .tblwrap{max-height:520px}
+/* L-258/L-301: the phone height for the wide table. It sits HERE and not in the shared
+   section 5g block, because .tblwrap's max-height is per-page and this stylesheet loads
+   after shared/shared.css, so a media rule there at equal specificity would never win. */
+@media(max-width:560px){.tblwrap{max-height:70vh}}

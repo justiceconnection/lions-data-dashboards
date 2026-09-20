@@ -302,7 +302,7 @@ body{
 </dialog>
 
 <script type="module">
-let duckdb; const BUILD='prod7';
+let duckdb; const BUILD='prod8';
 const SHARDS=['cases_a_m.parquet','cases_n_z.parquet'];
 const SRC="read_parquet(['cases_a_m.parquet','cases_n_z.parquet'])";
 const EXPORT_CAP=500000;
@@ -335,7 +335,7 @@ const COLUMNS=[
   ['national_priority','National priority',false],
   ['victim_witness','Victim/witness',false],
   ['drug_related','Drug-related',false],
-  ['drug_top_type','Top drug type',false],
+  ['drug_types','Drug types',false],
   ['collections','Collections',false],
   ['qui_tam','Qui tam',false],
   ['doj_division','DOJ division',false],

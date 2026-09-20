@@ -173,7 +173,15 @@ function renderTopline(){
  * sentence in #note when several categories were selected at occ='all'. That sentence is
  * now basis line state 2, directly above the table, so #note is no longer written to.
  */
-const ROW_CAP=8000;   // a RENDERING budget, not a property of the data - spec section 8
+/* The table and its CSV are built by LIONS_TABLE in shared/shared.js, which every
+   dashboard already loads (invariant 9 is unchanged by L-301: no script and no
+   stylesheet was added to or removed from any chain). This page passes a DESCRIPTOR -
+   TBL_DESC below - carrying its own columns, its own cube read, its own dimension slots
+   and its own signed copy. The shared strings are authored once, in LIONS_TABLE.COPY,
+   and aliased into TBL_COPY below so they cannot drift four ways.
+   L-258 section 1 C0; built under L-301. */
+const ROW_CAP=window.LIONS_TABLE.ROW_CAP;   // a RENDERING budget, not a property of the data - spec section 8
+const TCOPY=window.LIONS_TABLE.COPY;
 /* `g` is the column group a user can switch off; 'key' is never switchable, so a CSV
    consumer parsing by name has a stable set of five key columns whatever the user does.
    `w` is the provisional-window metric key the column takes: the table's own mark is the
@@ -204,7 +212,9 @@ const TBL_COLS=[
 /* The six columns the CSV carries and the screen does not. Each spells out in a word what
    the table shows as a mark or as cell text. Declared to the user in TBL_COPY.csvLine,
    beside the download button, because style guide section 9 requires any surviving
-   screen/file difference to be stated there. */
+   screen/file difference to be stated there.
+   LIONS_TABLE.csvColumns() emits exactly these six, positionally, next to the column
+   each one qualifies; this list is the written inventory the signed csvLine counts. */
 const CSV_EXTRA=['period_grain','period_partial','provisional','provisional_window_months',
   'district_level','category_level'];
 /* Every user-facing string the table and the CSV put on the page. Signed by Cary verbatim
@@ -212,10 +222,10 @@ const CSV_EXTRA=['period_grain','period_partial','provisional','provisional_wind
 const TBL_COPY={
   totalLabel:'All categories (cube total)',
   complementLabel:'Other categories, and cases with none recorded',
-  distSum:n=>n+' districts, added together',
+  distSum:TCOPY.distSum,
   catSum:n=>n+' categories, added together',
   basisDistinct:'Distinct total', basisAll:'All occurrences', basisPrimary:'Primary category',
-  addsTotal:'is the total', addsYes:'yes', addsNo:'no - overlaps',
+  addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
   /* L-267. The FOURTH value of the Adds up? column, and the reason it is a fourth rather
      than a reuse: with breakout off and exactly ONE category selected the table holds one
      row and no total row, so there is no sum in it and no second row to overlap with.
@@ -236,16 +246,16 @@ const TBL_COPY={
   lineBreakoutAllOcc:'Program category rows do not add up to the total row, because a case is counted in every category it touches. The total row is the cube\'s own total for all categories, counted once per case.',
   lineBreakoutPrimary:'Program category rows add up to the total row once "Other categories, and cases with none recorded" is included, because each case is counted once under its first code.',
   lineOverlap:'You have selected an umbrella category and one of its own sub-categories, so two of these rows count the same cases. Turn one of them off.',
-  refusal:(n,cap)=>'This selection would draw '+n.toLocaleString()+' rows and the table draws up to '+cap.toLocaleString()+'. Narrow the date range, choose a coarser Group by, or select fewer districts or categories.',
+  refusal:(n,cap)=>TCOPY.refusal(n,cap,'categories'),
   /* L-257, signed by Cary verbatim on 17 September 2026 (design note section 7a). The
      placeholder shown between the panel opening and the table landing. It names the ACT
      and never a duration: the duration is a property of the reader's device and nobody
      has measured a phone. The verb is this page's own - the refusal above says "draw". */
-  pending:'Drawing the table…',
+  pending:TCOPY.pending,
   csvLine:'The CSV has the same rows and the same figures as the table, plus six columns that spell out in words what the table shows as marks: the period\'s grain, whether it is a part period, whether it is provisional and how many months that covers, and what each district and category cell is.',
-  footProv:n=>'Rows marked † are provisional: the most recent '+n+' months are still being reported, so those figures will rise. The mark uses the widest window across the columns in this table, so a month marked here can still be settled for filings on their own.',
-  partialNote:'* part period - fewer months than the period holds.',
-  scrollHint:n=>'Scroll the table sideways to see all '+n+' columns.'
+  footProv:TCOPY.footProvUp,
+  partialNote:TCOPY.partialNote,
+  scrollHint:TCOPY.scrollHint
 };
 let LAST={rows:[],cols:[],provN:6};
 let BYDIST=null;   // district -> its own rows; built once FULL is in. See tblDistRows().
@@ -308,21 +318,7 @@ function tblSelectionOverlaps(){
   const s=tblSelCats();
   return s.some(a=>s.some(b=>b!==a&&CATMAP[b]&&CATMAP[b].subcat!=='ALL'&&CATMAP[b].grp===a));
 }
-const activeTblCols=()=>TBL_COLS.filter(c=>c.g==='key'||state.tblCols[c.g]);
-function tblProvWindow(){
-  const keys=activeTblCols().filter(c=>c.w).map(c=>c.w);
-  return keys.length?PV.nMax(keys,PVOPT):PV.n('cases_filed',PVOPT);
-}
-const grainNoun=()=>({month:'month',cq:'calendar quarter',fq:'fiscal quarter',fy:'fiscal year'})[state.grain];
-const grainKey=()=>({month:'month',cq:'cal_quarter',fq:'fiscal_quarter',fy:'fiscal_year'})[state.grain];
-
-function tblDistrictSlots(){
-  const sel=tblSelDists();
-  if(!sel.length) return [{label:'National',level:'national',set:new Set(['National'])}];
-  if(state.rowsBy.district) return sel.slice().sort().map(d=>({label:fmtDist(d),level:'district',set:new Set([d])}));
-  if(sel.length===1) return [{label:fmtDist(sel[0]),level:'district',set:new Set(sel)}];
-  return [{label:TBL_COPY.distSum(sel.length),level:'selection_sum',set:new Set(sel)}];
-}
+const grainNoun=()=>window.LIONS_TABLE.grainNoun(state.grain);
 function tblCategorySlots(){
   const sel=tblSelCats();
   const total={label:TBL_COPY.totalLabel,level:'cube_total',target:{kind:'all'},basis:TBL_COPY.basisDistinct,additive:TBL_COPY.addsTotal};
@@ -349,56 +345,37 @@ function tblCategorySlots(){
   if(adds) rows.push({label:TBL_COPY.complementLabel,level:'complement',complementOf:sel.map(tblCatKey),basis,additive:TBL_COPY.addsYes});
   return rows;
 }
-function tblRowCount(){ return grainBuckets(SPINE,visIdx(),state.grain).length*tblDistrictSlots().length*tblCategorySlots().length; }
-
-function buildTblRows(){
-  const B=grainBuckets(SPINE,visIdx(),state.grain);
-  const ds=tblDistrictSlots(), cs=tblCategorySlots();
-  const nProv=tblProvWindow();
-  const flags=PV.bucketFlags(SPINE,B,nProv);
-  const out=[];
-  for(const d of ds){
-    const cache=new Map();
-    const comp=slot=>{
-      if(slot.complementOf){
-        if(!cache.has('__all')) cache.set('__all',bucketComp(aggregateTable(d.set,{kind:'all'}),B));
-        const tot=cache.get('__all');
-        const part=bucketComp(aggregateTable(d.set,{kind:'keys',keys:new Set(slot.complementOf)}),B);
-        const o={}; for(const k of NUM) o[k]=tot[k].map((v,i)=>v-part[k][i]);
-        return o;
-      }
-      const key=slot.level==='cube_total'?'__all':slot.label;
-      // Invariant 4: bucket the COMPONENT counts first (bucketComp), then apply the metric
-      // formula to the bucketed components below. Never average the monthly percentages.
-      if(!cache.has(key)) cache.set(key,bucketComp(aggregateTable(d.set,slot.target),B));
-      return cache.get(key);
-    };
-    for(const c of cs){
-      const R=comp(c);
-      for(let i=0;i<B.length;i++){
-        const r={period:B[i].label+(B[i].partial?'*':''),
-          period_grain:grainKey(), period_partial:B[i].partial?'yes':'',
-          provisional:flags[i]?'yes':'', provisional_window_months:nProv,
-          district:d.label, district_level:d.level,
-          category:c.label, category_level:c.level,
-          counting_basis:c.basis, additive:c.additive,
-          _prov:!!flags[i], _order:i};
-        for(const k of NUM) r[k]=R[k][i];
-        const dt=r.defendants_terminated;
-        r.clearance_pct  = r.cases_filed>0?100*r.cases_terminated/r.cases_filed:null;
-        r.guilty_pct     = dt>0?100*r.guilty/dt:null;
-        r.not_guilty_pct = dt>0?100*r.not_guilty/dt:null;
-        r.dismissed_pct  = dt>0?100*r.dismissed/dt:null;
-        r.rule_20_21_pct = dt>0?100*r.rule_20_21/dt:null;
-        r.other_pct      = dt>0?100*r.other/dt:null;
-        out.push(r);
-      }
-    }
-  }
-  /* period-major: the time series stays the primary reading, as it is on the chart */
-  out.sort((a,b)=>a._order-b._order);
-  return {rows:out,provN:nProv};
-}
+/* The descriptor this page hands LIONS_TABLE. Every field is this page's own; the row
+   model, the bucketing, the CSV shape, the refusal and the DOM writing are the engine's
+   and are identical on all four dashboards (L-258 section 1 C0, built under L-301). */
+const TBL_DESC={
+  spine:()=>SPINE, visIdx:()=>visIdx(),
+  cols:()=>TBL_COLS,
+  dimKey:'category', dimNounPlural:'categories',
+  hasBasisCol:true, hasEdge:true,
+  stockKeys:[], extraKeyCsv:[],
+  pv:PVOPT, defaultWindowKey:'cases_filed',
+  aggregate:(st,dists,target)=>aggregateTable(dists,target),
+  dimSlots:()=>tblCategorySlots(),
+  /* Invariant 4: every one of these runs on components the engine has ALREADY bucketed,
+     so a fiscal-year clearance rate is the year's terminations over the year's filings
+     and never the mean of twelve monthly rates. */
+  derive:r=>{ const dt=r.defendants_terminated;
+    r.clearance_pct  = r.cases_filed>0?100*r.cases_terminated/r.cases_filed:null;
+    r.guilty_pct     = dt>0?100*r.guilty/dt:null;
+    r.not_guilty_pct = dt>0?100*r.not_guilty/dt:null;
+    r.dismissed_pct  = dt>0?100*r.dismissed/dt:null;
+    r.rule_20_21_pct = dt>0?100*r.rule_20_21/dt:null;
+    r.other_pct      = dt>0?100*r.other/dt:null; },
+  rowExtras:()=>{},
+  basisLine:()=>tblBasisLine(),
+  afterHead:thead=>mountDocMarkers(DOC_SURFACE,thead,DOC_TH_KEYS),
+  copy:TBL_COPY
+};
+const TBL=window.LIONS_TABLE.make(TBL_DESC);
+const activeTblCols=()=>TBL.activeCols(state);
+function tblProvWindow(){ return TBL.provWindow(state); }
+function tblRowCount(){ return TBL.rowCount(state); }
 
 function tblBasisLine(){
   if(tblSelectionOverlaps()) return TBL_COPY.lineOverlap;
@@ -414,58 +391,7 @@ function tblBasisLine(){
   return state.occ==='primary'?TBL_COPY.lineBreakoutPrimary:TBL_COPY.lineBreakoutAllOcc;
 }
 
-const tesc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-function renderTable(){
-  const el=id=>document.getElementById(id);
-  const n=tblRowCount();
-  el('basisline').textContent=tblBasisLine();
-  /* NO SILENT TRUNCATION, ever: a truncated table that still offers a download is how a
-     user gets a file that is quietly missing half its rows. The basis line stays, because
-     it still describes what the rows would be; the summary line, the scroll hint and the
-     table's two caveat lines go, because a caveat about rows that were not drawn is noise.
-     D-1: the CSV mirrors the table, so the download refuses with it. */
-  if(n>ROW_CAP){
-    el('refusal').textContent=TBL_COPY.refusal(n,ROW_CAP); el('refusal').hidden=false;
-    el('tblwrap').hidden=true; el('dl').disabled=true; el('dl2').disabled=true;
-    el('summary').textContent=''; el('tblnotes').hidden=true; el('scrollhint').hidden=true;
-    el('thead').innerHTML=''; el('tbody').innerHTML='';
-    LAST={rows:[],cols:activeTblCols(),provN:tblProvWindow()};
-    return;
-  }
-  el('refusal').hidden=true; el('tblwrap').hidden=false;
-  el('dl').disabled=false; el('dl2').disabled=false;
-  el('tblnotes').hidden=false; el('scrollhint').hidden=false;
-  const built=buildTblRows(), cols=activeTblCols();
-  LAST={rows:built.rows,cols,provN:built.provN};
-  el('thead').innerHTML='<tr>'+cols.map(c=>`<th class="${c.g==='key'?'k':'m'}${c.fold?' b':''}" scope="col">${tesc(c.h)}</th>`).join('')+'</tr>';
-  el('tbody').innerHTML=built.rows.map(r=>{
-    const cls=[];
-    /* `edge` is CARRIED FORWARD UNCHANGED, hard-coded date and all. Its threshold is
-       undocumented and its styling fails WCAG 1.4.1 and 1.4.3. Cary RULED on 16 September
-       2026 (spec section 10, D-2) that it is carried forward exactly as it is and that
-       both defects go to the data-analyst as L-236: a remedy derived without knowing what
-       that date means would enshrine a threshold nobody can explain. */
-    if(r.period_grain==='month'&&r.period.slice(0,7)<="1996-09") cls.push('edge');
-    if(r._prov) cls.push('recent');
-    if(r.category_level==='cube_total') cls.push('rowtotal');
-    return '<tr'+(cls.length?` class="${cls.join(' ')}"`:'')+'>'+cols.map(c=>{
-      if(c.k==='period') return `<td class="k">${tesc(r.period)}${r._prov?PV.tableMark():''}</td>`;
-      /* The two trap columns FOLD INTO the category cell below 560px rather than being
-         dropped: their value differs between the total row and the category rows, and that
-         difference is the whole invariant-3 point. The meta span is display:none at desktop
-         width, so it is out of the accessibility tree there and nothing is read twice. */
-      if(c.k==='category') return `<td class="k">${tesc(r.category)}<span class="kmeta">${tesc(r.counting_basis)} &middot; adds up: ${tesc(r.additive)}</span></td>`;
-      if(c.g==='key') return `<td class="k${c.fold?' b':''}">${tesc(r[c.k])}</td>`;
-      return `<td>${c.t==='pct'?p1(r[c.k]):rint(r[c.k])}</td>`;
-    }).join('')+'</tr>';
-  }).join('');
-  mountDocMarkers(DOC_SURFACE,el('thead'),DOC_TH_KEYS);
-  el('summary').innerHTML=`<b>${built.rows.length.toLocaleString()}</b> rows &middot; <b>${cols.length+CSV_EXTRA.length}</b> columns in the CSV`;
-  el('scrollhint').textContent=TBL_COPY.scrollHint(cols.length-cols.filter(c=>c.fold).length);
-  el('notesprov').textContent=TBL_COPY.footProv(built.provN);
-  el('notespartial').textContent=TBL_COPY.partialNote;
-}
+function renderTable(){ LAST=TBL.render(state); }
 
 /* ── L-257: the table is built on FIRST OPEN, and not while the disclosure is shut ──
  * renderTable() used to run in the main render path whether or not #tablePanel was
@@ -644,31 +570,8 @@ function render(){
  * found: `tr.edge`, the grey tint at or before 1996-09. D-2 carries that class forward
  * untouched, so the gap is carried forward with it; closing it means shipping a flag
  * whose meaning nobody has written down (L-236). */
-function csvColumns(){
-  const cols=LAST.cols.length?LAST.cols:activeTblCols();
-  const out=[];
-  for(const c of cols){
-    out.push(c.k);
-    if(c.k==='period') out.push('period_grain','period_partial','provisional','provisional_window_months');
-    if(c.k==='district') out.push('district_level');
-    if(c.k==='category') out.push('category_level');
-  }
-  return out;
-}
-function buildCSVText(){
-  const keys=csvColumns();
-  const L=[keys.join(",")];
-  const q=v=>{ const s=v==null?'':String(v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
-  for(const r of LAST.rows){
-    L.push(keys.map(k=>{
-      const v=r[k];
-      if(k.endsWith('_pct')) return v==null?'':v.toFixed(2);
-      if(k==='period') return r.period.replace('*','');   /* the "*" is carried by period_partial */
-      return q(v);
-    }).join(","));
-  }
-  return L.join("\n");
-}
+function csvColumns(){ return TBL.csvColumns(state,LAST.cols.length?LAST.cols:activeTblCols()); }
+function buildCSVText(){ return TBL.csvText(state,LAST); }
 function buildCSV(){
   /* L-257: #dl sits OUTSIDE the panel and is live with the table never built, so the
      download does the build itself rather than going silently dead on the empty LAST

@@ -12,7 +12,8 @@ const REASON_ORDER=REASONS.map(r=>r[0]);
 const RCOLOR=Object.fromEntries(REASONS);
 const DEFAULT_REASONS=REASON_ORDER.filter(r=>r!=="Other"); // the 7
 const state={dim:'category',dists:new Set(['National']),cats:new Set(['ALL']),ags:null,
-  reasons:new Set(DEFAULT_REASONS),admins:new Set(),from:'2014-10',to:'2026-06',grain:'month'};
+  reasons:new Set(DEFAULT_REASONS),admins:new Set(),from:'2014-10',to:'2026-06',grain:'month',
+  rowsBy:{district:false,dim:false},tblCols:{reasons:true,shares:true,totals:true}};
 let CAT_NAT=null,CAT_FULL=null,AG_NAT=null,AG_FULL=null,SPINE=[],
   catFullLoading=false,agLoading=false,agFullLoading=false,dMS=null,chart=null,chart2=null;
 let CATLIST=[],DEPTS_AG=[],AGLIST=[];
@@ -99,7 +100,7 @@ const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.l
     if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
 }};
 
-let SER={}, lastRows=[];
+let SER={};
 function scopeText(){ const dt=(state.dists.has('National')||state.dists.size===0)?'National':state.dists.size+' districts';
   const gv=isAg()?(state.ags&&state.ags.size===AGLIST.length?'all agencies':(state.ags?state.ags.size:0)+' agencies')
                  :((state.cats.has('ALL')||state.cats.size===0)?'all categories':state.cats.size+' categories');
@@ -150,22 +151,194 @@ function renderChart2(){
         y:{beginAtZero:true,title:{display:true,text:'Matters declined',color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v.toLocaleString()},grid:{color:'#e6e6e3'}}}},
     plugins:[adminBands,PV.plugin]});
 }
-function renderTable(){
-  const rs=selReasons(); const rows=[]; let totAll=0; const totBy={}; for(const r of rs) totBy[r]=0;
-  // Computed from the vintage edge, replacing a hardcoded `ym>="2026-03"` that would
-  // have meant the wrong thing the moment the next vintage promoted. Colour alone is a
-  // WCAG 1.4.1 failure, so provisional rows also carry a dagger.
-  const provM=PV.monthFlags(SPINE,PV.n(PROV_METRIC,PVOPT));
-  for(const i of visIdx()){ const ym=SPINE[i]; const vals=rs.map(r=>SER[r][i]); const tot=vals.reduce((a,b)=>a+b,0);
-    rs.forEach((r,j)=>totBy[r]+=vals[j]); totAll+=tot;
-    rows.push({ym,vals,tot,prov:!!provM[i],tag:provM[i]?"recent prov":""}); }
-  lastRows={rs,rows};
-  document.getElementById("thead").innerHTML="<tr><th>Month</th>"+rs.map(r=>`<th>${r}</th>`).join("")+"<th>Total</th></tr>";
-  document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-    return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${Math.round(v).toLocaleString()}</td>`).join("")+`<td>${Math.round(r.tot).toLocaleString()}</td></tr>`;
-  }).join("");
-  document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · <b>${Math.round(totAll).toLocaleString()}</b> matters declined · ${scopeText()}`;
-  document.getElementById("note").textContent=rs.length===0?"Select at least one declination reason.":"";
+/* ══════════════════════════════════════════════════════════════════════════════════
+   THE DATA TABLE AND ITS CSV - L-258, built under L-301.
+   The engine is LIONS_TABLE in shared/shared.js, which this page already loads, so
+   INVARIANT 9 IS UNCHANGED: no script and no stylesheet was added to or removed from
+   this page's chain.
+
+   THIS PAGE IS THE ASYMMETRICAL ONE, deliberately (spec C5). Its series ARE the reasons,
+   so THE EIGHT REASONS STAY COLUMNS - they are this page's measure, exactly as the five
+   disposition columns are the criminal table's - and the row slots are district x
+   (program category | referring agency), which is what the page's own Break down by
+   toggle already switches. Each declination carries exactly one reason, measured at
+   ratio 1.000000 both ways, so the reason columns partition the row's own total and the
+   shares total 100.0% of the selected reasons.
+
+   L-139 LANDS HERE. The column headed a bare `Total` was the total of the SELECTED
+   reasons - 1,847 against the cube's 1,872 at 2014-10 - which is a labelling defect and
+   not a wrong number. It becomes TWO columns that each name their parts, so the
+   difference is on the face of the table instead of hidden in a heading. THERE IS NO
+   reason='ALL' ROW IN EITHER DECLINATION CUBE to read instead - 0 such rows in all four
+   files, checked rather than assumed (design-lab/l258-cube-measure.js, L-281) - so the
+   all-reasons figure is a CHECKED SUM and the label says so rather than calling it the
+   cube's total.
+
+   THE (ym, reason) GRID IS ZERO-SUPPRESSED: 133 of 3,056 keys at category='ALL' carry no
+   row, and an absent key is a TRUE ZERO, not a gap. aggregateTable() fills the grid by
+   initialising every reason across the whole spine before it adds anything, so nothing
+   downstream can read a measured zero as unknown.
+   Spec: ops/handoffs/L-258-design-spec.md, copy signed by Cary 19 September 2026.
+   ══════════════════════════════════════════════════════════════════════════════════ */
+const ROW_CAP=window.LIONS_TABLE.ROW_CAP;
+const TCOPY=window.LIONS_TABLE.COPY;
+const rkey=r=>'r_'+r.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+const RKEYS=REASON_ORDER.map(rkey);
+/* Every user-facing string this table puts on the page that is not already in
+   LIONS_TABLE.COPY. Signed by Cary verbatim on 19 September 2026 (spec section 6).
+   Never an em dash (D-042). */
+const TBL_COPY={
+  totalLabelCat:'All program categories (cube total)',
+  totalLabelAg:'All referring agencies (cube total)',
+  complementLabelCat:'The other program categories, added together',
+  complementLabelAg:'The other referring agencies, added together',
+  dimSumCat:n=>n+' program categories, added together',
+  dimSumAg:n=>n+' referring agencies, added together',
+  addsOneCat:'is one program category',
+  addsOneAg:'is one referring agency',
+  distSum:TCOPY.distSum,
+  addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
+  selTotal:n=>n+' of 8 reasons, added together',
+  allTotal:'All 8 reasons, added together',
+  lineAllCat:p=>'One row per '+p+'. The figures are the cube’s own total row for all program categories.',
+  lineOneCat:p=>'One row per '+p+'. The figures are one program category.',
+  lineSumCat:(p,n)=>'One row per '+p+'. The figures are '+n+' program categories added together, and each declined matter is counted once, because a matter has exactly one program category.',
+  lineBreakoutCat:'The category rows add up to the total row once "The other program categories, added together" is included, because a declined matter has exactly one program category.',
+  lineAllAg:p=>'One row per '+p+'. The figures are the cube’s own total row for all referring agencies.',
+  lineOneAg:p=>'One row per '+p+'. The figures are one referring agency.',
+  lineSumAg:(p,n)=>'One row per '+p+'. The figures are '+n+' referring agencies added together, and each declined matter is counted once, because a matter has exactly one referring agency.',
+  lineBreakoutAg:'The agency rows add up to the total row once "The other referring agencies, added together" is included, because a declined matter has exactly one referring agency.',
+  /* appended in EVERY state, because the reason selection is a second axis and L-139 is
+     exactly what happens when it goes unstated */
+  reasonClause:n=>' The reason columns are '+n+' of the 8 reasons, and each share is of those '+n+'.',
+  reasonClauseAll:' The reason columns are all 8 reasons, and each share is of all 8.',
+  notesExtra:'Each declined matter carries exactly one reason, so the reason columns add up to the "added together" column beside them.',
+  /* THE ONE EMPTY STATE ANY OF THESE FOUR PAGES HAS. Every other control defaults back
+     to a selection - no district means National, no category means the cube's total row
+     - but the reason multi-select is `plain` (no ALL sentinel) and can genuinely hold
+     nothing, and with nothing selected the table has no measure at all. This sentence is
+     this page's own, unchanged character for character, moved out of #note. */
+  empty:'Select at least one declination reason.',
+  refusalCat:(n,cap)=>TCOPY.refusal(n,cap,'program categories'),
+  refusalAg:(n,cap)=>TCOPY.refusal(n,cap,'referring agencies'),
+  pending:TCOPY.pending
+};
+let LAST={rows:[],cols:[],provN:6};
+let BYDIST_CAT=null,BYDIST_AG=null;   // district -> its own rows; built once the cube is in
+
+function tblDistRows(d){
+  const src=isAg()?AG_FULL:CAT_FULL;
+  if(!src) return [];
+  if(isAg()){ if(!BYDIST_AG){ BYDIST_AG=new Map(); for(const r of src){ let a=BYDIST_AG.get(r.district); if(!a){a=[];BYDIST_AG.set(r.district,a);} a.push(r); } } return BYDIST_AG.get(d)||[]; }
+  if(!BYDIST_CAT){ BYDIST_CAT=new Map(); for(const r of src){ let a=BYDIST_CAT.get(r.district); if(!a){a=[];BYDIST_CAT.set(r.district,a);} a.push(r); } }
+  return BYDIST_CAT.get(d)||[];
+}
+/* The cube is LONG on reason and the table is WIDE on it, so the pivot happens here: one
+   component array per reason, over the whole spine, filled with zeros first. The grid is
+   zero-suppressed (133 of 3,056 keys at category='ALL'), and an absent key is a measured
+   zero rather than a gap - see the header above.
+     target.kind 'all'  - the cube's OWN total row: category='ALL', or department='ALL'
+                          AND subagency='ALL' on the agency cube.
+     target.kind 'keys' - one or more named categories or subagencies. */
+function aggregateTable(dists,target){
+  const ag=isAg();
+  const useNat=dists.has('National')||dists.size===0;
+  const R={}; for(const k of RKEYS) R[k]=new Array(SPINE.length).fill(0);
+  const idxOf=new Map(SPINE.map((ym,i)=>[ym,i]));
+  const add=row=>{
+    if(target.kind==='all'){ if(ag?!(row.dept==='ALL'&&row.grp==='ALL'):row.grp!=='ALL') return; }
+    else { if(row.grp==='ALL'||(ag&&row.dept==='ALL')||!target.keys.has(row.grp)) return; }
+    const i=idxOf.get(row.ym); if(i==null) return;
+    const k=rkey(row.reason); if(R[k]) R[k][i]+=row.declined; };
+  if(useNat){ const nat=ag?AG_NAT:CAT_NAT; if(nat) for(const r of nat) add(r); }
+  else { for(const d of dists) for(const r of tblDistRows(d)) add(r); }
+  return R;
+}
+const tblSelDims=()=>{ const s=isAg()?state.ags:state.cats;
+  if(!s) return [];
+  return (s.has('ALL')||s.size===0)?[]:[...s]; };
+
+const TBL_DESC={
+  spine:()=>SPINE, visIdx:()=>visIdx(),
+  cols:st=>{
+    const sel=REASON_ORDER.filter(r=>st.reasons.has(r));
+    const c=[
+      {k:'period',g:'key',h:'Period'},
+      {k:'district',g:'key',h:'District'},
+      {k:isAg()?'agency':'category',g:'key',h:isAg()?'Referring agency':'Program category'},
+      {k:'additive',g:'key',h:'Adds up?',fold:true}
+    ];
+    /* the reason names are UNCHANGED, character for character, from the columns this
+       table printed before L-258 */
+    for(const r of sel) c.push({k:rkey(r),g:'reasons',h:r,t:'int',w:PROV_METRIC});
+    for(const r of sel) c.push({k:rkey(r)+'_pct',g:'shares',h:r+' %',t:'pct',w:PROV_METRIC});
+    c.push({k:'selected_reasons_total',g:'totals',h:TBL_COPY.selTotal(sel.length),t:'int',w:PROV_METRIC,cls:'tot'});
+    c.push({k:'all_reasons_total',g:'totals',h:TBL_COPY.allTotal,t:'int',w:PROV_METRIC});
+    return c; },
+  get dimKey(){ return isAg()?'agency':'category'; },
+  get dimNounPlural(){ return isAg()?'referring agencies':'program categories'; },
+  hasBasisCol:false,
+  /* declinations.page.js has never carried tr.edge and does not gain it here - a reading
+     of the three page scripts, not an assumption (spec section 5.5) */
+  hasEdge:false,
+  stockKeys:[], extraKeyCsv:[],
+  pv:PVOPT, defaultWindowKey:PROV_METRIC,
+  aggregate:(st,dists,target)=>aggregateTable(dists,target),
+  dimSlots:st=>window.LIONS_TABLE.partitioningSlots(TBL_DESC,st),
+  selectedDims:()=>tblSelDims(),
+  dimList:()=>isAg()?AGLIST:CATLIST,
+  /* The share denominator is the SELECTED reasons, not all eight, so the table and the
+     page's own 100%-stacked chart agree: that chart normalises on the selected reasons
+     and its axis says so. The all-eight figure is beside it as its own column, which is
+     what makes an incomplete selection VISIBLE instead of implied. That is L-139.
+     Invariant 4: both totals and every share run on components the engine has ALREADY
+     bucketed, never on a mean of monthly percentages. */
+  derive:(r,st)=>{
+    let sel=0,all=0;
+    for(const x of REASON_ORDER){ const v=r[rkey(x)]||0; all+=v; if(st.reasons.has(x)) sel+=v; }
+    r.selected_reasons_total=sel; r.all_reasons_total=all;
+    for(const x of REASON_ORDER) r[rkey(x)+'_pct']=sel>0?100*(r[rkey(x)]||0)/sel:null; },
+  rowExtras:()=>{},
+  basisLine:st=>tblBasisLine(st),
+  emptyState:st=>st.reasons.size?null:TBL_COPY.empty,
+  csvLine:(st,n)=>TCOPY.csvLine(n),
+  get copy(){ return {
+    totalLabel:isAg()?TBL_COPY.totalLabelAg:TBL_COPY.totalLabelCat,
+    complementLabel:isAg()?TBL_COPY.complementLabelAg:TBL_COPY.complementLabelCat,
+    dimSum:isAg()?TBL_COPY.dimSumAg:TBL_COPY.dimSumCat,
+    addsOne:isAg()?TBL_COPY.addsOneAg:TBL_COPY.addsOneCat,
+    notesExtra:TBL_COPY.notesExtra }; }
+};
+const TBL=window.LIONS_TABLE.make(TBL_DESC);
+const activeTblCols=()=>TBL.activeCols(state);
+function tblRowCount(){ return TBL.rowCount(state); }
+/* FOUR STATES plus a clause appended in every one of them, counted before the branch was
+   written (style guide 5g, after L-249 D-C). A state missing from the enumeration does
+   not fall through to a neighbour. */
+function tblBasisLine(st){
+  const p=window.LIONS_TABLE.grainNoun(st.grain), sel=tblSelDims(), ag=isAg();
+  const n=REASON_ORDER.filter(r=>st.reasons.has(r)).length;
+  const clause=n===8?TBL_COPY.reasonClauseAll:TBL_COPY.reasonClause(n);
+  if(st.rowsBy.dim) return (ag?TBL_COPY.lineBreakoutAg:TBL_COPY.lineBreakoutCat)+clause;
+  if(sel.length>1) return (ag?TBL_COPY.lineSumAg:TBL_COPY.lineSumCat)(p,sel.length)+clause;
+  if(sel.length===1) return (ag?TBL_COPY.lineOneAg:TBL_COPY.lineOneCat)(p)+clause;
+  return (ag?TBL_COPY.lineAllAg:TBL_COPY.lineAllCat)(p)+clause;
+}
+function renderTable(){ LAST=TBL.render(state); }
+/* The breakout button names the page's own Break down by axis, so the two controls agree */
+function syncRowsByLabel(){ const b=document.getElementById('rowsbydim');
+  if(b) b.textContent=isAg()?'Referring agency':'Program category'; }
+
+/* ── L-257's lazy build, inherited exactly (spec C7) ──────────────────────────────── */
+let tblDirty=true;
+const tblPanelOpen=()=>!document.getElementById('tablePanel').hidden;
+function tblBuild(){ document.getElementById('tblpending').textContent=''; renderTable(); tblDirty=false; }
+function tblInvalidate(){
+  tblDirty=true;
+  if(tblPanelOpen()){ tblBuild(); return; }
+  document.getElementById('basisline').textContent=tblBasisLine(state);
+  const over=tblRowCount()>ROW_CAP;
+  document.getElementById('dl').disabled=over; document.getElementById('dl2').disabled=over;
 }
 
 function updateChartAccessibility(){
@@ -216,7 +389,7 @@ async function render(){
      would wipe a failure within one tick. */
   if(!(isAg()?(useNat?AG_NAT:AG_FULL):(useNat?CAT_NAT:CAT_FULL))) return;
   SER=seriesByReason();
-  renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); renderTable();
+  renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); tblInvalidate();
 }
 
 // ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
@@ -260,12 +433,15 @@ function renderTopline(){
 }
 
 function buildCSV(){
-  const rs=lastRows.rs, head=["month",...rs,"total","provisional"];
-  const L=[head.join(",")];
-  for(const r of lastRows.rows) L.push([r.ym,...r.vals.map(v=>Math.round(v)),Math.round(r.tot),r.prov?"yes":""].join(","));
-  const blob=new Blob([L.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
-  const dt=(state.dists.has('National')||state.dists.size===0)?'National':state.dists.size+'dists';
-  a.download=`lions_declinations_${state.dim}_${dt}_${state.from}_${state.to}.csv`; a.click();
+  /* #dl sits OUTSIDE the panel and is live with the table never built, so the download
+     does the build itself rather than going silently dead on the empty LAST below. Same
+     rows, same cap: D-1 is not re-opened, and an over-cap selection or an empty reason
+     selection still refuses, because tblBuild() runs the same branches the table does. */
+  if(tblDirty) tblBuild();
+  if(LAST.rows.length===0) return;   /* D-1: if the table refuses to draw, the download refuses too */
+  const blob=new Blob([TBL.csvText(state,LAST)],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
+  a.download=`lions_declinations_${state.dim}_${dt}_${state.grain}_${state.from}_${state.to}.csv`; a.click();
 }
 
 // flat multi-select; opts.plain => no All sentinel (used for reasons)
@@ -372,8 +548,8 @@ async function init(){ renderNav();
   multiSelect("reason",{items:REASON_ORDER,plain:true,allLabel:"All reasons",emptyLabel:"pick reasons…",initial:state.reasons,searchable:false,
     onChange:v=>{ state.reasons=new Set(v); render(); }});
   document.querySelectorAll('#dimSeg button').forEach(x=>x.addEventListener('click',async()=>{ document.querySelectorAll('#dimSeg button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.dim=x.dataset.v;
-    if(isAg()) await ensureAgency(); buildDimPicker(); render(); }));
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); }));
+    if(isAg()) await ensureAgency(); buildDimPicker(); syncRowsByLabel(); render(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); tblInvalidate(); }));
   document.querySelectorAll('#presets button').forEach(btn=>btn.addEventListener('click',()=>{ const k=btn.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
     const ns=new Set(state.admins); ns.has(k)?ns.delete(k):ns.add(k);
@@ -385,7 +561,33 @@ async function init(){ renderNav();
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);
-  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
+  document.getElementById("dl2").addEventListener("click",buildCSV);
+  syncRowsByLabel();
+  document.querySelectorAll('#rowsby button').forEach(b=>b.addEventListener('click',()=>{
+    const on=!state.rowsBy[b.dataset.v]; state.rowsBy[b.dataset.v]=on;
+    b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); tblBuild(); }));
+  document.querySelectorAll('#colgroups button').forEach(b=>b.addEventListener('click',()=>{
+    const g=b.dataset.v, on=!state.tblCols[g];
+    /* never zero metric columns: a table with only key columns answers nothing */
+    if(!on && activeTblCols().filter(c=>c.g!=='key').length<=TBL_DESC.cols(state).filter(c=>c.g===g).length) return;
+    state.tblCols[g]=on; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');
+    tblBuild(); }));
+  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize'));
+    if(!willOpen||!tblDirty) return;
+    /* Over cap there is nothing to build and no wait to explain, so the refusal shows at
+       once and WITHOUT the placeholder (L-257 design note section 5). renderTable()
+       returns straight out of its refusal branch, so this is cheap enough to run inline. */
+    if(tblRowCount()>ROW_CAP){ tblBuild(); return; }
+    /* ORDER MATTERS. The panel is already unhidden above, so this mutation lands in a
+       live region that is already visible: a role="status" that gains its text in the
+       same paint in which it appears is not reliably announced. */
+    document.getElementById('tblpending').textContent=TBL_COPY.pending;
+    /* NEVER synchronous in the handler. The browser paints nothing until a task returns,
+       so a build in here would leave the panel unopened and the disclosure looking dead
+       for the whole build. The first requestAnimationFrame callback still runs before the
+       frame's paint, so the work hangs off the second. */
+    requestAnimationFrame(()=>requestAnimationFrame(tblBuild));
+  });
   // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
   // The district cube (decl_cat_cube.csv, ~23 MB) is fetched on EVERY page load,
   // not on district selection. It is intentionally un-awaited, so it never blocks

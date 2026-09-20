@@ -1,4 +1,4 @@
-const state={dists:new Set(['National']),cats:new Set(['ALL']),role:'Defendant',basis:'cases',metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06',grain:'month'};
+const state={dists:new Set(['National']),cats:new Set(['ALL']),role:'Defendant',basis:'cases',metric:'cases_filed',seriesBy:'category',ax2:false,ax2by:'series',ax2sel:new Set(),kpiCat:'Immigration',mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06',grain:'month',rowsBy:{district:false,dim:false},tblCols:{matters:true,cases:true,pending:false,dispositions:true,rates:true}};
 let NAT=null, FULL=null, SPINE=[], fullLoading=false, dMS=null, cMS=null, ax2MS=null, chart=null, chart2=null, chart3=null, CATLIST=[];
 const NUM=["matters_received","cases_filed","matters_terminated","cases_terminated","d_judg_us","d_settle","d_against","d_dismissed","d_other"];
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
@@ -148,9 +148,7 @@ function leftItems(){ return state.seriesBy==='category'
     ? ((state.cats.has('ALL')||state.cats.size===0)?['ALL']:[...state.cats])
     : ((state.dists.has('National')||state.dists.size===0)?['National']:[...state.dists]); }
 function rightLabelText(){ return state.ax2&&state.ax2sel.size?[...state.ax2sel].slice(0,3).join(', ')+(state.ax2sel.size>3?'…':''):''; }
-const r1=x=>x==null?"-":x.toLocaleString(undefined,{maximumFractionDigits:1});
 const rint=x=>x==null?"-":Math.round(x).toLocaleString();
-let lastRows=[];
 
 // ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
 // The four KPI cards and their renderKPIs() are retired. Two rules this page carries
@@ -197,27 +195,171 @@ function renderTopline(){
   }); }catch(e){ console.warn('LIONS_TOPLINE.render failed - topline section skipped', e); }
 }
 
-function renderTable(){
-  const R=agg(state.dists,state.cats,state.role);
-  const cols=metricsList().map(([k,lbl])=>({key:k,label:lbl}));
-  const arrs=cols.map(c=>metricArray(R,c.key));
-  const rows=[];
-  // Computed from the vintage edge, replacing a hardcoded `ym>="2026-03"` that would
-  // have meant the wrong thing the moment the next vintage promoted. The table prints
-  // every metric, so it takes the widest window across its own columns (spec §3.5).
-  const provM=PV.monthFlags(SPINE,PV.nMax(cols.map(c=>c.key),PVOPT));
-  for(const i of visIdx()){ const ym=SPINE[i];
-    rows.push({ym, vals:arrs.map(a=>a[i]), prov:!!provM[i], tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")}); }
-  lastRows={head:cols.map(c=>c.key),rows};
-  const thead=document.getElementById("thead");
-  thead.innerHTML="<tr><th>Month</th>"+cols.map(c=>`<th>${c.label}</th>`).join("")+"</tr>";
-  mountDocMarkers(DOC_SURFACE,thead,Object.fromEntries(cols.map(c=>[c.label,c.key])));
-  document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-    return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${v==null?"-":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
-  }).join("");
-  const pf=primaryFlow(); const tot=metricArray(R, state.basis==='cases'?'cases_filed':'matters_received');
-  const s=visIdx().reduce((a,i)=>a+tot[i],0);
-  document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · ${primaryLabel()} <b>${Math.round(s).toLocaleString()}</b> · ${state.role} · ${state.cats.has('ALL')||state.cats.size===0?'all causes':[...state.cats].join(', ')}`;
+/* ══════════════════════════════════════════════════════════════════════════════════
+   THE DATA TABLE AND ITS CSV - L-258, built under L-301.
+   The engine is LIONS_TABLE in shared/shared.js, which this page already loads, so
+   INVARIANT 9 IS UNCHANGED: no script and no stylesheet was added to or removed from
+   this page's chain. Everything below is this page's descriptor: its columns, its cube
+   read, its dimension slots, its signed copy.
+   Spec: ops/handoffs/L-258-design-spec.md, copy signed by Cary 19 September 2026.
+   ══════════════════════════════════════════════════════════════════════════════════ */
+const ROW_CAP=window.LIONS_TABLE.ROW_CAP;
+const TCOPY=window.LIONS_TABLE.COPY;
+/* `g` is the column group a user can switch off; 'key' is never switchable, so a CSV
+   consumer parsing by name has a stable key set whatever the user does. `w` is the
+   provisional-window metric key the column takes: the table's own mark is the WIDEST
+   across the columns it is currently printing (the L-014 envelope rule). `fold` marks
+   the column that folds INTO the cause cell below 560px. `cls` carries the stock
+   hairline - a level is not something to add down. */
+const TBL_COLS=[
+  {k:'period',g:'key',h:'Period'},
+  {k:'district',g:'key',h:'District'},
+  {k:'cause',g:'key',h:'Cause of action'},
+  {k:'additive',g:'key',h:'Adds up?',fold:true},
+  {k:'matters_received',g:'matters',h:'Matters received',t:'int',w:'matters_received'},
+  {k:'matters_terminated',g:'matters',h:'Matters terminated',t:'int',w:'matters_terminated'},
+  {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},
+  {k:'cases_terminated',g:'cases',h:'Cases terminated',t:'int',w:'cases_terminated'},
+  {k:'cases_pending',g:'pending',h:'Cases pending (at period end)',t:'int',w:'cases_pending',cls:'stock'},
+  {k:'d_judg_us',g:'dispositions',h:'Judgment for U.S.',t:'int',w:'cases_terminated'},
+  {k:'d_settle',g:'dispositions',h:'Settlements',t:'int',w:'cases_terminated'},
+  {k:'d_against',g:'dispositions',h:'Judgment against U.S.',t:'int',w:'cases_terminated'},
+  {k:'d_dismissed',g:'dispositions',h:'Dismissed',t:'int',w:'cases_terminated'},
+  {k:'d_other',g:'dispositions',h:'Other disposition',t:'int',w:'cases_terminated'},
+  {k:'d_judg_us_pct',g:'rates',h:'Judgment for U.S. %',t:'pct',w:'cases_terminated'},
+  {k:'d_settle_pct',g:'rates',h:'Settlements %',t:'pct',w:'cases_terminated'},
+  {k:'d_against_pct',g:'rates',h:'Judgment against U.S. %',t:'pct',w:'cases_terminated'},
+  {k:'d_dismissed_pct',g:'rates',h:'Dismissed %',t:'pct',w:'cases_terminated'},
+  {k:'d_other_pct',g:'rates',h:'Other disposition %',t:'pct',w:'cases_terminated'}
+];
+/* Every user-facing string this table puts on the page that is not already in
+   LIONS_TABLE.COPY. Signed by Cary verbatim on 19 September 2026 (spec section 6).
+   Never an em dash (D-042). */
+const TBL_COPY={
+  totalLabel:'All causes of action (cube total)',
+  /* Criminal's complement reads "Other categories, and cases with none recorded" because
+     there really is a residual there. On this cube the 14 causes reach category='ALL'
+     EXACTLY - 0 of 1,146 (ym, role) keys disagree on any of 9 columns, measured in
+     design-lab/l258-cube-measure.js - so a label claiming uncategorised members would
+     assert something false. This one names what the row is. */
+  complementLabel:'The other causes of action, added together',
+  dimSum:n=>n+' causes of action, added together',
+  distSum:TCOPY.distSum,
+  addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
+  addsOne:'is one cause of action',
+  lineAll:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are the cube’s own total row for all causes of action.',
+  lineOne:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are one cause of action.',
+  lineSum:(p,n,role)=>'One row per '+p+', U.S. as '+role+'. The figures are '+n+' causes of action added together, and each case is counted once, because a case has exactly one cause of action.',
+  lineBreakout:(p,role)=>'One row per '+p+' per cause of action, U.S. as '+role+'. The cause rows add up to the total row once "The other causes of action, added together" is included, because a case has exactly one cause of action.',
+  notesExtra:'Cases pending is a level read at the end of the period, not a total for the period. Do not add that column down.',
+  refusal:(n,cap)=>TCOPY.refusal(n,cap,'causes of action'),
+  pending:TCOPY.pending
+};
+let LAST={rows:[],cols:[],provN:6};
+let BYDIST=null;   // district -> its own rows; built once FULL is in. See tblDistRows().
+
+/* The district cube is 641,931 rows and a cross-tab asks for it once per district slot
+   per cause slot. Indexing it once turns each of those scans into the rows that district
+   actually has. FULL is assigned once and never mutated, so the index cannot go stale;
+   it is built lazily so a national-only session never pays for it. */
+function tblDistRows(d){
+  if(!FULL) return [];
+  if(!BYDIST){ BYDIST=new Map();
+    for(const r of FULL){ let a=BYDIST.get(r.district); if(!a){ a=[]; BYDIST.set(r.district,a); } a.push(r); } }
+  return BYDIST.get(d)||[];
+}
+/* The table needs all NINE numeric columns the cube carries; aggregateRaw() carries the
+   same nine under short field names for the charts. Kept separate rather than widened,
+   because the chart path is the hot one.
+     target.kind 'all'  - the cube's OWN total row, category='ALL' at the selected role.
+     target.kind 'keys' - one or more named causes.
+   THE FIVE d_* COLUMNS CARRY BLANK CELLS, NOT ZEROS, and parseCSV coerces blank to 0
+   explicitly with `+c[I[k]]||0`. That the coercion is right rather than convenient is
+   measured: read that way the five columns reproduce cases_terminated on every one of
+   the 15,643 national and 641,931 district rows, including the 9,483 rows carrying a
+   blank cell AND a non-zero cases_terminated (design-lab/l258-cube-measure.js). */
+function aggregateTable(dists,target){
+  const useNat=dists.has('National')||dists.size===0;
+  const idx=new Map();
+  const add=r=>{
+    if(r.role!==state.role) return;
+    if(target.kind==='all'){ if(r.grp!=='ALL') return; }
+    else { if(r.grp==='ALL'||!target.keys.has(r.grp)) return; }
+    let o=idx.get(r.ym);
+    if(!o){ o={}; for(const k of NUM) o[k]=0; idx.set(r.ym,o); }
+    for(const k of NUM) o[k]+=r[k]; };
+  if(useNat){ for(const r of NAT) add(r); }
+  else { for(const d of dists) for(const r of tblDistRows(d)) add(r); }
+  const R={}; for(const k of NUM) R[k]=[];
+  for(const ym of SPINE){ const o=idx.get(ym); for(const k of NUM) R[k].push(o?o[k]:0); }
+  /* cases_pending is a COUNTED column in a SECOND cube and is read through pendingArr(),
+     which is the only place that knows the zero-suppression contract: a month with no row
+     inside the loaded cube's own min..max is a ZERO, and a month outside it is null and
+     prints "-". It is a STOCK, so the engine takes the bucket's LAST month, never a sum. */
+  R.cases_pending=pendingArr(dists,target.kind==='all'?new Set(['ALL']):target.keys,state.role);
+  return R;
+}
+const tblSelCauses=()=>(state.cats.has('ALL')||state.cats.size===0)?[]:[...state.cats];
+
+const TBL_DESC={
+  spine:()=>SPINE, visIdx:()=>visIdx(),
+  cols:()=>TBL_COLS,
+  dimKey:'cause', dimNounPlural:'causes of action',
+  hasBasisCol:false, hasEdge:true,
+  stockKeys:['cases_pending'],
+  /* The U.S. role is a page filter, not a third breakout axis: there is no role='ALL'
+     row in this cube to check a three-role sum against (1,146 category='ALL' rows, 382
+     months x 3 roles, and no others - measured). It is stated in the basis line and it
+     rides the CSV as a machine column, so two downloads can be merged by a consumer who
+     wants both. */
+  extraKeyCsv:['us_role'],
+  pv:PVOPT, defaultWindowKey:'cases_filed',
+  aggregate:(st,dists,target)=>aggregateTable(dists,target),
+  dimSlots:st=>window.LIONS_TABLE.partitioningSlots(TBL_DESC,st),
+  selectedDims:()=>tblSelCauses(),
+  dimList:()=>CATLIST,
+  /* Invariant 4: these run on components the engine has ALREADY bucketed, so a
+     fiscal-year settlement share is the year's settlements over the year's terminations
+     and never the mean of twelve monthly rates. The five shares total 100.0% on every
+     row, because the five d_* columns partition cases_terminated exactly. */
+  derive:r=>{ const ct=r.cases_terminated;
+    for(const k of ['d_judg_us','d_settle','d_against','d_dismissed','d_other'])
+      r[k+'_pct']=ct>0?100*r[k]/ct:null; },
+  rowExtras:r=>{ r.us_role=state.role; },
+  basisLine:st=>tblBasisLine(st),
+  csvLine:(st,n)=>TCOPY.csvLine(n),
+  copy:TBL_COPY
+};
+const TBL=window.LIONS_TABLE.make(TBL_DESC);
+const activeTblCols=()=>TBL.activeCols(state);
+function tblRowCount(){ return TBL.rowCount(state); }
+/* FOUR STATES, counted before the branch was written (style guide 5g, after L-249 D-C).
+   A state missing from the enumeration does not fall through to a neighbour. */
+function tblBasisLine(st){
+  const p=window.LIONS_TABLE.grainNoun(st.grain), sel=tblSelCauses();
+  if(st.rowsBy.dim) return TBL_COPY.lineBreakout(p,st.role);
+  if(sel.length>1) return TBL_COPY.lineSum(p,sel.length,st.role);
+  if(sel.length===1) return TBL_COPY.lineOne(p,st.role);
+  return TBL_COPY.lineAll(p,st.role);
+}
+function renderTable(){ LAST=TBL.render(state); }
+
+/* ── L-257's lazy build, inherited exactly (spec C7) ────────────────────────────────
+ * The table is built on the FIRST OPEN of the disclosure and marked stale by any filter,
+ * date, preset, role, column-group or grain change. TWO THINGS STAY EAGER, and both are
+ * state-derived and build no rows: tblRowCount() is three cheap counts, so an over-cap
+ * selection disables Download CSV at the moment it goes over budget, panel open or shut;
+ * and tblBasisLine() reads state only, so the basis line is on screen in the same paint
+ * in which the panel opens. */
+let tblDirty=true;
+const tblPanelOpen=()=>!document.getElementById('tablePanel').hidden;
+function tblBuild(){ document.getElementById('tblpending').textContent=''; renderTable(); tblDirty=false; }
+function tblInvalidate(){
+  tblDirty=true;
+  if(tblPanelOpen()){ tblBuild(); return; }
+  document.getElementById('basisline').textContent=tblBasisLine(state);
+  const over=tblRowCount()>ROW_CAP;
+  document.getElementById('dl').disabled=over; document.getElementById('dl2').disabled=over;
 }
 
 const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
@@ -381,14 +523,19 @@ function render(){
      missing, which the topline draws as "None in this period." under a district label -
      an answer of zero where the cube has 1,081. Refuse the same way. */
   if(pendWanted() && (!PNAT || (needFull && !PFULL))) return;
-  renderTopline(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); renderTable(); }
+  renderTopline(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); tblInvalidate(); }
 
 function buildCSV(){
-  const head=["month",...lastRows.head,"provisional"];
-  const L=[head.join(",")];
-  for(const r of lastRows.rows) L.push([r.ym,...r.vals.map(v=>v==null?"":(Number.isInteger(v)?v:v.toFixed(2))),r.prov?"yes":""].join(","));
-  const blob=new Blob([L.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
-  a.download=`civil_${state.role}_${state.basis}_${state.from}_${state.to}.csv`; a.click();
+  /* #dl sits OUTSIDE the panel and is live with the table never built, so the download
+     does the build itself rather than going silently dead on the empty LAST below. Same
+     button, same rows, same cap: D-1 is not re-opened, and an over-cap selection still
+     refuses, because tblBuild() runs the same refusal branch the table does. */
+  if(tblDirty) tblBuild();
+  if(LAST.rows.length===0) return;   /* D-1: if the table refuses to draw, the download refuses too */
+  const blob=new Blob([TBL.csvText(state,LAST)],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
+  const ct=(state.cats.has('ALL')||state.cats.size===0)?'ALL':(state.cats.size===1?[...state.cats][0].replace(/\W+/g,''):state.cats.size+'causes');
+  a.download=`civil_${dt}_${ct}_${state.role}_${state.grain}_${state.from}_${state.to}.csv`; a.click();
 }
 
 function multiSelect(mountId,opts){
@@ -481,7 +628,7 @@ async function init(){ renderNav();
   document.querySelectorAll('#basis button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.basis=b.dataset.v; populateMetric(); if(state.ax2&&state.ax2by==='metric') buildAx2Picker(); render(); }));
   document.querySelectorAll('#seriesBy button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#seriesBy button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.seriesBy=b.dataset.v; if(state.seriesBy==='district') await ensureFull(); await ensurePending(); if(state.ax2by==='series') buildAx2Picker(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); updateChartAccessibility(); }));
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); renderChart3(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); renderChart3(); tblInvalidate(); }));
   document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); await ensurePending(); buildAx2Picker(); renderChart(); }));
   document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
@@ -493,11 +640,38 @@ async function init(){ renderNav();
   state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
-  // The CSV prints every metric, so it waits on the pending cube rather than exporting a
-  // column of dashes. Same reason the table below triggers the fetch when it is opened.
-  document.getElementById("dl").addEventListener("click",async()=>{ await ensurePending(true); renderTable(); buildCSV(); });
-  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden;
-    if(willOpen) ensurePending(true).then(render); p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
+  /* The Pending column group is the ONE group that is off by default, because it is the
+     only one that costs a fetch: 0.56 MiB national and 33.74 MiB district. Opening the
+     panel used to call ensurePending(true) unconditionally, so a reader who never wanted
+     the column paid for it anyway (spec C8). Now the button is where the reader asks. */
+  document.getElementById("dl").addEventListener("click",buildCSV);
+  document.getElementById("dl2").addEventListener("click",buildCSV);
+  document.querySelectorAll('#rowsby button').forEach(b=>b.addEventListener('click',()=>{
+    const on=!state.rowsBy[b.dataset.v]; state.rowsBy[b.dataset.v]=on;
+    b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); tblBuild(); }));
+  document.querySelectorAll('#colgroups button').forEach(b=>b.addEventListener('click',async()=>{
+    const g=b.dataset.v, on=!state.tblCols[g];
+    /* never zero metric columns: a table with only key columns answers nothing */
+    if(!on && activeTblCols().filter(c=>c.g!=='key').length<=TBL_COLS.filter(c=>c.g===g).length) return;
+    state.tblCols[g]=on; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');
+    if(on && g==='pending') await ensurePending(true);
+    tblBuild(); }));
+  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize'));
+    if(!willOpen||!tblDirty) return;
+    /* Over cap there is nothing to build and no wait to explain, so the refusal shows at
+       once and WITHOUT the placeholder (L-257 design note section 5). renderTable()
+       returns straight out of its refusal branch, so this is cheap enough to run inline. */
+    if(tblRowCount()>ROW_CAP){ tblBuild(); return; }
+    /* ORDER MATTERS. The panel is already unhidden above, so this mutation lands in a
+       live region that is already visible: a role="status" that gains its text in the
+       same paint in which it appears is not reliably announced. */
+    document.getElementById('tblpending').textContent=TBL_COPY.pending;
+    /* NEVER synchronous in the handler. The browser paints nothing until a task returns,
+       so a build in here would leave the panel unopened and the disclosure looking dead
+       for the whole build. The first requestAnimationFrame callback still runs before the
+       frame's paint, so the work hangs off the second. */
+    requestAnimationFrame(()=>requestAnimationFrame(tblBuild));
+  });
   // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
   // The district cube (civil_cube.csv, ~31 MB) is fetched on EVERY page load,
   // not on district selection. It is intentionally un-awaited, so it never blocks

@@ -29,15 +29,6 @@
     margin:0 0 4px}
 .ms-sub label{
     display:flex;align-items:center;gap:7px;padding:3px 6px 3px 28px;font-size:12.5px;color:#333;cursor:pointer;white-space:nowrap}
-/* L-257: the first-open placeholder inside #tblwrap. It is never display:none and never
-   toggled with [hidden] - taking a live region out of the tree defeats the point of its
-   being static. Empty, a block box with no content and no padding has zero height, so it
-   takes no space; the padding only applies once it has words in it. It lives here rather
-   than beside .tbl-basis and .tbl-refusal in shared/shared.css because only index.html
-   carries the element today: one stamp site instead of six. L-258 generalises the table
-   to the other three dashboards and that is the moment to move this rule. */
-.tbl-pending{margin:0;padding:0;color:var(--mut);font-size:12.5px;line-height:1.4}
-.tbl-pending:not(:empty){padding:10px 12px}
 /* L-249: the auto-deselect note, under the group row that fired. NOT a .ms-list label -
    those are white-space:nowrap with no max-width on the panel, which is the mechanism
    that pushes this panel off a 390px viewport. This wraps and caps at 34ch, so it can

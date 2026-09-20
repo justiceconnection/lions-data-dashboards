@@ -6,10 +6,10 @@
 <link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="shared/multipliers.js?v=202606"></script>
-<link rel="stylesheet" href="shared/shared.css?v=20260918b">
+<link rel="stylesheet" href="shared/shared.css?v=20260919a">
 <link rel="stylesheet" href="lab.css?v=20260917a">
 <link rel="stylesheet" href="styles/shell2.css?v=20260917a">
-<link rel="stylesheet" href="styles/civil.css?v=20260916a">
+<link rel="stylesheet" href="styles/civil.css?v=20260919a">
 <script src="scripts/civil.head.js?v=20260820c"></script>
 </head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
@@ -66,16 +66,66 @@
   <div class="card"><h3><span id="chart3Title">Disposition mix - % of cases terminated</span></h3>
     <div id="legend3"></div><div id="chart3msg"></div><div class="chartbox sm" id="chart3box"><canvas id="chart3" role="img" aria-label="Disposition mix chart showing percent of cases terminated by disposition type.">Disposition mix chart showing percent of cases terminated by disposition type.</canvas></div></div>
 
-  <div id="summary"></div>
   <div class="tabletoggle"><button id="tblToggle" class="disc" aria-expanded="false">▸ Show data table</button></div>
-  <div id="tablePanel" hidden><div class="tblwrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div></div>
+  <!-- L-258, built under L-301. The table stays exactly where it is: inside
+       #tablePanel, behind the same disclosure, inside the same .tblwrap, above the same
+       #dl button. No new page, no new panel, no new card, no move - so invariant 9's
+       load chain is unchanged and no script or stylesheet is added or removed.
+       The two shape controls sit HERE and not in a .controls block: shell2.js collects
+       the .wrap children classed occbar/masters/master/controls into the Filters
+       top-dropdown (web/shell2.js:36-37) and opens that dropdown only at min-width:760px
+       (:90), so a control placed there would be unreachable from the table it reshapes
+       on a phone. The table's own caveats sit here for the same kind of reason: the
+       shell2 footnote component replaces #footnote's whole innerHTML (:131, :136) after
+       the page script has run, so anything written there is destroyed.
+       #summary moved INSIDE the panel: it counts the table's rows, and a count of rows
+       that were not drawn is noise during a refusal. -->
+  <div id="tablePanel" hidden>
+    <div class="tbl-shape">
+      <div class="grp"><span class="lbl" id="rowsbylbl">Break rows out by</span>
+        <div class="seg" id="rowsby" role="group" aria-labelledby="rowsbylbl">
+          <button type="button" data-v="district" aria-pressed="false">District</button>
+          <button type="button" data-v="dim" aria-pressed="false">Cause of action</button>
+        </div>
+      </div>
+      <div class="grp"><span class="lbl" id="colslbl">Columns</span>
+        <div class="seg" id="colgroups" role="group" aria-labelledby="colslbl">
+          <button type="button" data-v="matters" class="on" aria-pressed="true">Matters</button>
+          <button type="button" data-v="cases" class="on" aria-pressed="true">Cases</button>
+          <button type="button" data-v="pending" class="" aria-pressed="false">Pending</button>
+          <button type="button" data-v="dispositions" class="on" aria-pressed="true">Dispositions</button>
+          <button type="button" data-v="rates" class="on" aria-pressed="true">Rates</button>
+        </div>
+      </div>
+    </div>
+    <p class="tbl-basis" id="basisline"></p>
+    <p class="tbl-refusal" id="refusal" hidden></p>
+    <p class="scrollhint" id="scrollhint"></p>
+    <div class="topbar"><button id="dl2">Download CSV</button></div>
+    <!-- L-257: the first-open placeholder. STATIC and initially EMPTY, because a
+         role="status" created together with its own text is not reliably announced;
+         only its textContent ever changes. It sits inside #tblwrap so the labelled
+         region is never empty while the table is being drawn, and so the refusal path,
+         which hides #tblwrap, cannot show it. -->
+    <div class="tblwrap" id="tblwrap" tabindex="0" role="region" aria-label="Civil matters and cases data table"><p class="tbl-pending" id="tblpending" role="status"></p><table>
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table></div>
+    <div id="summary"></div>
+    <div class="tbl-notes" id="tblnotes">
+      <div id="notesprov"></div>
+      <div id="notespartial"></div>
+      <div id="notesextra"></div>
+    </div>
+  </div>
   <div class="bottombar"><button id="dl">Download CSV</button></div>
+  <p class="csvline" id="csvline"></p>
   <div class="foot" id="footnote"></div>
 </div>
 <script src="shared/config.js?v=20260915a"></script>
 <script src="shared/provisional.js?v=20260903a"></script>
-<script src="shared/shared.js?v=20260918c"></script>
-<script src="scripts/civil.page.js?v=20260918c"></script><!-- LIONS auto-height reporter (for Framer embed) -->
+<script src="shared/shared.js?v=20260919a"></script>
+<script src="scripts/civil.page.js?v=20260919b"></script><!-- LIONS auto-height reporter (for Framer embed) -->
 <script src="shared/height-reporter.js?v=20260903a"></script>
 <script src="lab.js?v=20260903a"></script>
 <script src="shell2.js?v=20260917b"></script>

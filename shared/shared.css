@@ -319,7 +319,9 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
    at phone width. `.tblwrap`'s max-height is per-page and lives in each page's own
    stylesheet - index/agency/declinations 520px, civil 480px - and every page stylesheet
    loads AFTER this file, so a media rule here at equal specificity would lose the
-   cascade and never apply. It is in styles/index.css, beside the value it overrides. */
+   cascade and never apply. It is in all four page stylesheets, beside the value each one
+   overrides - styles/index.css since L-237, and styles/civil.css, styles/agency.css and
+   styles/declinations.css since L-301. */
 /* the two shape controls - INSIDE the table panel, never a .wrap child with a
    controls/masters/master/occbar class, which shell2.js folds away below 760px */
 .tbl-shape{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:0 0 10px;font-size:12.5px}
@@ -340,6 +342,21 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .tbl-notes{color:var(--mut);font-size:11.5px;margin:8px 0 0;max-width:72ch}
 .tbl-notes div{margin-top:3px}
 .scrollhint{display:none;color:var(--mut);font-size:11.5px;margin:0 0 6px}
+/* L-257: the first-open placeholder inside #tblwrap. It is never display:none and never
+   toggled with [hidden] - taking a live region out of the tree defeats the point of its
+   being static. Empty, a block box with no content and no padding has zero height, so it
+   takes no space; the padding only applies once it has words in it. It lived in
+   styles/index.css while index.html was the only page carrying the element; L-258/L-301
+   gave it to the other three, so it moves here and is DELETED there - two rules with one
+   selector in two files is how a cascade question gets invented later. */
+.tbl-pending{margin:0;padding:0;color:var(--mut);font-size:12.5px;line-height:1.4}
+.tbl-pending:not(:empty){padding:10px 12px}
+/* a stock column is a level, not something to add down: a 1px rule detaches it from the flow
+   columns beside it. The header says so in words as well - colour is never the only channel */
+th.stock,td.stock{border-left:1px solid var(--line)}
+/* the declinations table's reason columns partition the row's own total, exactly as the
+   criminal table's five disposition columns do; the totals block is separated the same way */
+th.tot,td.tot{border-left:1px solid var(--line)}
 /* below 560px the two trap columns FOLD INTO the category cell rather than disappearing */
 .kmeta{display:none}
 .topbar{display:none}

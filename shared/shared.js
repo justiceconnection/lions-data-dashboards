@@ -1965,3 +1965,335 @@ function mountDocMarkers(surface,root,labelToKey,base){
                   gfill: gfill, periodGrain: periodGrain }
   };
 })(typeof window !== 'undefined' ? window : globalThis);
+
+/* ══════════════════════════════════════════════════════════════════════════════════
+   THE DATA TABLE AND ITS CSV - ONE ENGINE, FOUR DESCRIPTORS.
+   L-233/L-237 built this on index.html; L-258 generalised it to civil.html,
+   agency.html and declinations.html, and L-301 is the build.
+   Specs: ops/handoffs/L-233-design-spec.md, ops/handoffs/L-258-design-spec.md.
+
+   WHY IT LIVES HERE AND NOT IN FOUR PAGE SCRIPTS (L-258 section 1, C0).
+   1. Invariant 9 is unchanged on all four dashboards: shared/shared.js is already in
+      every chain, so no script and no stylesheet is added or removed anywhere.
+   2. The strings Cary signed exist in ONE place and cannot drift four ways. The shared
+      ones are in COPY below; a page's own words are in its descriptor's `copy`.
+   3. The invariant-3 defences are the same code, written once and controlled once.
+
+   WHAT A DESCRIPTOR OWES THE ENGINE. Everything page-shaped:
+     spine(), visIdx()        the month axis and the window the page is showing
+     cols(state)              the column list, each {k,g,h,t,w,fold,cls}
+     dimKey, dimNounPlural    the second key column's field name and the refusal's noun
+     hasBasisCol              whether a Counting basis key column is printed
+     stockKeys                columns that take the bucket's LAST month, never a sum
+     extraKeyCsv              machine columns that ride beside the dimension key
+     pv, defaultWindowKey     the LIONS_PROV options and the fallback window metric
+     aggregate(state,dists,target)   the cube read; target.kind is 'all' or 'keys'
+     dimSlots(state)          the dimension slots, which is where invariant 3 lands
+     derive(row,state)        every ratio, applied to BUCKETED components (invariant 4)
+     rowExtras(row,state)     per-page machine columns, e.g. us_role
+     basisLine(state)         the one sentence above the table
+     emptyState(state)        optional; a string when the table has no measure at all
+     copy                     the page's own signed strings
+     hasEdge                  whether this page carries tr.edge (two of the four do)
+     afterHead(thead)         optional hook, e.g. index.html's doc markers
+     csvLine(state,nExtra)    optional; pages whose machine-column count varies
+
+   House style D-042: no em dashes, in the copy and in these comments.
+   ══════════════════════════════════════════════════════════════════════════════════ */
+(function (g) {
+  'use strict';
+
+  /* A RENDERING budget, not a property of the data. L-233 section 8; re-measured at 22
+     columns for L-258 section 8 and it still sits inside the same band. */
+  var ROW_CAP = 8000;
+
+  /* The strings that are identical on all four dashboards. Signed by Cary on
+     16 September 2026 (L-233 section 6) and 19 September 2026 (L-258 section 6). */
+  var COPY = {
+    rowsLabel: 'Break rows out by',
+    rowsDistrict: 'District',
+    colsLabel: 'Columns',
+    distSum: function (n) { return n + ' districts, added together'; },
+    addsTotal: 'is the total', addsYes: 'yes', addsNo: 'no - overlaps',
+    /* The signed criminal refusal ends "select fewer districts or categories". Only the
+       final noun is per page, because "categories" names nothing on agency.html and
+       names the wrong axis on declinations.html, where the categories are rows and the
+       reasons are columns. Everything before it is unchanged, character for character. */
+    refusal: function (n, cap, noun) {
+      return 'This selection would draw ' + n.toLocaleString() + ' rows and the table draws up to ' +
+        cap.toLocaleString() + '. Narrow the date range, choose a coarser Group by, or select fewer districts or ' + noun + '.';
+    },
+    /* L-257. The placeholder between the panel opening and the table landing. It names
+       the ACT and never a duration: the duration is a property of the reader's device. */
+    pending: 'Drawing the table…',
+    footProvUp: function (n) {
+      return 'Rows marked † are provisional: the most recent ' + n + ' months are still being reported, so those figures will rise. The mark uses the widest window across the columns in this table, so a month marked here can still be settled for filings on their own.';
+    },
+    /* L-258 section 5.4. A net stock is OVERSTATED at the vintage edge and will FALL,
+       so the flows caveat is wrong in the dangerous direction for a pending column.
+       Chosen by LIONS_PROV.dirAll() over the window keys the active columns carry. */
+    footProvDown: function (n) {
+      return 'Rows marked † are provisional: the most recent ' + n + ' months are still being reported. A pending caseload is overstated at that edge and will fall, because terminations are reported more slowly than filings.';
+    },
+    partialNote: '* part period - fewer months than the period holds.',
+    scrollHint: function (n) { return 'Scroll the table sideways to see all ' + n + ' columns.'; },
+    csvLine: function (n) {
+      return 'The CSV has the same rows and the same figures as the table, plus ' + n +
+        ' columns that spell out in words what the table shows as marks: the period\'s grain, whether it is a part period, whether it is provisional and how many months that covers, and what each key cell is.';
+    }
+  };
+
+  var GRAIN_NOUN = { month: 'month', cq: 'calendar quarter', fq: 'fiscal quarter', fy: 'fiscal year' };
+  var GRAIN_KEY = { month: 'month', cq: 'cal_quarter', fq: 'fiscal_quarter', fy: 'fiscal_year' };
+  function grainNoun(x) { return GRAIN_NOUN[x]; }
+  function grainKey(x) { return GRAIN_KEY[x]; }
+
+  var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+  var rint = function (x) { return x == null ? '-' : Math.round(x).toLocaleString(); };
+  var p1 = function (x) { return x == null ? '-' : x.toFixed(1); };
+
+  /* District slots are IDENTICAL on all four dashboards. Three levels, and the national
+     row is never called a sum: the national cube file is its own read, not a sum over
+     the 93 districts, and the table must not imply otherwise even though the two agree
+     exactly (L-258 section 3.1). */
+  function districtSlots(state) {
+    var sel = (state.dists.has('National') || state.dists.size === 0) ? [] : Array.from(state.dists);
+    if (!sel.length) return [{ label: 'National', level: 'national', set: new Set(['National']) }];
+    if (state.rowsBy.district) return sel.slice().sort().map(function (d) {
+      return { label: fmtDist(d), level: 'district', set: new Set([d]) };
+    });
+    if (sel.length === 1) return [{ label: fmtDist(sel[0]), level: 'district', set: new Set(sel) }];
+    return [{ label: COPY.distSum(sel.length), level: 'selection_sum', set: new Set(sel) }];
+  }
+
+  /* The dimension-slot builder for every axis whose parts PARTITION their cube's own
+     total row exactly: civil causes, civil client agencies, declination program
+     categories and declination referring agencies. Measured on the promoted July 2026
+     cubes, per axis, in design-lab/l258-cube-measure.js - not inherited from Criminal,
+     where the answer is different and depends on the occurrence axis.
+     Because the parts partition exactly and no cell in these cubes is negative, the
+     complement row is non-negative BY CONSTRUCTION rather than by measurement. */
+  function partitioningSlots(desc, state) {
+    var c = desc.copy, sel = desc.selectedDims(state);
+    var total = { label: c.totalLabel, level: 'cube_total', target: { kind: 'all' }, additive: COPY.addsTotal };
+    var member = function (m) {
+      return { label: m, level: 'member', target: { kind: 'keys', keys: new Set([m]) }, additive: COPY.addsYes };
+    };
+    if (!sel.length) {
+      if (!state.rowsBy.dim) return [total];
+      var all = desc.dimList();
+      return [total].concat(all.map(member)).concat([
+        { label: c.complementLabel, level: 'complement', complementOf: all, additive: COPY.addsYes }]);
+    }
+    if (!state.rowsBy.dim) {
+      /* L-267's fourth Adds up? value. One row and no total row means there is no sum in
+         the table and no second row to overlap with, so the column answers what the row
+         IS rather than a yes/no question with no subject. */
+      if (sel.length === 1) return [{ label: sel[0], level: 'member', target: { kind: 'keys', keys: new Set(sel) }, additive: c.addsOne }];
+      return [{ label: c.dimSum(sel.length), level: 'selection_sum', target: { kind: 'keys', keys: new Set(sel) }, additive: COPY.addsYes }];
+    }
+    return [total].concat(sel.map(member)).concat([
+      { label: c.complementLabel, level: 'complement', complementOf: sel, additive: COPY.addsYes }]);
+  }
+
+  function make(desc) {
+    var PV = function () { return window.LIONS_PROV; };
+
+    function activeCols(state) {
+      return desc.cols(state).filter(function (c) { return c.g === 'key' || state.tblCols[c.g] !== false; });
+    }
+    /* The L-014 envelope: the table's own provisional mark is the WIDEST window across
+       the columns it is CURRENTLY printing, so the chart and the table can legitimately
+       mark different spans. Never hard-coded, always computed from the active set. */
+    function windowKeys(state) {
+      return activeCols(state).filter(function (c) { return c.w; }).map(function (c) { return c.w; });
+    }
+    function provWindow(state) {
+      var k = windowKeys(state);
+      return k.length ? PV().nMax(k, desc.pv) : PV().n(desc.defaultWindowKey, desc.pv);
+    }
+    function provDirection(state) {
+      var k = windowKeys(state);
+      return k.length ? PV().dirAll(k) : 'up';
+    }
+    function rowCount(state) {
+      return grainBuckets(desc.spine(), desc.visIdx(), state.grain).length
+        * districtSlots(state).length * desc.dimSlots(state).length;
+    }
+    /* Invariant 4, structurally: the COMPONENT counts are bucketed first and every ratio
+       formula runs on the bucketed components afterwards, in desc.derive(). Never a mean
+       of monthly percentages. A STOCK is a level, so it takes the bucket's LAST month
+       instead - summing one is what made civil.html's chart disagree with its own table
+       by a constant 38,768 (L-126 / L-155). */
+    function bucketComponents(R, B) {
+      var o = {};
+      for (var k in R) o[k] = desc.stockKeys.indexOf(k) >= 0 ? bucketEnd(R[k], B) : bucketSum(R[k], B);
+      return o;
+    }
+    function buildRows(state) {
+      var B = grainBuckets(desc.spine(), desc.visIdx(), state.grain);
+      var ds = districtSlots(state), cs = desc.dimSlots(state);
+      var nProv = provWindow(state);
+      var flags = PV().bucketFlags(desc.spine(), B, nProv);
+      var out = [];
+      ds.forEach(function (d) {
+        var cache = new Map();
+        var comp = function (slot) {
+          if (slot.complementOf) {
+            if (!cache.has('__all')) cache.set('__all', bucketComponents(desc.aggregate(state, d.set, { kind: 'all' }), B));
+            var tot = cache.get('__all');
+            var part = bucketComponents(desc.aggregate(state, d.set, { kind: 'keys', keys: new Set(slot.complementOf) }), B);
+            var o = {};
+            for (var k in tot) o[k] = tot[k].map(function (v, i) { return v - part[k][i]; });
+            return o;
+          }
+          var key = slot.level === 'cube_total' ? '__all' : slot.label;
+          if (!cache.has(key)) cache.set(key, bucketComponents(desc.aggregate(state, d.set, slot.target), B));
+          return cache.get(key);
+        };
+        cs.forEach(function (c) {
+          var R = comp(c);
+          for (var i = 0; i < B.length; i++) {
+            var r = {
+              period: B[i].label + (B[i].partial ? '*' : ''),
+              period_grain: grainKey(state.grain), period_partial: B[i].partial ? 'yes' : '',
+              provisional: flags[i] ? 'yes' : '', provisional_window_months: nProv,
+              district: d.label, district_level: d.level,
+              _prov: !!flags[i], _order: i
+            };
+            r[desc.dimKey] = c.label; r[desc.dimKey + '_level'] = c.level;
+            if (desc.hasBasisCol) r.counting_basis = c.basis;
+            r.additive = c.additive;
+            for (var k in R) r[k] = R[k][i];
+            desc.derive(r, state);
+            desc.rowExtras(r, state);
+            out.push(r);
+          }
+        });
+      });
+      /* period-major: the time series stays the primary reading, as it is on the chart */
+      out.sort(function (a, b) { return a._order - b._order; });
+      return { rows: out, provN: nProv };
+    }
+
+    /* The CSV MIRRORS the table: same rows, same order, same figures, same metric
+       columns, plus the machine columns that carry the marks the screen draws, each one
+       placed next to the column it qualifies. Headers are field names, not display
+       labels (style guide section 9). A percentage is emitted at 2dp where the screen
+       rounds to 1dp: that is presentation, not identity.
+       Invariant 6 survives the export boundary as THREE columns and may not be collapsed
+       to one: `provisional` is the flag, `provisional_window_months` is what makes it
+       interpretable away from this page, and `period_partial` is a DIFFERENT fact. */
+    function csvColumns(state, cols) {
+      var out = [];
+      cols.forEach(function (c) {
+        out.push(c.k);
+        if (c.k === 'period') out.push('period_grain', 'period_partial', 'provisional', 'provisional_window_months');
+        if (c.k === 'district') out.push('district_level');
+        if (c.k === desc.dimKey) {
+          out.push(desc.dimKey + '_level');
+          desc.extraKeyCsv.forEach(function (x) { out.push(x); });
+        }
+      });
+      return out;
+    }
+    function csvText(state, LAST) {
+      var keys = csvColumns(state, LAST.cols.length ? LAST.cols : activeCols(state));
+      var L = [keys.join(',')];
+      var q = function (v) { var s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+      LAST.rows.forEach(function (r) {
+        L.push(keys.map(function (k) {
+          var v = r[k];
+          if (k.slice(-4) === '_pct') return v == null ? '' : v.toFixed(2);
+          if (k === 'period') return r.period.replace('*', '');   /* the "*" is carried by period_partial */
+          return q(v);
+        }).join(','));
+      });
+      return L.join('\n');
+    }
+
+    function el(id) { return document.getElementById(id); }
+    function clear(state, text) {
+      /* NO SILENT TRUNCATION, ever: a truncated table that still offers a download is how
+         a user gets a file quietly missing half its rows. The basis line stays, because it
+         still describes what the rows would be; the summary line, the scroll hint and the
+         caveats go, because a caveat about rows that were not drawn is noise. D-1: the CSV
+         mirrors the table, so the download refuses with it. */
+      el('refusal').textContent = text; el('refusal').hidden = false;
+      el('tblwrap').hidden = true; el('dl').disabled = true;
+      if (el('dl2')) el('dl2').disabled = true;
+      el('summary').textContent = ''; el('tblnotes').hidden = true; el('scrollhint').hidden = true;
+      el('thead').innerHTML = ''; el('tbody').innerHTML = '';
+    }
+
+    function render(state) {
+      var n = rowCount(state);
+      el('basisline').textContent = desc.basisLine(state);
+      /* The empty state reuses the refusal's container and idiom - one vocabulary for
+         "here is why there is no table" - and it is checked BEFORE the budget, because a
+         table with no measure has no row count worth reporting. */
+      var empty = desc.emptyState ? desc.emptyState(state) : null;
+      if (empty) { clear(state, empty); return { rows: [], cols: [], provN: provWindow(state) }; }
+      if (n > ROW_CAP) {
+        clear(state, COPY.refusal(n, ROW_CAP, desc.dimNounPlural));
+        return { rows: [], cols: activeCols(state), provN: provWindow(state) };
+      }
+      el('refusal').hidden = true; el('tblwrap').hidden = false;
+      el('dl').disabled = false; if (el('dl2')) el('dl2').disabled = false;
+      el('tblnotes').hidden = false; el('scrollhint').hidden = false;
+      var built = buildRows(state), cols = activeCols(state);
+      el('thead').innerHTML = '<tr>' + cols.map(function (c) {
+        return '<th class="' + (c.g === 'key' ? 'k' : 'm') + (c.fold ? ' b' : '') + (c.cls ? ' ' + c.cls : '') + '" scope="col">' + esc(c.h) + '</th>';
+      }).join('') + '</tr>';
+      el('tbody').innerHTML = built.rows.map(function (r) {
+        var cls = [];
+        /* `edge` is CARRIED FORWARD UNCHANGED on the pages that already have it,
+           hard-coded date and all. Its threshold is undocumented and its styling fails
+           WCAG 1.4.1 and 1.4.3. Cary RULED on 16 September 2026 (L-233 section 10, D-2)
+           that it is carried forward exactly as it is and that both defects go to the
+           data-analyst as L-236. declinations.html has never had the class and does not
+           gain one here. */
+        if (desc.hasEdge && r.period_grain === 'month' && r.period.slice(0, 7) <= '1996-09') cls.push('edge');
+        if (r._prov) cls.push('recent');
+        if (r[desc.dimKey + '_level'] === 'cube_total') cls.push('rowtotal');
+        return '<tr' + (cls.length ? ' class="' + cls.join(' ') + '"' : '') + '>' + cols.map(function (c) {
+          if (c.k === 'period') return '<td class="k">' + esc(r.period) + (r._prov ? PV().tableMark() : '') + '</td>';
+          /* The trap columns FOLD INTO the dimension cell below 560px rather than being
+             dropped: their value differs between the total row and the member rows, and
+             that difference is the whole invariant-3 point. The meta span is display:none
+             at desktop width, so it is out of the accessibility tree there and nothing is
+             read twice. */
+          if (c.k === desc.dimKey) {
+            return '<td class="k">' + esc(r[c.k]) + '<span class="kmeta">' +
+              (desc.hasBasisCol ? esc(r.counting_basis) + ' &middot; ' : '') + 'adds up: ' + esc(r.additive) + '</span></td>';
+          }
+          if (c.g === 'key') return '<td class="k' + (c.fold ? ' b' : '') + '">' + esc(r[c.k]) + '</td>';
+          if (c.cls) return '<td class="' + c.cls + '">' + (c.t === 'pct' ? p1(r[c.k]) : rint(r[c.k])) + '</td>';
+          return '<td>' + (c.t === 'pct' ? p1(r[c.k]) : rint(r[c.k])) + '</td>';
+        }).join('') + '</tr>';
+      }).join('');
+      if (desc.afterHead) desc.afterHead(el('thead'));
+      var csvCols = csvColumns(state, cols);
+      el('summary').innerHTML = '<b>' + built.rows.length.toLocaleString() + '</b> rows &middot; <b>' +
+        csvCols.length + '</b> columns in the CSV';
+      el('scrollhint').textContent = COPY.scrollHint(cols.length - cols.filter(function (c) { return c.fold; }).length);
+      el('notesprov').textContent = (provDirection(state) === 'down' ? COPY.footProvDown : COPY.footProvUp)(built.provN);
+      el('notespartial').textContent = COPY.partialNote;
+      if (el('notesextra')) el('notesextra').textContent = desc.copy.notesExtra || '';
+      if (desc.csvLine && el('csvline')) el('csvline').textContent = desc.csvLine(state, csvCols.length - cols.length);
+      return { rows: built.rows, cols: cols, provN: built.provN };
+    }
+
+    return {
+      activeCols: activeCols, provWindow: provWindow, provDirection: provDirection,
+      rowCount: rowCount, buildRows: buildRows, csvColumns: csvColumns, csvText: csvText,
+      render: render, desc: desc
+    };
+  }
+
+  g.LIONS_TABLE = {
+    COPY: COPY, ROW_CAP: ROW_CAP, make: make,
+    districtSlots: districtSlots, partitioningSlots: partitioningSlots,
+    grainNoun: grainNoun, grainKey: grainKey
+  };
+})(typeof window !== 'undefined' ? window : globalThis);

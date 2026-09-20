@@ -4,7 +4,11 @@ const DEFAULT_AGS_V=['SSA','HUD','IRS','Bureau of Prisons','ICE','HSI','FBI','DE
 const state={cls:'R',dists:new Set(['National']),
   ags:new Set(DEFAULT_AGS_R),occ:'lead',metric:'cases_filed',
   agsC:new Set(DEFAULT_AGS_V),role:'Defendant',basis:'cases',metricC:'cases_filed',
-  mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06',grain:'month'};
+  mixMode:'stacked',admins:new Set(),from:'2013-01',to:'2026-06',grain:'month',
+  rowsBy:{district:false,dim:false},
+  /* every group either mode can show, so switching mode and back does not lose a
+     reader's choice. `pending` is the one group off by default (spec C8). */
+  tblCols:{cases:true,defendants:true,dispositions:true,rates:true,matters:true,pending:false}};
 let NAT=null,FULL=null,CNAT=null,CFULL=null,SPINE=[],fullLoading=false,cfullLoading=false,civilLoading=false;
 let dMS=null,chart=null,chart2=null,chart3=null;
 let AGLIST_R=[],AGLIST_V=[],DEPTS_R=[],DEPTS_V=[];
@@ -29,7 +33,6 @@ const CURRENT="agency.html";
 // L-144: this page is TWO flag sets over one surface. `agencyCivil` is the Civil mode of
 // the same page, so REFERENCES.modes maps it back to `agency` for `?from=`.
 const docMode=()=>isCiv()?'agencyCivil':'agency';
-const DOC_TH_KEYS_R={'Cases filed':'cases_filed','Def. filed':'defendants_filed'};
 
 // ── L-155: `cases_pending` is a COUNTED column, read from its own cube ───────────
 // `civil_agency_pending_cube_national.csv` / `civil_agency_pending_cube.csv`:
@@ -62,9 +65,6 @@ let PCNAT=null,PCFULL=null,PSP_N=null,PSP_F=null,pcnatLoading=false,pcfullLoadin
 const PV=window.LIONS_PROV;
 const SL=window.LIONS_STATUS;
 const pvopt=()=>({civil:isCiv()});
-// The share chart normalises on the mode's inflow; the table prints every metric and
-// so takes the widest window across its own columns (spec §3.5).
-const TBL_METRICS_R=["cases_filed","cases_terminated","clearance","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct"];
 function mixMetric(){ return isCiv()?(state.basis==='cases'?'cases_filed':'matters_received'):'cases_filed'; }
 
 // mode helpers
@@ -182,10 +182,8 @@ function shareFlow(R){ return isCiv()?R[primaryFlow()]:R.filed; }
 
 function agColor(ag){ const i=curAglist().indexOf(ag); return CATPAL[(i<0?0:i)%CATPAL.length]; }
 function selAgs(){ return [...curAgs()]; }
-const r1=x=>x==null?"-":x.toLocaleString(undefined,{maximumFractionDigits:1});
 const rint=x=>x==null?"-":Math.round(x).toLocaleString();
 const p1=x=>x==null?"-":x.toFixed(1);
-let lastRows=[], lastCols=[];
 
 // ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
 // The four KPI cards and their renderKPIs() are retired.
@@ -383,61 +381,299 @@ function updateChartAccessibility(){
   );
 }
 
-function renderTable(){
-  const R=aggregate(state.dists,curAgs());
-  // Computed from the vintage edge, replacing a hardcoded `ym>="2026-03"` that would
-  // have meant the wrong thing the moment the next vintage promoted. Colour alone is a
-  // WCAG 1.4.1 failure, so provisional rows also carry a dagger.
-  const provM=PV.monthFlags(SPINE,PV.nMax(isCiv()?metricsList().map(m=>m[0]):TBL_METRICS_R,pvopt()));
-  if(!isCiv()){
-    const rows=[]; let sf=0,stt=0;
-    for(const i of visIdx()){ const ym=SPINE[i]; const filed=R.filed[i],term=R.term[i],dt=R.dt[i];
-      const row={ym,filed,term,df:R.df[i],dt,filed3:mean3(R.filed,i),term3:mean3(R.term,i),
-        clr:filed>0?100*term/filed:null,clr3:ratio3(R.term,R.filed,i),
-        gpct:dt>0?100*R.guilty[i]/dt:null,dpct:dt>0?100*R.dismissed[i]/dt:null,
-        prov:!!provM[i],
-        tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")};
-      rows.push(row); sf+=filed; stt+=term; }
-    lastRows=rows; lastCols=null;
-    const theadR=document.getElementById("thead");
-    theadR.innerHTML="<tr><th>Month</th><th>Cases filed</th><th>Cases term.</th><th>Clearance %</th><th>Def. filed</th><th>Def. term.</th><th>Guilty %</th><th>Dismissed %</th></tr>";
-    mountDocMarkers(docMode(),theadR,DOC_TH_KEYS_R);
-    document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-      return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td><td>${rint(r.filed)}</td><td>${rint(r.term)}</td><td>${p1(r.clr)}</td><td>${rint(r.df)}</td><td>${rint(r.dt)}</td><td>${p1(r.gpct)}</td><td>${p1(r.dpct)}</td></tr>`;
-    }).join("");
-    const ocl=sf>0?(100*stt/sf).toFixed(1)+"%":"-";
-    document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · filed <b>${sf.toLocaleString()}</b> · terminated <b>${stt.toLocaleString()}</b> · clearance <b>${ocl}</b>`;
-    document.getElementById("note").textContent=(state.occ==='all'&&curAgs().size>1)?"Note: “All agencies” basis - a case referred by several selected agencies is counted more than once.":"";
-  } else {
-    const cols=metricsList().map(m=>m[0]); const arrs=cols.map(m=>metricArray(R,m));
-    const rows=[];
-    for(const i of visIdx()){ const ym=SPINE[i]; rows.push({ym,vals:arrs.map(a=>a[i]),prov:!!provM[i],tag:ym<="1996-09"?"edge":(provM[i]?"recent prov":"")}); }
-    lastRows=rows; lastCols=cols;
-    const theadC=document.getElementById("thead");
-    theadC.innerHTML="<tr><th>Month</th>"+metricsList().map(m=>`<th>${m[1]}</th>`).join("")+"</tr>";
-    mountDocMarkers(docMode(),theadC,Object.fromEntries(metricsList().map(m=>[m[1],m[0]])));
-    document.getElementById("tbody").innerHTML=rows.map(r=>{ const cls=r.tag?` class="${r.tag}"`:'';
-      return `<tr${cls}><td>${r.ym}${r.prov?PV.tableMark():''}</td>`+r.vals.map(v=>`<td>${v==null?"-":(Number.isInteger(v)?rint(v):r1(v))}</td>`).join("")+`</tr>`;
-    }).join("");
-    const tot=metricArray(R, state.basis==='cases'?'cases_filed':'matters_received');
-    const s=visIdx().reduce((a,i)=>a+tot[i],0);
-    document.getElementById("summary").innerHTML=`<b>${rows.length}</b> months · ${primaryLabel()} <b>${Math.round(s).toLocaleString()}</b> · U.S. as ${state.role} · ${curAgs().size} agencies`;
-    document.getElementById("note").textContent="";
+/* ══════════════════════════════════════════════════════════════════════════════════
+   THE DATA TABLE AND ITS CSV - L-258, built under L-301.
+   The engine is LIONS_TABLE in shared/shared.js, which this page already loads, so
+   INVARIANT 9 IS UNCHANGED: no script and no stylesheet was added to or removed from
+   this page's chain. Everything below is this page's descriptor.
+
+   INVARIANT 13 LIVES HERE. This page is TWO cubes and TWO crosswalks - agency_cube in
+   criminal mode, civil_agency_cube in civil mode - and the descriptor switches whole
+   rather than mixing: its columns, its cube read, its slot builder, its provisional
+   options and its copy all follow isCiv(). Nothing is shared across the two but the
+   engine itself.
+
+   THE MIRROR TRAP, and it is the reason this page is not a port of index.html.
+   lions_cube's total row exists ONLY at occ='all'. agency_cube's exists ONLY at
+   occ='lead' - 382 of 382 national rows - and at occ='all' there is no total row at
+   all. THE OCCURRENCE AXIS IS THEREFORE NOT FILTERED ON THE TOTAL-ROW BRANCH of
+   aggregateTable() below, deliberately: honouring an occ='all' selection there would
+   match no row, and the table would read zero or fall through to summing the agencies,
+   which is invariant 3's own failure mode. Measured, both directions, in
+   design-lab/l258-cube-measure.js.
+   Spec: ops/handoffs/L-258-design-spec.md, copy signed by Cary 19 September 2026.
+   ══════════════════════════════════════════════════════════════════════════════════ */
+const ROW_CAP=window.LIONS_TABLE.ROW_CAP;
+const TCOPY=window.LIONS_TABLE.COPY;
+/* `g` is the column group a user can switch off; 'key' is never switchable. `w` is the
+   provisional-window metric key the column takes - the table's mark is the WIDEST across
+   the columns it is currently printing (the L-014 envelope). `fold` marks the columns
+   that fold INTO the agency cell below 560px. `cls` carries the stock hairline. */
+const TBL_COLS_R=[
+  {k:'period',g:'key',h:'Period'},
+  {k:'district',g:'key',h:'District'},
+  {k:'agency',g:'key',h:'Referring agency'},
+  {k:'counting_basis',g:'key',h:'Counting basis',fold:true},
+  {k:'additive',g:'key',h:'Adds up?',fold:true},
+  {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},
+  {k:'cases_terminated',g:'cases',h:'Cases terminated',t:'int',w:'cases_terminated'},
+  {k:'defendants_filed',g:'defendants',h:'Defendants filed',t:'int',w:'defendants_filed'},
+  {k:'defendants_terminated',g:'defendants',h:'Defendants terminated',t:'int',w:'defendants_terminated'},
+  {k:'guilty',g:'dispositions',h:'Guilty',t:'int',w:'guilty'},
+  {k:'not_guilty',g:'dispositions',h:'Not guilty',t:'int',w:'guilty'},
+  {k:'dismissed',g:'dispositions',h:'Dismissed',t:'int',w:'dismissed'},
+  {k:'rule_20_21',g:'dispositions',h:'Rule 20/21',t:'int',w:'guilty'},
+  {k:'other',g:'dispositions',h:'Other disposition',t:'int',w:'guilty'},
+  {k:'clearance_pct',g:'rates',h:'Clearance %',t:'pct',w:'clearance'},
+  {k:'guilty_pct',g:'rates',h:'Guilty %',t:'pct',w:'guilty_pct'},
+  {k:'not_guilty_pct',g:'rates',h:'Not guilty %',t:'pct',w:'guilty_pct'},
+  {k:'dismissed_pct',g:'rates',h:'Dismissed %',t:'pct',w:'dismissed_pct'},
+  {k:'rule_20_21_pct',g:'rates',h:'Rule 20/21 %',t:'pct',w:'guilty_pct'},
+  {k:'other_pct',g:'rates',h:'Other disposition %',t:'pct',w:'guilty_pct'}
+];
+const TBL_COLS_V=[
+  {k:'period',g:'key',h:'Period'},
+  {k:'district',g:'key',h:'District'},
+  {k:'agency',g:'key',h:'Client agency'},
+  {k:'additive',g:'key',h:'Adds up?',fold:true},
+  {k:'matters_received',g:'matters',h:'Matters received',t:'int',w:'matters_received'},
+  {k:'matters_terminated',g:'matters',h:'Matters terminated',t:'int',w:'matters_terminated'},
+  {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},
+  {k:'cases_terminated',g:'cases',h:'Cases terminated',t:'int',w:'cases_terminated'},
+  {k:'cases_pending',g:'pending',h:'Cases pending (at period end)',t:'int',w:'cases_pending',cls:'stock'},
+  {k:'d_judg_us',g:'dispositions',h:'Judgment for U.S.',t:'int',w:'cases_terminated'},
+  {k:'d_settle',g:'dispositions',h:'Settlements',t:'int',w:'cases_terminated'},
+  {k:'d_against',g:'dispositions',h:'Judgment against U.S.',t:'int',w:'cases_terminated'},
+  {k:'d_dismissed',g:'dispositions',h:'Dismissed',t:'int',w:'cases_terminated'},
+  {k:'d_other',g:'dispositions',h:'Other disposition',t:'int',w:'cases_terminated'},
+  {k:'d_judg_us_pct',g:'rates',h:'Judgment for U.S. %',t:'pct',w:'cases_terminated'},
+  {k:'d_settle_pct',g:'rates',h:'Settlements %',t:'pct',w:'cases_terminated'},
+  {k:'d_against_pct',g:'rates',h:'Judgment against U.S. %',t:'pct',w:'cases_terminated'},
+  {k:'d_dismissed_pct',g:'rates',h:'Dismissed %',t:'pct',w:'cases_terminated'},
+  {k:'d_other_pct',g:'rates',h:'Other disposition %',t:'pct',w:'cases_terminated'}
+];
+const TBL_GROUPS_R=[['cases','Cases'],['defendants','Defendants'],['dispositions','Dispositions'],['rates','Rates']];
+const TBL_GROUPS_V=[['matters','Matters'],['cases','Cases'],['pending','Pending'],['dispositions','Dispositions'],['rates','Rates']];
+/* Every user-facing string this table puts on the page that is not already in
+   LIONS_TABLE.COPY, one object per mode. Signed by Cary verbatim on 19 September 2026
+   (spec section 6). Never an em dash (D-042). */
+const TBL_COPY_R={
+  totalLabel:'All referring agencies (cube total)',
+  complementLabel:'The other referring agencies, added together',
+  dimSum:n=>n+' referring agencies, added together',
+  distSum:TCOPY.distSum,
+  addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
+  addsOne:'is one referring agency',
+  /* Two of Criminal's three signed basis values are reused character for character.
+     `Primary category` becomes `Lead agency`, which is both the axis agency_cube carries
+     and the exact word on this page's own toggle. `All agencies` is deliberately NOT
+     reused for the other value: on a row that already names one agency, a cell reading
+     `All agencies` reads as a SELECTION rather than as a basis. */
+  basisDistinct:'Distinct total', basisLead:'Lead agency', basisAll:'All occurrences',
+  lineAll:p=>'One row per '+p+'. The figures are the cube’s own total row for all referring agencies, which counts each case once.',
+  lineOne:(p,occ)=>'One row per '+p+'. The figures are one referring agency, counted '+(occ==='lead'?'once under each case’s lead agency':'under every agency that referred the case')+'.',
+  lineSumLead:(p,n)=>'One row per '+p+'. The figures are '+n+' referring agencies added together, and each case is counted once, under its lead agency.',
+  lineSumAll:(p,n)=>'One row per '+p+'. The figures are '+n+' referring agencies added together, and a case referred by more than one of them is counted more than once.',
+  lineBreakoutLead:'Agency rows add up to the total row once "The other referring agencies, added together" is included, because each case is counted once under its lead agency.',
+  lineBreakoutAll:'Agency rows do not add up to the total row, because a case is counted under every agency that referred it. The total row is the cube’s own total for all agencies, counted once per case, which this cube carries only on the lead-agency basis.',
+  notesExtra:'',
+  refusal:(n,cap)=>TCOPY.refusal(n,cap,'referring agencies'),
+  pending:TCOPY.pending
+};
+const TBL_COPY_V={
+  totalLabel:'All client agencies (cube total)',
+  complementLabel:'The other client agencies, added together',
+  dimSum:n=>n+' client agencies, added together',
+  distSum:TCOPY.distSum,
+  addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
+  addsOne:'is one client agency',
+  lineAll:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are the cube’s own total row for all client agencies.',
+  lineOne:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are one client agency.',
+  lineSum:(p,n,role)=>'One row per '+p+', U.S. as '+role+'. The figures are '+n+' client agencies added together, and each case is counted once, because a case has exactly one client agency.',
+  lineBreakout:(p,role)=>'One row per '+p+' per client agency, U.S. as '+role+'. The agency rows add up to the total row once "The other client agencies, added together" is included, because a case has exactly one client agency.',
+  notesExtra:'Cases pending is a level read at the end of the period, not a total for the period. Do not add that column down.',
+  refusal:(n,cap)=>TCOPY.refusal(n,cap,'client agencies'),
+  pending:TCOPY.pending
+};
+const tblCopy=()=>isCiv()?TBL_COPY_V:TBL_COPY_R;
+let LAST={rows:[],cols:[],provN:6};
+let BYDIST_R=null,BYDIST_V=null;   // district -> its own rows; built once the cube is in
+
+/* The district cubes are 820,160 and 1,014,877 rows, and a cross-tab asks for them once
+   per district slot per agency slot. Indexing once turns each of those scans into the
+   rows that district actually has. Neither cube is mutated after assignment, so the
+   index cannot go stale; it is built lazily so a national-only session never pays. */
+function tblDistRows(d){
+  const src=isCiv()?CFULL:FULL;
+  if(!src) return [];
+  if(isCiv()){ if(!BYDIST_V){ BYDIST_V=new Map(); for(const r of src){ let a=BYDIST_V.get(r.district); if(!a){a=[];BYDIST_V.set(r.district,a);} a.push(r); } } return BYDIST_V.get(d)||[]; }
+  if(!BYDIST_R){ BYDIST_R=new Map(); for(const r of src){ let a=BYDIST_R.get(r.district); if(!a){a=[];BYDIST_R.set(r.district,a);} a.push(r); } }
+  return BYDIST_R.get(d)||[];
+}
+/* The table needs all NINE numeric columns the mode's cube carries; aggR() and aggC()
+   carry six and nine under short field names for the charts. Kept separate rather than
+   widened, because the chart path is the hot one.
+     target.kind 'all'  - the cube's OWN total row, department='ALL' AND subagency='ALL'.
+                          THE OCCURRENCE AXIS IS NOT FILTERED HERE. See the header above.
+     target.kind 'keys' - one or more named subagencies AT the selected occurrence axis
+                          (criminal) or at the selected role (civil). */
+function aggregateTable(dists,target){
+  const civ=isCiv(), NUMS=civ?NUM_C:NUM_R;
+  const useNat=dists.has('National')||dists.size===0;
+  const idx=new Map();
+  const add=r=>{
+    if(civ && r.role!==state.role) return;
+    if(target.kind==='all'){ if(!(r.dept==='ALL'&&r.grp==='ALL')) return; }
+    else { if(r.dept==='ALL'||r.grp==='ALL'||!target.keys.has(r.grp)) return;
+           if(!civ && r.occ!==state.occ) return; }
+    let o=idx.get(r.ym);
+    if(!o){ o={}; for(const k of NUMS) o[k]=0; idx.set(r.ym,o); }
+    for(const k of NUMS) o[k]+=r[k]; };
+  const nat=civ?CNAT:NAT;
+  if(useNat){ if(nat) for(const r of nat) add(r); }
+  else { for(const d of dists) for(const r of tblDistRows(d)) add(r); }
+  const R={}; for(const k of NUMS) R[k]=[];
+  for(const ym of SPINE){ const o=idx.get(ym); for(const k of NUMS) R[k].push(o?o[k]:0); }
+  /* cases_pending is a COUNTED column in a SECOND cube, read through pendingArrC(),
+     which is the only place that knows the zero-suppression contract. It is a STOCK, so
+     the engine takes the bucket's LAST month and never a sum. Civil mode only. */
+  if(civ) R.cases_pending=pendingArrC(dists,target.kind==='all'?new Set(['ALL']):target.keys,state.role);
+  return R;
+}
+const tblSelAgs=()=>{ const a=curAgs(); return (a.has('ALL')||a.size===0)?[]:[...a]; };
+
+/* agency.html's CRIMINAL slot builder. Additivity here is PER AXIS and is the mirror of
+   index.html's: at occ='lead' the department x subagency rows reproduce the total row
+   EXACTLY on all 382 months and all nine columns, so the complement row is honest and
+   non-negative by construction; at occ='all' they over-count and THERE IS NO TOTAL ROW
+   AT ALL, so there is no complement row and there must not be one - total minus a sum of
+   overlapping parts can go negative, and a negative "other" row is worse than no row. */
+function agencyCrimSlots(st){
+  const c=TBL_COPY_R, sel=tblSelAgs(), lead=st.occ==='lead';
+  const basis=lead?c.basisLead:c.basisAll;
+  const total={label:c.totalLabel,level:'cube_total',target:{kind:'all'},basis:c.basisDistinct,additive:c.addsTotal};
+  const member=m=>({label:m,level:'member',target:{kind:'keys',keys:new Set([m])},basis,additive:lead?c.addsYes:c.addsNo});
+  if(!sel.length){
+    if(!st.rowsBy.dim) return [total];
+    const all=AGLIST_R, rows=[total].concat(all.map(member));
+    if(lead) rows.push({label:c.complementLabel,level:'complement',complementOf:all,basis,additive:c.addsYes});
+    return rows;
   }
+  if(!st.rowsBy.dim){
+    if(sel.length===1) return [{label:sel[0],level:'member',target:{kind:'keys',keys:new Set(sel)},basis,additive:c.addsOne}];
+    return [{label:c.dimSum(sel.length),level:'selection_sum',target:{kind:'keys',keys:new Set(sel)},basis,additive:lead?c.addsYes:c.addsNo}];
+  }
+  const rows=[total].concat(sel.map(member));
+  if(lead) rows.push({label:c.complementLabel,level:'complement',complementOf:sel,basis,additive:c.addsYes});
+  return rows;
+}
+
+const TBL_DESC={
+  spine:()=>SPINE, visIdx:()=>visIdx(),
+  cols:()=>isCiv()?TBL_COLS_V:TBL_COLS_R,
+  dimKey:'agency',
+  get dimNounPlural(){ return isCiv()?'client agencies':'referring agencies'; },
+  get hasBasisCol(){ return !isCiv(); },
+  hasEdge:true,
+  get stockKeys(){ return isCiv()?['cases_pending']:[]; },
+  /* The U.S. role is a page filter in civil mode, not a third breakout axis: there is no
+     role='ALL' row in civil_agency_cube to check a three-role sum against. It is stated
+     in the basis line and rides the CSV as a machine column. Criminal mode has no role. */
+  get extraKeyCsv(){ return isCiv()?['us_role']:[]; },
+  get pv(){ return pvopt(); },
+  defaultWindowKey:'cases_filed',
+  aggregate:(st,dists,target)=>aggregateTable(dists,target),
+  dimSlots:st=>isCiv()?window.LIONS_TABLE.partitioningSlots(TBL_DESC,st):agencyCrimSlots(st),
+  selectedDims:()=>tblSelAgs(),
+  dimList:()=>AGLIST_V,
+  /* Invariant 4: every ratio runs on components the engine has ALREADY bucketed, so a
+     fiscal-year guilty share is the year's guilty dispositions over the year's terminated
+     defendants and never the mean of twelve monthly rates. The five criminal disposition
+     shares total 100.0% of defendants terminated and the five civil ones total 100.0% of
+     cases terminated, because both sets partition their denominator exactly (measured). */
+  derive:r=>{
+    if(isCiv()){ const ct=r.cases_terminated;
+      for(const k of ['d_judg_us','d_settle','d_against','d_dismissed','d_other'])
+        r[k+'_pct']=ct>0?100*r[k]/ct:null;
+      return; }
+    const dt=r.defendants_terminated;
+    r.clearance_pct=r.cases_filed>0?100*r.cases_terminated/r.cases_filed:null;
+    for(const k of ['guilty','not_guilty','dismissed','rule_20_21','other'])
+      r[k+'_pct']=dt>0?100*r[k]/dt:null; },
+  rowExtras:r=>{ if(isCiv()) r.us_role=state.role; },
+  basisLine:st=>tblBasisLine(st),
+  csvLine:(st,n)=>TCOPY.csvLine(n),
+  get copy(){ return tblCopy(); }
+};
+const TBL=window.LIONS_TABLE.make(TBL_DESC);
+const activeTblCols=()=>TBL.activeCols(state);
+function tblRowCount(){ return TBL.rowCount(state); }
+/* SIX STATES in criminal mode and FOUR in civil, counted before the branch was written
+   (style guide 5g, after L-249 D-C). Seven criminal lines for six states: 2/3 and 4/5 are
+   one state each with the occurrence axis choosing the clause, and 6/7 likewise. A state
+   missing from the enumeration does not fall through to a neighbour. */
+function tblBasisLine(st){
+  const p=window.LIONS_TABLE.grainNoun(st.grain), sel=tblSelAgs();
+  if(isCiv()){ const c=TBL_COPY_V;
+    if(st.rowsBy.dim) return c.lineBreakout(p,st.role);
+    if(sel.length>1) return c.lineSum(p,sel.length,st.role);
+    if(sel.length===1) return c.lineOne(p,st.role);
+    return c.lineAll(p,st.role); }
+  const c=TBL_COPY_R, lead=st.occ==='lead';
+  if(st.rowsBy.dim) return lead?c.lineBreakoutLead:c.lineBreakoutAll;
+  if(sel.length>1) return lead?c.lineSumLead(p,sel.length):c.lineSumAll(p,sel.length);
+  if(sel.length===1) return c.lineOne(p,st.occ);
+  return c.lineAll(p);
+}
+function renderTable(){ LAST=TBL.render(state); }
+
+/* The column-group buttons follow the mode, because the two cubes carry different
+   columns. Rebuilt by switchClass(); the state map holds every group either mode can
+   show, so switching back and forth does not lose a reader's choice. */
+function tblGroups(){ return isCiv()?TBL_GROUPS_V:TBL_GROUPS_R; }
+function buildColGroups(){
+  const host=document.getElementById('colgroups');
+  host.innerHTML=tblGroups().map(([g,lbl])=>
+    `<button type="button" data-v="${g}" class="${state.tblCols[g]?'on':''}" aria-pressed="${state.tblCols[g]?'true':'false'}">${lbl}</button>`).join('');
+  host.querySelectorAll('button').forEach(b=>b.addEventListener('click',async()=>{
+    const g=b.dataset.v, on=!state.tblCols[g];
+    /* never zero metric columns: a table with only key columns answers nothing */
+    if(!on && activeTblCols().filter(c=>c.g!=='key').length<=TBL_DESC.cols(state).filter(c=>c.g===g).length) return;
+    state.tblCols[g]=on; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');
+    /* the ONE column group that costs a fetch - 1.41 MiB national, 66.11 MiB district -
+       and the reason it is the one group off by default (spec C8) */
+    if(on && g==='pending') await ensurePending(true);
+    tblBuild(); }));
+}
+
+/* ── L-257's lazy build, inherited exactly (spec C7) ────────────────────────────────
+ * The table is built on the FIRST OPEN of the disclosure and marked stale by any filter,
+ * date, preset, mode, occurrence-axis, role, column-group or grain change. TWO THINGS
+ * STAY EAGER, and both are state-derived and build no rows: tblRowCount() is three cheap
+ * counts, so an over-cap selection disables Download CSV at the moment it goes over
+ * budget, panel open or shut; and tblBasisLine() reads state only, so the basis line is
+ * on screen in the same paint in which the panel opens. */
+let tblDirty=true;
+const tblPanelOpen=()=>!document.getElementById('tablePanel').hidden;
+function tblBuild(){ document.getElementById('tblpending').textContent=''; renderTable(); tblDirty=false; }
+function tblInvalidate(){
+  tblDirty=true;
+  if(tblPanelOpen()){ tblBuild(); return; }
+  document.getElementById('basisline').textContent=tblBasisLine(state);
+  const over=tblRowCount()>ROW_CAP;
+  document.getElementById('dl').disabled=over; document.getElementById('dl2').disabled=over;
 }
 
 function buildCSV(){
-  const L=[];
-  if(!isCiv()){
-    L.push(["month","cases_filed","cases_terminated","clearance_pct","defendants_filed","defendants_terminated","guilty_pct","dismissed_pct","provisional"].join(","));
-    for(const r of lastRows) L.push([r.ym,r.filed,r.term,r.clr==null?"":r.clr.toFixed(2),r.df,r.dt,r.gpct==null?"":r.gpct.toFixed(2),r.dpct==null?"":r.dpct.toFixed(2),r.prov?"yes":""].join(","));
-  } else {
-    L.push(["month",...lastCols,"provisional"].join(","));
-    for(const r of lastRows) L.push([r.ym,...r.vals.map(v=>v==null?"":(Number.isInteger(v)?v:v.toFixed(2))),r.prov?"yes":""].join(","));
-  }
-  const blob=new Blob([L.join("\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
-  const dt=(state.dists.has('National')||state.dists.size===0)?'National':state.dists.size+'dists';
-  a.download=`lions_agency_${isCiv()?'civil_'+state.role+'_'+state.basis:'criminal'}_${dt}_${state.from}_${state.to}.csv`; a.click();
+  /* #dl sits OUTSIDE the panel and is live with the table never built, so the download
+     does the build itself rather than going silently dead on the empty LAST below. Same
+     button, same rows, same cap: D-1 is not re-opened, and an over-cap selection still
+     refuses, because tblBuild() runs the same refusal branch the table does. */
+  if(tblDirty) tblBuild();
+  if(LAST.rows.length===0) return;   /* D-1: if the table refuses to draw, the download refuses too */
+  const blob=new Blob([TBL.csvText(state,LAST)],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
+  a.download=`lions_agency_${isCiv()?'civil_'+state.role:'criminal_'+state.occ}_${dt}_${state.grain}_${state.from}_${state.to}.csv`; a.click();
 }
 
 // flat multi-select (districts)
@@ -583,13 +819,13 @@ async function render(){
      print is deleted - the topline caption is a superset of it - and the progress and
      failure messages belong to the ensure functions, which are the only things that know
      which one is true. A render that wrote here would wipe a failure within one tick. */
-  renderTopline(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); renderTable();
+  renderTopline(); renderChart(); renderChart2(); renderChart3(); updateChartAccessibility(); tblInvalidate();
 }
 
 async function switchClass(cls){
   state.cls=cls;
   if(isCiv()){ await ensureCivil(); if(!(state.dists.has('National')||state.dists.size===0)) await ensureFullC(); }
-  populateMetric(); buildAgencyPicker(); render();
+  populateMetric(); buildAgencyPicker(); buildColGroups(); render();
 }
 
 async function init(){ renderNav();
@@ -613,7 +849,7 @@ async function init(){ renderNav();
   document.querySelectorAll('#role button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#role button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.role=x.dataset.v; render(); }));
   document.querySelectorAll('#basis button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#basis button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.basis=x.dataset.v; populateMetric(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(x=>x.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(y=>y.classList.remove('on')); x.classList.add('on'); state.mixMode=x.dataset.v; renderChart2(); updateChartAccessibility(); }));
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); renderChart3(); }));
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); renderChart3(); tblInvalidate(); }));
   document.querySelectorAll('#presets button').forEach(btn=>btn.addEventListener('click',()=>{ const k=btn.dataset.p;
     if(k==='all'){ state.admins.clear(); applyAdmins(); render(); return; }
     const ns=new Set(state.admins); ns.has(k)?ns.delete(k):ns.add(k);
@@ -624,11 +860,31 @@ async function init(){ renderNav();
   state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
-  // The CSV prints every metric, so it waits on the pending cube rather than exporting a
-  // column of dashes. Same reason the table below triggers the fetch when it is opened.
-  document.getElementById("dl").addEventListener("click",async()=>{ await ensurePending(true); renderTable(); buildCSV(); });
-  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden;
-    if(willOpen) ensurePending(true).then(render); p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize')); });
+  /* Opening the panel used to call ensurePending(true) unconditionally, so a reader who
+     never wanted the pending column paid up to 66.11 MiB for it anyway. Now the Pending
+     column-group button is where the reader asks, and it is off by default (spec C8). */
+  document.getElementById("dl").addEventListener("click",buildCSV);
+  document.getElementById("dl2").addEventListener("click",buildCSV);
+  document.querySelectorAll('#rowsby button').forEach(b=>b.addEventListener('click',()=>{
+    const on=!state.rowsBy[b.dataset.v]; state.rowsBy[b.dataset.v]=on;
+    b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); tblBuild(); }));
+  buildColGroups();
+  document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize'));
+    if(!willOpen||!tblDirty) return;
+    /* Over cap there is nothing to build and no wait to explain, so the refusal shows at
+       once and WITHOUT the placeholder (L-257 design note section 5). renderTable()
+       returns straight out of its refusal branch, so this is cheap enough to run inline. */
+    if(tblRowCount()>ROW_CAP){ tblBuild(); return; }
+    /* ORDER MATTERS. The panel is already unhidden above, so this mutation lands in a
+       live region that is already visible: a role="status" that gains its text in the
+       same paint in which it appears is not reliably announced. */
+    document.getElementById('tblpending').textContent=tblCopy().pending;
+    /* NEVER synchronous in the handler. The browser paints nothing until a task returns,
+       so a build in here would leave the panel unopened and the disclosure looking dead
+       for the whole build. The first requestAnimationFrame callback still runs before the
+       frame's paint, so the work hangs off the second. */
+    requestAnimationFrame(()=>requestAnimationFrame(tblBuild));
+  });
   // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────
   // The district cube (agency_cube.csv, ~40 MB) is fetched on EVERY page load,
   // not on district selection. It is intentionally un-awaited, so it never blocks
