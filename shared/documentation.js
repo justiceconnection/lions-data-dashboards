@@ -34,9 +34,9 @@
      a silent prose edit impossible.
      PROSE_SHA covered `src` and never `v`, and GROUPS is empty, so until 16 September
      2026 (L-217) it covered no figure and no page copy at all.  */
-  var REVISED   = '2026-09-17';
+  var REVISED   = '2026-09-20';
   var PROSE_SHA = 'bf13437a';   /* recomputed by tests/docs-check.js check 26(e); there is no generator script */
-  var COPY_SHA  = '2712fd4a';   /* same check, over #doc-copy-html in reading-the-data.html */
+  var COPY_SHA  = '37be5f81';   /* same check, over #doc-copy-html in reading-the-data.html */
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
   var SURFACES = {
@@ -493,7 +493,7 @@
     'e-doj-3b', 'e-doj-t4', 'e-doj-t5-cases', 'e-pending-entry-date', 'e-two-crim',
     'e-provisional', 'e-not-final', 'e-revision',
     'e-cat-overlap', 'e-ag-overlap', 'e-zero-months', 'e-ratio', 'e-selection',
-    'e-cl-imputed', 'e-cl-court',
+    'e-cl-imputed', 'e-cl-court', 'e-cl-record-type', 'e-cl-disposition',
     /* the FAQ block, authored in the page. One id each: they used to share id="faq" */
     'e-faq-source', 'e-faq-why', 'e-faq-how-to-use', 'e-faq-how-not-to-use',
     'e-faq-cleaning', 'e-faq-provisional', 'e-faq-categories', 'e-faq-usao',

@@ -37,7 +37,10 @@ const REFERENCES={
     agency:{cases_filed:"e-two-crim",defendants_filed:"e-two-crim"},
     agencyCivil:{cases_filed:"e-doj-t4",cases_terminated:"e-doj-t4",cases_pending:"e-doj-t5-cases",matters_pending:"e-pending-entry-date"},
     declinations:{},
-    lookup:{filed_date:"e-filed-two"}
+    lookup:{filed_date:"e-filed-two",
+            record_type:"e-cl-record-type",
+            court_type:"e-cl-record-type",
+            disposition:"e-cl-disposition"}
   },
   // `base` is "" from the site root and "../" from case-lookup/. No `target`: every link
   // on this site navigates inside the Framer embed, and one that did not would be the odd

@@ -96,8 +96,8 @@ body{
   .note-body dt{font-weight:700;margin-top:7px}
   .note-body dd{margin:0}
   .note-body code{font-size:12px;background:#f4f4f5;border-radius:4px;padding:1px 4px}
-  .note-count[data-state="loading"]{color:var(--muted)}
-  .note-count[data-state="zero"]{color:var(--err)}
+  .note-body a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+  .note-body a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
   .parity{border:1px solid var(--line);border-radius:8px;background:#fff;
           padding:11px 13px;margin-bottom:10px;font-size:13px}
@@ -190,7 +190,7 @@ body{
       <div class="fld"><label>U.S. role</label><div id="ms_role"></div></div>
       <div class="fld"><label>Lead agency</label><div id="ms_lead"></div></div>
       <div class="fld"><label>Status</label><select id="f_status"><option value="">All</option></select></div>
-      <div class="fld"><label class="withhint">Court type<button type="button" class="hint" id="hintCourt" aria-controls="recNote" aria-expanded="false" aria-label="Why some court types are no longer listed">&#9432;</button></label><div id="ms_court"></div></div>
+      <div class="fld"><label class="withhint">Court type<button type="button" class="hint" id="hintCourt" aria-controls="courtNote" aria-expanded="false" aria-label="Why some court types are no longer listed">&#9432;</button></label><div id="ms_court"></div></div>
       <div class="fld"><label class="withhint">Disposition<button type="button" class="hint" id="hintDisp" aria-controls="dispNote" aria-expanded="false" aria-label="Differences between declinations and dispositions">&#9432;</button></label><div id="ms_disp"></div></div>
 
       <!-- L-111: the two new cells. Both are ordinary grid cells carrying an
@@ -222,30 +222,31 @@ body{
 
     <details class="cols"><summary>Choose columns</summary><div class="colgrid" id="colChooser"></div></details>
 
-    <!-- L-078: the record-type note. Copy is binding (ops/handoffs/L-078-design-spec.md §3)
-         and deliberately asserts NOTHING about what these proceedings are - no
-         "supervised release", no "revocation", no statute. That reading is an
-         inference from lead charges and 1,509 of the FY2025 subset carry neither a
-         charge nor a category. The count sentence is filled by loadNoteCount(). -->
+    <!-- L-306 / L-307: THREE SHORT-FORM NOTES, one per (i) button.
+         The long answers moved to reading-the-data.html - e-cl-record-type and
+         e-cl-disposition - and each note here answers its own question in two or
+         three sentences and then links to its full entry. The links are built from
+         REFERENCES at the foot of this file, so this page gains no new dependency.
+         Copy is binding: ops/handoffs/L-306-design-spec.md §4, signed by Cary on
+         2026-09-20. No note quotes a figure, so no note queries anything. -->
     <details class="note" id="recNote">
-      <summary id="recNoteSummary">Data note: record types, and what changed for post-disposition proceedings</summary>
+      <summary id="recNoteSummary">Data note: the three record types</summary>
       <div class="note-body">
+        <p>A <b>Case</b> has at least one proceeding in a real court that is not post-disposition. A <b>Matter</b> has no real-court proceeding recorded. A <b>Post-disposition Proceeding</b> is a record whose only real-court activity was recorded after a case had already been disposed of.</p>
+        <p>The name says where the record sits in the court history. It does not say what the proceeding was about.</p>
+        <p><a id="lnkRecord">Full note: Record types in Case Look-Up &#8594;</a></p>
+      </div>
+    </details>
 
-        <h4>The three record types</h4>
-        <dl>
-          <dt>Case</dt>
-          <dd> A case is when there is at least one proceeding in a real court that is not post-disposition. These records carry a <b>filed</b> date and a <b>court type</b>.</dd>
-          <dt>Matter</dt>
-          <dd>When the USAO records no real-court proceeding. <b>Filed</b> and <b>court type</b> are blank.</dd>
-          <dt>Post-disposition Proceeding</dt>
-          <dd>The only real-court activity USAO records for this case is post-disposition - activity recorded after a case has already been disposed of. There is no filing that opens a case, so <b>filed</b>, <b>court type</b>, <b>court no.</b> and <b>U.S. District Court filing date</b> are blank on every one of these records. A <b>disposition</b> may still be shown: it is the outcome recorded on the post-disposition proceeding itself, not the outcome of a prosecution.</dd>
-        </dl>
-
-        <h4>Some caveats about record types</h4>
-        <p>The name describes <i>where the record sits in the court history</i>. It is not a description of what the proceeding was about: if LIONS shows that the activity is post-disposition, it does not record what kind of proceeding it was. Most of these records carry a program category or a lead charge, some carry neither, and we have not labeled them beyond what is recorded.</p>
-        
-        <h4>Differences in dashboard display and data download</h4>
-        <p>Justice Connection did some data labeling to make the dashboard easier to read so there may be some slight changes if you choose to download data as a CSV. One example: dates are <code>MM/DD/YYYY</code> on screen and <code>YYYY-MM-DD</code> in the original data. Another change is the CSV&rsquo;s column headings match the underlying data field names rather than our table headings - for example <code>dc_filed_date</code> for &ldquo;U.S. District Court filing date&rdquo;.</p>
+    <!-- The Court-type note. Its (i) carries aria-label "Why some court types are no
+         longer listed" and until L-307 it opened #recNote, which did not answer that
+         (L-306 §2). It has its own note now, and its own answer. -->
+    <details class="note" id="courtNote">
+      <summary id="courtNoteSummary">Data note: why court type is blank on some records</summary>
+      <div class="note-body">
+        <p>Court type is the first court a record appeared in. It is blank on every <b>Matter</b> and on every <b>Post-disposition Proceeding</b>, because neither has a filing that opens a case, and the Court type list no longer offers the post-disposition values.</p>
+        <p>Use <b>Record type</b> to separate those records instead.</p>
+        <p><a id="lnkCourt">Full note: Record types in Case Look-Up &#8594;</a></p>
       </div>
     </details>
 
@@ -253,11 +254,9 @@ body{
     <details class="note" id="dispNote">
       <summary id="dispNoteSummary">Data note: dispositions versus declinations</summary>
       <div class="note-body">
-        <h4>Disposition records</h4>
-        <p>Disposition is the last outcome recorded on a proceeding in a real court. Where a case had several court proceedings, it is the outcome of the latest one.</p>
-        <p>A matter that was declined and later charged and prosecuted shows the outcome of <b>that prosecution</b>, so it can read <b>guilty</b>. To find declined matters use the <b>declination</b> filter, which is built from the declination itself.</p>
-        <h4>The &ldquo;Declined &ndash; &hellip;&rdquo; values</h4>
-        <p>The disposition list also carries several values beginning <b>declined &ndash;</b>, such as &ldquo;declined &ndash; agency request&rdquo;. Those are <b>civil</b> outcomes from debt-collection and bankruptcy work. They are not criminal declinations.</p>
+        <p>Disposition is the last outcome recorded on a proceeding in a real court. A matter that was declined and later charged and prosecuted shows the outcome of <b>that prosecution</b>, so it can read <b>guilty</b>.</p>
+        <p>To find declined matters, use the <b>Declination</b> filter, which is built from the declination itself.</p>
+        <p><a id="lnkDisp">Full note: Dispositions and declinations &#8594;</a></p>
       </div>
     </details>
 
@@ -475,7 +474,7 @@ async function init(){
   $('searchBtn').onclick=runSearch;
   $('csvBtn').onclick=downloadCSV;
   $('capClose').onclick=()=>$('capDialog').close();
-  setupNote();
+  setupNotes();
   setupDeclination();
   $('status').style.display='none';
   $('filterPanel').style.display='';
@@ -483,43 +482,22 @@ async function init(){
 }
 
 
-/* ------------------------------------------------------------------ L-078 --
-   The record-type note.  */
-function setupNote(){
-  const note=$('recNote'), summary=$('recNoteSummary');
-  if(!note || !summary) return;
-  const hints=[$('hintRecord'), $('hintCourt')].filter(Boolean);
-  /* aria-expanded is synced FROM the details' own toggle event, not from the
-     click handler, so collapsing from the summary is not missed. */
-  const sync=()=>hints.forEach(b=>b.setAttribute('aria-expanded', note.open?'true':'false'));
-  note.addEventListener('toggle',()=>{ sync(); if(note.open) loadNoteCount(); });
-  sync();
-  hints.forEach(b=>b.addEventListener('click',()=>{
-    if(!note.open) note.open=true;                       // already open: just move focus
-    /* tabindex is set only for the duration of the focus() call and then removed.
-       <summary> is focusable natively; LEAVING tabindex="-1" on it would take it
-       out of the tab order for the rest of the session, so a keyboard user who
-       opened the note from a hint could never Tab back to it to collapse it.
-       Verified in Chromium: Tab still reaches the summary after a hint click. */
-    summary.setAttribute('tabindex','-1'); summary.focus(); summary.removeAttribute('tabindex');
-  }));
+/* --------------------------------------------------------- L-078, L-306 --
+   The short-form notes. Each (i) opens its own note; wireNote() below syncs
+   aria-expanded from the note's own toggle event and removes the tabindex it
+   sets, so a keyboard user can still Tab back to the summary.
+   #dispNote is wired by setupDeclination(), where it has always been.
+
+   L-307 deleted setupNote() and loadNoteCount() from here. setupNote() wired
+   one note to two hints, which is what let the Court-type (i) open a note that
+   did not answer its own label; loadNoteCount() filled a <span id="pdCount">
+   that a copy edit had already removed, so it read nothing and returned on its
+   third line. Neither has a caller now. */
+function setupNotes(){
+  wireNote('recNote','recNoteSummary',['hintRecord']);
+  wireNote('courtNote','courtNoteSummary',['hintCourt']);
 }
-let noteCountStarted=false;
-async function loadNoteCount(){
-  if(noteCountStarted) return; noteCountStarted=true;
-  const el=$('pdCount'); if(!el) return;
-  const set=(state,text)=>{ el.dataset.state=state; el.textContent=text; };
-  set('loading','Counting…');
-  try{
-    const r=(await qy("SELECT count(*) FILTER (WHERE record_type='post_disposition') AS n, count(*) AS total FROM "+SRC))[0];
-    const n=Number(r.n), total=Number(r.total);
-    if(!(n>0)){ set('zero','No post-disposition proceedings are present in the data currently loaded.'); return; }
-    set('ok','This record type covers '+n.toLocaleString('en-US')+' records, '+(n/total*100).toFixed(1)+
-             '% of the '+total.toLocaleString('en-US')+' in the data currently loaded.');
-  }catch(e){
-    set('error',''); log('note count failed: '+((e&&e.message)||e));
-  }
-}
+
 
 /* ==========================================================================
    L-111 - declination filtering, and the parity block that compares this
@@ -960,7 +938,7 @@ init().catch(e=>console.error(e));
 </script>
 <!-- Dashboard selector: reads the shared DASHBOARDS list (single source of truth) and links back
      to the dashboards with the correct relative path. No Filters dropdown here by design. -->
-<script src="../shared/config.js?v=20260915a"></script>
+<script src="../shared/config.js?v=20260920a"></script>
 <script>
 (function(){
   var CUR='case-lookup/index.html';
@@ -985,6 +963,17 @@ init().catch(e=>console.error(e));
     if(bo && REFERENCES.entryFor('lookup','filed_date')) {
       /* marker glyph removed site-wide; keep the option text unchanged */
     }
+    // L-306 §8b: the three short-form notes' links. Built through entryFor() and
+    // then href(), never a hard-coded path: entryFor() returns null for an entry
+    // the notes page does not publish, and in that case the link's whole <p> is
+    // removed so the note still reads as a complete answer rather than offering a
+    // dead link. `../` because this page is one directory down. No `target`.
+    [['lnkRecord','record_type'],['lnkCourt','court_type'],['lnkDisp','disposition']]
+      .forEach(function(pair){
+        var a=document.getElementById(pair[0]), id=REFERENCES.entryFor('lookup',pair[1]);
+        if(!id){ a.parentNode.parentNode.removeChild(a.parentNode); return; }
+        a.href=REFERENCES.href('lookup',id,'../');
+      });
   }
   var acc=document.getElementById('dnav'), head=document.getElementById('dnavHead');
   head.addEventListener('click',function(){ var o=acc.classList.toggle('open'); head.setAttribute('aria-expanded', o?'true':'false'); });

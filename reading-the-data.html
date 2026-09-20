@@ -210,6 +210,28 @@
           <p>To see declined matters only, you can filter by "declination" and set "declined matters only." To visualize and filter immediate case declinations terminated by U.S. Attorney’s Offices, visit our declination dashboard.</p>
         </div>
       </details>
+
+      <details class="doc-entry" id="e-cl-record-type" data-surfaces="lookup">
+        <summary class="doc-esum">Record types in Case Look-Up</summary>
+        <div class="doc-ebody">
+          <p><b>The three record types.</b></p>
+          <p><b>Case</b> - A case is when there is at least one proceeding in a real court that is not post-disposition. These records carry a <b>filed</b> date and a <b>court type</b>.</p>
+          <p><b>Matter</b> - When the USAO records no real-court proceeding. <b>Filed</b> and <b>court type</b> are blank.</p>
+          <p><b>Post-disposition Proceeding</b> - The only real-court activity USAO records for this case is post-disposition - activity recorded after a case has already been disposed of. There is no filing that opens a case, so <b>filed</b>, <b>court type</b>, <b>court no.</b> and <b>U.S. District Court filing date</b> are blank on every one of these records. A <b>disposition</b> may still be shown: it is the outcome recorded on the post-disposition proceeding itself, not the outcome of a prosecution.</p>
+          <p><b>Some caveats about record types.</b> The name describes <i>where the record sits in the court history</i>. It is not a description of what the proceeding was about: if LIONS shows that the activity is post-disposition, it does not record what kind of proceeding it was. Most of these records carry a program category or a lead charge, some carry neither, and we have not labeled them beyond what is recorded.</p>
+          <p><b>Why court type is blank on some records.</b> Court type is the first court a record appeared in, so it is blank wherever there is no real-court proceeding to name. The Court type list no longer offers the post-disposition values. Use <b>Record type</b> to separate those records instead: choose <b>Case</b> to exclude post-disposition proceedings, or <b>Post-disposition Proceeding</b> to see only them.</p>
+          <p><b>Differences in dashboard display and data download.</b> Justice Connection did some data labeling to make the dashboard easier to read so there may be some slight changes if you choose to download data as a CSV. One example: dates are <code>MM/DD/YYYY</code> on screen and <code>YYYY-MM-DD</code> in the original data. Another change is the CSV&rsquo;s column headings match the underlying data field names rather than our table headings - for example <code>dc_filed_date</code> for &ldquo;U.S. District Court filing date&rdquo;.</p>
+        </div>
+      </details>
+
+      <details class="doc-entry" id="e-cl-disposition" data-surfaces="lookup">
+        <summary class="doc-esum">Dispositions and declinations</summary>
+        <div class="doc-ebody">
+          <p><b>Disposition records.</b> Disposition is the last outcome recorded on a proceeding in a real court. Where a case had several court proceedings, it is the outcome of the latest one.</p>
+          <p>A matter that was declined and later charged and prosecuted shows the outcome of <b>that prosecution</b>, so it can read <b>guilty</b>. To find declined matters use the <b>declination</b> filter, which is built from the declination itself.</p>
+          <p><b>The &ldquo;Declined &ndash; &hellip;&rdquo; values.</b> The disposition list also carries several values beginning <b>declined &ndash;</b>, such as &ldquo;declined &ndash; agency request&rdquo;. Those are <b>civil</b> outcomes from debt-collection and bankruptcy work. They are not criminal declinations.</p>
+        </div>
+      </details>
     </section>
     
     <section class="doc-grpsec doc-faq" data-g="faq">
@@ -294,8 +316,8 @@
   </div>
 </div>
 
-<script src="shared/config.js?v=20260915a"></script>
-<script src="shared/documentation.js?v=20260917c"></script>
+<script src="shared/config.js?v=20260920a"></script>
+<script src="shared/documentation.js?v=20260920a"></script>
 <script>
 
 (function () {
