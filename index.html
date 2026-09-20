@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="shared/shared.css?v=20260919a">
 <link rel="stylesheet" href="lab.css?v=20260917a">
 <link rel="stylesheet" href="styles/shell2.css?v=20260917a">
-<link rel="stylesheet" href="styles/index.css?v=20260919a">
+<link rel="stylesheet" href="styles/index.css?v=20260920a">
 <script src="scripts/index.head.js?v=20260820c"></script>
 </head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
@@ -19,7 +19,13 @@
 
   <div class="occbar">Program-category basis:
     <span class="seg" id="occ"><button data-v="all" class="on">All occurrences</button><button data-v="primary">Primary only</button></span>
-    <span class="occhint">Primary = each case counted once (first-entered code); All = counted in every category it touches.</span>
+    <button type="button" class="hint occ-hint" id="hintOcc" aria-expanded="false" aria-describedby="tipOcc" aria-label="What the program-category basis does to the charts">&#9432;</button>
+    <div class="hinttip" id="tipOcc">
+      <p>Each criminal case is tagged with one or more program categories.</p>
+      <p>To see all cases tagged with multiple program categories, toggle "all occurrences," which is how DOJ refers to this data. Note this will mean the bottom chart will add up to more than 100% and the same cases will be visualized multiple times in line charts.</p>
+      <p>To see case data tagged with their primary category - the first code entered for a case - select "primary only." All cases will only be counted once in charts.</p>
+      <p>When all categories are selected, topline metrics default to counting unique cases filed, regardless of program category.</p>
+    </div>
   </div>
 
 
@@ -129,7 +135,7 @@
 <script src="shared/config.js?v=20260920a"></script>
 <script src="shared/provisional.js?v=20260903a"></script>
 <script src="shared/shared.js?v=20260919a"></script>
-<script src="scripts/index.page.js?v=20260919a"></script>
+<script src="scripts/index.page.js?v=20260920a"></script>
 <script src="shared/height-reporter.js?v=20260903a"></script>
 <script src="lab.js?v=20260903a"></script>
 <script src="shell2.js?v=20260917b"></script>

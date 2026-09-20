@@ -746,7 +746,39 @@ async function ensureFull(){ if(FULL||fullLoading) return;
     SL.setLoading(null); SL.clearLoadError(); }
   catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } fullLoading=false; }
 
+/* ── THE HINT BUBBLE'S BEHAVIOUR (L-294). Style guide 5a. ────────────────────
+   The same function is written again in web/case-lookup/index.html's inline
+   <script>: the two pages share no file - Case Look-Up loads none of this chain
+   - so the style guide is what keeps the two copies one component.
+
+   Four openers. Three of them are CSS (hover, :focus-visible, :focus-within) and
+   cost no JS at all, so hover and keyboard still work if this script never runs.
+   The fourth is this click, which PINS the bubble by flipping aria-expanded,
+   because a phone has no hover.
+
+   `root` is the button, or the <label> that wraps it on Case Look-Up - there is
+   no label here, and the guard is kept so the two copies stay one component. */
+function wireHint(btnId, tipId){
+  var b=document.getElementById(btnId), t=document.getElementById(tipId);
+  if(!b||!t) return;
+  var root=b.closest('label')||b;
+  var close=function(){ b.setAttribute('aria-expanded','false'); };
+  b.addEventListener('click',function(e){ e.stopPropagation();
+    b.setAttribute('aria-expanded', b.getAttribute('aria-expanded')==='true'?'false':'true'); });
+  /* Escape from the button and from inside the bubble; focus returns to the
+     button so a keyboard user is not stranded on a link that just vanished. */
+  b.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  t.addEventListener('keydown',function(e){ if(e.key==='Escape'){ close(); b.focus(); } });
+  document.addEventListener('click',function(e){
+    if(!t.contains(e.target) && !root.contains(e.target)) close(); });
+}
+
 async function init(){ renderNav();
+  /* L-294: wired HERE, above the first await, because the bar and its button are
+     static markup that paints before any cube arrives and the bubble reads no
+     data - so the pin has to work even on the branch below that returns early
+     when the national cube fails. */
+  wireHint('hintOcc','tipOcc');
   /* L-224: the national cube is 1.5-3 MB and until it lands the page is a blank chart
      with no explanation. The message is cleared by the same resource arriving, below;
      the setup between here and the first render() is synchronous, so no paint happens

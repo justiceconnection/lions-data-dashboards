@@ -74,30 +74,49 @@ body{
   font-style: normal;
 }
 
-  .fld label.withhint{display:flex;align-items:center;gap:6px}
+  .fld label.withhint{display:flex;align-items:center;gap:6px;position:relative}
   .hint{appearance:none;border:0;background:none;padding:0;margin:0;line-height:1;
         font:inherit;font-size:13px;color:var(--muted);cursor:pointer;
         width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;
-        border-radius:50%;flex:none}
+        border-radius:50%;flex:none;position:relative}
   .hint:hover{color:var(--ink)}
   .hint:focus-visible{outline:2px solid var(--ink);outline-offset:2px;color:var(--ink)}
 
-  details.note{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
-  details.note>summary{cursor:pointer;color:var(--ink);font-size:13px;font-weight:600;list-style:none;display:flex;align-items:center;gap:7px}
-  details.note>summary::-webkit-details-marker{display:none}
-  details.note>summary::before{content:"\25B8";color:var(--muted);font-size:11px;transition:transform .15s;display:inline-block}
-  details.note[open]>summary::before{transform:rotate(90deg)}
-  details.note>summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  .note-body{max-width:100%;font-size:13px;margin-top:10px}
-  .note-body h4{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:14px 0 5px}
-  .note-body h4:first-child{margin-top:2px}
-  .note-body p{margin:0 0 8px}
-  .note-body dl{margin:0 0 8px}
-  .note-body dt{font-weight:700;margin-top:7px}
-  .note-body dd{margin:0}
-  .note-body code{font-size:12px;background:#f4f4f5;border-radius:4px;padding:1px 4px}
-  .note-body a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
-  .note-body a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* ── THE HINT BUBBLE (L-312, L-294). Style guide 5a. ──────────────────────────
+   One component, three surfaces: this, index.html's program-category basis, and
+   the topline's provisional mark (5f, D-059). It opens FOUR ways - hover, focus,
+   focus inside the bubble, and a click that PINS it - and the bubble is the
+   button's aria-describedby target, so it is never [hidden] and never
+   display:none and a screen-reader user has the sentence without opening it.
+
+   .hint::after is TWO things at once. At rest it is the TARGET: a 16px glyph
+   with a 26x26 hit area, at zero layout cost. While the bubble is open it also
+   reaches DOWN to meet it, and that is the whole reason a link can live in
+   here - without the reach, the pointer crosses 8.5px of dead ground between
+   button and bubble, the bubble closes, and the link is unreachable by mouse.
+   Measured: design-lab/l312-shots.js --seed=nobridge breaks at step 14 of the
+   pointer walk. :focus-within is the same fix for the keyboard.
+   It is the BUTTON's pseudo-element and not the bubble's, which is what keeps
+   the bubble the only thing carrying a z-index. An earlier draft put z-index:6
+   on .hint and every OTHER field's glyph then ghosted through an open bubble -
+   found by looking at a screenshot, not by any assertion.
+
+   text-transform / letter-spacing / font-weight are RESETS, not taste. On Case
+   Look-Up the bubble lives inside a .fld label, which is uppercase, 600 and
+   letter-spaced; without these three the whole sentence and its link render in
+   CAPITALS. Found by looking at design-lab/l312-live-1280.png, not by counting
+   selectors - design-lab/l312-shots.js --seed=nolabelreset is the guard. */
+.hint{position:relative}
+.hinttip{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:-1px;padding:0;border:0;text-transform:none;letter-spacing:normal;font-weight:400}
+.hint:hover~.hinttip,.hint:focus-visible~.hinttip,.hint[aria-expanded="true"]~.hinttip,.hinttip:hover,.hinttip:focus-within{
+  top:calc(100% + 6px);left:0;right:0;bottom:auto;width:auto;height:auto;overflow:visible;clip-path:none;
+  white-space:normal;margin:0;z-index:5;border-left:4px solid var(--ink);border-top:1px solid var(--line);
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff;border-radius:0 8px 8px 0;
+  padding:9px 11px;font-size:12px;line-height:1.45;color:var(--ink);text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.hint::after{content:"";position:absolute;inset:-5px}
+.hint:hover::after,.hint:focus-visible::after,.hint[aria-expanded="true"]::after{bottom:-16px}
+.hinttip a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.hinttip a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
   .parity{border:1px solid var(--line);border-radius:8px;background:#fff;
           padding:11px 13px;margin-bottom:10px;font-size:13px}
@@ -185,13 +204,13 @@ body{
     <div class="filters">
       <div class="fld"><label>District</label><div id="ms_dist"></div></div>
       <div class="fld"><label>Case type</label><select id="f_type"><option value="">All</option><option>Civil</option><option>Criminal</option></select></div>
-      <div class="fld"><label class="withhint">Record type<button type="button" class="hint" id="hintRecord" aria-controls="recNote" aria-expanded="false" aria-label="About record types">&#9432;</button></label><select id="f_record"><option value="">All</option><option>Matter</option><option>Case</option><option value="post_disposition">Post-disposition Proceeding</option></select></div>
+      <div class="fld"><label class="withhint">Record type<button type="button" class="hint" id="hintRecord" aria-expanded="false" aria-describedby="tipRecord" aria-label="About record types">&#9432;</button><span class="hinttip" id="tipRecord">A <b>Case</b> has at least one proceeding in a real court that is not post-disposition, a <b>Matter</b> has no real-court proceeding recorded, and a <b>Post-disposition Proceeding</b> is a record whose only real-court activity was recorded after a case had already been disposed of; the name says where the record sits in the court history, not what the proceeding was about. <a id="lnkRecord">Full note: Record types in Case Look-Up &#8594;</a></span></label><select id="f_record"><option value="">All</option><option>Matter</option><option>Case</option><option value="post_disposition">Post-disposition Proceeding</option></select></div>
       <div class="fld"><label>Category</label><div id="ms_cat"></div></div>
       <div class="fld"><label>U.S. role</label><div id="ms_role"></div></div>
       <div class="fld"><label>Lead agency</label><div id="ms_lead"></div></div>
       <div class="fld"><label>Status</label><select id="f_status"><option value="">All</option></select></div>
-      <div class="fld"><label class="withhint">Court type<button type="button" class="hint" id="hintCourt" aria-controls="courtNote" aria-expanded="false" aria-label="Why some court types are no longer listed">&#9432;</button></label><div id="ms_court"></div></div>
-      <div class="fld"><label class="withhint">Disposition<button type="button" class="hint" id="hintDisp" aria-controls="dispNote" aria-expanded="false" aria-label="Differences between declinations and dispositions">&#9432;</button></label><div id="ms_disp"></div></div>
+      <div class="fld"><label class="withhint">Court type<button type="button" class="hint" id="hintCourt" aria-expanded="false" aria-describedby="tipCourt" aria-label="Why some court types are no longer listed">&#9432;</button><span class="hinttip" id="tipCourt">Court type is the first court a record appeared in, so it is blank on every <b>Matter</b> and on every <b>Post-disposition Proceeding</b>, because neither has a filing that opens a case, and the Court type list no longer offers the post-disposition values; use <b>Record type</b> to separate those records instead. <a id="lnkCourt">Full note: Record types in Case Look-Up &#8594;</a></span></label><div id="ms_court"></div></div>
+      <div class="fld"><label class="withhint">Disposition<button type="button" class="hint" id="hintDisp" aria-expanded="false" aria-describedby="tipDisp" aria-label="Differences between declinations and dispositions">&#9432;</button><span class="hinttip" id="tipDisp">Disposition is the last outcome recorded on a proceeding in a real court; a matter that was declined and later charged and prosecuted shows the outcome of <b>that prosecution</b>, so it can read <b>guilty</b> - to find declined matters, use the <b>Declination</b> filter, which is built from the declination itself. <a id="lnkDisp">Full note: Dispositions and declinations &#8594;</a></span></label><div id="ms_disp"></div></div>
 
       <!-- L-111: the two new cells. Both are ordinary grid cells carrying an
            ordinary control and NO prose, so the grid baselines are untouched
@@ -222,43 +241,15 @@ body{
 
     <details class="cols"><summary>Choose columns</summary><div class="colgrid" id="colChooser"></div></details>
 
-    <!-- L-306 / L-307: THREE SHORT-FORM NOTES, one per (i) button.
-         The long answers moved to reading-the-data.html - e-cl-record-type and
-         e-cl-disposition - and each note here answers its own question in two or
-         three sentences and then links to its full entry. The links are built from
-         REFERENCES at the foot of this file, so this page gains no new dependency.
-         Copy is binding: ops/handoffs/L-306-design-spec.md §4, signed by Cary on
-         2026-09-20. No note quotes a figure, so no note queries anything. -->
-    <details class="note" id="recNote">
-      <summary id="recNoteSummary">Data note: the three record types</summary>
-      <div class="note-body">
-        <p>A <b>Case</b> has at least one proceeding in a real court that is not post-disposition. A <b>Matter</b> has no real-court proceeding recorded. A <b>Post-disposition Proceeding</b> is a record whose only real-court activity was recorded after a case had already been disposed of.</p>
-        <p>The name says where the record sits in the court history. It does not say what the proceeding was about.</p>
-        <p><a id="lnkRecord">Full note: Record types in Case Look-Up &#8594;</a></p>
-      </div>
-    </details>
-
-    <!-- The Court-type note. Its (i) carries aria-label "Why some court types are no
-         longer listed" and until L-307 it opened #recNote, which did not answer that
-         (L-306 §2). It has its own note now, and its own answer. -->
-    <details class="note" id="courtNote">
-      <summary id="courtNoteSummary">Data note: why court type is blank on some records</summary>
-      <div class="note-body">
-        <p>Court type is the first court a record appeared in. It is blank on every <b>Matter</b> and on every <b>Post-disposition Proceeding</b>, because neither has a filing that opens a case, and the Court type list no longer offers the post-disposition values.</p>
-        <p>Use <b>Record type</b> to separate those records instead.</p>
-        <p><a id="lnkCourt">Full note: Record types in Case Look-Up &#8594;</a></p>
-      </div>
-    </details>
-
-    <!-- ==================== L-111: the Disposition note ===================== -->
-    <details class="note" id="dispNote">
-      <summary id="dispNoteSummary">Data note: dispositions versus declinations</summary>
-      <div class="note-body">
-        <p>Disposition is the last outcome recorded on a proceeding in a real court. A matter that was declined and later charged and prosecuted shows the outcome of <b>that prosecution</b>, so it can read <b>guilty</b>.</p>
-        <p>To find declined matters, use the <b>Declination</b> filter, which is built from the declination itself.</p>
-        <p><a id="lnkDisp">Full note: Dispositions and declinations &#8594;</a></p>
-      </div>
-    </details>
+    <!-- L-312: the three short-form data notes that stood here are GONE. Each (i)
+         button now carries its own bubble inside its own label - one signed sentence
+         and one link - so the answer arrives on hover, on keyboard focus and on tap
+         instead of on a click, and no prose sits in a grid cell. The bubble is the
+         button aria-describedby target and is never [hidden] and never display:none,
+         so a screen-reader user has the sentence without opening anything.
+         Copy is binding: ops/handoffs/L-312-L-294-design-spec.md §4, signed by Cary
+         on 2026-09-20. The links are still built from REFERENCES at the foot of this
+         file, so this page still gains no new dependency. -->
 
     <!-- L-120, 2 Sep 2026 (Cary): the L-111 declination note (#declNote, -->
 
@@ -482,20 +473,44 @@ async function init(){
 }
 
 
-/* --------------------------------------------------------- L-078, L-306 --
-   The short-form notes. Each (i) opens its own note; wireNote() below syncs
-   aria-expanded from the note's own toggle event and removes the tabindex it
-   sets, so a keyboard user can still Tab back to the summary.
-   #dispNote is wired by setupDeclination(), where it has always been.
+/* --------------------------------------------- L-078, L-306, L-312, L-294 --
+   THE HINT BUBBLE'S BEHAVIOUR. Style guide 5a. The same function is written
+   again in web/scripts/index.page.js for index.html's program-category basis:
+   the two pages share no file - Case Look-Up loads none of the dashboard chain
+   - so the style guide is what keeps the two copies one component.
 
-   L-307 deleted setupNote() and loadNoteCount() from here. setupNote() wired
-   one note to two hints, which is what let the Court-type (i) open a note that
-   did not answer its own label; loadNoteCount() filled a <span id="pdCount">
-   that a copy edit had already removed, so it read nothing and returned on its
-   third line. Neither has a caller now. */
+   Four openers. Three of them are CSS (hover, :focus-visible, :focus-within)
+   and cost no JS at all, so hover and keyboard still work if this script never
+   runs. The fourth is this click, which PINS the bubble by flipping
+   aria-expanded, because a phone has no hover.
+
+   `root` is the button, or the <label> that wraps it here. A <label> holding a
+   <button> makes that button its labeled control, so a click on the label text
+   dispatches a SECOND click on the button; without this guard the document
+   handler would read the label's own click as an outside click, close the
+   bubble the button's handler had just opened, and clicking a label would do
+   nothing.
+
+   L-312 deleted wireNote() with the three <details> notes it wired; L-307 had
+   already deleted setupNote() and loadNoteCount(). None of the three has a
+   caller now. */
+function wireHint(btnId, tipId){
+  var b=document.getElementById(btnId), t=document.getElementById(tipId);
+  if(!b||!t) return;
+  var root=b.closest('label')||b;
+  var close=function(){ b.setAttribute('aria-expanded','false'); };
+  b.addEventListener('click',function(e){ e.stopPropagation();
+    b.setAttribute('aria-expanded', b.getAttribute('aria-expanded')==='true'?'false':'true'); });
+  /* Escape from the button and from inside the bubble; focus returns to the
+     button so a keyboard user is not stranded on a link that just vanished. */
+  b.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  t.addEventListener('keydown',function(e){ if(e.key==='Escape'){ close(); b.focus(); } });
+  document.addEventListener('click',function(e){
+    if(!t.contains(e.target) && !root.contains(e.target)) close(); });
+}
 function setupNotes(){
-  wireNote('recNote','recNoteSummary',['hintRecord']);
-  wireNote('courtNote','courtNoteSummary',['hintCourt']);
+  wireHint('hintRecord','tipRecord');
+  wireHint('hintCourt','tipCourt');
 }
 
 
@@ -725,28 +740,12 @@ function renderParity(){
 /* ---- wiring ---------------------------------------------------------------
    Additive by construction, exactly as L-078's note is: it reads filters, adds
    two clauses to currentFilter(), and changes no existing result. */
-function wireNote(noteId, summaryId, hintIds, onOpen){
-  const note=$(noteId), summary=$(summaryId);
-  if(!note||!summary) return;
-  const hints=hintIds.map(i=>$(i)).filter(Boolean);
-  /* aria-expanded is synced FROM the details' own toggle event, so collapsing
-     from the summary is not missed. <details> fires toggle on a LATER task, so
-     it is correct one tick after the click, not synchronously. */
-  const sync=()=>hints.forEach(b=>b.setAttribute('aria-expanded', note.open?'true':'false'));
-  note.addEventListener('toggle',()=>{ sync(); if(note.open&&onOpen) onOpen(); });
-  sync();
-  hints.forEach(b=>b.addEventListener('click',()=>{
-    if(!note.open) note.open=true;
-    /* tabindex only for the duration of the focus() call - see L-078 §9a. */
-    summary.setAttribute('tabindex','-1'); summary.focus(); summary.removeAttribute('tabindex');
-  }));
-}
 function onFilterChange(){
   renderConflict();
   if($('f_decl').value || msReason.values().length) ensureCube();
 }
 function setupDeclination(){
-  wireNote('dispNote','dispNoteSummary',['hintDisp']);
+  wireHint('hintDisp','tipDisp');
   ['f_decl','f_basis','f_record','f_status'].forEach(id=>{
     const el=$(id); if(!el) return;
     const prev=el.onchange;
@@ -963,15 +962,19 @@ init().catch(e=>console.error(e));
     if(bo && REFERENCES.entryFor('lookup','filed_date')) {
       /* marker glyph removed site-wide; keep the option text unchanged */
     }
-    // L-306 §8b: the three short-form notes' links. Built through entryFor() and
-    // then href(), never a hard-coded path: entryFor() returns null for an entry
-    // the notes page does not publish, and in that case the link's whole <p> is
-    // removed so the note still reads as a complete answer rather than offering a
-    // dead link. `../` because this page is one directory down. No `target`.
+    // L-306 §8b, L-312: the three hint bubbles' links. Built through entryFor()
+    // and then href(), never a hard-coded path: entryFor() returns null for an
+    // entry the notes page does not publish, and in that case the <a> and the
+    // space before it are removed - the link is the last phrase of the bubble now,
+    // not its own <p> - so the sentence still stands on its own rather than
+    // offering a dead link. `../` because this page is one directory down. No
+    // `target`.
     [['lnkRecord','record_type'],['lnkCourt','court_type'],['lnkDisp','disposition']]
       .forEach(function(pair){
         var a=document.getElementById(pair[0]), id=REFERENCES.entryFor('lookup',pair[1]);
-        if(!id){ a.parentNode.parentNode.removeChild(a.parentNode); return; }
+        if(!id){ var sp=a.previousSibling;
+                 if(sp && sp.nodeType===3) sp.nodeValue=sp.nodeValue.replace(/\s+$/,'');
+                 a.parentNode.removeChild(a); return; }
         a.href=REFERENCES.href('lookup',id,'../');
       });
   }

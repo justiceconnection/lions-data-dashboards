@@ -55,3 +55,60 @@
   .ms-grouped .ms-panel{max-width:100%}
   .ms-grouped .ms-list label{white-space:normal}
 }
+
+
+/* ── THE HINT BUBBLE (L-312, L-294). Style guide 5a. ──────────────────────────
+   One component, three surfaces: this, index.html's program-category basis, and
+   the topline's provisional mark (5f, D-059). It opens FOUR ways - hover, focus,
+   focus inside the bubble, and a click that PINS it - and the bubble is the
+   button's aria-describedby target, so it is never [hidden] and never
+   display:none and a screen-reader user has the sentence without opening it.
+
+   .hint::after is TWO things at once. At rest it is the TARGET: a 16px glyph
+   with a 26x26 hit area, at zero layout cost. While the bubble is open it also
+   reaches DOWN to meet it, and that is the whole reason a link can live in
+   here - without the reach, the pointer crosses 8.5px of dead ground between
+   button and bubble, the bubble closes, and the link is unreachable by mouse.
+   Measured: design-lab/l312-shots.js --seed=nobridge breaks at step 14 of the
+   pointer walk. :focus-within is the same fix for the keyboard.
+   It is the BUTTON's pseudo-element and not the bubble's, which is what keeps
+   the bubble the only thing carrying a z-index. An earlier draft put z-index:6
+   on .hint and every OTHER field's glyph then ghosted through an open bubble -
+   found by looking at a screenshot, not by any assertion.
+
+   text-transform / letter-spacing / font-weight are RESETS, not taste. On Case
+   Look-Up the bubble lives inside a .fld label, which is uppercase, 600 and
+   letter-spaced; without these three the whole sentence and its link render in
+   CAPITALS. Found by looking at design-lab/l312-live-1280.png, not by counting
+   selectors - design-lab/l312-shots.js --seed=nolabelreset is the guard. */
+.hint{position:relative}
+.hinttip{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:-1px;padding:0;border:0;text-transform:none;letter-spacing:normal;font-weight:400}
+.hint:hover~.hinttip,.hint:focus-visible~.hinttip,.hint[aria-expanded="true"]~.hinttip,.hinttip:hover,.hinttip:focus-within{
+  top:calc(100% + 6px);left:0;right:0;bottom:auto;width:auto;height:auto;overflow:visible;clip-path:none;
+  white-space:normal;margin:0;z-index:5;border-left:4px solid var(--ink);border-top:1px solid var(--line);
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff;border-radius:0 8px 8px 0;
+  padding:9px 11px;font-size:12px;line-height:1.45;color:var(--ink);text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.hint::after{content:"";position:absolute;inset:-5px}
+.hint:hover::after,.hint:focus-visible::after,.hint[aria-expanded="true"]::after{bottom:-16px}
+.hinttip a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.hinttip a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* ── the program-category basis affordance (L-294) ────────────────────────────
+   26x26 BOX here, where the topline's mark is also 26x26: .occbar is a flex row
+   whose seg buttons are 37px tall, so the box costs nothing. Case Look-Up's
+   16px glyph reaches 26x26 through ::after instead, because its label line box
+   is 21px and a 26px box would break the filter grid's label alignment.
+   The class is .occ-hint and not .hint because check 34 matches the UNION of a
+   selector's declarations across every stylesheet: two .hint rules disagreeing
+   on width would both pass, and the guide would stop describing either page. */
+.occ-hint{width:26px;height:26px;padding:0;font-size:15px;color:var(--mut);background:var(--panel);
+  border:1px solid var(--line);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;flex:none;line-height:1}
+.occ-hint:hover{border-color:var(--ink);color:var(--ink)}
+.occ-hint:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* the BAR is the containing block, so the bubble is the bar's width wherever the
+   bar is - including inside shell2.js's Filters drawer, which is where .occbar
+   lives on every width. .dw-panel is overflow:visible, so nothing clips it. */
+.occbar{position:relative}
+.occbar .hinttip{max-width:640px}
+.occbar .hinttip p{margin:0 0 7px}
+.occbar .hinttip p:last-child{margin:0}
