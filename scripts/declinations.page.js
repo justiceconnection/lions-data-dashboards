@@ -197,7 +197,7 @@ const TBL_COPY={
   /* appended in EVERY state, because the reason selection is a second axis and L-139 is exactly what happens when it goes unstated */
   reasonClause:n=>' Reason columns reflect '+n+' of the eight possible reasons, and each share is of those '+n+'.',
   reasonClauseAll:' Reason columns show all eight reasons, each share is divided by the total.',
-  notesExtra:'Each declined matter only has one reason, so reason columns can can be summed to match the "summed" column beside them.',
+  notesExtra:'Each declined matter only has one reason, so reason columns can be summed to match the "summed" column beside them.',
   /* THE ONE EMPTY STATE ANY OF THESE FOUR PAGES HAS. Every other control defaults back
      to a selection - no district means National, no category means the cube's total row
      - but the reason multi-select is `plain` (no ALL sentinel) and can genuinely hold

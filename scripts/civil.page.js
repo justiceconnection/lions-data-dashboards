@@ -243,7 +243,7 @@ const TBL_COPY={
      design-lab/l258-cube-measure.js - so a label claiming uncategorised members would
      assert something false. This one names what the row is. */
   complementLabel:'Other causes of action, summed',
-  dimSum:n=>n+'causes of action, summed',
+  dimSum:n=>n+' causes of action, summed',
   distSum:TCOPY.distSum,
   addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
   addsOne:'is one cause of action',

@@ -317,7 +317,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     windowBLabelStock: 'Second date',
     formLabel: 'Comparison',
     eraLabel: 'Administration',
-     /* NO TRAILING COLON. The render appends its own colon, so this string must not carry one. A stray colon here produced `Calculation:: ...` on every comparison card across all dashboards and grains, a long-standing pre-existing issue discovered 17 Sep 2026 when driving the comparison card in Chromium. Cary chose the fix that removes the colon from the string and leaves the render to append it. Do not revert this by adding the colon here and removing it from the render — that would reintroduce the defect. This label has exactly one consumer. */
+     /* NO TRAILING COLON. The render appends its own colon, so this string must not carry one. A stray colon here produced `Calculation:: ...` on every comparison card across all dashboards and grains, a long-standing pre-existing issue discovered 17 Sep 2026 when driving the comparison card in Chromium. Cary chose the fix that removes the colon from the string and leaves the render to append it. Do not revert this by adding the colon here and removing it from the render - that would reintroduce the defect. This label has exactly one consumer. */
     basisLabel: 'Calculation',
     alsoHead: 'Other topline calculations',
 
@@ -643,6 +643,18 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
   /* ══ RENDER HELPERS ═════════════════════════════════════════════════════════════ */
   function defLine(t) { return '<div class="tf-def">' + esc(t) + '</div>'; }
+  /* An EMPTY string renders NOTHING. `.tf-flag` carries a 4px charcoal rule and a #fff9c4
+     fill and the glyph is written by this function rather than by the copy, so a blanked
+     flag string would otherwise paint a full-width yellow warning box containing a ⚠ and
+     no warning - measured at 1030x28 on declinations.html when COPY.armD was blanked.
+     Ruled by Cary 17 September 2026 (L-246) as the general fix rather than restoring that
+     one string: the next blanked flag string would do the same thing. This changes no
+     copy - no string is added, removed or reworded - and a flag with text is unaffected. */
+  function flagLine(t) {
+    if (!t) return '';
+    return '<div class="tf-flag"><span aria-hidden="true">⚠</span> ' + esc(t) + '</div>';
+  }
+
 
   /* ══ THE SECTION'S ONE PROVISIONAL MARK (L-207) ═════════════════════════════════
      A <button>, not a bare glyph, and that is invariant 6 rather than taste: a phone has  no hover, so a hover-only mark is hidden on touch, which is most of the traffic to a  dashboard embedded in a Framer page. It opens three ways - hover and keyboard focus in CSS, tap or click here - and the bubble is the button's aria-describedby target   and is NEVER `hidden` and never display:none, so a screen-reader user has the
