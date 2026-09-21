@@ -1562,6 +1562,10 @@ function mountDocMarkers(surface,root,labelToKey,base){
             r[desc.dimKey] = c.label; r[desc.dimKey + '_level'] = c.level;
             if (desc.hasBasisCol) r.counting_basis = c.basis;
             r.additive = c.additive;
+            // canonical machine flag for whether this slot's rows sum to the total
+            if (c.additive === COPY.addsYes) r.additive_bool = true;
+            else if (c.additive === COPY.addsNo) r.additive_bool = false;
+            else r.additive_bool = null; // totals / not-applicable
             for (var k in R) r[k] = R[k][i];
             desc.derive(r, state);
             desc.rowExtras(r, state);
@@ -1580,6 +1584,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
       var out = [];
       cols.forEach(function (c) {
         out.push(c.k);
+        if (c.k === 'additive') out.push('additive_bool');
         if (c.k === 'period') out.push('period_grain', 'period_partial', 'provisional', 'provisional_window_months');
         if (c.k === 'district') out.push('district_level');
         if (c.k === desc.dimKey) {
@@ -1642,9 +1647,16 @@ function mountDocMarkers(surface,root,labelToKey,base){
           /* The trap columns FOLD INTO the dimension cell below 560px rather than being dropped: their value differs between the total row and the member rows, and that difference is the whole invariant-3 point. The meta span is display:none at desktop width, so it is out of the accessibility tree there and nothing is  read twice. */
           if (c.k === desc.dimKey) {
             return '<td class="k">' + esc(r[c.k]) + '<span class="kmeta">' +
-              (desc.hasBasisCol ? esc(r.counting_basis) + ' &middot; ' : '') + 'adds up: ' + esc(r.additive) + '</span></td>';
+              (desc.hasBasisCol ? esc(r.counting_basis) + ' &middot; ' : '') + 'Summable: ' + esc(r.additive_bool == null ? '-' : (r.additive_bool ? 'True' : 'False'))
+              + (r.additive ? ' <span class="sr-only">(' + esc(r.additive) + ')</span>' : '') + '</span></td>';
           }
-          if (c.g === 'key') return '<td class="k' + (c.fold ? ' b' : '') + '">' + esc(r[c.k]) + '</td>';
+          if (c.g === 'key') {
+            if (c.k === 'additive') {
+              var v = r.additive_bool == null ? '-' : (r.additive_bool ? 'True' : 'False');
+              return '<td class="k' + (c.fold ? ' b' : '') + '">' + esc(v) + (r.additive ? ' <span class="sr-only">(' + esc(r.additive) + ')</span>' : '') + '</td>';
+            }
+            return '<td class="k' + (c.fold ? ' b' : '') + '">' + esc(r[c.k]) + '</td>';
+          }
           if (c.cls) return '<td class="' + c.cls + '">' + (c.t === 'pct' ? p1(r[c.k]) : rint(r[c.k])) + '</td>';
           return '<td>' + (c.t === 'pct' ? p1(r[c.k]) : rint(r[c.k])) + '</td>';
         }).join('') + '</tr>';

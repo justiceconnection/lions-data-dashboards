@@ -215,7 +215,7 @@ const TBL_COLS=[
   {k:'period',g:'key',h:'Period'},
   {k:'district',g:'key',h:'District'},
   {k:'cause',g:'key',h:'Cause of action'},
-  {k:'additive',g:'key',h:'Adds up?',fold:true},
+  {k:'additive',g:'key',h:'Summable',fold:true},
   {k:'matters_received',g:'matters',h:'Matters received',t:'int',w:'matters_received'},
   {k:'matters_terminated',g:'matters',h:'Matters terminated',t:'int',w:'matters_terminated'},
   {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},

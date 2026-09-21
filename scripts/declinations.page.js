@@ -248,7 +248,7 @@ const TBL_DESC={
       {k:'period',g:'key',h:'Period'},
       {k:'district',g:'key',h:'District'},
       {k:isAg()?'agency':'category',g:'key',h:isAg()?'Referring agency':'Program category'},
-      {k:'additive',g:'key',h:'Adds up?',fold:true}
+      {k:'additive',g:'key',h:'Summable',fold:true}
     ];
     /* the reason names are UNCHANGED, character for character, from the columns this
        table printed before L-258 */

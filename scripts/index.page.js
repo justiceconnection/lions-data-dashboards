@@ -192,7 +192,7 @@ const TBL_COLS=[
   {k:'district',g:'key',h:'District'},
   {k:'category',g:'key',h:'Program category'},
   {k:'counting_basis',g:'key',h:'Counting basis',fold:true},
-  {k:'additive',g:'key',h:'Adds up?',fold:true},
+  {k:'additive',g:'key',h:'Summable',fold:true},
   {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},
   {k:'cases_terminated',g:'cases',h:'Cases terminated',t:'int',w:'cases_terminated'},
   {k:'defendants_filed',g:'defendants',h:'Defendants filed',t:'int',w:'defendants_filed'},

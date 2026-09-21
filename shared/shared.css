@@ -231,6 +231,9 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .tbl-refusal{border-left:4px solid var(--ink);background:#fff;border-radius:0 6px 6px 0;padding:8px 10px;font-size:12.5px;line-height:1.4;color:var(--ink);margin:0 0 8px}
 /* the one-line screen/file difference note, next to the download button (style guide 9) */
 .csvline{color:var(--mut);font-size:12px;margin:8px 0 0}
+/* accessibility helper: visually-hidden but available to screen readers */
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;border:0!important}
+.tf-bool{font-weight:600}
 /* the table's own caveats, INSIDE the panel. Never #footnote: shell2.js replaces that element's whole innerHTML with one shared string on all four dashboards. */
 .tbl-notes{color:var(--mut);font-size:11.5px;margin:8px 0 0}
 .tbl-notes div{margin-top:3px}
