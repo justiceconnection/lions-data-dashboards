@@ -220,39 +220,28 @@ const CSV_EXTRA=['period_grain','period_partial','provisional','provisional_wind
 /* Every user-facing string the table and the CSV put on the page. Signed by Cary verbatim
    on 16 September 2026 (spec section 6). Never an em dash (D-042). */
 const TBL_COPY={
-  totalLabel:'All categories (cube total)',
+  totalLabel:'All categories',
   complementLabel:'Other categories, and cases with none recorded',
   distSum:TCOPY.distSum,
   catSum:n=>n+' categories, added together',
   basisDistinct:'Distinct total', basisAll:'All occurrences', basisPrimary:'Primary category',
   addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
-  /* L-267. The FOURTH value of the Adds up? column, and the reason it is a fourth rather
-     than a reuse: with breakout off and exactly ONE category selected the table holds one
-     row and no total row, so there is no sum in it and no second row to overlap with.
-     'yes' would claim the rows reach a total that is not on the table, 'no - overlaps'
-     would claim an overlap between rows that do not exist, and 'is the total' - which is
-     what this state carried until L-267 - is flatly false. It parallels addsTotal in
-     grammar for the same reason: both answer what the row IS, because the column's yes/no
-     question has no subject on a one-row table. */
+  /* L-267. The FOURTH value of the Adds up? column, and the reason it is a fourth rather than a reuse: with breakout off and exactly ONE category selected the table holds one row and no total row, so there is no sum in it and no second row to overlap with. 'yes' would claim the rows reach a total that is not on the table, 'no - overlaps' would claim an overlap between rows that do not exist, and 'is the total' - which is what this state carried until L-267 - is flatly false. It parallels addsTotal in grammar for the same reason: both answer what the row IS, because the column's yes/no question has no subject on a one-row table. */
   addsOne:'is one category',
-  lineNoBreakoutAll:p=>'One row per '+p+'. The figures are the cube\'s own total row for all program categories, which counts each case once.',
-  lineNoBreakoutSum:(p,n)=>'One row per '+p+'. The figures are '+n+' program categories added together, and a case in more than one of them is counted more than once.',
-  /* L-249 D-C, signed by Cary verbatim on 17 September 2026 (spec section 6.2). The SIXTH
-     basis-line state: breakout off with exactly ONE category selected. It fell through the
-     sel.length>1 test to lineNoBreakoutAll above, which then told the reader the figures
-     were the cube's own total row for all program categories while the table showed one.
-     Basis line 1 is unchanged - it was right for its own state and the ROUTING was wrong. */
-  lineNoBreakoutOne:(p,occ)=>'One row per '+p+'. The figures are one program category, counted '+(occ==='primary'?'once under each case\'s first code':'under every code it touches')+'.',
-  lineBreakoutAllOcc:'Program category rows do not add up to the total row, because a case is counted in every category it touches. The total row is the cube\'s own total for all categories, counted once per case.',
-  lineBreakoutPrimary:'Program category rows add up to the total row once "Other categories, and cases with none recorded" is included, because each case is counted once under its first code.',
-  lineOverlap:'You have selected an umbrella category and one of its own sub-categories, so two of these rows count the same cases. Turn one of them off.',
+  lineNoBreakoutAll:p=>'One row per '+p+'. Figures show the database\'s total cases for all program categories, counted once per case.',
+  lineNoBreakoutSum:(p,n)=>'One row per '+p+'. Figures show '+n+' program categories added together, and a case labeled with more than one category is shown more than once.',
+  /* L-249 D-C, signed by Cary verbatim on 17 September 2026 (spec section 6.2). The SIXTH basis-line state: breakout off with exactly ONE category selected. It fell through the sel.length>1 test to lineNoBreakoutAll above, which then told the reader the figures were the cube's own total row for all program categories while the table showed one. Basis line 1 is unchanged - it was right for its own state and the ROUTING was wrong. */
+  lineNoBreakoutOne:(p,occ)=>'One row per '+p+'. Figures shown are one program category, counted '+(occ==='primary'?'once by the case\'s primary code':'under every labeled code')+'.',
+  lineBreakoutAllOcc:'Program category rows will add up to a number that differs from the total row, because cases may be filed with multiple program categories. The total row is the database\'s own total for all categories, counted once per case.',
+  lineBreakoutPrimary:'Program category rows will reach the total row once "Other categories, and cases with none recorded" is included.',
+  lineOverlap:'You have selected an umbrella category and one of its own sub-categories, so two of these rows count the same cases. Toggle one of them off.',
   refusal:(n,cap)=>TCOPY.refusal(n,cap,'categories'),
   /* L-257, signed by Cary verbatim on 17 September 2026 (design note section 7a). The
      placeholder shown between the panel opening and the table landing. It names the ACT
      and never a duration: the duration is a property of the reader's device and nobody
      has measured a phone. The verb is this page's own - the refusal above says "draw". */
   pending:TCOPY.pending,
-  csvLine:'The CSV has the same rows and the same figures as the table, plus six columns that spell out in words what the table shows as marks: the period\'s grain, whether it is a part period, whether it is provisional and how many months that covers, and what each district and category cell is.',
+  csvLine:'The CSV has the same rows and the same figures as the table, plus six columns that outline table notes: the reporting period, whether it is a partial period, whether data is provisional and how many months that includes, and what each district and category cell is.',
   footProv:TCOPY.footProvUp,
   partialNote:TCOPY.partialNote,
   scrollHint:TCOPY.scrollHint
@@ -848,14 +837,9 @@ async function init(){ renderNav();
        once and WITHOUT the placeholder (design note section 5). renderTable() returns
        straight out of its refusal branch, so this is cheap enough to run inline. */
     if(tblRowCount()>ROW_CAP){ tblBuild(); return; }
-    /* ORDER MATTERS. The panel is already unhidden above, so this mutation lands in a
-       live region that is already visible: a role="status" that gains its text in the
-       same paint in which it appears is not reliably announced. */
+    /* ORDER MATTERS. The panel is already unhidden above, so this mutation lands in a live region that is already visible: a role="status" that gains its text in the same paint in which it appears is not reliably announced. */
     document.getElementById('tblpending').textContent=TBL_COPY.pending;
-    /* NEVER synchronous in the handler. The browser paints nothing until a task returns,
-       so a build in here would leave the panel unopened and the disclosure looking dead
-       for the whole build. The first requestAnimationFrame callback still runs before the
-       frame's paint, so the work hangs off the second. */
+    /* NEVER synchronous in the handler. The browser paints nothing until a task returns, so a build in here would leave the panel unopened and the disclosure looking dead for the whole build. The first requestAnimationFrame callback still runs before the frame's paint, so the work hangs off the second. */
     requestAnimationFrame(()=>requestAnimationFrame(tblBuild));
   });
   // ── Deliberate prefetch. Do not "optimise" this into a lazy load. ──────────────

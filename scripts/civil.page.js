@@ -236,22 +236,22 @@ const TBL_COLS=[
    LIONS_TABLE.COPY. Signed by Cary verbatim on 19 September 2026 (spec section 6).
    Never an em dash (D-042). */
 const TBL_COPY={
-  totalLabel:'All causes of action (cube total)',
+  totalLabel:'All causes of action',
   /* Criminal's complement reads "Other categories, and cases with none recorded" because
      there really is a residual there. On this cube the 14 causes reach category='ALL'
      EXACTLY - 0 of 1,146 (ym, role) keys disagree on any of 9 columns, measured in
      design-lab/l258-cube-measure.js - so a label claiming uncategorised members would
      assert something false. This one names what the row is. */
-  complementLabel:'The other causes of action, added together',
-  dimSum:n=>n+' causes of action, added together',
+  complementLabel:'Other causes of action, summed',
+  dimSum:n=>n+'causes of action, summed',
   distSum:TCOPY.distSum,
   addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
   addsOne:'is one cause of action',
-  lineAll:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are the cube’s own total row for all causes of action.',
-  lineOne:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are one cause of action.',
-  lineSum:(p,n,role)=>'One row per '+p+', U.S. as '+role+'. The figures are '+n+' causes of action added together, and each case is counted once, because a case has exactly one cause of action.',
-  lineBreakout:(p,role)=>'One row per '+p+' per cause of action, U.S. as '+role+'. The cause rows add up to the total row once "The other causes of action, added together" is included, because a case has exactly one cause of action.',
-  notesExtra:'Cases pending is a level read at the end of the period, not a total for the period. Do not add that column down.',
+  lineAll:(p,role)=>'One row per '+p+', U.S. as '+role+'. Figures show the database\'s total for all causes of action.',
+  lineOne:(p,role)=>'One row per '+p+', U.S. as '+role+'. Figures show one cause of action.',
+  lineSum:(p,n,role)=>'One row per '+p+', U.S. as '+role+'. Figures show '+n+' causes of action added together, and each case is counted once.',
+  lineBreakout:(p,role)=>'One row per '+p+' per cause of action, U.S. as '+role+'. The cause rows add up to the total row once "Other causes of action" is included.',
+  notesExtra:'Pending cases is a figure reported at the end of the period, not a reflection of cases during that period. Do not sum that column.',
   refusal:(n,cap)=>TCOPY.refusal(n,cap,'causes of action'),
   pending:TCOPY.pending
 };

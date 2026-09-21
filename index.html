@@ -82,30 +82,21 @@
   <div id="note"></div>
   <div class="tabletoggle"><button id="tblToggle" class="disc" aria-expanded="false">▸ Show data table</button></div>
   <!-- L-233 (built under L-237). The table stays exactly where it is: inside
-       #tablePanel, behind the same disclosure, inside the same .tblwrap, above the same
-       #dl button. No new page, no new panel, no new card, no move - so invariant 9's
-       load chain is unchanged and no script or stylesheet is added or removed.
-       The two shape controls sit HERE and not in a .controls block: shell2.js collects
-       the .wrap children classed occbar/masters/master/controls into the Filters
-       top-dropdown (web/shell2.js:36-37) and opens that dropdown only at min-width:760px
-       (:90), so a control placed there would be unreachable from the table it reshapes
-       on a phone. The table's own caveats sit here for the same kind of reason: the
-       shell2 footnote component replaces #footnote's whole innerHTML (:131, :136) after
-       the page script has run, so anything written there is destroyed. -->
+       #tablePanel, behind the same disclosure, inside the same .tblwrap, above the same #dl button. The two shape controls sit HERE and not in a .controls block: shell2.js collects the .wrap children classed occbar/masters/master/controls into the Filters top-dropdown (web/shell2.js:36-37) and opens that dropdown only at min-width:760px (:90), so a control placed there would be unreachable from the table it reshapes on a phone. The table's own caveats sit here for the same kind of reason: the shell2 footnote component replaces #footnote's whole innerHTML (:131, :136 after the page script has run, so anything written there is destroyed. -->
   <div id="tablePanel" hidden>
     <div class="tbl-shape">
-      <div class="grp"><span class="lbl" id="rowsbylbl">Break rows out by</span>
+      <div class="grp"><span class="lbl" id="rowsbylbl">Organize rows by</span>
         <div class="seg" id="rowsby" role="group" aria-labelledby="rowsbylbl">
           <button type="button" data-v="district" aria-pressed="false">District</button>
           <button type="button" data-v="category" aria-pressed="false">Program category</button>
         </div>
       </div>
-      <div class="grp"><span class="lbl" id="colslbl">Columns</span>
+      <div class="grp"><span class="lbl" id="colslbl">Include columns</span>
         <div class="seg" id="colgroups" role="group" aria-labelledby="colslbl">
           <button type="button" data-v="cases" class="on" aria-pressed="true">Cases</button>
           <button type="button" data-v="defendants" class="on" aria-pressed="true">Defendants</button>
           <button type="button" data-v="dispositions" class="on" aria-pressed="true">Dispositions</button>
-          <button type="button" data-v="rates" class="on" aria-pressed="true">Rates</button>
+          <button type="button" data-v="rates" class="on" aria-pressed="true">Clearance rates</button>
         </div>
       </div>
     </div>
@@ -113,11 +104,7 @@
     <p class="tbl-refusal" id="refusal" hidden></p>
     <p class="scrollhint" id="scrollhint"></p>
     <div class="topbar"><button id="dl2">Download CSV</button></div>
-    <!-- L-257: the first-open placeholder. STATIC and initially EMPTY, because a
-         role="status" created together with its own text is not reliably announced;
-         only its textContent ever changes. It sits inside #tblwrap so the labelled
-         region is never empty while the table is being drawn, and so the refusal path,
-         which hides #tblwrap, cannot show it. -->
+    <!-- L-257: the first-open placeholder. STATIC and initially EMPTY, because a role="status" created together with its own text is not reliably announced; only its textContent ever changes. It sits inside #tblwrap so the labelled region is never empty while the table is being drawn, and so the refusal path, which hides #tblwrap, cannot show it. -->
     <div class="tblwrap" id="tblwrap" tabindex="0" role="region" aria-label="Criminal cases data table"><p class="tbl-pending" id="tblpending" role="status"></p><table>
       <thead id="thead"></thead>
       <tbody id="tbody"></tbody>

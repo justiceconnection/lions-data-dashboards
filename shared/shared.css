@@ -23,12 +23,7 @@ button{cursor:pointer}
 .seg{display:flex;gap:6px}
 .seg button:hover{border-color:var(--accent)}
 .seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-/* .seg is flex-wrap:nowrap, so a seg wider than its container overflows the DOCUMENT
-   rather than wrapping. The five Administration buttons need 321px at their own
-   min-content widths; below 760px shell2.js folds .controls into the Filters panel,
-   which is 254px wide at a 320px viewport, so the row hung 34px off the right edge of
-   all four dashboards. Wrapping is the only fix that leaves the type size, the padding
-   and the labels alone. L-265. */
+/* .seg is flex-wrap:nowrap, so a seg wider than its container overflows the DOCUMENT rather than wrapping. The five Administration buttons need 321px at their own min-content widths; below 760px shell2.js folds .controls into the Filters panel,  which is 254px wide at a 320px viewport, so the row hung 34px off the right edge of all four dashboards. Wrapping is the only fix that leaves the type size, the padding and the labels alone. L-265. */
 #presets{flex-wrap:wrap}
 #presets button{padding:8px 12px;font-size:15px}
 .ms{position:relative}
@@ -49,39 +44,22 @@ thead th{position:sticky;top:0;background:var(--panel);color:var(--mut);font-siz
 tbody tr:hover{background:#f5f5f3}
 tr.edge td{color:#b0b1ac}
 /* Provisional rows. #9a7b2e was 4.00:1 on #ffffff and 3.67:1 on the tbody tr:hover fill
-   #f5f5f3 - both under WCAG 1.4.3's 4.5:1. #846826 is 5.26 / 5.09 / 4.82 on white, --bg
-   and the hover fill. Computed, not judged. Colour is never the only channel here: the
-   row also carries LIONS_PROV.tableMark()'s dagger. RULED by Cary 16 September 2026
-   (L-233 design spec section 10, D-2), which also carries tr.edge above forward UNTOUCHED
-   - its 2.16:1 colour-only failure and its undocumented 1996-09 threshold are L-236. */
+   #f5f5f3 - both under WCAG 1.4.3's 4.5:1. #846826 is 5.26 / 5.09 / 4.82 on white, --bg and the hover fill. */
 tr.recent td{color:#846826}
 /* key columns read left, metrics read right */
 th.k,td.k{text-align:left}
-/* the first key column stays put while the metrics scroll sideways. thead th is already
-   sticky-top, so the corner cell needs both axes and the highest z-index of the three. */
+/* the first key column stays put while the metrics scroll sideways. thead th is already sticky-top, so the corner cell needs both axes and the highest z-index of the three. */
 th.k:first-child,td.k:first-child{position:sticky;left:0;background:var(--panel);z-index:1}
 td.k:first-child{box-shadow:1px 0 0 var(--line)}
 thead th.k:first-child{z-index:3}
-/* the cube's own total row anchors each block: a rule, not a fill - a fill would be a
-   second colour channel doing work the label already does */
+
 tr.rowtotal td{font-weight:600;border-top:2px solid var(--line)}
-/* Provisional (right-censored) data - L-021 rev B, spec ops/handoffs/L-003-design-spec.md.
-   .sw-prov is the legend/KPI swatch. REVISION B: it is TWO-TONE - one light stroke and
-   one dark one - because that is the mark that is actually on the stacked charts, which
-   are the family where the treatment has to work hardest. A single dark hatch keyed a
-   mark that now appears on neither family at full strength. `tr.prov` is a hook only -
-   provisional rows keep the existing `recent` colour and gain the .provmark dagger,
-   because colour alone is a WCAG 1.4.1 failure. */
 .sw-prov{width:11px;height:11px;border-radius:2px;display:inline-block;border:1px solid #cfd0cb;
   background:#dcdcd8;
   background-image:repeating-linear-gradient(45deg,transparent 0 3px,rgba(251,251,251,.90) 3px 4px),
                    repeating-linear-gradient(45deg,transparent 0 3px,rgba(33,33,35,.55) 3px 4px);
   background-position:0 0,2px 2px}
 td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
-/* .provnote and .provnote .sw-prov are DELETED here (L-207). They styled the topline
-   section's eight per-figure and per-pair provisional lines, which are struck and
-   replaced by the one section mark below; nothing else in web/ used them. .sw-prov
-   itself is untouched and is live in the chart legends and inside the mark. */
 .bottombar{display:flex;justify-content:flex-end;margin-top:10px}
 .tabletoggle{margin:8px 0}
 .disc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
@@ -97,19 +75,10 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
     padding-top:10px;
     white-space: pre-line;
 }
-/* The one status line (L-224). Never [hidden]: the rule above wins with !important, so
-   an author display here cannot reveal it and a live region out of the accessibility
-   tree is never announced. Empty at rest, which is a 0px box with no margin. */
 #status{display:block;color:var(--mut);font-size:12px}
 #status:not(:empty){margin-top:10px}
 #status.st-err{color:var(--ink);font-weight:600}
-/* The dashboard nav, presentation. shared/config.js is the single source of truth for
-   this component's CONTENT; this block is the single source of truth for its LOOK, and it
-   lives here because shared/shared.css is the only stylesheet the four dashboards and
-   reading-the-data.html all load. Moved here from styles/shell2.css:62-68 (the chip) and
-   lab.css:6-15 (the accordion) by L-263, verbatim, with the .dw-bar qualifier dropped.
-   case-lookup/index.html keeps its own inline copy because it loads no shared stylesheet;
-   this block is the master those rules track. */
+/* The dashboard nav, presentation. shared/config.js is the single source of truth for this component's CONTENT; this block is the single source of truth for its LOOK, and it */
 .dashnav{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 16px}
 .dashnav a{position:relative;font-size:14.5px;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);text-decoration:none;font-weight:600;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease,background .15s ease}
 .dashnav a::after{content:"";position:absolute;left:10px;right:10px;bottom:6px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .22s ease}
@@ -134,40 +103,16 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 
 @media(max-width:600px){.dashnav{display:none}.dashsel{display:block}}
 
-/* ── THE TOPLINE SECTION - L-199 direction B, built under L-204, 15 September 2026 ──
-   Spec: ops/handoffs/L-199-spec-draft.md. Reference: design-lab/l199-common.css.
-   It lives here rather than in a new stylesheet because all four dashboards need it and
-   shared.css is already on all four, so no asset is added and invariant 9's load chain
-   is unchanged. The old .kpi card rules are gone from the four styles/<page>.css files,
-   and with them the .kpis media queries: L-016 is DISCHARGED rather than resolved to one
-   breakpoint, because there is no four-up grid left to switch. The strip is auto-fit and
-   re-columns itself continuously. D-042: no em dashes. */
+/* ── THE TOPLINE SECTION - L-199 direction B, built under L-204, 15 September 2026 */
 .kpis{background:var(--panel);border:1px solid var(--line);border-radius:12px;
   padding:12px 14px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 
-/* THE CAPTION ROW. The caption tells a user this section is not the chart's filter bar;
-   it sits LEFT and the section's one provisional mark sits RIGHT, at the top right of the
-   .kpis box (L-207). A flex row rather than an absolutely positioned icon, so the caption
-   wraps into the space the mark leaves instead of running under it: at 390px the caption
-   is two lines and an absolute icon would sit on top of the second. */
+/* THE CAPTION ROW. The caption tells a user this section is not the chart's filter bar */
 .tf-cap{font-size:12px;color:var(--mut);margin-bottom:10px;display:flex;
   align-items:flex-start;justify-content:space-between;gap:10px}
 .tf-captxt{min-width:0}
 
-/* ── THE SECTION'S ONE PROVISIONAL MARK (L-207) ──────────────────────────────────────
-   One mark for the whole section, replacing eight per-figure provisional strings. It is
-   a BUTTON, not a bare glyph, because it must open on TAP as well as on hover: a phone
-   has no hover and invariant 6 says mark provisional periods and never hide them, so a
-   hover-only mark is hidden on touch.
-   The mark itself is the provisional HATCH, the same texture LIONS_PROV draws on a
-   right-censored chart band, so it is texture plus an accessible name and never colour
-   alone, and a reader who has seen the hatched band below has already met it. 26x26
-   matches shell2's own caret and clears WCAG 2.5.8's 24x24 target size. The hatch's dark
-   stripes composite to 4.61:1 on the card fill, computed rather than judged: the lower
-   gradient's rgba(33,33,35,.55) over #dcdcd8 is #757574, where the 1px --line border is
-   1.27:1 and the #dcdcd8 swatch base is 1.38:1 and neither could have carried the mark
-   on its own. The upper rgba(251,251,251,.90) layer lightens the alternate stripes to
-   #ececeb and does not annihilate the dark ones, which is the L-003 failure mode. */
+/* ── THE SECTION'S ONE PROVISIONAL MARK (L-207) ────────────────────────────────────── */
 .tf-provwrap{position:relative;flex:none;display:inline-flex}
 .tf-prov{display:inline-flex;align-items:center;justify-content:center;width:26px;
   height:26px;padding:0;background:var(--panel);border:1px solid var(--line);
@@ -175,11 +120,7 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .tf-prov:hover{border-color:var(--ink)}
 .tf-prov:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .tf-prov .sw-prov{width:14px;height:14px}
-/* the bubble. NEVER `hidden` and never display:none: it is the button's
-   aria-describedby target, so it stays in the accessibility tree at every visual state
-   and a screen-reader user never depends on opening it. Closed, it is clipped to 1px by
-   the standard visually-hidden idiom; open, it is a popover below and left of the
-   button, right-aligned so it cannot overflow the section's right edge. */
+/* the bubble. */
 .tf-tip{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);
   white-space:nowrap;margin:-1px;padding:0;border:0}
 .tf-provwrap:hover .tf-tip,.tf-prov:focus-visible~.tf-tip,.tf-prov[aria-expanded="true"]~.tf-tip{
@@ -191,18 +132,8 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
   background:var(--panel);border-radius:0 8px 8px 0;padding:8px 10px;
   font-size:11.5px;line-height:1.4;color:var(--ink);text-align:left;
   box-shadow:0 8px 24px rgba(0,0,0,.14)}
-/* The two-truths marker's three rules - the override block, its pill and its return
-   button - are DELETED here, with the control they marked (L-205, spec 4.1). The contrast
-   arithmetic they were written for is not withdrawn and still governs the two blocks
-   below: charcoal #212123 is 16.07:1 on the card fill and 15.53:1 on the page ground,
-   against a #e4e4e1 hairline at 1.27:1 and --accent at 1.19:1, neither of which could
-   carry a channel on its own. */
 
-/* the glance strip. A GRID rather than a flex row, because flex lets the last item on a
-   wrapped row grow to fill it: measured in Chromium at 620px, three flex items came out
-   279/279/558 and the third read as a different kind of thing. The divider is a
-   box-shadow rather than a border so the first column of EVERY row has no rule to its
-   left: at -1px it falls outside the strip's box and is clipped by overflow:hidden. */
+/* the glance strip. A GRID rather than a flex row, because flex lets the last item on a wrapped row grow to fill it: measured in Chromium at 620px, three flex items came out 279/279/558 and the third read as a different kind of thing. The divider is a box-shadow rather than a border so the first column of EVERY row has no rule to its left: at -1px it falls outside the strip's box and is clipped by overflow:hidden. */
 .tf-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:10px 0;overflow:hidden;margin:0 -14px}
 .tf-stat{padding:2px 14px;box-shadow:-1px 0 0 var(--line)}
@@ -220,9 +151,7 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .tf-ask2{border-top:1px solid var(--line);margin-top:12px;padding-top:11px}
 .tf-ask{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;font-size:13px;
   border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:0 0 10px}
-/* a <select> is as wide as its widest option and does not shrink in a flex row, so a
-   long option label pushes the section past the viewport. MEASURED at 390px before this
-   line: one element escaped the section and the page scrolled sideways. */
+/* a <select> is as wide as its widest option and does not shrink in a flex row, so a long option label pushes the section past the viewport. MEASURED at 390px before this line: one element escaped the section and the page scrolled sideways. */
 .tf-ask select{font-size:12.5px;padding:6px 9px;max-width:100%;min-width:0}
 .tf-ask button{font-size:12.5px;padding:6px 10px}
 .tf-ask .lead{font-weight:600}
@@ -235,23 +164,12 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .tf-q{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);
   font-weight:700;margin-bottom:6px}
 /* THE TWO PERIODS OF A COMPARISON ARE DIVIDED (L-207). The same grid-plus-box-shadow
-   idiom .tf-strip already uses, for the same reason: auto-fit re-columns with no media
-   query, and a box-shadow at -1px/-1px falls outside the container's own box and is
-   clipped by overflow:hidden, so the first cell of every ROW carries no rule. Side by
-   side that draws a vertical hairline between the two periods and before the change;
-   stacked on a phone the vertical rules are clipped at the left edge and the horizontal
-   ones appear instead. One rule, two behaviours, no media query and no new colour: it is
-   --line, the hairline the strip, the basis line and the answer border already use. The
-   -13px margin matches .tf-answer's own 13px padding. .tf-delta's rule is deleted with
+   idiom .tf-strip already uses, for the same reason: auto-fit re-columns with no media query, and a box-shadow at -1px/-1px falls outside the container's own box and is  clipped by overflow:hidden, so the first cell of every ROW carries no rule. Side by side that draws a vertical hairline between the two periods and before the change; stacked on a phone the vertical rules are clipped at the left edge and the horizontal ones appear instead. One rule, two behaviours, no media query and no new colour: it is --line, the hairline the strip, the basis line and the answer border already use. The -13px margin matches .tf-answer's own 13px padding. .tf-delta's rule is deleted with
    the flex row it belonged to; the class stays on the change cell as a hook. */
 .tf-pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:12px 0;align-items:flex-start;margin:0 -13px 4px;overflow:hidden}
 .tf-side{padding:0 13px;box-shadow:-1px 0 0 var(--line),0 -1px 0 var(--line)}
-/* the figure's own label on each side of a pair (L-214). No new colour and no new size:
-   it is --mut at 11.5px, the same as .tf-win, which is the glance strip's equivalent
-   line. It is a separate selector rather than a reuse of .tf-win because .tf-win means
-   "the period" everywhere else, and a class that means two things is what a later reader
-   gets wrong. */
+/* the figure's own label on each side of a pair. */
 .tf-side .tf-fig{color:var(--mut);font-size:11.5px;margin-top:2px}
 .tf-basis{font-size:12px;color:var(--ink);margin-top:8px;border-top:1px solid var(--line);padding-top:7px}
 .tf-basis b{font-weight:700}
@@ -263,12 +181,10 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .tf-other .ok{color:var(--mut);font-weight:400;font-size:12px}
 .tf-value {font-size:13px}
 .tf-other .os{color:var(--mut);font-weight:400;font-size:12px}
-/* a flag that qualifies a figure: the fill encodes nothing (1.04:1 against the page) and
-   the 4px charcoal rule carries it at 15.00:1 on the fill. */
+/* a flag that qualifies a figure: the fill encodes nothing (1.04:1 against the page) and the 4px charcoal rule carries it at 15.00:1 on the fill. */
 .tf-flag{margin-top:8px;border-left:4px solid var(--ink);background:#fff9c4;
   border-radius:0 6px 6px 0;padding:6px 9px;font-size:11.5px;line-height:1.35;color:var(--ink)}
-/* a refusal: the comparison asked for cannot be answered honestly on this period, so the
-   section says so in words instead of printing a figure. */
+/* a refusal: the comparison asked for cannot be answered honestly on this period, so the section says so in words instead of printing a figure. */
 .tf-refusal{margin-top:2px;border-left:4px solid var(--ink);background:#fff;
   border-radius:0 6px 6px 0;padding:6px 10px;font-size:12.5px;line-height:1.4;color:var(--ink)}
 .ancizar-sans {
@@ -288,14 +204,7 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .chk label{font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--ink)}
 .ms-btn{min-width:150px;text-align:left}
 .ms-panel{position:absolute;z-index:30;top:calc(100% + 4px);left:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.14)}
-/* L-234: text-transform/letter-spacing restored verbatim from styles/index.css,
-   styles/agency.css and styles/declinations.css, which carried them until db2e5da
-   consolidated this rule here and dropped them. Without them .ctl label's uppercase
-   inherits down onto the option rows, and because these labels are white-space:nowrap
-   and .ms-panel has no max-width the panel sizes to its widest label and grows ~34%,
-   overflowing the viewport at 390 and 320 (L-229 test report D-1). civil.html never
-   carried them, so this moves civil's option labels to lowercase too - a knowing,
-   accepted change for consistency, not a regression. */
+/* L-234: text-transform/letter-spacing restored verbatim from styles/index.css, styles/agency.css and styles/declinations.css, which carried them until db2e5da consolidated this rule here and dropped them. Without them .ctl label's uppercase inherits down onto the option rows, and because these labels are white-space:nowrap  and .ms-panel has no max-width the panel sizes to its widest label and grows ~34%, overflowing the viewport at 390 and 320 (L-229 test report D-1). civil.html never carried them, so this moves civil's option labels to lowercase too - a knowing,accepted change for consistency, not a regression. */
 .ms-list label{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:6px;font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer;white-space:nowrap}
 .ms-dept{font-weight:600;margin-top:4px}
 .ms-sub label{padding-left:22px;font-size:12.5px;color:#333}
@@ -303,25 +212,11 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .chartbox{position:relative;width:100%}
 #summary{color:var(--mut);font-size:12.5px;margin:2px 2px}
 .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:12px;position:relative}
-/* L-229: restored verbatim from styles/index.css and styles/agency.css, which carried
-   these two rules identically until db2e5da moved the rest of the block here and dropped
-   these. The basis control row - "Program-category basis:" on index.html, "Agency basis:"
-   on agency.html - is the only user of either. */
+/* L-229: restored verbatim from styles/index.css and styles/agency.css, which carried these two rules identically until db2e5da moved the rest of the block here and dropped  these. The basis control row - "Program-category basis:" on index.html, "Agency basis:" on agency.html - is the only user of either. */
 .occbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;font-size:12.5px;color:var(--mut)}
 .occhint{font-size:11.5px;color:var(--mut);opacity:.8}
 
-/* ── The wide data table (L-233, built under L-237) ──────────────────────────────────
-   Style guide section 5g. These rules live in the SHARED file, not in styles/index.css,
-   because the phase-2 row generalises the component to the other three dashboards and a
-   rule that has to move again is a second cache-stamp churn for no gain. Only
-   index.html carries the markup today, so nothing else renders differently for them.
-   ONE declaration of this block is deliberately NOT here: `.tblwrap{max-height:70vh}`
-   at phone width. `.tblwrap`'s max-height is per-page and lives in each page's own
-   stylesheet - index/agency/declinations 520px, civil 480px - and every page stylesheet
-   loads AFTER this file, so a media rule here at equal specificity would lose the
-   cascade and never apply. It is in all four page stylesheets, beside the value each one
-   overrides - styles/index.css since L-237, and styles/civil.css, styles/agency.css and
-   styles/declinations.css since L-301. */
+/* ── The wide data table (L-233, built under L-237) ────────────────────────────────── ONE declaration of this block is deliberately NOT here: `.tblwrap{max-height:70vh}` at phone width. `.tblwrap`'s max-height is per-page and lives in each page's own stylesheet - index/agency/declinations 520px, civil 480px - and every page stylesheet  loads AFTER this file, so a media rule here at equal specificity would lose the cascade and never apply. It is in all four page stylesheets, beside the value each one overrides - styles/index.css since L-237, and styles/civil.css, styles/agency.css and styles/declinations.css since L-301. */
 /* the two shape controls - INSIDE the table panel, never a .wrap child with a
    controls/masters/master/occbar class, which shell2.js folds away below 760px */
 .tbl-shape{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:0 0 10px;font-size:12.5px}
@@ -331,31 +226,19 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .tbl-shape button{font-size:12px;padding:5px 9px}
 .tbl-shape button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
 .tbl-shape button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-/* the basis line and the refusal reuse the topline section's idioms, so the page has one
-   vocabulary for "here is what this is" and "here is why there is no figure" */
+/* the basis line and the refusal reuse the topline section's idioms, so the page has one vocabulary for "here is what this is" and "here is why there is no figure" */
 .tbl-basis{font-size:12px;color:var(--ink);margin:0 0 8px;border-left:4px solid var(--ink);padding:6px 9px;background:#fff;border-radius:0 6px 6px 0}
 .tbl-refusal{border-left:4px solid var(--ink);background:#fff;border-radius:0 6px 6px 0;padding:8px 10px;font-size:12.5px;line-height:1.4;color:var(--ink);margin:0 0 8px}
 /* the one-line screen/file difference note, next to the download button (style guide 9) */
-.csvline{color:var(--mut);font-size:11.5px;margin:8px 0 0;}
-/* the table's own caveats, INSIDE the panel. Never #footnote: shell2.js replaces that
-   element's whole innerHTML with one shared string on all four dashboards. */
-.tbl-notes{color:var(--mut);font-size:11.5px;margin:8px 0 0;max-width:72ch}
+.csvline{color:var(--mut);font-size:12px;margin:8px 0 0}
+/* the table's own caveats, INSIDE the panel. Never #footnote: shell2.js replaces that element's whole innerHTML with one shared string on all four dashboards. */
+.tbl-notes{color:var(--mut);font-size:11.5px;margin:8px 0 0}
 .tbl-notes div{margin-top:3px}
 .scrollhint{display:none;color:var(--mut);font-size:11.5px;margin:0 0 6px}
-/* L-257: the first-open placeholder inside #tblwrap. It is never display:none and never
-   toggled with [hidden] - taking a live region out of the tree defeats the point of its
-   being static. Empty, a block box with no content and no padding has zero height, so it
-   takes no space; the padding only applies once it has words in it. It lived in
-   styles/index.css while index.html was the only page carrying the element; L-258/L-301
-   gave it to the other three, so it moves here and is DELETED there - two rules with one
-   selector in two files is how a cascade question gets invented later. */
 .tbl-pending{margin:0;padding:0;color:var(--mut);font-size:12.5px;line-height:1.4}
 .tbl-pending:not(:empty){padding:10px 12px}
-/* a stock column is a level, not something to add down: a 1px rule detaches it from the flow
-   columns beside it. The header says so in words as well - colour is never the only channel */
 th.stock,td.stock{border-left:1px solid var(--line)}
-/* the declinations table's reason columns partition the row's own total, exactly as the
-   criminal table's five disposition columns do; the totals block is separated the same way */
+/* the declinations table's reason columns partition the row's own total, exactly as the criminal table's five disposition columns do; the totals block is separated the same way */
 th.tot,td.tot{border-left:1px solid var(--line)}
 /* below 560px the two trap columns FOLD INTO the category cell rather than disappearing */
 .kmeta{display:none}

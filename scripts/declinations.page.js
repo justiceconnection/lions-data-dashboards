@@ -30,11 +30,8 @@ const CURRENT="declinations.html";
 // All the logic lives in shared/provisional.js; this page only makes calls.
 // Two things this page owns for rev B, neither of them logic:
 //   scales.x.ticks.padding:6 on every chart carrying the treatment - a LAYOUT
-//     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
-//     bar lives in that space; Chart.js defaults to 3 and the bar would touch
-//     the tick labels.
-//   _stacked:true on datasets built for a stacked render - the input to
-//     LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
+//     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The bar lives in that space; Chart.js defaults to 3 and the bar would touch the tick labels.
+//   _stacked:true on datasets built for a stacked render - the input to LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
 //     Set per render, because the mix charts flip family at runtime.
 // A declination is a disposition event on a criminal matter, so `declined` is criminal
 // OUTFLOW: window 6 months, on both charts, the table and the CSV.
@@ -165,54 +162,42 @@ function renderChart2(){
    ratio 1.000000 both ways, so the reason columns partition the row's own total and the
    shares total 100.0% of the selected reasons.
 
-   L-139 LANDS HERE. The column headed a bare `Total` was the total of the SELECTED
-   reasons - 1,847 against the cube's 1,872 at 2014-10 - which is a labelling defect and
-   not a wrong number. It becomes TWO columns that each name their parts, so the
-   difference is on the face of the table instead of hidden in a heading. THERE IS NO
-   reason='ALL' ROW IN EITHER DECLINATION CUBE to read instead - 0 such rows in all four
-   files, checked rather than assumed (design-lab/l258-cube-measure.js, L-281) - so the
-   all-reasons figure is a CHECKED SUM and the label says so rather than calling it the
-   cube's total.
+   L-139 LANDS HERE. The column headed a bare `Total` was the total of the SELECTED reasons - 1,847 against the cube's 1,872 at 2014-10 - which is a labelling defect and
+   not a wrong number. It becomes TWO columns that each name their parts, so the difference is on the face of the table instead of hidden in a heading. THERE IS NO
+   reason='ALL' ROW IN EITHER DECLINATION CUBE to read instead - 0 such rows in all four files, checked rather than assumed (design-la l258-cube-measure.js, L-281) - so the all-reasons figure is a CHECKED SUM and the label says so rather than calling it the cube's total.
 
-   THE (ym, reason) GRID IS ZERO-SUPPRESSED: 133 of 3,056 keys at category='ALL' carry no
-   row, and an absent key is a TRUE ZERO, not a gap. aggregateTable() fills the grid by
-   initialising every reason across the whole spine before it adds anything, so nothing
-   downstream can read a measured zero as unknown.
-   Spec: ops/handoffs/L-258-design-spec.md, copy signed by Cary 19 September 2026.
-   ══════════════════════════════════════════════════════════════════════════════════ */
+   THE (ym, reason) GRID IS ZERO-SUPPRESSED: 133 of 3,056 keys at category='ALL' carry no row, and an absent key is a TRUE ZERO, not a gap. aggregateTable() fills the grid by initialising every reason across the whole spine before it adds anything, so nothing  downstream can read a measured zero as unknown.
+   Spec: ops/handoffs/L-258-design-spec.md, copy signed by Cary 19 September 2026. ══════════════════════════════════════════════════════════════════════════════════ */
 const ROW_CAP=window.LIONS_TABLE.ROW_CAP;
 const TCOPY=window.LIONS_TABLE.COPY;
 const rkey=r=>'r_'+r.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
 const RKEYS=REASON_ORDER.map(rkey);
-/* Every user-facing string this table puts on the page that is not already in
-   LIONS_TABLE.COPY. Signed by Cary verbatim on 19 September 2026 (spec section 6).
-   Never an em dash (D-042). */
+/* Every user-facing string this table puts on the page that is not already in LIONS_TABLE.COPY. */
 const TBL_COPY={
-  totalLabelCat:'All program categories (cube total)',
-  totalLabelAg:'All referring agencies (cube total)',
-  complementLabelCat:'The other program categories, added together',
-  complementLabelAg:'The other referring agencies, added together',
-  dimSumCat:n=>n+' program categories, added together',
-  dimSumAg:n=>n+' referring agencies, added together',
+  totalLabelCat:'All program categories',
+  totalLabelAg:'All referring agencies',
+  complementLabelCat:'Other program categories, summed',
+  complementLabelAg:'Other referring agencies, summed',
+  dimSumCat:n=>n+' program categories, summed',
+  dimSumAg:n=>n+' referring agencies, summed',
   addsOneCat:'is one program category',
   addsOneAg:'is one referring agency',
   distSum:TCOPY.distSum,
   addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
-  selTotal:n=>n+' of 8 reasons, added together',
-  allTotal:'All 8 reasons, added together',
-  lineAllCat:p=>'One row per '+p+'. The figures are the cube’s own total row for all program categories.',
-  lineOneCat:p=>'One row per '+p+'. The figures are one program category.',
-  lineSumCat:(p,n)=>'One row per '+p+'. The figures are '+n+' program categories added together, and each declined matter is counted once, because a matter has exactly one program category.',
-  lineBreakoutCat:'The category rows add up to the total row once "The other program categories, added together" is included, because a declined matter has exactly one program category.',
-  lineAllAg:p=>'One row per '+p+'. The figures are the cube’s own total row for all referring agencies.',
-  lineOneAg:p=>'One row per '+p+'. The figures are one referring agency.',
-  lineSumAg:(p,n)=>'One row per '+p+'. The figures are '+n+' referring agencies added together, and each declined matter is counted once, because a matter has exactly one referring agency.',
-  lineBreakoutAg:'The agency rows add up to the total row once "The other referring agencies, added together" is included, because a declined matter has exactly one referring agency.',
-  /* appended in EVERY state, because the reason selection is a second axis and L-139 is
-     exactly what happens when it goes unstated */
-  reasonClause:n=>' The reason columns are '+n+' of the 8 reasons, and each share is of those '+n+'.',
-  reasonClauseAll:' The reason columns are all 8 reasons, and each share is of all 8.',
-  notesExtra:'Each declined matter carries exactly one reason, so the reason columns add up to the "added together" column beside them.',
+  selTotal:n=>n+' of 8 reasons, summed',
+  allTotal:'All 8 reasons, summed',
+  lineAllCat:p=>'One row per '+p+'. Figures show the database\'s total row for all program categories.',
+  lineOneCat:p=>'One row per '+p+'. Figures show one program category.',
+  lineSumCat:(p,n)=>'One row per '+p+'. Figures show '+n+' program categories summed, and each declined matter is counted once.',
+  lineBreakoutCat:'The category rows add up to the total row once "Other program categories, summed" is included.',
+  lineAllAg:p=>'One row per '+p+'. Figures show cases from all referring agencies.',
+  lineOneAg:p=>'One row per '+p+'. Figures show cases from one referring agency.',
+  lineSumAg:(p,n)=>'One row per '+p+'. Figures shown are cases from '+n+' referring agencies summed; each declined matter is counted once.',
+  lineBreakoutAg:'Agency rows add up to the total row once "Other referring agencies, summed" is included.',
+  /* appended in EVERY state, because the reason selection is a second axis and L-139 is exactly what happens when it goes unstated */
+  reasonClause:n=>' Reason columns reflect '+n+' of the eight possible reasons, and each share is of those '+n+'.',
+  reasonClauseAll:' Reason columns show all eight reasons, each share is divided by the total.',
+  notesExtra:'Each declined matter only has one reason, so reason columns can can be summed to match the "summed" column beside them.',
   /* THE ONE EMPTY STATE ANY OF THESE FOUR PAGES HAS. Every other control defaults back
      to a selection - no district means National, no category means the cube's total row
      - but the reason multi-select is `plain` (no ALL sentinel) and can genuinely hold
@@ -236,10 +221,7 @@ function tblDistRows(d){
 /* The cube is LONG on reason and the table is WIDE on it, so the pivot happens here: one
    component array per reason, over the whole spine, filled with zeros first. The grid is
    zero-suppressed (133 of 3,056 keys at category='ALL'), and an absent key is a measured
-   zero rather than a gap - see the header above.
-     target.kind 'all'  - the cube's OWN total row: category='ALL', or department='ALL'
-                          AND subagency='ALL' on the agency cube.
-     target.kind 'keys' - one or more named categories or subagencies. */
+   zero rather than a gap - see the header above. target.kind 'all'  - the cube's OWN total row: category='ALL', or department='ALL' AND subagency='ALL' on the agency cube. target.kind 'keys' - one or more named categories or subagencies. */
 function aggregateTable(dists,target){
   const ag=isAg();
   const useNat=dists.has('National')||dists.size===0;
@@ -364,7 +346,7 @@ function updateChartAccessibility(){
   const provA=reaches?(' '+PV.noteText(nA,PV.dir(PROV_METRIC))):'';
   const provA1=reaches?(' '+PV.noteText(nA,'mix')):'';
   chartEl.setAttribute('aria-label',
-    `Declinations by reason over time as stacked percent share. Breakdown mode: ${dimText}. Filters: ${distText}; ${groupText}; reasons: ${reasonText}; ${state.from} to ${state.to}.${provA1}`
+    `Declinations by reason over time as percent share. Breakdown mode: ${dimText}. Filters: ${distText}; ${groupText}; reasons: ${reasonText}; ${state.from} to ${state.to}.${provA1}`
   );
   chart2El.setAttribute('aria-label',
     `Total declined matters over time for selected declination reasons. Breakdown mode: ${dimText}. Filters: ${distText}; ${groupText}; reasons: ${reasonText}; ${state.from} to ${state.to}.${provA}`
@@ -377,10 +359,7 @@ async function render(){
   const needFull=!useNat;
   if(isAg()){ if(!AG_NAT) await ensureAgency(); if(needFull) await ensureAgFull(); }
   else if(needFull){ await ensureCatFull(); }
-  /* L-283: seriesByReason()'s `if(!rows) return out;` is NOT a guard - `out` is already
-     zero-filled, so a missing cube is ANSWERED with zero under a district label: the
-     topline reads "None in this period." and the table prints 1,136 cells of 0 where the
-     cube has 2,702. Refuse instead, the way index.html and civil.html do (L-275): hold
+  /* L-283: seriesByReason()'s `if(!rows) return out;` is NOT a guard - `out` is already  zero-filled, so a missing cube is ANSWERED with zero under a district label: the topline reads "None in this period." and the table prints 1,136 cells of 0 where the cube has 2,702. Refuse instead, the way index.html and civil.html do (L-275): hold
      the previous view and leave the message the failed ensure wrote. Falling back to the
      national rows is not an option either - that prints national figures under a
      district label.

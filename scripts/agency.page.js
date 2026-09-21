@@ -413,29 +413,29 @@ const TBL_COLS_R=[
   {k:'period',g:'key',h:'Period'},
   {k:'district',g:'key',h:'District'},
   {k:'agency',g:'key',h:'Referring agency'},
-  {k:'counting_basis',g:'key',h:'Counting basis',fold:true},
-  {k:'additive',g:'key',h:'Adds up?',fold:true},
+  {k:'counting_basis',g:'key',h:'Filtering',fold:true},
+  {k:'additive',g:'key',h:'Sum of the period',fold:true},
   {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},
   {k:'cases_terminated',g:'cases',h:'Cases terminated',t:'int',w:'cases_terminated'},
-  {k:'defendants_filed',g:'defendants',h:'Defendants filed',t:'int',w:'defendants_filed'},
-  {k:'defendants_terminated',g:'defendants',h:'Defendants terminated',t:'int',w:'defendants_terminated'},
-  {k:'guilty',g:'dispositions',h:'Guilty',t:'int',w:'guilty'},
-  {k:'not_guilty',g:'dispositions',h:'Not guilty',t:'int',w:'guilty'},
-  {k:'dismissed',g:'dispositions',h:'Dismissed',t:'int',w:'dismissed'},
-  {k:'rule_20_21',g:'dispositions',h:'Rule 20/21',t:'int',w:'guilty'},
+  {k:'defendants_filed',g:'defendants',h:'Defendants, filed',t:'int',w:'defendants_filed'},
+  {k:'defendants_terminated',g:'defendants',h:'Defendants, terminated',t:'int',w:'defendants_terminated'},
+  {k:'guilty',g:'dispositions',h:'Guilty verdict',t:'int',w:'guilty'},
+  {k:'not_guilty',g:'dispositions',h:'Not guilty verdict',t:'int',w:'guilty'},
+  {k:'dismissed',g:'dispositions',h:'Dismissed verdict',t:'int',w:'dismissed'},
+  {k:'rule_20_21',g:'dispositions',h:'Rule 20/21 disposition',t:'int',w:'guilty'},
   {k:'other',g:'dispositions',h:'Other disposition',t:'int',w:'guilty'},
-  {k:'clearance_pct',g:'rates',h:'Clearance %',t:'pct',w:'clearance'},
-  {k:'guilty_pct',g:'rates',h:'Guilty %',t:'pct',w:'guilty_pct'},
-  {k:'not_guilty_pct',g:'rates',h:'Not guilty %',t:'pct',w:'guilty_pct'},
-  {k:'dismissed_pct',g:'rates',h:'Dismissed %',t:'pct',w:'dismissed_pct'},
-  {k:'rule_20_21_pct',g:'rates',h:'Rule 20/21 %',t:'pct',w:'guilty_pct'},
-  {k:'other_pct',g:'rates',h:'Other disposition %',t:'pct',w:'guilty_pct'}
+  {k:'clearance_pct',g:'rates',h:'Clearance rate',t:'pct',w:'clearance'},
+  {k:'guilty_pct',g:'rates',h:'Guilty share',t:'pct',w:'guilty_pct'},
+  {k:'not_guilty_pct',g:'rates',h:'Not guilty share',t:'pct',w:'guilty_pct'},
+  {k:'dismissed_pct',g:'rates',h:'Dismissed share',t:'pct',w:'dismissed_pct'},
+  {k:'rule_20_21_pct',g:'rates',h:'Rule 20/21 share',t:'pct',w:'guilty_pct'},
+  {k:'other_pct',g:'rates',h:'Other disposition share',t:'pct',w:'guilty_pct'}
 ];
 const TBL_COLS_V=[
   {k:'period',g:'key',h:'Period'},
   {k:'district',g:'key',h:'District'},
   {k:'agency',g:'key',h:'Client agency'},
-  {k:'additive',g:'key',h:'Adds up?',fold:true},
+  {k:'additive',g:'key',h:'Sum',fold:true},
   {k:'matters_received',g:'matters',h:'Matters received',t:'int',w:'matters_received'},
   {k:'matters_terminated',g:'matters',h:'Matters terminated',t:'int',w:'matters_terminated'},
   {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},
@@ -446,11 +446,11 @@ const TBL_COLS_V=[
   {k:'d_against',g:'dispositions',h:'Judgment against U.S.',t:'int',w:'cases_terminated'},
   {k:'d_dismissed',g:'dispositions',h:'Dismissed',t:'int',w:'cases_terminated'},
   {k:'d_other',g:'dispositions',h:'Other disposition',t:'int',w:'cases_terminated'},
-  {k:'d_judg_us_pct',g:'rates',h:'Judgment for U.S. %',t:'pct',w:'cases_terminated'},
-  {k:'d_settle_pct',g:'rates',h:'Settlements %',t:'pct',w:'cases_terminated'},
-  {k:'d_against_pct',g:'rates',h:'Judgment against U.S. %',t:'pct',w:'cases_terminated'},
-  {k:'d_dismissed_pct',g:'rates',h:'Dismissed %',t:'pct',w:'cases_terminated'},
-  {k:'d_other_pct',g:'rates',h:'Other disposition %',t:'pct',w:'cases_terminated'}
+  {k:'d_judg_us_pct',g:'rates',h:'Judgment for U.S. share',t:'pct',w:'cases_terminated'},
+  {k:'d_settle_pct',g:'rates',h:'Settlements share',t:'pct',w:'cases_terminated'},
+  {k:'d_against_pct',g:'rates',h:'Judgment against U.S. share',t:'pct',w:'cases_terminated'},
+  {k:'d_dismissed_pct',g:'rates',h:'Dismissed share',t:'pct',w:'cases_terminated'},
+  {k:'d_other_pct',g:'rates',h:'Other disposition share',t:'pct',w:'cases_terminated'}
 ];
 const TBL_GROUPS_R=[['cases','Cases'],['defendants','Defendants'],['dispositions','Dispositions'],['rates','Rates']];
 const TBL_GROUPS_V=[['matters','Matters'],['cases','Cases'],['pending','Pending'],['dispositions','Dispositions'],['rates','Rates']];
@@ -458,8 +458,8 @@ const TBL_GROUPS_V=[['matters','Matters'],['cases','Cases'],['pending','Pending'
    LIONS_TABLE.COPY, one object per mode. Signed by Cary verbatim on 19 September 2026
    (spec section 6). Never an em dash (D-042). */
 const TBL_COPY_R={
-  totalLabel:'All referring agencies (cube total)',
-  complementLabel:'The other referring agencies, added together',
+  totalLabel:'All referring agencies',
+  complementLabel:'Other referring agencies, added together',
   dimSum:n=>n+' referring agencies, added together',
   distSum:TCOPY.distSum,
   addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
@@ -470,28 +470,28 @@ const TBL_COPY_R={
      reused for the other value: on a row that already names one agency, a cell reading
      `All agencies` reads as a SELECTION rather than as a basis. */
   basisDistinct:'Distinct total', basisLead:'Lead agency', basisAll:'All occurrences',
-  lineAll:p=>'One row per '+p+'. The figures are the cube’s own total row for all referring agencies, which counts each case once.',
-  lineOne:(p,occ)=>'One row per '+p+'. The figures are one referring agency, counted '+(occ==='lead'?'once under each case’s lead agency':'under every agency that referred the case')+'.',
-  lineSumLead:(p,n)=>'One row per '+p+'. The figures are '+n+' referring agencies added together, and each case is counted once, under its lead agency.',
-  lineSumAll:(p,n)=>'One row per '+p+'. The figures are '+n+' referring agencies added together, and a case referred by more than one of them is counted more than once.',
-  lineBreakoutLead:'Agency rows add up to the total row once "The other referring agencies, added together" is included, because each case is counted once under its lead agency.',
-  lineBreakoutAll:'Agency rows do not add up to the total row, because a case is counted under every agency that referred it. The total row is the cube’s own total for all agencies, counted once per case, which this cube carries only on the lead-agency basis.',
+  lineAll:p=>'One row per '+p+'.',
+  lineOne:(p,occ)=>'One row per '+p+'. Figures show each referring agency, counted '+(occ==='lead'?' only once under the lead agency':'under every agency that referred the case')+'.',
+  lineSumLead:(p,n)=>'One row per '+p+'. Figures show '+n+' referring agencies added together. Each case is counted once, under the lead agency.',
+  lineSumAll:(p,n)=>'One row per '+p+'. Figures show '+n+' referring agencies added together. A case referred by more than one agency is shown in multiple rows.',
+  lineBreakoutLead:'Agency rows add up to the total row once "Other referring agencies" is included.',
+  lineBreakoutAll:'Agency rows do not add up to the total row, because cases will be included under every agency that referred it. Instead, use the "total" row to see all cases for the selected period.',
   notesExtra:'',
   refusal:(n,cap)=>TCOPY.refusal(n,cap,'referring agencies'),
   pending:TCOPY.pending
 };
 const TBL_COPY_V={
-  totalLabel:'All client agencies (cube total)',
-  complementLabel:'The other client agencies, added together',
+  totalLabel:'All client agencies',
+  complementLabel:'Other client agencies',
   dimSum:n=>n+' client agencies, added together',
   distSum:TCOPY.distSum,
   addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
   addsOne:'is one client agency',
-  lineAll:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are the cube’s own total row for all client agencies.',
+  lineAll:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are the dataset\'s total row for all client agencies.',
   lineOne:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are one client agency.',
-  lineSum:(p,n,role)=>'One row per '+p+', U.S. as '+role+'. The figures are '+n+' client agencies added together, and each case is counted once, because a case has exactly one client agency.',
-  lineBreakout:(p,role)=>'One row per '+p+' per client agency, U.S. as '+role+'. The agency rows add up to the total row once "The other client agencies, added together" is included, because a case has exactly one client agency.',
-  notesExtra:'Cases pending is a level read at the end of the period, not a total for the period. Do not add that column down.',
+  lineSum:(p,n,role)=>'One row per '+p+', U.S. as '+role+'. The figures are '+n+' client agencies added together, and each case is counted once.',
+  lineBreakout:(p,role)=>'One row per '+p+' per client agency, U.S. as '+role+'. The agency rows add up to the total row once "Other client agencies" is included.',
+  notesExtra:'Cases pending is a single figure reported at the end of the period, not cases for the period. Do not sum that column.',
   refusal:(n,cap)=>TCOPY.refusal(n,cap,'client agencies'),
   pending:TCOPY.pending
 };
@@ -499,10 +499,7 @@ const tblCopy=()=>isCiv()?TBL_COPY_V:TBL_COPY_R;
 let LAST={rows:[],cols:[],provN:6};
 let BYDIST_R=null,BYDIST_V=null;   // district -> its own rows; built once the cube is in
 
-/* The district cubes are 820,160 and 1,014,877 rows, and a cross-tab asks for them once
-   per district slot per agency slot. Indexing once turns each of those scans into the
-   rows that district actually has. Neither cube is mutated after assignment, so the
-   index cannot go stale; it is built lazily so a national-only session never pays. */
+/* The district cubes are 820,160 and 1,014,877 rows, and a cross-tab asks for them once per district slot per agency slot. Indexing once turns each of those scans into the rows that district actually has. Neither cube is mutated after assignment, so the index cannot go stale; it is built lazily so a national-only session never pays. */
 function tblDistRows(d){
   const src=isCiv()?CFULL:FULL;
   if(!src) return [];
