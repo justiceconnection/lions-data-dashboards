@@ -28,18 +28,9 @@ function extTooltip(context){ const {chart,tooltip}=context; let el=document.get
   if(x+w>window.innerWidth-8) x=r.left+tooltip.caretX-w-14;
   if(x<8)x=8; if(y<8)y=8; if(y+ht>window.innerHeight-8)y=window.innerHeight-ht-8;
   el.style.left=x+'px'; el.style.top=y+'px'; }
-// The provisional caveat line that used to sit under a KPI value went with the four KPI
-// cards (L-204), and the topline section's own eight provisional strings went with L-207:
-// the section now carries ONE mark, built by the engine at the foot of this file. The
-// rule they were all written under still binds anything flex or grid: BUILD AND REMOVE
-// the element rather than toggling [hidden], because an author display rule beats the
-// browser's [hidden]{display:none}. The mark's own bubble is the exception that proves
-// it - it is never display:none at all, because it is an aria-describedby target.
+// The provisional caveat line that used to sit under a KPI value went with the four KPI cards (L-204), and the topline section's own eight provisional strings went with L-207: the section now carries ONE mark, built by the engine at the foot of this file. The rule they were all written under still binds anything flex or grid: BUILD AND REMOVE the element rather than toggling [hidden], because an author display rule beats the browser's [hidden]{display:none}. The mark's own bubble is the exception that proves it - it is never display:none at all, because it is an aria-describedby target.
 function fmtDist(c){ if(c&&c.length===3&&'NSEWMC'.includes(c[2])){ const P={N:'Northern',S:'Southern',E:'Eastern',W:'Western',M:'Middle',C:'Central'}; return c.slice(0,2)+'-'+P[c[2]]; } return c; }
-// L-222: the district clause of the topline caption, in one place because all four
-// dashboards carry the same 'National' sentinel and the same fmtDist labels. An EMPTY
-// array means the national read - the page fetches the national cube rather than summing
-// 93 districts, and the engine prints 'National' for it, never nothing.
+// L-222: the district clause of the topline caption, in one place because all four dashboards carry the same 'National' sentinel and the same fmtDist labels. An EMPTY array means the national read - the page fetches the national cube rather than summing 93 districts, and the engine prints 'National' for it, never nothing.
 function distClause(dists){ return (dists.has('National')||dists.size===0) ? [] : [...dists].map(fmtDist); }
 function fmtMMYYYY(x){ const p=(x||'').split('-'); return p.length===2?p[1]+'-'+p[0]:x; }
 function months(a,b){ const r=[]; let [y,m]=a.split("-").map(Number); const [Y,M]=b.split("-").map(Number);
@@ -47,47 +38,19 @@ function months(a,b){ const r=[]; let [y,m]=a.split("-").map(Number); const [Y,M
 function renderNav(){ const nav=document.getElementById('dashnav'), sel=document.getElementById('dashsel');
   if(nav) nav.innerHTML=DASHBOARDS.map(d=>`<a href="./${d.file}"${d.file===CURRENT?' class="on" aria-current="page"':''}>${d.name}</a>`).join("");
   if(sel){ sel.innerHTML=DASHBOARDS.map(d=>`<option value="${d.file}"${d.file===CURRENT?' selected':''}>${d.name}</option>`).join(""); sel.onchange=()=>{ if(sel.value!==CURRENT) location.href='./'+sel.value; }; } }
-/* ── THE STATUS LINE (L-224) ────────────────────────────────────────
- * One live region per dashboard - <span id="status" aria-live="polite">, the last child
- * of .sub. It has exactly two jobs, a load in progress and a load that failed. It states
- * no filters, because the topline caption does that, and nothing about provisional data,
- * because the topline's one mark does that.
+/* ── THE STATUS LINE (L-224)
+ * One live region per dashboard - <span id="status" aria-live="polite">, the last child of .sub. It has exactly two jobs: a load in progress and a load that failed.
  *
- * IT IS NEVER [hidden], and that is the whole design. A live region that is out of the
- * accessibility tree when its text is written is never announced, and shared.css's
- * [hidden]{display:none!important} beats any display a component sets - so a builder who
- * leaves the attribute on and adds CSS gets a silent no-op. The element is always in the
- * tree, always empty at rest, and only its textContent changes.
+ * A live region that is out of the accessibility tree when its text is written is never announced, and shared.css's [hidden]{display:none!important} beats any display a component sets - so a builder who leaves the attribute on and adds CSS gets a silent no-op. The element is always in the tree, always empty at rest, and only its textContent changes.
  *
- * Precedence, highest first: an unresolved FAILURE, a load IN PROGRESS, empty. A failure
- * is cleared by the next successful load of ANY resource - not only by the resource that
- * failed - and NEVER by a render. On these pages render() runs immediately after an
- * awaited fetch, so a failure written by that fetch's catch and not protected by the
- * render half of this rule is gone within one tick.
+ * Precedence, highest first: an unresolved FAILURE, a load IN PROGRESS, empty. A failure is cleared by the next successful load of ANY resource - not only by the resource that failed - and NEVER by a render. On these pages render() runs immediately after an awaited fetch, so a failure written by that fetch's catch and not protected by the render half of this rule is gone within one tick.
  *
- * THE "ANY RESOURCE" HALF IS A RETREAT, NOT THE DESIGN - corrected 18 September 2026, and
- * a later reader must not take it for the intended behaviour. This block asserted that a
- * failure is cleared only by a later successful load of the failing resource itself - the
- * wording is quoted verbatim in section 5i and in D-084 - and no such behaviour ships: ST
- * below is ONE untagged error slot, clearLoadError() clears it unconditionally, and it
- * has sixteen call sites across the four page scripts (twelve
- * ensureX() success paths plus each page's boot path), so a message about one cube is
- * wiped by a different cube arriving. The spec stated the same-resource rule in prose and
- * contradicted it in its own reference implementation twenty lines below; QA caught it at
- * the L-224/L-283 gate as defect D-1 and Cary ruled the same day that the prose is
- * corrected and the build ships.
+ * THE "ANY RESOURCE" HALF IS A RETREAT, NOT THE DESIGN - corrected 18 September 2026, and a later reader must not take it for the intended behaviour. This block asserted that a failure is cleared only by a later successful load of the failing resource itself - the wording is quoted verbatim in section 5i and in D-084 - and no such behaviour ships: ST below is ONE untagged error slot, clearLoadError() clears it unconditionally, and it has sixteen call sites across the four page scripts (twelve ensureX() success paths plus each page's boot path), so a message about one cube is wiped by a different cube arriving. The spec stated the same-resource rule in prose and contradicted it in its own reference implementation twenty lines below; QA caught it at the L-224/L-283 gate as defect D-1 and Cary ruled the same day that the prose is corrected and the build ships.
  *
- * THE REAL FIX IS ops/LEDGER.md L-292, AND IT IS TWO HALVES, NOT ONE: key the slot by
- * resource, AND settle the relevance rule - whether a message that is still true but no
- * longer describes what the reader is looking at should be shown at all. Keying alone
- * would not discharge it, because QA's mirror finding F-2 is this same one slot in the
- * other direction: on declinations.html a failure message sticks in bold over a correctly
- * drawn view for the rest of the session, and a resource-keyed message whose resource
- * never reloads sticks exactly as long. Build to L-292, not to this paragraph.
+ * THE REAL FIX IS ops/LEDGER.md L-292, AND IT IS TWO HALVES, NOT ONE: key the slot by resource, AND settle the relevance rule - whether a message that is still true but no longer describes what the reader is looking at should be shown at all. Keying alone would not discharge it, because QA's mirror finding F-2 is this same one slot in the other direction: on declinations.html a failure message sticks in bold over a correctly drawn view for the rest of the session, and a resource-keyed message whose resource never reloads sticks exactly as long. Build to L-292, not to this paragraph.
  * See docs/DASHBOARD_STYLE_GUIDE.md section 5i and ops/DECISIONS.md D-084.
  *
- * Every string below is signed copy (L-224 spec section C). Do not write a new one, and
- * do not add a glyph: textContent only, so there is no escaping discipline to get wrong.
+ * Every string below is signed copy (L-224 spec section C). Do not write a new one, and do not add a glyph: textContent only, so there is no escaping discipline to get wrong.
  */
 (function (g) {
   'use strict';
@@ -128,17 +91,10 @@ function renderNav(){ const nav=document.getElementById('dashnav'), sel=document
 })(typeof window !== 'undefined' ? window : globalThis);
 
 function visIdx(){ const r=[]; for(let i=0;i<SPINE.length;i++){ const ym=SPINE[i]; if(ym>=state.from&&ym<=state.to) r.push(i);} return r; }
-// Chart factory: every dashboard chart is created through this so a page can adjust the
-// config just before render (used by the Design-2 lab via window.LIONS_CHART_TWEAK).
-// With no tweak installed it is a passthrough - identical to `new window.Chart(ctx,cfg)`.
+// Chart factory: every dashboard chart is created through this so a page can adjust the config just before render (used by the Design-2 lab via window.LIONS_CHART_TWEAK). With no tweak installed it is a passthrough - identical to `new window.Chart(ctx,cfg)`.
 function mkChart(ctx,cfg){ if(window.LIONS_CHART_TWEAK){ try{ window.LIONS_CHART_TWEAK(cfg); }catch(e){} } return new window.Chart(ctx,cfg); }
 
-// ── Time-grain grouping: Month (default) / Calendar Quarter / Fiscal Quarter / Fiscal Year ──
-// Purely a re-bucketing of the monthly data - no new cubes. Counts SUM within a bucket;
-// percentages are recomputed by summing the component counts first (ratio-of-sums), so callers
-// bucket the component arrays (bucketComp) and then run their existing metric formula on them.
-// FY convention: FY2025 = Oct 2024 .. Sep 2025 (labeled by the year it ENDS).
-// grain: 'month' | 'cq' (calendar qtr) | 'fq' (fiscal qtr) | 'fy' (fiscal year).
+// ── Time-grain grouping: Month (default) / Calendar Quarter / Fiscal Quarter / Fiscal Year ── Purely a re-bucketing of the monthly data - no new cubes. Counts SUM within a bucket; percentages are recomputed by summing the component counts first (ratio-of-sums), so callers bucket the component arrays (bucketComp) and then run their existing metric formula on them. FY convention: FY2025 = Oct 2024 .. Sep 2025 (labeled by the year it ENDS). grain: 'month' | 'cq' (calendar qtr) | 'fq' (fiscal qtr) | 'fy' (fiscal year).
 function grainBuckets(spine, idxs, grain){
   if(!grain || grain==='month') return idxs.map(i=>({label:spine[i],idxs:[i],size:1,months:1,partial:false}));
   const info=(ym)=>{ const p=ym.split('-'); const y=+p[0], m=+p[1];
@@ -152,14 +108,7 @@ function grainBuckets(spine, idxs, grain){
 }
 function bucketSum(arr,B){ return B.map(b=>{ let s=0; for(const i of b.idxs){ const v=arr&&arr[i]; if(v!=null) s+=v; } return s; }); }
 function bucketComp(R,B){ const o={}; for(const k in R){ if(Array.isArray(R[k])) o[k]=bucketSum(R[k],B); } return o; }
-// A STOCK must never be summed across a bucket - L-126. A pending caseload is a level
-// measured at a month end, so a quarter's value is the level at the quarter's LAST month,
-// not the sum of its three months and not the net change across them. Pass the full-spine
-// metric array through this instead of running the metric formula over bucketComp'd
-// components. Which metrics are stocks is PV.family(m)==='stock' (shared/provisional.js),
-// which is already the authority for the provisional window and the down-direction copy;
-// do not invent a second predicate. Trailing nulls inside a bucket fall back to the last
-// non-null month in it, so a partial bucket still reports a real level.
+// A STOCK must never be summed across a bucket - L-126. A pending caseload is a level measured at a month end, so a quarter's value is the level at the quarter's LAST month, not the sum of its three months and not the net change across them. Pass the full-spine metric array through this instead of running the metric formula over bucketComp'd components. Which metrics are stocks is PV.family(m)==='stock' (shared/provisional.js), which is already the authority for the provisional window and the down-direction copy; do not invent a second predicate. Trailing nulls inside a bucket fall back to the last non-null month in it, so a partial bucket still reports a real level.
 function bucketEnd(arr,B){ return B.map(b=>{ for(let k=b.idxs.length-1;k>=0;k--){ const v=arr&&arr[b.idxs[k]]; if(v!=null) return v; } return null; }); }
 function grainLabels(B){ return B.map(b=>b.label+(b.partial?'*':'')); }   // "*" flags an incomplete period
 function grainAnyPartial(B){ return B.some(b=>b.partial); }
@@ -174,26 +123,14 @@ function chartToSVG(chart, opts){
   const W = chart.width, H = chart.height, A = chart.chartArea;
   const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const gp = (el,props) => { try{ return el.getProps(props,true); }catch(e){ const o={}; props.forEach(p=>o[p]=el[p]); return o; } };
-  const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+  const FONT = "Roboto,Helvetica,Arial,sans-serif";
   const scales = chart.scales||{};
   const allS = Object.keys(scales).map(k=>scales[k]);
   const yScales = allS.filter(s=>s.axis==='y');
   const xScale  = allS.find(s=>s.axis==='x');
   const yMain   = yScales.find(s=>s.position==='left') || yScales[0];
   const datasets = chart.data.datasets||[];
-  // ── Provisional zone (L-021, revision B) ────────────────────────────────────
-  // chartToSVG re-emits geometry by hand and runs no Chart.js plugins, so every mark
-  // the treatment makes has to be rebuilt here or the export silently drops the
-  // caveat - and an export travels, which is why that is worse than never having had
-  // the marker. The numbers come from LIONS_PROV.TILES / .STYLE via svgPattern(), so
-  // the canvas and the SVG cannot drift apart. (The administration bands are still
-  // missing from every export; pre-existing, logged as L-012, not fixed here.)
-  //
-  // Revision B forks by chart family exactly as the plugin does, and for the same
-  // reason: on a stacked chart the marker is ink laid OVER the data, never a
-  // transform applied TO it. So the flat hatch goes under the data on an unstacked
-  // chart, the two-tone hatch goes over the fills on a stacked one, and a stacked
-  // chart's strokes are NOT faded.
+  // ── Provisional zone (L-021, revision B) ──────────────────────────────────── chartToSVG re-emits geometry by hand and runs no Chart.js plugins, so every mark the treatment makes has to be rebuilt here or the export silently drops the caveat. The numbers come from LIONS_PROV.TILES / .STYLE via svgPattern(), so the canvas and the SVG cannot drift apart.
   const PV_ = (typeof window!=='undefined' && window.LIONS_PROV) ? window.LIONS_PROV : null;
   const PVS = (PV_ && PV_.STYLE) || {rule:'#9a9b96',gutter:'rgba(33,33,35,0.72)',gutterH:3,gutterGap:1,
     label:'Provisional',labelInk:'#3f4043',labelHalo:'rgba(251,251,251,0.92)',labelPad:14,labelTop:24};
@@ -207,8 +144,7 @@ function chartToSVG(chart, opts){
     if(i0>=0 && xScale){
       const half = provFlags.length>1 ? Math.abs(xScale.getPixelForValue(1)-xScale.getPixelForValue(0))/2 : 10;
       provX0 = Math.max(A.left, xScale.getPixelForValue(i0)-half); } }
-  // Emits the hatch <rect> for one tile kind. Called before the datasets for 'flat'
-  // and after them for 'stacked' - the stacking order IS the fix for QA's D1.
+  // Emits the hatch <rect> for one tile kind. Called before the datasets for 'flat and after them for 'stacked' - the stacking order IS the fix for QA's D1.
   const provHatchRect = kind => {
     const pat = PV_ ? PV_.svgPattern(kind)
       : '<pattern id="lionsProvHatch-flat" patternUnits="userSpaceOnUse" width="8" height="8">'
@@ -245,9 +181,7 @@ function chartToSVG(chart, opts){
       else out.push('<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="middle" font-size="9" fill="#6b6c68">'+esc(lab)+'</text>'); }); }
   out.push('<line x1="'+A.left+'" y1="'+A.top+'" x2="'+A.left+'" y2="'+A.bottom+'" stroke="#c9c9c4"/>');
   out.push('<line x1="'+A.left+'" y1="'+A.bottom+'" x2="'+A.right+'" y2="'+A.bottom+'" stroke="#c9c9c4"/>');
-  // Unstacked only: the flat hatch goes UNDER the data. On a stacked chart the fills
-  // would erase it (measured: a 3/255 modulation - that is D1), so there is no "under"
-  // and the stacked tile is emitted after the datasets instead.
+  // Unstacked only: the flat hatch goes UNDER the data. On a stacked chart the fills would erase it (measured: a 3/255 modulation - that is D1), so there is no "under" and the stacked tile is emitted after the datasets instead.
   if(provX0!=null && !provStacked) provHatchRect('flat');
   for(let i=0;i<datasets.length;i++){ const meta=chart.getDatasetMeta(i); if(!meta||meta.hidden) continue;
     const els=meta.data||[]; const type=meta.type||chart.config.type;
@@ -271,13 +205,8 @@ function chartToSVG(chart, opts){
         for(let k=Math.max(0,from);k<=to&&k<pts.length;k++){ const p=pts[k]; if(!p){ on=false; continue; }
           d+=(on?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)+' '; on=true; }
         return d.trim(); };
-      // Each dataset fades on its OWN window (ds._prov, set by LIONS_PROV.decorateLine);
-      // chart.data._prov is the chart-wide envelope and is only the fallback. The
-      // segment ENTERING the first provisional bucket is faded too, so the faded run
-      // starts one point earlier.
-      // Revision B: a stacked chart is never faded. Fading a stacked fill moves the
-      // apparent colour, and on a stacked chart the colour is the series identity -
-      // the scrim defect by another route (spec §3.4, §6.7).
+      // Each dataset fades on its OWN window (ds._prov, set by LIONS_PROV.decorateLine); chart.data._prov is the chart-wide envelope and is only the fallback. The segment ENTERING the first provisional bucket is faded too, so the faded run starts one point earlier.
+      // Revision B: a stacked chart is never faded. Fading a stacked fill moves the apparent colour, and on a stacked chart the colour is the series identity the scrim defect by another route (spec §3.4, §6.7).
       const dsFlags=provStacked?null:((datasets[i]&&datasets[i]._prov)||provFlags);
       const i0=firstProv(dsFlags);
       if(i0<0){ emit(seg(0,pts.length-1),stroke); }
@@ -287,22 +216,16 @@ function chartToSVG(chart, opts){
   if(provX0!=null){
     // Stacked only: the two-tone hatch, OVER the fills.
     if(provStacked) provHatchRect('stacked');
-    // Boundary rule (both families) and, on a stacked chart, the open right edge -
-    // the stacked stand-in for the line family's hollow terminal point.
+    // Boundary rule (both families) and, on a stacked chart, the open right edge - the stacked stand-in for the line family's hollow terminal point.
     out.push('<line x1="'+(provX0+0.5).toFixed(1)+'" y1="'+A.top.toFixed(1)+'" x2="'+(provX0+0.5).toFixed(1)
       +'" y2="'+A.bottom.toFixed(1)+'" stroke="'+PVS.rule+'" stroke-width="1" stroke-dasharray="3 3"/>');
     if(provStacked)
       out.push('<line x1="'+(A.right-0.5).toFixed(1)+'" y1="'+A.top.toFixed(1)+'" x2="'+(A.right-0.5).toFixed(1)
         +'" y2="'+A.bottom.toFixed(1)+'" stroke="'+PVS.rule+'" stroke-width="1" stroke-dasharray="3 3"/>');
-    // The gutter bar - identical on every family, and the only mark outside the plot
-    // area. In the export it sits in the same place the canvas puts it.
+    // The gutter bar - identical on every family, and the only mark outside the plot area. In the export it sits in the same place the canvas puts it.
     out.push('<rect x="'+provX0.toFixed(1)+'" y="'+(A.bottom+PVS.gutterGap).toFixed(1)+'" width="'+(A.right-provX0).toFixed(1)
       +'" height="'+PVS.gutterH+'" fill="'+PVS.gutter+'"/>');
-    // The haloed label. NO WIDTH GUARD - rev A's `>64` is what made it absent at the
-    // default range (QA D3); it must not come back here either. There is no
-    // measureText in the exporter, so the width is estimated at ~5.8px/char for
-    // 10.5px/600, the same figure the check harness stubs; the placement rule itself
-    // is LIONS_PROV.labelPlacement so the two cannot disagree about which side wins.
+    // The haloed label. NO WIDTH GUARD - rev A's `>64` is what made it absent at the default range (QA D3); it must not come back here either. There is no measureText in the exporter, so the width is estimated at ~5.8px/char for 10.5px/600, the same figure the check harness stubs; the placement rule itself is LIONS_PROV.labelPlacement so the two cannot disagree about which side wins.
     const zSVG = {x0:provX0, x1:A.right, area:A};
     const twSVG = PVS.label.length*5.8;
     const plSVG = PV_ ? PV_.labelPlacement(zSVG, twSVG)
@@ -340,26 +263,15 @@ function mountDocMarkers(surface,root,labelToKey,base){
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════════
-   THE TOPLINE SECTION - L-199 direction B, built under L-204, 15 September 2026.
-   Spec: ops/handoffs/L-199-spec-draft.md (copy signed by Cary, section 9).
-   Reference implementation: design-lab/l199-b.html + l199-common.js + l199-shell.js.
+   THE TOPLINE SECTION - L-199 direction B, built under L-204, 15 September 2026. Spec: ops/handoffs/L-199-spec-draft.md (copy signed by Cary, section 9). Reference implementation: design-lab/l199-b.html + l199-common.js + l199-shel js.
 
-   THREE JOBS, THREE SHAPES (spec section 1): a permanent glance strip, a look-up
-   answer and a comparison answer, with ONE ask line covering the last two.
+   THREE JOBS, THREE SHAPES (spec section 1): a permanent glance strip, a look-up answer and a comparison answer, with ONE ask line covering the last two.
 
-   THE SECTION ROOT KEEPS class="kpis". shell2.js finds the topline by
-   wrap.querySelector('.kpis') and hangs its own "Topline metrics" header and collapse
-   caret off it, so renaming the container would silently remove both and collapsing
-   would stop taking the controls with the figures. The page adds no title of its own.
+   THE SECTION ROOT KEEPS class="kpis". shell2.js finds the topline by wrap.querySelector('.kpis') and hangs its own "Topline metrics" header and collapse caret off it, so renaming the container would silently remove both and collapsing would stop taking the controls with the figures. The page adds no title of its own.
 
-   NO VINTAGE-DEPENDENT CONSTANT IN ANY COPY STRING (spec section 6). Every number a
-   user reads - the year ranges, the "data runs to" month, every provisional count, the
-   jackknife percentage, the mean-to-median gap, the bucket count, the length of
-   the current administration - is computed here from the loaded cube at render time.
-   The only digits allowed inside a string are fixed historical dates.
+   NO VINTAGE-DEPENDENT CONSTANT IN ANY COPY STRING (spec section 6). Every number a user reads - the year ranges, the "data runs to" month, every provisional count, the jackknife percentage, the mean-to-median gap, the bucket count, the length of  the current administration - is computed here from the loaded cube at render time. The only digits allowed inside a string are fixed historical dates.
 
-   House style D-042: no em dashes, in the copy and in these comments.
-   ══════════════════════════════════════════════════════════════════════════════════ */
+   House style D-042: no em dashes, in the copy and in these comments.═════════════════════════════════════════════════════════════════════════════ */
 (function (g) {
   'use strict';
 
@@ -367,9 +279,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
   var COPY = {
     /* ONE caption, true on every state. */
     captionTpl: 'Viewing: {metric}, {range}{filters}.',
-    /* the range's convention, computed from the months rather than written
-       look-up heading, because buildPeriods() calls the same function, so the section
-       cannot read "fiscal" in one line and "calendar" in the next. */
+     /* Range convention is computed from the months (not from a look-up heading). buildPeriods() calls the same function, so the section must not read "fiscal" on one line and "calendar" on the next. */
     capConvCal: 'calendar months',
     capConvFy: 'FY{a} to FY{b}',
     capConvFy1: 'FY{a}',
@@ -381,8 +291,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     capModeCiv: 'civil',
     capByCat: 'by program category',
     capByAgency: 'by referring agency',
-    /* the four occurrence-basis clauses, lower-cased from the basis sentences the model
-       already carries */
+    /* the four occurrence-basis clauses, lower-cased from the basis sentences the model already carries */
     capOccAll: 'measured against all-occurrences',
     capOccPrimary: 'filtered by primary category filing',
     capOccLead: 'organized by lead agency',
@@ -393,16 +302,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     capNounAgencies: 'agencies',
     capNounReasons: 'reasons',
     capNounDistricts: 'districts',
-    /* THE SECTION'S ONE PROVISIONAL MARK 
-       It replaces EIGHT per-figure provisional strings and the section footer's second
-       sentence; the footer keeps the page's own caption and nothing else. Two strings and
-       not one, because an icon needs an accessible NAME as well as a body: the name is
-       what a screen reader announces for the control, the body is what the control
-       reveals. The body is direction-neutral - one mark now covers a flow, which rises, a
-       stock, which falls, and a share, whose mix shifts - and it carries `Data runs to
-       {month}`, which is the only thing the struck footer said that nothing else did.
-       {n} is COMPUTED, never written: it is model.provN, LIONS_PROV.n() for the page's
-       SELECTED metric, so it follows a metric change (spec section 6, section 8 item 28). */
+     /* The section's single provisional mark replaces eight per-figure provisional strings and the footer's second sentence. The footer retains the page's caption only. There are two strings (name and body) because the icon needs an accessible name (announced by screen readers) in addition to the explanatory body text. The body is direction-neutral: it covers flows (which may rise), stocks (which may fall),and shares (whose composition changes). It carries `Data runs to {month}`, the one item the removed footer uniquely supplied. The {n} value is computed (model.provN,  LIONS_PROV.n()) for the selected metric so it follows metric changes (spec section 6, section 8 item 28). */
     provMarkName: 'Why recent months are incomplete',
     provMarkBody: 'Data runs to {month}. The most recent {n} months are still being reported, so figures may change.',
 
@@ -417,122 +317,55 @@ function mountDocMarkers(surface,root,labelToKey,base){
     windowBLabelStock: 'Second date',
     formLabel: 'Comparison',
     eraLabel: 'Administration',
-    /* NO TRAILING COLON. The render appends its own, so this string carrying one printed
-       `Calculation:: ...` on every comparison card, on all four dashboards, at every grain
-       - live on the public site and pre-existing, not introduced by L-250. Found on 17
-       September 2026 while driving the comparison card in Chromium for the first time; no
-       gate reads this line, which is how it survived a signed spec, a re-baselined browser
-       gate and three QA rounds in one week.
-       CARY WAS OFFERED BOTH FIXES AND CHOSE THIS ONE: the string loses the colon, and the
-       render at the `.tf-basis` line keeps appending it. THE ALTERNATIVE WAS TO LEAVE THE
-       COLON HERE AND DROP IT FROM THE RENDER. Do not "fix" it that way later - the two
-       together reintroduce the defect, and this label has exactly one consumer. */
+     /* NO TRAILING COLON. The render appends its own colon, so this string must not carry one. A stray colon here produced `Calculation:: ...` on every comparison card across all dashboards and grains, a long-standing pre-existing issue discovered 17 Sep 2026 when driving the comparison card in Chromium. Cary chose the fix that removes the colon from the string and leaves the render to append it. Do not revert this by adding the colon here and removing it from the render — that would reintroduce the defect. This label has exactly one consumer. */
     basisLabel: 'Calculation',
     alsoHead: 'Other topline calculations',
 
-    /* DEFINITIONS - FIVE, and only in the look-up answer (Cary, 15 September 2026,
-       spec section 3). A definition appears only where the label is not already the
-       definition: Middle month, Overall rate, Share of the total, and the average and
-       middle month-end readings on a stock. Each of those five denies a specific wrong
-       reading its own label invites, which is the test for a sixth. Seven were struck with
-       their figures - total, average per month, the highest month, the lowest month, the
-       first and last month, the reading at a date and the highest month-end reading - and
-       their text is NOT quoted here, because copy left in the source is how a later
-       reader restores it word for word (spec 4.1).
-       A BASIS IS NOT A DEFINITION and is not cut: invariants 3 and 4 live in the basis,
-       so a share keeps its denominator sentence and a rate keeps what divides what, on
-       the glance strip as well as in the answer. The settled-months half of three struck
-       definitions survives as COPY.noteSettledOnly, which still prints on all three. */
-    /* THE NOUN SLOTS ARE L-250, and every one of them renders the SIGNED SENTENCE BACK
-       CHARACTER FOR CHARACTER at Group by = Month. {bucket} / {buckets} / {perBucket} /
-       {bucketEnd} fill from GRAIN below: month / months / monthly / month-end at the
-       default grain, and the calendar-quarter, fiscal-quarter and fiscal-year forms
-       otherwise. Nothing else in these sentences moves. */
+    /* DEFINITIONS - FIVE, and only in the look-up answer (Cary, 15 September 2026,  spec section 3). A definition appears only where the label is not already the definition: Middle month, Overall rate, Share of the total, and the average and middle month-end readings on a stock. Each of those five denies a specific wrong  reading its own label invites, which is the test for a sixth. Seven were struck with their figures - total, average per month, the highest month, the lowest month, the first and last month, the reading at a date and the highest month-end reading - and  their text is NOT quoted here, because copy left in the source is how a later reader restores it word for word (spec 4.1).
+     /* A BASIS IS NOT A DEFINITION and is not cut: invariants 3 and 4 live in the basis, so a share keeps its denominator sentence and a rate keeps what divides what, on the glance strip as well as in the answer. The settled-months half of three struck definitions survives as COPY.noteSettledOnly, which still prints on all three. */
+    /* THE NOUN SLOTS ARE L-250, and every one of them renders the SIGNED SENTENCE BACK CHARACTER FOR CHARACTER at Group by = Month. {bucket} / {buckets} / {perBucket} / {bucketEnd} fill from GRAIN below: month / months / monthly / month-end at the default grain, and the calendar-quarter, fiscal-quarter and fiscal-year forms otherwise. */
     defMedian: 'The middle value of {n} {perBucket} totals.',
     defMedianFew: 'The middle value of {n} {perBucket} totals. Note, few {buckets} are selected making trend analysis difficult.',
     defShare: 'Note this figure is calculated as a share of the total of the selected time period.',
     defStockAvg: 'The average of the {n} {bucketEnd} readings in the period. Not the same as the year-end reading.',
     defStockMedian: 'The middle value of {n} {bucketEnd} readings.',
 
-    /* PERCENT METRICS. Signed 15 September 2026 in the section 9e delta, which closed
-       the first of the five gaps L-204 found: section 9's figure menus covered flows and
-       stocks only, and clearance, guilty and dismissed are selectable on Criminal and
-       Agency. A rate carries EXACTLY THREE figures - Overall rate, Middle month, Share of
-       the total. No Total (adding percentages is not a quantity), no Average per month
-       (mean-of-ratios, which invariant 4 forbids: 100.52% correct against 102.60%
-       averaged, L-198 1.5), and no extremum or first-and-last, because an extremum of a
-       ratio series is set by its denominator and a single month at district-and-category
-       grain can carry a handful of cases. */
+    /* PERCENT METRICS. Signed 15 September 2026 in the section 9e delta, which closed the first of the five gaps L-204 found: section 9's figure menus covered flows and stocks only, and clearance, guilty and dismissed are selectable on Criminal and Agency. A rate carries EXACTLY THREE figures - Overall rate, Middle month, Share of the total. No Total (adding percentages is not a quantity), no Average per month (mean-of-ratios, which invariant 4 forbids: 100.52% correct against 102.60% averaged, L-198 1.5), and no extremum or first-and-last, because an extremum of a ratio series is set by its denominator and a single month at district-and-category grain can carry a handful of cases. */
     mRate: 'Overall rate',
     defRate: 'The period\'s component totals divided one by the other, not the average of the monthly percentages.',
     defMedianRate: 'The middle value of {n} {perBucket} percentages. It is not the period\'s overall rate, which divides the totals.',
-    /* the glance's second slot on a rate is the total the rate divides BY, labelled with
-       that series' own metric name. Without this clause the strip reads as two unrelated
-       figures side by side, which is what the 1200px shot showed before it was written. */
+    /* the glance's second slot on a rate is the total the rate divides BY, labelled with that series' own metric name. Without this clause the strip reads as two unrelated figures side by side, which is what the 1200px shot showed before it was written. */
     basisRateDen: 'The total this rate divides by.',
 
     /* notes that qualify a figure */
     noteBestCause: 'Note a single {bucket} may reflect a court closure or a one-off batch, not a spike at that period of time.',
     noteSettledOnly: 'Analyzed over settled {buckets} only, so provisional {buckets} are not included.',
     noteMeanMedian: 'The average and the middle {bucket} differ by {gap}% here. District-level averages are more uneven than nationally.',
-    /* `is an signal` -> `is a signal`. CARY RULED THE TYPO FIXED, 17 September 2026
-       (L-250 spec section 13 open question 4, which the spec left open and which he
-       answered during the build). This is the ONE string in the section that does NOT
-       render character for character as it did before L-250 at Group by = Month, and it
-       is a signed copy change by ruling rather than a slip: nothing else in the sentence
-       moves. The spec and design-lab/l250-copy.js still carry the old spelling. */
-    noteStockPeakEdge: 'Over all {buckets} the peak is the newest {bucket}, {edge}, which is a signal of incomplete reporting instead of a new high.',
-    noteStockSelected: 'Pending is a sum of cases. A total over a period adds up month-end balances and counts nothing, so this section offers a reading at a date instead.',
+    /* `is an signal` -> `is a signal`. This is the ONE string in the section that does NOT render character for character as it did before L-250 at Group by = Month, and it is a signed copy change by ruling rather than a slip: nothing else in the sentence moves. The spec and design-lab/l250-copy.js still carry the old spelling. */
+    noteStockPeakEdge: 'Over all {buckets} the peak is the newest {bucket}, {edge}, which due to incomplete reporting, not necessarily a new high.',
+    noteStockSelected: 'Pending is a sum of cases. A total over a period adds up month-end balances which is not how pending cases are reported, so this section offers pending cases at a specific date instead.',
     noteStockNoPrior: 'Pending cases cannot be compared over a prior period, only a figure at one date versus another.',
     noteShareWhole: '',
     noteHalfSeasonal: 'This series has a strong seasonal cycle, which may not be accounted for in raw computation. For richer analysis, compare similar calendar months.',
-    /* THE {bucketEnd} SLOT HERE IS CARY'S RULING OF 17 September 2026, not spec section 11.
-       The spec's copy block does not carry this string at all, and the sentence renders
-       byte-identical at Month grain. It takes the slot because it prints on the SAME CARD
-       as basisFigStockHalves below, about the SAME figure: without it, fiscal-year grain
-       gave a basis line saying `fiscal-year-end` and a note beside it saying `month-end`.
-       See the form 2 stock branch in buildPair() for the half of this the comment there
-       used to argue against. */
-    noteStockHalves: 'A sum, like pending cases, has no half total. Each half is read as its average {bucketEnd} level over that half.',
+    /* THE {bucketEnd} SLOT HERE IS CARY'S RULING OF 17 September 2026, not spec section 11. The spec's copy block does not carry this string at all, and the sentence renders byte-identical at Month grain. It takes the slot because it prints on the SAME CARD as basisFigStockHalves below, about the SAME figure: without it, fiscal-year grain gave a basis line saying `fiscal-year-end` and a note beside it saying `month-end`. See the form 2 stock branch in buildPair() for the half of this the comment there used to argue against. */
+    noteStockHalves: 'Pending cases has no half total. Each half is read as its average {bucketEnd} level over that half.',
 
     /* ══ THE SIX NEW STRINGS OF L-250, and EVERY ONE IS SILENT AT GROUP BY = MONTH.
-       Signed by Cary 17 September 2026 (spec section 11.8). ═══════════════════════ */
-    /* the divisor, on the period line, beside the figure that divides by it. Without it
-       the glance reads `Average per fiscal year 55,004` over a range holding two part
-       fiscal years and nothing on the face says what it divided by. */
+    ═══════════════════════ */
+    /* the divisor, on the period line, beside the figure that divides by it. */
     bucketCount: '{n} {buckets}',
-    bucketCountPart1: '{n} {buckets}, one of them a part period',
-    bucketCountPartN: '{n} {buckets}, {p} of them part periods',
-    /* the "*" key. VERBATIM the string the four page scripts already print under their
-       charts (web/scripts/index.page.js:475 and its three siblings), so the mark a reader
-       meets under the chart means the same thing above it. The L-237 table prints a
-       DIFFERENT sentence for the same mark; unifying the three is spec open question 3
-       and its own row, not this change. */
+    bucketCountPart1: '{n} {buckets}, one of them a partial period',
+    bucketCountPartN: '{n} {buckets}, {p} of them partial periods',
+    /* the "*" key. VERBATIM the string the four page scripts already print under their charts (web/scripts/index.page.js:475 and its three siblings), so the mark a reader meets under the chart means the same thing above it. The L-237 table prints a DIFFERENT sentence for the same mark; unifying the three is spec open question 3 and its own row, not this change. */
     partKey: '* partial period (fewer months than the full period)',
-    /* on the highest and the lowest figure, and only where a part period was actually
-       dropped. Measured: `Lowest fiscal year` over the default Criminal range is 48,427
-       (FY2023) with the exclusion and 45,682 (FY2013*) without - a different year, 5.7%
-       low, on nine months. */
-    notePartExcluded: 'Part periods are excluded too: a {bucket} with fewer months than the period holds would be highest or lowest on its length alone.',
-    /* invariant 4 said out loud on the one figure a coarse grain makes newly
-       misreadable: a reader who sees `Middle calendar quarter 95.03%` can assume the
-       quarter is the average of its three monthly percentages. It is not. */
-    defBucketRate: 'Each {bucket}\'s percentage divides its own totals, not the average of its months.',
-    /* forms 3, 4 and 5 on a stock. Signed in the 9e delta (gap 4). STRUCK in the same
-       delta: 'This comparison starts from the current administration, so the period above
-       does not apply.' Forms 3 and 4 printed it beside a period select they had disabled,
-       and there is no period select to disable. */
+    /* on the highest and the lowest figure, and only where a part period was actually dropped. Measured: `Lowest fiscal year` over the default Criminal range is 48,427(FY2023) with the exclusion and 45,682 (FY2013*) without - a different year, 5.7% low, on nine months. */
+    notePartExcluded: 'Partial periods are excluded.',
+    /* invariant 4 said out loud on the one figure a coarse grain makes newly misreadable: a reader who sees `Middle calendar quarter 95.03%` can assume the quarter is the average of its three monthly percentages. It is not. */
+    defBucketRate: 'Each {bucket}\'s percentage is the share of {bucket} totals, not the average across months.',
+    /* forms 3, 4 and 5 on a stock. Signed in the 9e delta (gap 4). STRUCK in the same delta: 'This comparison starts from the current administration, so the period above does not apply.' Forms 3 and 4 printed it beside a period select they had disabled, and there is no period select to disable. */
     basisStockPeriod: 'The average open caseload over each period. This period should be read as average {bucketEnd} level rather than as a sum.',
 
-    /* ══ THE COMPARISON BASIS IS A FIGURE CLAUSE AND THEN A PERIOD CLAUSE (L-214, Cary's
-       option A, 15 September 2026, spec 5.2e and the 9g delta). The figure drives the
-       comparison, so the basis is a function of (figure, form, lengths) and it is COMPOSED
-       rather than written out sixty times. `Total` is not in this block: it keeps the
-       length rule and its whole SIGNED sentence, built per form in buildPair() and rendered
-       character for character as before. Every other figure reuses that sentence's second
-       half - the PERIOD clause, also built per form - after its own first half, below.
-       Nine of these are new wording; the three stock sentences above and beside them are
-       MOVED from "the form's basis" to "this figure's clause" with no word changed. */
+    /* ══ THE COMPARISON BASIS IS A FIGURE CLAUSE AND THEN A PERIOD CLAUSE (L-214, Cary's option A, 15 September 2026, spec 5.2e and the 9g delta). The figure drives the comparison, so the basis is a function of (figure, form, lengths) and it is COMPOSED rather than written out sixty times. `Total` is not in this block: it keeps the length rule and its whole SIGNED sentence, built per form in buildPair() and rendered character for character as before. Every other figure reuses that sentence's second half - the PERIOD clause, also built per form - after its own first half, below. Nine of these are new wording; the three stock sentences above and beside them are MOVED from "the form's basis" to "this figure's clause" with no word changed. */
     basisFigAvg: 'Per {bucket}, each period\'s total divided by {perBucket} count.',
     basisFigMedian: 'The middle {bucket} of each period.',
     basisFigBest: 'The highest single {bucket} in each period, settled {buckets} only.',
@@ -542,51 +375,19 @@ function mountDocMarkers(surface,root,labelToKey,base){
     basisFigMedianRate: 'The middle of each period\'s {perBucket} percentages.',
     basisFigStockMedian: 'The middle {bucketEnd} reading in each period.',
     basisFigStockPeak: 'The highest {bucketEnd} reading in each period, settled {buckets} only.',
-    /* MOVED, not new: form 1's stock sentence and form 2's stock sentence were the FORM's
-       basis and are now the clause of the figure the form used to choose on the user's
-       behalf. Not one word of either changes. The third, basisStockPeriod above, moves the
-       same way and is the `Average month-end reading` clause on forms 3, 4 and 5. */
+    /* MOVED, not new: form 1's stock sentence and form 2's stock sentence were the FORM's basis and are now the clause of the figure the form used to choose on the user's behalf. Not one word of either changes. The third, basisStockPeriod above, moves the same way and is the `Average month-end reading` clause on forms 3, 4 and 5. */
     basisFigStockRead: 'Two readings, one date each. Both dates are settled. Pending cases have no prior period of the same length, so this form reads the same date a period earlier.',
     basisFigStockHalves: 'The average {bucketEnd} open caseload over each half. Pending cases have no half total, so a half is read as its average {bucketEnd} level rather than as a sum.',
-    /* THE SHARE CLAUSE IS THE ONE AMENDED STRING (9g). It was form 4's basis, so it named
-       an administration and unequal lengths; it now prints on every form, including form 1
-       where both periods are the same length and neither is an administration. Two words:
-       `Each administration's` -> `Each period's`, `the unequal lengths` -> `the periods'
-       lengths`. Nothing else in the sentence moves. It is built rather than stored because
-       it carries the page's own selection name and occurrence basis. */
-    /* a middle month over few values moves on any one of them (L-198 1.2). On a PAIR the
-       span is computed over the two periods ACTUALLY compared and the wider is printed. */
-    /* THE {buckets} SLOT AND THE BUCKET TRIGGER ARE CARY'S RULING of 17 September 2026,
-       not spec section 11, which does not carry this string. It renders byte-identical at
-       Month grain. Both halves moved together and the trigger is the half that mattered:
-       the look-up's own few-values caveat now counts BUCKETS, so a five-fiscal-year range
-       at Fiscal Year grain fired it on the look-up (5 buckets) and stayed silent on a
-       comparison of the same metric (form 2's halves are 30 months each) - the caveat went
-       missing exactly where a reader needs it. Wording it alone would have left that. */
+    /* THE SHARE CLAUSE IS THE ONE AMENDED STRING (9g). It was form 4's basis, so it named an administration and unequal lengths; it now prints on every form including form 1 where both periods are the same length and neither is an administration. Two words:`Each administration's` -> `Each period's`, `the unequal lengths` -> `the periods' lengths`. Nothing else in the sentence moves. It is built rather than stored because it carries the page's own selection name and occurrence basis. */
+    /* a middle month over few values moves on any one of them (L-198 1.2). On a PAIR the span is computed over the two periods ACTUALLY compared and the wider is printed. */
+    /* THE {buckets} SLOT AND THE BUCKET TRIGGER ARE CARY'S RULING of 17 September 2026, not spec section 11, which does not carry this string. It renders byte-identical at Month grain. Both halves moved together and the trigger is the half that mattered: the look-up's own few-values caveat now counts BUCKETS, so a five-fiscal-year range at Fiscal Year grain fired it on the look-up (5 buckets) and stayed silent on a comparison of the same metric (form 2's halves are 30 months each) - the caveat went  missing exactly where a reader needs it. Wording it alone would have left that. */
     notePairMedianFew: 'Note this analysis contains few {buckets}, so read this comparison as an indication rather than a settled figure.',
-    /* THERE IS NO SETTLED-ONLY BASIS SENTENCE (L-207, spec section 8 item 30). The five
-       that existed went with the settled-months control: a comparison that reaches into
-       provisional months now computes over ALL months, which is what the default always
-       did. The two stock basis lines are NOT struck and not amended - a stock's
-       truncation inside a comparison is a COMPUTATION rule and never was that control,
-       and each side's label names the months actually read, which is L-193 section 2.4's
-       own "say which date it is".
-       THERE IS NO PROVISIONAL STRING HERE EITHER. The eight that were - the flow flag,
-       the share flag, the stock flag, the "how much of the face" line, the two comparison
-       direction lines, form 2's second-half line and the footer's second sentence - are
-       replaced by the one section mark above (spec section 8 item 26). They are removed
-       rather than left unreachable: copy sitting in the source is how a later reader
-       restores it word for word. What the section no longer tells the reader is spec
-       section 5.3a, and Cary signed knowing it. */
+    /* THERE IS NO SETTLED-ONLY BASIS SENTENCE (L-207, spec section 8 item 30). The five that existed went with the settled-months control: a comparison that reaches into provisional months now computes over ALL months, which is what the default always did. The two stock basis lines are NOT struck and not amended - a stock's truncation inside a comparison is a COMPUTATION rule and never was that control, and each side's label names the months actually read, which is L-193 section 2.4's own "say which date it is". THERE IS NO PROVISIONAL STRING HERE EITHER. The eight that were - the flow flag, the share flag, the stock flag, the "how much of the face" line, the two comparison direction lines, form 2's second-half line and the footer's second sentence - are replaced by the one section mark above (spec section 8 item 26). They are removed rather than left unreachable: copy sitting in the source is how a later reader restores it word for word. What the section no longer tells the reader is spec section 5.3a, and Cary signed knowing it. */
 
     /* THREE refusals. None carries a measured figure: section 6. */
     refuseNoEarlier: 'The data begins in October 1994, so there is no earlier period of the same length as this one. Choose a second period instead.',
     refuseShortHalves: 'This period is shorter than two years, which could produce wonky data due to the seasonal cycle of case data. Therefore the comparison is not offered below two years. Choose a longer period, or compare with a second period instead.',
-    /* form 3 takes the FIRST N months of the chosen administration, N being the chart
-       range's own length. When the administration is shorter there are not N months to
-       take, and the form REFUSES rather than capping (spec 5.2d, Cary 15 September 2026,
-       carve-out 10.6): capping answers form 4's question under a label that says "the
-       same months", and form 4 is the next line of the same menu. */
+    /* form 3 takes the FIRST N months of the chosen administration, N being the chart range's own length. When the administration is shorter there are not N months to take, and the form REFUSES rather than capping (spec 5.2d, Cary 15 September 2026, carve-out 10.6): capping answers form 4's question under a label that says "the same months", and form 4 is the next line of the same menu. */
     refuseEraShort: '{name} covers {m} months of this data and the chart\'s date range is {n} months, making an unequal comparison. Choose the whole of an earlier administration instead, or shorten the chart\'s date range.',
 
     /* declinations */
@@ -596,18 +397,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
     /* states */
     unavailable: 'Not available for this period.',
-    /* appended to the line above when matters_pending is selected. Section 3 asks the
-       partial-data state for the sentence AND one clause naming what is missing; the
-       signed block carried only the first, and this is the second (9e delta, gap 3). */
+    /* appended to the line above when matters_pending is selected. Section 3 asks the partial-data state for the sentence AND one clause naming what is missing; the signed block carried only the first, and this is the second (9e delta, gap 3). */
     notOfferedMatters: 'Matters pending is not published as a single figure, only as a running total since October 1994, so this section does not put a number on it.',
     zero: 'None in this period.',
     loading: 'Still loading.'
   };
 
-  /* ══ THE FIVE COMPARISON FORMS. Cary, 15 September 2026, in this order. A developer
-     may not add a sixth, reorder them, or change a basis (spec section 8 item 12).
-     Every one is taken from ops/handoffs/L-198-data-note.md and the citation rides on
-     the record. ════════════════════════════════════════════════════════════════════ */
+  /* ══ THE FIVE COMPARISON FORMS. Cary, 15 September 2026, in this order. A developer may not add a sixth, reorder them, or change a basis (spec section 8 item 12). Every one is taken from ops/handoffs/L-198-data-note.md and the citation rides on the record. ════════════════════════════════════════════════════════════════════ */
   var FORMS = [
     { k: 'prev',     label: 'The previous period, same length',        cite: 'L-198 §2.1' },
     { k: 'halves',   label: 'First half against second half',          cite: 'L-198 §2.7' },
@@ -644,15 +440,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
   }
 
-  /* ══ GROUP BY - the section's period figures follow the page's grain (L-250) ══════
-     The section has NO period control of its own and gains none here (D-058, as amended
-     17 September 2026): Group by sits in the page's own .controls bar with From, To and
-     Administration, and this section follows it exactly as it follows those. Before
-     L-250 the engine did not read it at all, so the chart re-bucketed and the figures
-     above it went on saying `Average per month` off the same control.
-     grainBuckets() and bucketEnd() are at file scope, shared/shared.js:61-83, and the
-     charts and the L-237 table already use them. NO ASSET IS ADDED: invariant 9's chains
-     are unchanged. ═══════════════════════════════════════════════════════════════════ */
+  /* ══ GROUP BY - the section's period figures follow the page's grain (L-250) ══════ The section has NO period control of its own and gains none here (D-058, as amended 17 September 2026): Group by sits in the page's own .controls bar with From, To and Administration, and this section follows it exactly as it follows those. Before L-250 the engine did not read it at all, so the chart re-bucketed and the figures above it went on saying `Average per month` off the same control. grainBuckets() and bucketEnd() are at file scope, shared/shared.js:61-83, and the charts and the L-237 table already use them. NO ASSET IS ADDED: invariant 9's chains are unchanged. ═══════════════════════════════════════════════════════════════════ */
   var GRAIN = {
     month: { one: 'month',            many: 'months',            adj: 'monthly',          end: 'month-end' },
     cq:    { one: 'calendar quarter', many: 'calendar quarters', adj: 'calendar-quarter', end: 'calendar-quarter-end' },
@@ -669,14 +457,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
       .replace(/\{perBucket\}/g, G.adj)
       .replace(/\{bucketEnd\}/g, G.end);
   }
-  /* A NULLABLE bucket sum, and it is deliberately NOT the file-scope bucketSum() at :73.
-     That one returns 0 for a bucket whose every month is null, which is right for a chart
-     - a plotted 0 sits among its neighbours and reads as a gap - and wrong here, where one
-     bucket becomes a headline `Lowest calendar quarter` with nothing beside it. A series
-     that ends before the vintage edge would win every lowest reading with a zero it never
-     recorded, and 1,364 of 3,726 civil-grain series and 4,712 of 9,306 agency-grain series
-     do end early (web/scripts/civil.page.js:21). figureFor() already skips nulls at month
-     grain, so returning null PRESERVES the section's behaviour rather than adding one. */
+  /* A NULLABLE bucket sum, and it is deliberately NOT the file-scope bucketSum() at :73. That one returns 0 for a bucket whose every month is null, which is right for a chart - a plotted 0 sits among its neighbours and reads as a gap - and wrong here, where one bucket becomes a headline `Lowest calendar quarter` with nothing beside it. A series that ends before the vintage edge would win every lowest reading with a zero it never recorded, and 1,364 of 3,726 civil-grain series and 4,712 of 9,306 agency-grain series do end early (web/scripts/civil.page.js:21). figureFor() already skips nulls at month grain, so returning null PRESERVES the section's behaviour rather than adding one. */
   function bucketVals(arr, B) {
     return B.map(function (b) {
       var s = 0, any = false;
@@ -687,51 +468,32 @@ function mountDocMarkers(surface,root,labelToKey,base){
       return any ? s : null;
     });
   }
-  /* ONE re-bucketing of ONE period. Called per period and never once per model: the
-     chart's range, each of buildPeriods()'s presets and each SIDE of a comparison have
-     different months and different edges, and grainBuckets() takes an index list for
-     exactly that reason. */
+  /* ONE re-bucketing of ONE period. Called per period and never once per model: the chart's range, each of buildPeriods()'s presets and each SIDE of a comparison have different months and different edges, and grainBuckets() takes an index list for exactly that reason. */
   function periodGrain(M, idxs, grain) {
     var B = grainBuckets(M.spine, idxs, grain), vals, i;
     if (M.kind === 'rate') {
-      /* INVARIANT 4, and this is the whole of it: sum the NUMERATOR and the DENOMINATOR
-         inside the bucket and divide ONCE. Never the mean of the monthly percentages.
-         Measured on the shipped district cube: VT guilty disposition %, Q4 2022, is
-         78.79% done this way against 87.04% done as the mean of its three monthly rates -
-         10.47% relative, 8.25 percentage points. At month grain the two coincide exactly,
-         which is why the error is invisible until the grain changes. */
+      /* INVARIANT 4, and this is the whole of it: sum the NUMERATOR and the DENOMINATOR inside the bucket and divide ONCE. Never the mean of the monthly percentages. Measured on the shipped district cube: VT guilty disposition %, Q4 2022, is 78.79% done this way against 87.04% done as the mean of its three monthly rates - 10.47% relative, 8.25 percentage points. At month grain the two coincide exactly, which is why the error is invisible until the grain changes. */
       var num = bucketVals(M.rate.num, B), den = bucketVals(M.rate.den, B);
       vals = num.map(function (n, j) { return (den[j] > 0) ? 100 * n / den[j] : null; });
     } else if (M.kind === 'stock') {
-      /* A STOCK IS NEVER SUMMED ACROSS A BUCKET (L-126). A pending caseload is a level at
-         a month end, so a quarter reads the level at the quarter's LAST month. */
+      /* A STOCK IS NEVER SUMMED ACROSS A BUCKET (L-126). A pending caseload is a level at a month end, so a quarter reads the level at the quarter's LAST month. */
       vals = bucketEnd(M.series, B);
     } else {
       vals = bucketVals(M.series, B);
     }
-    /* A BUCKET IS PROVISIONAL IF ANY MONTH IN IT IS - shared/provisional.js:136's own
-       rule, which the four charts already use. At a coarse grain that is strictly MORE
-       conservative, and it is the same boundary the chart band draws. */
+    /* A BUCKET IS PROVISIONAL IF ANY MONTH IN IT IS - shared/provisional.js:136's own rule, which the four charts already use. At a coarse grain that is strictly MORE conservative, and it is the same boundary the chart band draws. */
     var prov = B.map(function (b) {
       return b.idxs.some(function (j) { return j > M.cut; });
     });
     var eligible = [], nPart = 0;
     for (i = 0; i < B.length; i++) {
       if (B[i].partial) nPart++;
-      /* whole AND settled, in that order of reasons: a part period would be highest or
-         lowest on its LENGTH and a provisional one on its REPORTING. Neither is about the
-         caseload. The table MARKS a short bucket and prints it among its neighbours; the
-         topline prints one bucket as a headline with nothing to compare it to, so it
-         excludes instead. Measured: `Lowest fiscal year` over the default Criminal range
-         is 48,427 (FY2023) with the exclusion and 45,682 (FY2013*) without. */
+      /* whole AND settled, in that order of reasons: a part period would be highest or lowest on its LENGTH and a provisional one on its REPORTING. Neither is about the caseload. The table MARKS a short bucket and prints it among its neighbours; the topline prints one bucket as a headline with nothing to compare it to, so it excludes instead. Measured: `Lowest fiscal year` over the default Criminal range is 48,427 (FY2023) with the exclusion and 45,682 (FY2013*) without. */
       if (!B[i].partial && !prov[i]) eligible.push(i);
     }
     return {
       B: B, vals: vals, prov: prov, eligible: eligible, nPartial: nPart,
-      /* the bucket's own label, carrying the SAME trailing "*" grainLabels() puts on the
-         chart axis and the L-237 table puts in its Period column. One mark, one meaning.
-         A month bucket is named by monthName(), because every figure in this section that
-         puts a month on its face has always put `April 2026` there and not `2026-04`. */
+      /* the bucket's own label, carrying the SAME trailing "*" grainLabels() puts on the chart axis and the L-237 table puts in its Period column. */
       labels: B.map(function (b) {
         return ((!grain || grain === 'month') ? monthName(b.label) : b.label) + (b.partial ? '*' : '');
       }),
@@ -739,18 +501,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
       endMonth: B.map(function (b) { return M.spine[b.idxs[b.idxs.length - 1]]; })
     };
   }
-  /* the LAST SETTLED bucket, which is D-060 one level up: a settled bucket has every
-     month settled, so its end month is a real settled month. Part periods are NOT
-     excluded here - a part period's end is still a real month-end level and the figure
-     names the month, which is D-060's own instruction. */
+  /* the LAST SETTLED bucket, which is D-060 one level up: a settled bucket has every month settled, so its end month is a real settled month. Part periods are NOT excluded here - a part period's end is still a real month-end level and the figure names the month, which is D-060's own instruction. */
   function lastSettledBucket(P) {
     for (var i = P.B.length - 1; i >= 0; i--) if (!P.prov[i]) return i;
     return P.B.length ? P.B.length - 1 : -1;
   }
 
-  /* ══ THE MODEL. Each page builds one of these per render and hands it over. Nothing
-     in here is a cube read: the page has already fetched and filtered, and this module
-     only ever does a second pass over the monthly series it is given. ═════════════ */
+  /* ══ THE MODEL. Each page builds one of these per render and hands it over. Nothing in here is a cube read: the page has already fetched and filtered, and this module only ever does a second pass over the monthly series it is given. ═════════════ */
   function levelOver(M, idxs) {
     if (!idxs.length) return null;
     if (M.kind === 'rate') {                       /* invariant 4: ratio of sums */
@@ -777,24 +534,10 @@ function mountDocMarkers(surface,root,labelToKey,base){
   }
   function fmtRate(M, v) { return M.kind === 'rate' ? n2(v) + '%' : n1(v); }
 
-  /* ══ THE RANGE LABEL AND THE CAPTION (L-222) ════════════════════════════════════
-     ONE function labels a range, and it is used by the caption AND by the chart period
-     every glance figure and every look-up heading prints. That is not a tidiness point:
-     with two of them the section reads "(FY2016 to FY2025)" in its caption and
-     "(calendar months)" for the same months three lines below (spec section 2).
-     A range from an October to a September is exactly a whole number of fiscal years -
-     the FY convention at shared.js:55, labelled by the year it ENDS - and nothing else
-     is. There is no window, no tolerance and no judgement in the test, and a user who
-     types those months into From and To gets the same label as one who clicks the FY
-     preset, which is the point of computing it.
-     NAMED labelRange and not rangeLabel because rangeLabel(M, idxs) already exists lower
-     down, for a COMPARISON's two sides; a second `function rangeLabel` here hoists over it
-     and every comparison label goes undefined. */
+  /* ══ THE RANGE LABEL AND THE CAPTION (L-222) ════════════════════════════════════ ONE function labels a range, and it is used by the caption AND by the chart period every glance figure and every look-up heading prints. That is not a tidiness point: with two of them the section reads "(FY2016 to FY2025)" in its caption and "(calendar months)" for the same months three lines below (spec section 2). A range from an October to a September is exactly a whole number of fiscal years - the FY convention at shared.js:55, labelled by the year it ENDS - and nothing else is. There is no window, no tolerance and no judgement in the test, and a user who types those months into From and To gets the same label as one who clicks the FY preset, which is the point of computing it. NAMED labelRange and not rangeLabel because rangeLabel(M, idxs) already exists lower down, for a COMPARISON's two sides; a second `function rangeLabel` here hoists over it and every comparison label goes undefined. */
   function labelRange(a, b) {
     var conv;
-    /* the first render happens before the cube has arrived, and the page's view indices
-       can point past an empty spine. monthName() has always returned '' for a missing
-       month; this keeps that exact behaviour rather than throwing inside the caption. */
+    /* the first render happens before the cube has arrived, and the page's view indices can point past an empty spine. monthName() has always returned '' for a missing month; this keeps that exact behaviour rather than throwing inside the caption. */
     if (!a || !b) return monthName(a) + ' to ' + monthName(b) + ' (' + COPY.capConvCal + ')';
     if (a.slice(5, 7) === '10' && b.slice(5, 7) === '09') {
       var fa = fyOf(a), fb = fyOf(b);
@@ -805,22 +548,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
   }
   function rangeIsFy(a, b) { return a.slice(5, 7) === '10' && b.slice(5, 7) === '09'; }
 
-  /* ONE selection clause, and the rule is: name it when the user picked exactly one,
-     count it when they picked more. Naming five is unbounded width - the longest specific
-     category in the July cube is 56 characters - and the caption sits ABOVE the figures,
-     so every line it gains pushes the chart down. The cost is that the caption says how
-     many and not which; the picker that set it is one click away. */
+  /* ONE selection clause, and the rule is: name it when the user picked exactly one, count it when they picked more. Naming five is unbounded width - the longest specific category in the July cube is 56 characters - and the caption sits ABOVE the figures, so every line it gains pushes the chart down. The cost is that the caption says how many and not which; the picker that set it is one click away. */
   function listClause(items, noun) {
     return items.length === 1 ? String(items[0])
       : COPY.capMany.replace('{n}', String(items.length)).replace('{noun}', noun);
   }
 
-  /* THE CAPTION. One sentence, built in one place, from the chart state and nothing else
-     (spec section 8 item 3: not four times in four page scripts). Clause order is fixed
-     on every dashboard, so a reader who learns it on one page keeps it on the next: what
-     is counted (mode, breakdown), where (district), for whom (role), which parts
-     (selection), how counted (occurrence basis). It reads NO data - only the user's own
-     filter state and the loaded spine. */
+  /* THE CAPTION. One sentence, built in one place, from the chart state and nothing else (spec section 8 item 3: not four times in four page scripts). Clause order is fixed on every dashboard, so a reader who learns it on one page keeps it on the next: what is counted (mode, breakdown), where (district), for whom (role), which parts(selection), how counted (occurrence basis). It reads NO data - only the user's own filter state and the loaded spine. */
   function captionFor(M) {
     var f = M.filters || {}, cl = [];
     if (f.mode) cl.push(f.mode);
@@ -839,8 +573,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
       .replace('{filters}', cl.length ? ', ' + cl.join(', ') : '');
   }
 
-  /* ══ PERIODS. Every one is computed from the loaded spine; no window is a constant
-     and no label carries a figure written into a string (spec section 6). ═══════── */
+  /* ══ PERIODS. Every one is computed from the loaded spine; no window is a constant and no label carries a figure written into a string (spec section 6). ═══════── */
   function buildPeriods(M) {
     var sp = M.spine, edge = sp[sp.length - 1], out = [];
     function idxsFor(a, b) {
@@ -855,10 +588,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
     /* the chart's own range is the default and is always first */
     if (M.view.length) {
-      /* L-222: the chart's own period is labelled by labelRange(), the same function the
-         caption uses, so the two can never disagree about the convention. This label was
-         a hard-coded '(calendar months)' and printed three times on the glance strip and
-         once in every look-up heading. */
+      /* L-222: the chart's own period is labelled by labelRange(), the same function the caption uses, so the two can never disagree about the convention. */
       var ca = sp[M.view[0]], cb = sp[M.view[M.view.length - 1]];
       out.push({
         k: 'chart', idxs: M.view.slice(), conv: (ca && cb && rangeIsFy(ca, cb)) ? 'fy' : 'cal',
@@ -884,8 +614,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     for (var i = 0; i < P.length; i++) if (P[i].k === k) return P[i];
     return P[0] || null;
   }
-  /* the administration bands, as index runs on the spine. Invariant 8: ADMINS is the
-     single source of truth and this module reads it rather than restating it. */
+  /* the administration bands, as index runs on the spine. Invariant 8: ADMINS is the single source of truth and this module reads it rather than restating it. */
   function eraRuns(M) {
     var sp = M.spine, edge = sp[sp.length - 1], out = [];
     for (var e = 0; e < ADMINS.length; e++) {
@@ -897,8 +626,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return out;
   }
 
-  /* ══ COMPUTED QUANTITIES THAT REACH COPY. Every one is a pass over the loaded
-     series, never a written constant (spec section 6). ══════════════════════════ */
+  /* ══ COMPUTED QUANTITIES THAT REACH COPY. Every one is a pass over the loaded series, never a written constant (spec section 6). ══════════════════════════ */
   /* the jackknife a median on few values owes: how far leaving out one month moves it */
   function jackknife(vals) {
     var a = vals.filter(function (v) { return v != null; });
@@ -911,41 +639,14 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
     return worst;
   }
-  /* seasonalAmp() STOOD HERE AND IS REMOVED (L-247). It averaged the settled months of
-     each calendar month and took the peak-to-trough spread, which is mean-of-ratios on a
-     rate metric and so an invariant 4 breach. Its only caller was the seasonal note in
-     figureFor(), struck by Cary on 17 September 2026; removing the call orphaned it and
-     it goes with the call rather than sitting unreferenced with a known defect in it.
-     R.seasonal and COPY.noteHalfSeasonal are a DIFFERENT thing, on form 2 only, and are
-     untouched: they test the half's length in months and carry no computed figure. */
+  /* seasonalAmp() STOOD HERE AND IS REMOVED (L-247). It averaged the settled months of each calendar month and took the peak-to-trough spread, which is mean-of-ratios on a rate metric and so an invariant 4 breach. Its only caller was the seasonal note in figureFor(), struck by Cary on 17 September 2026; removing the call orphaned it and it goes with the call rather than sitting unreferenced with a known defect in it. R.seasonal and COPY.noteHalfSeasonal are a DIFFERENT thing, on form 2 only, and are untouched: they test the half's length in months and carry no computed figure. */
 
   /* ══ RENDER HELPERS ═════════════════════════════════════════════════════════════ */
   function defLine(t) { return '<div class="tf-def">' + esc(t) + '</div>'; }
-  /* An EMPTY string renders NOTHING. `.tf-flag` carries a 4px charcoal rule and a #fff9c4
-     fill and the glyph is written by this function rather than by the copy, so a blanked
-     flag string would otherwise paint a full-width yellow warning box containing a ⚠ and
-     no warning - measured at 1030x28 on declinations.html when COPY.armD was blanked.
-     Ruled by Cary 17 September 2026 (L-246) as the general fix rather than restoring that
-     one string: the next blanked flag string would do the same thing. This changes no
-     copy - no string is added, removed or reworded - and a flag with text is unaffected. */
-  function flagLine(t) {
-    if (!t) return '';
-    return '<div class="tf-flag"><span aria-hidden="true">⚠</span> ' + esc(t) + '</div>';
-  }
 
   /* ══ THE SECTION'S ONE PROVISIONAL MARK (L-207) ═════════════════════════════════
-     A <button>, not a bare glyph, and that is invariant 6 rather than taste: a phone has
-     no hover, so a hover-only mark is hidden on touch, which is most of the traffic to a
-     dashboard embedded in a Framer page. It opens three ways - hover and keyboard focus
-     in CSS, tap or click here - and the bubble is the button's aria-describedby target
-     and is NEVER `hidden` and never display:none, so a screen-reader user has the
-     sentence without opening anything. The visible mark is the provisional HATCH, the
-     same texture LIONS_PROV draws on a right-censored chart band, plus the accessible
-     name: texture and text, never colour alone. It is 26x26, which clears WCAG 2.5.8's
-     24x24 target size and matches shell2's own caret. It is the SECOND child of the
-     caption row inside .kpis, so collapsing the section takes the mark with the figures
-     and shell2's caret - which sits on the LEFT of its own header, outside .kpis - is
-     nowhere near it. ══════════════════════════════════════════════════════════════ */
+     A <button>, not a bare glyph, and that is invariant 6 rather than taste: a phone has  no hover, so a hover-only mark is hidden on touch, which is most of the traffic to a  dashboard embedded in a Framer page. It opens three ways - hover and keyboard focus in CSS, tap or click here - and the bubble is the button's aria-describedby target   and is NEVER `hidden` and never display:none, so a screen-reader user has the
+     sentence without opening anything. The visible mark is the provisional HATCH, the  same texture LIONS_PROV draws on a right-censored chart band, plus the accessible  name: texture and text, never colour alone. It is 26x26, which clears WCAG 2.5.8's 24x24 target size and matches shell2's own caret. It is the SECOND child of the  caption row inside .kpis, so collapsing the section takes the mark with the figures  and shell2's caret - which sits on the LEFT of its own header, outside .kpis - is nowhere near it. ══════════════════════════════════════════════════════════════ */
   function provMarkHTML(month, n) {
     var body = COPY.provMarkBody.replace('{month}', month).replace('{n}', String(n));
     return '<span class="tf-provwrap">' +
@@ -965,9 +666,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     b.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') b.setAttribute('aria-expanded', 'false');
     });
-    /* Escape and a click elsewhere close it, so a tapped bubble is not stuck open over
-       the strip. The caption row is rebuilt on every paint, so the button is new each
-       time and the document listener is bound once rather than once per paint. */
+    /* Escape and a click elsewhere close it, so a tapped bubble is not stuck open over the strip. The caption row is rebuilt on every paint, so the button is new each time and the document listener is bound once rather than once per paint. */
     if (markDismissBound) return;
     markDismissBound = true;
     document.addEventListener('click', function () {
@@ -978,15 +677,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
   /* ══ MEASURES ═══════════════════════════════════════════════════════════════════
      One record per measure: its menu label, and a function that turns a period into
-     a value, a sub-line, a definition and the notes it owes. Every figure carries its
-     value, label, period, definition, basis and flag (spec section 3). ═══════════ */
+     a value, a sub-line, a definition and the notes it owes. Every figure carries its value, label, period, definition, basis and flag (spec section 3). ═══════════ */
   function measureList(M) {
     var out = [];
     if (M.kind === 'stock') {
       out.push('read', 'avg', 'median', 'peak');
     } else if (M.kind === 'rate') {
-      /* three and no more: Overall rate, Middle month, Share of the total. See COPY.mRate
-         for why a rate carries no total, no average per month and no extremum. */
+      /* three and no more: Overall rate, Middle month, Share of the total. See COPY.mRate for why a rate carries no total, no average per month and no extremum. */
       out.push('rate', 'median');
     } else {
       out.push('total', 'avg', 'median', 'best', 'worst', 'firstlast');
@@ -994,10 +691,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     if (M.share && M.kind !== 'stock') out.push('share');
     return out;
   }
-  /* EIGHT of these labels carry a noun slot and follow Group by (L-250); THREE do not,
-     and that is the point rather than an omission. `Total`, `Overall rate` and the share
-     name no period, and `Reading at a date` is a date at every grain - what moves is
-     WHICH date, and the figure prints it on its sub-line. */
+  /* EIGHT of these labels carry a noun slot and follow Group by (L-250); THREE do not, and that is the point rather than an omission. `Total`, `Overall rate` and the share name no period, and `Reading at a date` is a date at every grain - what moves is WHICH date, and the figure prints it on its sub-line. */
   function measureLabel(M, k) {
     var gr = M && M.grain;
     switch (k) {
@@ -1011,14 +705,12 @@ function mountDocMarkers(surface,root,labelToKey,base){
       case 'firstlast': return gfill('First and last {bucket}', gr);
       case 'read': return 'Reading at a date';
       case 'share': return M.share.label;
-      /* the glance-only denominator slot on a rate: the series' own metric name, which
-         the page already has, so the slot costs no new name. */
+      /* the glance-only denominator slot on a rate: the series' own metric name, which the page already has, so the slot costs no new name. */
       case 'den': return (M.rate && M.rate.denLabel) || 'Total';
     }
     return k;
   }
-  /* the settled subset of a period. Extrema and stock readings truncate; everything
-     else flags (invariant 6, spec sections 5.1 and 5.3). */
+  /* the settled subset of a period. Extrema and stock readings truncate; everything else flags (invariant 6, spec sections 5.1 and 5.3). */
   function settledOf(M, idxs) {
     return idxs.filter(function (i) { return i <= M.cut; });
   }
@@ -1027,14 +719,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return n;
   }
 
-  /* the period line's SECOND line, coarse grain only, and only on a figure that reads
-     EVERY bucket in the period: the average, the middle one and a stock's reading. It is
-     the divisor, on the face, beside the figure that divides by it. It is NOT printed
-     beside Total, Overall rate, Share or the rate's denominator slot, which are
-     grain-invariant and divide by nothing; NOT on the two extrema, which are computed
-     over a SUBSET and would contradict the exclusion note directly underneath; and NOT on
-     first-and-last, which names its two buckets on its own face. Empty at month grain,
-     which is what keeps the strip identical to the state the copy was signed for. */
+  /* the period line's SECOND line, coarse grain only, and only on a figure that reads EVERY bucket in the period: the average, the middle one and a stock's reading. It is the divisor, on the face, beside the figure that divides by it. It is NOT printed beside Total, Overall rate, Share or the rate's denominator slot, which are grain-invariant and divide by nothing; NOT on the two extrema, which are computed over a SUBSET and would contradict the exclusion note directly underneath; and NOT on first-and-last, which names its two buckets on its own face. Empty at month grain, which is what keeps the strip identical to the state the copy was signed for. */
   var READS_EVERY_BUCKET = { avg: 1, median: 1, read: 1 };
   function bucketCountLine(P, grain, k) {
     if (!grain || grain === 'month') return '';
@@ -1046,20 +731,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
   function figureFor(M, k, per) {
     var idxs = per.idxs, grain = M.grain;
-    /* THE ONE RE-BUCKETING. P.vals are the bucket values, already computed the way each
-       kind requires: a count sums, a rate is a ratio of its summed components (invariant
-       4), a stock reads its last month (L-126). At month grain every bucket is one month
-       and P.vals is M.series over the period, so every figure below is arithmetically
-       what it was before L-250. */
+    /* THE ONE RE-BUCKETING. P.vals are the bucket values, already computed the way each kind requires: a count sums, a rate is a ratio of its summed components (invariant 4), a stock reads its last month (L-126). At month grain every bucket is one month and P.vals is M.series over the period, so every figure below is arithmetically what it was before L-250. */
     var P = periodGrain(M, idxs, grain);
     var f = { key: k, label: measureLabel(M, k), period: per.label, notes: [],
               countLine: bucketCountLine(P, grain, k) };
     var i, best, bi, v;
     switch (k) {
-      /* ── GRAIN-INVARIANT. Not one of these four reads P, and none of them may be made
-         to: a sum of sums is the same sum, and a ratio of two whole-period sums has no
-         bucket in it. Measured identical at all four grains on the default Criminal
-         range: 770,057 and 94.9604%. ─────────────────────────────────────────────── */
+      /* ── GRAIN-INVARIANT. Not one of these four reads P, and none of them may be made to: a sum of sums is the same sum, and a ratio of two whole-period sums has no bucket in it. Measured identical at all four grains on the default Criminal range: 770,057 and 94.9604%. ─────────────────────────────────────────────── */
       case 'total':
         f.v = fmtLevel(M, levelOver(M, idxs));
         break;
@@ -1076,10 +754,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
           f.v = c ? nInt(s / c) : '-';
           f.def = gfill(COPY.defStockAvg, grain).replace('{n}', String(P.B.length));
         } else {
-          /* the period total divided by the NUMBER OF BUCKETS, which is the mean of the
-             bucket values and so the mean of what the chart plots. A part period is one
-             bucket and counts as one; the divisor is on the face in f.countLine, which is
-             the whole reason that line exists. */
+          /* the period total divided by the NUMBER OF BUCKETS, which is the mean of the bucket values and so the mean of what the chart plots. A part period is one bucket and counts as one; the divisor is on the face in f.countLine */
           var t = levelOver(M, idxs);
           f.v = t == null ? '-' : n1(t / P.B.length);
         }
@@ -1087,39 +762,28 @@ function mountDocMarkers(surface,root,labelToKey,base){
       case 'median':
         var md = median(P.vals);
         f.v = M.kind === 'stock' ? nInt(md) : fmtRate(M, md);
-        /* THE FEW-VALUES THRESHOLD IS NOW A COUNT OF BUCKETS, not of months. The caveat
-           exists because a median over few values moves on any one of them (L-198 1.2),
-           and the values medianed here are the buckets. At month grain the two readings
-           coincide, which is why 12 is unchanged. This is the one number in the L-250
-           spec the designer flagged as inherited rather than measured (spec 12.5); it
-           cannot produce a wrong figure, only a caveat that fires a little too often or
-           too rarely. */
+        /* THE FEW-VALUES THRESHOLD IS NOW A COUNT OF BUCKETS, not of months. The caveat exists because a median over few values moves on any one of them (L-198 1.2), and the values medianed here are the buckets. At month grain the two readings coincide, which is why 12 is unchanged. This is the one number in the L-250 spec the designer flagged as inherited rather than measured (spec 12.5) */
         f.def = M.kind === 'stock' ? gfill(COPY.defStockMedian, grain).replace('{n}', String(P.B.length))
               : M.kind === 'rate' ? gfill(COPY.defMedianRate, grain).replace('{n}', String(P.B.length))
               : (P.B.length <= 12
                   ? gfill(COPY.defMedianFew, grain).replace('{n}', String(P.B.length)).replace('{jack}', n2(jackknife(P.vals) || 0))
                   : gfill(COPY.defMedian, grain).replace('{n}', String(P.B.length)));
-        /* invariant 4 said out loud on the one figure a coarse grain makes newly
-           misreadable. Silent at month grain, where there is nothing new to misread. */
+        /* invariant 4 said out loud on the one figure a coarse grain makes newly misreadable. Silent at month grain, where there is nothing new to misread. */
         if (M.kind === 'rate' && grain && grain !== 'month') f.def2 = gfill(COPY.defBucketRate, grain);
         break;
       case 'best': case 'worst': case 'peak':
         best = null; bi = null;
-        /* WHOLE AND SETTLED. P.eligible is the settled buckets that are not part periods;
-           at month grain nothing is ever a part period, so this is settledOf() exactly. */
+        /* WHOLE AND SETTLED. P.eligible is the settled buckets that are not part periods; at month grain nothing is ever a part period, so this is settledOf() exactly. */
         for (i = 0; i < P.eligible.length; i++) {
           v = P.vals[P.eligible[i]]; if (v == null) continue;
           if (best == null || (k === 'worst' ? v < best : v > best)) { best = v; bi = P.eligible[i]; }
         }
         f.v = nInt(best);              /* never a rate: a rate offers no extremum */
         f.sub = bi == null ? '' : P.labels[bi];
-        /* the DEFINITION is struck (the label says what it is) and the settled-months
-           half of it is not lost with it: it is COPY.noteSettledOnly, its own line, and
-           it still prints on all three. The extremum is the one place this section
+        /* the DEFINITION is struck (the label says what it is) and the settled-months half of it is not lost with it: it is COPY.noteSettledOnly, its own line, and it still prints on all three. The extremum is the one place this section
            truncates, and it says so exactly as before (invariant 6). */
         f.notes.push(gfill(COPY.noteSettledOnly, grain));
-        /* the second truncation, printed only where a part period was actually there to
-           drop. It is never there at month grain. */
+        /* the second truncation, printed only where a part period was actually there to drop. It is never there at month grain. */
         if (P.nPartial > 0) f.notes.push(gfill(COPY.notePartExcluded, grain));
         if (k !== 'peak') f.notes.push(gfill(COPY.noteBestCause, grain));
         /* on a stock, say when the UNTRUNCATED peak would have been the vintage edge */
@@ -1131,11 +795,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
           }
           if (ti != null && P.prov[ti]) f.notes.push(gfill(COPY.noteStockPeakEdge, grain).replace('{edge}', P.labels[ti]));
         }
-        /* a coarse grain can leave NOTHING both whole and settled - Last 12 months at
-           fiscal-year grain is two part periods, one of them provisional. The section
-           already owns a sentence for "there is no figure here" and it is reused, with
-           the two notes above saying which exclusion emptied the set. No new refusal
-           string is spent. */
+        /* a coarse grain can leave NOTHING both whole and settled - Last 12 months at fiscal-year grain is two part periods, one of them provisional. The section already owns a sentence for "there is no figure here" and it is reused, with the two notes above saying which exclusion emptied the set. No new refusal string is spent. */
         if (bi == null) { f.unavailable = true; f.def = COPY.unavailable; }
         break;
       case 'firstlast':
@@ -1144,20 +804,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
         if (P.B[0].partial || P.B[P.B.length - 1].partial) f.notes.push(COPY.partKey);
         break;
       case 'read':
-        /* THE LAST SETTLED MONTH IN THE CHART'S RANGE, with its date on its face (Cary,
-           15 September 2026, carve-out 10.10 = A). This supersedes ruling 3 of the same
-           morning, which read the NEWEST month and flagged it: L-207 struck every
-           provisional string in the section, so the flag that ruling rested on no longer
-           exists, and L-193 section 2.4's one stated truncation exception applies -
-           the civil pending stock rises 67.7% in ten months into the vintage edge and
-           peaks there at 148,696 against a settled high of 110,090 in January 2015
-           (L-198 section 1.4). The date names which month it is, which is that rule's own
-           instruction. Inside a COMPARISON the truncation is unchanged (spec 5.2).
-           AT A COARSE GRAIN this is the last settled BUCKET, read at the month it ends
-           on, and the label stays `Reading at a date` because a date is a date at every
-           grain - what moves is which date, and it is on the face. A part period is not
-           excluded: its end is a real month-end level and the sub-line names the bucket
-           so the reader can see it is short. */
+        /* THE LAST SETTLED MONTH IN THE CHART'S RANGE, with its date on its face (Cary, 15 September 2026, carve-out 10.10 = A). This supersedes ruling 3 of the same morning, which read the NEWEST month and flagged it: L-207 struck every provisional string in the section, so the flag that ruling rested on no longer exists, and L-193 section 2.4's one stated truncation exception applies - the civil pending stock rises 67.7% in ten months into the vintage edge and peaks there at 148,696 against a settled high of 110,090 in January 2015 (L-198 section 1.4). The date names which month it is, which is that rule's own instruction. Inside a COMPARISON the truncation is unchanged (spec 5.2). AT A COARSE GRAIN this is the last settled BUCKET, read at the month it ends on, and the label stays `Reading at a date` because a date is a date at every grain - what moves is which date, and it is on the face. A part period is not excluded: its end is a real month-end level and the sub-line names the bucket so the reader can see it is short. */
         var ri = lastSettledBucket(P);
         f.v = nInt(P.vals[ri]);
         f.sub = monthName(P.endMonth[ri]) + (P.B[ri].partial ? ' (' + P.labels[ri] + ')' : '');
@@ -1169,48 +816,28 @@ function mountDocMarkers(surface,root,labelToKey,base){
         if (M.share.basis) f.basis = M.share.basis;
         break;
       case 'den':
-        /* a rate alone answers "how well" and never "how big" (L-198 section 3), so the
-           glance's second slot on a percent metric is the total the rate divides by. */
+        /* a rate alone answers "how well" and never "how big" (L-198 section 3), so the glance's second slot on a percent metric is the total the rate divides by. */
         f.v = nInt(sumOf(M.rate.den, idxs));
         f.basis = COPY.basisRateDen;
         break;
     }
-    /* THE SEASONAL NOTE AND ITS CALL SITE ARE REMOVED (L-247, Cary, 17 September 2026).
-       Ashley struck the note by blanking COPY.noteSeasonal on 16 September and left the
-       call, so seasonalAmp() went on running and pushing an empty string through
-       defLine(), which painted an empty .tf-def carrying a 5px top margin on index.html
-       and civil.html. Cary ruled the call site out. COPY.noteSeasonal and seasonalAmp()
-       are removed with it rather than left unreferenced: an orphan function carrying a
-       known defect is L-011's shape, and this one averaged monthly percentages on a rate
-       metric - mean-of-ratios, invariant 4, immaterial nationally and about 12% relative
-       at district grain (VT guilty disposition %, 6.0% against a ratio-of-sums 6.7%,
-       L-243). The trigger was `idxs.length % 12 !== 0`, a test on MONTHS. */
-    /* at district level the average and the middle month are genuinely far apart.
-       BOTH SIDES MOVE TOGETHER OR THE GAP IS NONSENSE: a monthly mean against a quarterly
-       median prints a gap near 200% and reads as a data finding. Both are bucket
-       quantities here, and at month grain both are what they were. */
+    /* at district level the average and the middle month are genuinely far apart.BOTH SIDES MOVE TOGETHER OR THE GAP IS NONSENSE: a monthly mean against a quarterly median prints a gap near 200% and reads as a data finding. Both are bucket quantities here, and at month grain both are what they were. */
     if (M.districtSel && (k === 'avg' || k === 'median') && M.kind === 'count') {
       var tot = levelOver(M, idxs), mm = median(P.vals);
       if (tot != null && mm) {
         f.notes.push(gfill(COPY.noteMeanMedian, grain).replace('{gap}', n1(Math.abs(tot / P.B.length - mm) / Math.abs(mm) * 100)));
       }
     }
-    /* NO PER-FIGURE PROVISIONAL LINE (L-207, spec section 8 item 26). Invariant 6 is
-       discharged by the ONE section mark, which paintChrome() puts at the top right of
-       the box and which is reachable on hover, on focus, on tap and from the
-       accessibility tree without opening anything. */
+    /* NO PER-FIGURE PROVISIONAL LINE (L-207, spec section 8 item 26). Invariant 6 is discharged by the ONE section mark, which paintChrome() puts at the top right of the box and which is reachable on hover, on focus, on tap and from the accessibility tree without opening anything. */
     return f;
   }
 
   /* ══ THE GLANCE STRIP - three statistics plus the section footer line ═══════════
-     L-198 section 3's recommended sets: the level, the rate, and the selection's share
-     of the total row. When the selection IS the whole total the share would read 100%
-     and say nothing, so that slot becomes the middle month and says why (spec 10.3). */
+     L-198 section 3's recommended sets: the level, the rate, and the selection's share of the total row. When the selection IS the whole total the share would read 100% and say nothing, so that slot becomes the middle month and says why (spec 10.3). */
   function glanceKeys(M) {
     if (M.kind === 'stock') return ['read', 'avg', 'median'];
     if (M.kind === 'rate') {
-      /* the rate, the total it divides BY, and the share. A rate has no honest "average
-         per month": that is mean-of-ratios, invariant 4. */
+      /* the rate, the total it divides BY, and the share. A rate has no honest "average per month": that is mean-of-ratios, invariant 4. */
       return ['rate', 'den', (M.share && !M.allSelected) ? 'share' : 'median'];
     }
     return ['total', 'avg', (M.share && !M.allSelected) ? 'share' : 'median'];
@@ -1229,22 +856,12 @@ function mountDocMarkers(surface,root,labelToKey,base){
         if (f.sub) h += '<div class="tf-sub">' + esc(f.sub) + '</div>';
         h += '<div class="tf-k">' + esc(f.label) + '</div>';
         h += '<div class="tf-win">' + esc(per.label) + '</div>';
-        /* THE ONE ADDITION TO THE STRIP (L-250): the divisor, and how many of its buckets
-           are part periods. Empty at month grain, so the strip is byte-identical there. */
+        /* THE ONE ADDITION TO THE STRIP (L-250): the divisor, and how many of its buckets are part periods. Empty at month grain, so the strip is byte-identical there. */
         if (f.countLine) h += '<div class="tf-win">' + esc(f.countLine) + '</div>';
-        /* NO DEFINITION ON THE STRIP, at any width, in any context (Cary, 15 September
-           2026, spec section 3). The BASIS stays: invariants 3 and 4 live in it, and
-           without `The total this rate divides by.` the rate strip reads as two
-           unrelated figures side by side (carve-out 10.9, ruled to stay). */
+        /* NO DEFINITION ON THE STRIP, at any width, in any context (Cary, 15 September 2026, spec section 3). The BASIS stays: invariants 3 and 4 live in it, and without `The total this rate divides by.` the rate strip reads as two unrelated figures side by side (carve-out 10.9, ruled to stay). */
         if (f.basis) h += defLine(f.basis);
         if (keys[i] === 'median' && M.share && M.allSelected && M.kind !== 'stock') h += defLine(COPY.noteShareWhole);
-        /* THE GLANCE CARRIES SECTION 3'S SIX ELEMENTS AND NOT THE QUALIFYING NOTES.
-           Value, label, period, definition, basis and flag are owed on every figure in
-           every shape; the qualifying notes in section 9 - the seasonal balance of the
-           period, the district mean-to-median gap, the no-cause sentence - answer "what
-           else should I know about THIS figure" and belong on the look-up, where the user
-           asked for that figure. Rendered here they are identical on all three columns
-           and add 72px at 1200 and 232px at 390, measured in Chromium. */
+        /* THE GLANCE CARRIES SECTION 3'S SIX ELEMENTS AND NOT THE QUALIFYING NOTES. Value, label, period, definition, basis and flag are owed on every figure in every shape; the qualifying notes in section 9 - the seasonal balance of the period, the district mean-to-median gap, the no-cause sentence - answer "what else should I know about THIS figure" and belong on the look-up, where the user asked for that figure. Rendered here they are identical on all three columns and add 72px at 1200 and 232px at 390, measured in Chromium. */
         if (M.flags && M.flags.armD && (keys[i] === 'total' || keys[i] === 'avg')) h += flagLine(COPY.armD);
       }
       h += '</div>';
@@ -1268,10 +885,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     h += '<div class="tf-v big">' + esc(f.v) + '</div>';
     if (f.sub) h += '<div class="tf-sub">' + esc(f.sub) + '</div>';
     if (f.countLine) h += '<div class="tf-win">' + esc(f.countLine) + '</div>';
-    /* THE ONLY PLACE A DEFINITION APPEARS, and only on the five figures whose label is
-       not already their definition: Middle month, Overall rate, Share of the total, and
-       the average and middle month-end readings (spec section 3). figureFor() sets f.def
-       on those five and on nothing else, so this is the whole of the rule. */
+    /* THE ONLY PLACE A DEFINITION APPEARS, and only on the five figures whose label is not already their definition: Middle month, Overall rate, Share of the total, and the average and middle month-end readings (spec section 3). figureFor() sets f.def on those five and on nothing else, so this is the whole of the rule. */
     if (f.def) h += defLine(f.def);
     /* invariant 4, on `Middle {bucket}` on a percent metric at a coarse grain only */
     if (f.def2) h += defLine(f.def2);
@@ -1291,36 +905,15 @@ function mountDocMarkers(surface,root,labelToKey,base){
     host.innerHTML = h + '</div>';
   }
 
-  /* ══ THE COMPARISON ═════════════════════════════════════════════════════════════
-     Every form names itself on the page and carries its basis on its face.
-     THE FIGURE DRIVES THE COMPARISON (L-214, Cary's option A, 15 September 2026, spec
-     5.2e): every look-up figure applies to both periods, the FORM decides which two sets
-     of months, and the two lengths decide ONE thing only - whether `Total` may be
-     differenced. Equal length compares totals; unequal length compares per month and never
-     differences the two totals (L-198 sections 2.1 and 2.2), and that rule is now `Total`'s
-     alone. ══════════════════════════════════════════════════════════════════════════ */
-  /* WHAT EACH SIDE READS IS THE FIGURE'S JOB. Until L-214 the `measure` argument was read
-     for the share and then never again, so the form decided every other figure and the
-     figure select was inert in compare mode - L-211, `sideValue()` line 2. `mode` survives
-     for `Total` and for nothing else, which is where the length rule lives.
-     `pts` says the figure is a percentage and is compared in percentage POINTS, never as a
-     percent change of a percent (spec 5.2f note 3); a missing `v` says there is no single
-     change to print at all, which is `First and last month` (Cary, 15 September 2026). */
-  /* EACH SIDE RE-BUCKETS OVER ITS OWN MONTHS (L-250). The FORMS still choose MONTHS - not
-     a line of buildPair()'s month arithmetic moves, all three refusals stay month tests,
-     and `Total`'s five signed basis sentences and every period clause still count months
-     and stay true. What follows the grain is each side's own figure VALUE, because D-061
-     shares the figure label between the look-up and the comparison and a monthly number
-     under a quarterly label is a wrong figure rather than an inconsistency. */
+  /* ══ THE COMPARISON ═════════════════════════════════════════════════════════════ Every form names itself on the page and carries its basis on its face. THE FIGURE DRIVES THE COMPARISON (L-214, Cary's option A, 15 September 2026, spec 5.2e): every look-up figure applies to both periods, the FORM decides which two sets of months, and the two lengths decide ONE thing only - whether `Total` may be differenced. Equal length compares totals; unequal length compares per month and never differences the two totals (L-198 sections 2.1 and 2.2), and that rule is now `Total`'s alone. ══════════════════════════════════════════════════════════════════════════ */
+  /* WHAT EACH SIDE READS IS THE FIGURE'S JOB. Until L-214 the `measure` argument was read for the share and then never again, so the form decided every other figure and the figure select was inert in compare mode - L-211, `sideValue()` line 2. `mode` survives for `Total` and for nothing else, which is where the length rule lives. `pts` says the figure is a percentage and is compared in percentage POINTS, never as a percent change of a percent (spec 5.2f note 3); a missing `v` says there is no single change to print at all, which is `First and last month` (Cary, 15 September 2026). */
+  /* EACH SIDE RE-BUCKETS OVER ITS OWN MONTHS (L-250). The FORMS still choose MONTHS - not a line of buildPair()'s month arithmetic moves, all three refusals stay month tests, and `Total`'s five signed basis sentences and every period clause still count months and stay true. What follows the grain is each side's own figure VALUE, because D-061 shares the figure label between the look-up and the comparison and a monthly number under a quarterly label is a wrong figure rather than an inconsistency. */
   function sideValue(M, idxs, mode, measure) {
     var i, s, c, t, P;
     if (measure === 'share') return { v: shareOver(M, idxs), fmt: n2(shareOver(M, idxs)) + '%', pts: true };
     P = periodGrain(M, idxs, M.grain);
     if (measure === 'best' || measure === 'worst' || measure === 'peak') {
-      /* over WHOLE AND SETTLED buckets, on a flow as well as a stock: an extremum would
-         otherwise be won by a bucket whose reporting is not yet complete (invariant 6) or
-         by one that is short (L-250 section 5.2). At month grain nothing is ever a part
-         period, so this is the settled-months rule exactly as before. */
+      /* over WHOLE AND SETTLED buckets, on a flow as well as a stock: an extremum would otherwise be won by a bucket whose reporting is not yet complete (invariant 6) or by one that is short (L-250 section 5.2). At month grain nothing is ever a part period, so this is the settled-months rule exactly as before. */
       var best = null, bi = null;
       for (i = 0; i < P.eligible.length; i++) {
         var ev = P.vals[P.eligible[i]]; if (ev == null) continue;
@@ -1337,9 +930,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
       return { v: md, fmt: M.kind === 'stock' ? nInt(md) : fmtRate(M, md), pts: M.kind === 'rate' };
     }
     if (M.kind === 'stock') {
-      /* both sides are already truncated to settled months by buildPair(), on every form
-         and every figure (L-198 2.3, spec 10.5), and each side's LABEL names the months
-         actually read - L-193 2.4's own "say which date it is". */
+      /* both sides are already truncated to settled months by buildPair(), on every form and every figure (L-198 2.3, spec 10.5), and each side's LABEL names the months actually read - L-193 2.4's own "say which date it is". */
       if (measure === 'avg' || mode === 'avg') {
         s = 0; c = 0;
         for (i = 0; i < P.vals.length; i++) if (P.vals[i] != null) { s += P.vals[i]; c++; }
@@ -1350,46 +941,24 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
     t = levelOver(M, idxs);
     if (measure === 'rate') return { v: t, fmt: fmtLevel(M, t), pts: true };
-    /* `Average per {bucket}` prints the bare per-bucket figure and carries no `in total`
-       sub-line: that sub-line is `Total`'s, and on the two forms that read per month by
-       rule it is the only arithmetic difference between the two figures (spec 5.2f n.1). */
+    /* `Average per {bucket}` prints the bare per-bucket figure and carries no `in total` sub-line: that sub-line is `Total`'s, and on the two forms that read per month by rule it is the only arithmetic difference between the two figures (spec 5.2f n.1). */
     if (measure === 'avg') return { v: t == null ? null : t / P.B.length, fmt: t == null ? '-' : n1(t / P.B.length) };
-    /* `Total`'s own per-month reading on the unequal-length forms stays PER MONTH, because
-       the length rule and the signed sentences that state it count months (spec section
-       7). This is the one divisor in the section that does not follow the grain. */
+    /* `Total`'s own per-month reading on the unequal-length forms stays PER MONTH, because the length rule and the signed sentences that state it count months (spec section 7). This is the one divisor in the section that does not follow the grain. */
     if (mode === 'perMonth') return { v: t == null ? null : t / idxs.length, fmt: (t == null ? '-' : n1(t / idxs.length) + ' per month'), total: nInt(t) };
     return { v: t, fmt: fmtLevel(M, t) };
   }
 
-  /* THE FIGURE MENU IN COMPARE MODE (L-214, spec 5.2f note 4 and carve-out 10.11). It is
-     the look-up menu with ONE subtraction, on one kind, on four of the five forms: a
-     stock's `Reading at a date` is offered on form 1 only. Form 1 on a stock IS a date
-     against a date (L-198 2.3); forms 2 to 5 compare two SPANS, and spec 10.5 ruled that a
-     span on a stock is read as its average month-end level. Leaving the entry on those
-     forms would offer a second reading of the same pair that disagrees in SIGN with the
-     ruled one (L-198 2.7d: -17.46% against +11.43% on one real window). It is not offered
-     rather than refused, so no string is spent, and a user who was on it when they change
-     the form is moved to `Average month-end reading` visibly, in the select they are
-     looking at. Nothing else is subtracted: a developer may not add a figure to this menu
-     that the look-up menu does not offer (spec 5.2h). */
+  /* THE FIGURE MENU IN COMPARE MODE (L-214, spec 5.2f note 4 and carve-out 10.11). It is the look-up menu with ONE subtraction, on one kind, on four of the five forms: a stock's `Reading at a date` is offered on form 1 only. Form 1 on a stock IS a date against a date (L-198 2.3); forms 2 to 5 compare two SPANS, and spec 10.5 ruled that a span on a stock is read as its average month-end level. Leaving the entry on those forms would offer a second reading of the same pair that disagrees in SIGN with the ruled one (L-198 2.7d: -17.46% against +11.43% on one real window). It is not offered rather than refused, so no string is spent, and a user who was on it when they change the form is moved to `Average month-end reading` visibly, in the select they are looking at. Nothing else is subtracted: a developer may not add a figure to this menu that the look-up menu does not offer (spec 5.2h). */
   function measuresForCompare(M, form) {
     var keys = measureList(M);
     if (M.kind === 'stock' && form !== 'prev') keys = keys.filter(function (k) { return k !== 'read'; });
     return keys;
   }
 
-  /* ── THE BASIS, COMPOSED: a figure clause and then a period clause (spec 5.2e, 9g).
-     `Total` returns its whole signed sentence untouched, so it renders character for
-     character as before on all five forms. Every other figure takes its own clause and
-     then the form's period clause, which is the second half of that same sentence. A
-     stock's clauses are whole sentences and take no period clause, because each side's
-     label already names the months read. ─────────────────────────────────────────── */
+  /* ── THE BASIS, COMPOSED: a figure clause and then a period clause (spec 5.2e, 9g). `Total` returns its whole signed sentence untouched, so it renders character for character as before on all five forms. Every other figure takes its own clause and then the form's period clause, which is the second half of that same sentence. A stock's clauses are whole sentences and take no period clause, because each side's label already names the months read. ─────────────────────────────────────────── */
   function figureClause(M, measure, form) {
     if (measure === 'share') {
-      /* THE ONE AMENDED STRING (9g): `Each administration's` -> `Each period's` and
-         `the unequal lengths` -> `the periods' lengths`, because this sentence was form
-         4's and now prints on every form. It is built rather than stored because it
-         carries the page's own selection name and occurrence basis. */
+      /* THE ONE AMENDED STRING (9g): `Each administration's` -> `Each period's` and `the unequal lengths` -> `the periods' lengths`, because this sentence was form 4's and now prints on every form. It is built rather than stored because it carries the page's own selection name and occurrence basis. */
       return 'Each period\'s ' + ((M.share && M.share.selName) || 'selection') + ' share of its own total row' +
         (M.share && M.share.occ ? ', ' + M.share.occ + ' basis' : '') +
         '. A share is a ratio within each period, so the periods\' lengths do not distort it.';
@@ -1414,10 +983,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return null;
   }
   function composeBasis(M, R, measure) {
-    /* `Total` keeps its WHOLE signed sentence, character for character, on all five
-       forms: it counts months and the forms still choose months. Every other figure's
-       clause takes the noun slot (L-250) and then the form's own period clause, which is
-       untouched and still counts months. */
+    /* `Total` keeps its WHOLE signed sentence, character for character, on all five forms: it counts months and the forms still choose months. Every other figure's clause takes the noun slot (L-250) and then the form's own period clause, which is untouched and still counts months. */
     if (measure === 'total') return R.totalBasis;
     var c = figureClause(M, measure, R.form);
     if (!c) return R.totalBasis;
@@ -1428,13 +994,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return monthName(M.spine[idxs[0]]) + ' to ' + monthName(M.spine[idxs[idxs.length - 1]]);
   }
 
-  /* WHICH OF THE TWO PERIODS IS THE LATER ONE IS COMPUTED FROM THE MONTHS, never assumed
-     (spec 5.3, section 8 item 23). Before L-205 forms 3 and 4 hard-coded the chart side as
-     the later one, which was true while their first period was always the current
-     administration and which an arbitrary chart range makes false: set the range to
-     Trump I, pick Trump II, and the administration is the later period. The pair is shown
-     later-side-first so that the two signed provisional strings, which open "The first
-     period" and "The second period", name the slots they are actually on. */
+  /* WHICH OF THE TWO PERIODS IS THE LATER ONE IS COMPUTED FROM THE MONTHS, never assumed (spec 5.3, section 8 item 23). Before L-205 forms 3 and 4 hard-coded the chart side as the later one, which was true while their first period was always the current administration and which an arbitrary chart range makes false: set the range to Trump I, pick Trump II, and the administration is the later period. The pair is shown later-side-first so that the two signed provisional strings, which open "The first period" and "The second period", name the slots they are actually on. */
   function orderPair(M, R, s1, s2) {
     var aIsLater = M.spine[s1.ix[s1.ix.length - 1]] >= M.spine[s2.ix[s2.ix.length - 1]];
     R.a = aIsLater ? s1 : s2;
@@ -1442,16 +1002,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
     R.laterIsA = true;
     R.ix = [R.a.ix, R.b.ix];
   }
-  /* THE PAIR FLAG AND ITS DIRECTION ARE STRUCK (L-207). pairProv() chose between the
-     two direction strings and both are gone, so it is removed rather than left with no
-     caller. This is the costliest of the three subtractions and the spec says so where
-     Cary read it: L-198 2.6 asks in terms for the direction of the bias on a pair, and
-     the section no longer prints it (spec 5.3a, first item). orderPair() below is NOT
-     removed - its other job, the display ORDER, survives and is section 8 item 23. */
-  /* the administration band whose months ARE these months, if there is one. Two uses: it
-     is the one band excluded from forms 3 and 4's menu, because comparing a period with
-     itself says nothing; and it names the chart's side of the pair when the two coincide,
-     which is how those forms collapse to their original wording. */
+  /* THE PAIR FLAG AND ITS DIRECTION ARE STRUCK (L-207). pairProv() chose between the two direction strings and both are gone, so it is removed rather than left with no caller. This is the costliest of the three subtractions and the spec says so where Cary read it: L-198 2.6 asks in terms for the direction of the bias on a pair, and the section no longer prints it (spec 5.3a, first item). orderPair() below is NOTremoved - its other job, the display ORDER, survives and is section 8 item 23. */
+  /* the administration band whose months ARE these months, if there is one. Two uses: it is the one band excluded from forms 3 and 4's menu, because comparing a period with itself says nothing; and it names the chart's side of the pair when the two coincide, which is how those forms collapse to their original wording. */
   function eraMatching(M, idxs) {
     var runs = eraRuns(M), r;
     for (var i = 0; i < runs.length; i++) {
@@ -1467,10 +1019,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
   }
 
   /* Build the comparison. Returns either { refusal } or a full record.
-     buildPair() decides the two sets of MONTHS and builds `Total`'s signed sentence
-     (`totalBasis`) and the form's own period clause (`periods`); buildCompare() then
-     composes the basis for the figure the user picked. The split is the rule: the form
-     chooses the months, the figure chooses what each side reads (spec 5.2e). */
+     buildPair() decides the two sets of MONTHS and builds `Total`'s signed sentence(`totalBasis`) and the form's own period clause (`periods`); buildCompare() then composes the basis for the figure the user picked. The split is the rule: the form chooses the months, the figure chooses what each side reads (spec 5.2e). */
   function buildCompare(M, per, o) {
     var R = buildPair(M, per, o);
     if (R && !R.refusal && !R.unavailable) R.basis = composeBasis(M, R, o.measure);
@@ -1483,12 +1032,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
     var runs, era, k;
 
     if (F === 'prev') {
-      /* REFUSED, not truncated, where the earlier period would begin before the data
-         does, including the partly covered case (spec 5.2a). A shorter or renormalised
-         earlier period answers a question the user did not ask. */
-      /* THERE IS NO SETTLED-MONTHS ALTERNATIVE (L-207, spec section 8 item 30). A
-         comparison reaching into provisional months computes over all months, which is
-         what this branch always did by default. */
+      /* REFUSED, not truncated, where the earlier period would begin before the data does, including the partly covered case (spec 5.2a). A shorter or renormalised earlier period answers a question the user did not ask. */
+      /* THERE IS NO SETTLED-MONTHS ALTERNATIVE (L-207, spec section 8 item 30). A comparison reaching into provisional months computes over all months, which is what this branch always did by default. */
       var A = idxs.slice();
       if (!A.length || A[0] < 0) return { refusal: COPY.refuseNoEarlier };
       var B = []; for (k = A[0] - A.length; k < A[0]; k++) B.push(k);
@@ -1499,16 +1044,11 @@ function mountDocMarkers(surface,root,labelToKey,base){
         var Bs = []; for (k = As[0] - As.length; k < As[0]; k++) Bs.push(k);
         if (Bs[0] < 0) return { refusal: COPY.refuseNoEarlier };
         A = As; B = Bs;
-        /* THE SIDE LABEL IS THE SPAN AND THE DATE IS THE FIGURE'S SUB-LINE (L-214).
-           It was the date, which was true while form 1 on a stock could only be read as
-           two readings; the three span figures now apply here too and each side's label
-           has to name the months actually read. `Reading at a date` puts its own date on
-           its face, in the sub-line, exactly as an extremum does (spec 3a). */
+        /* THE SIDE LABEL IS THE SPAN AND THE DATE IS THE FIGURE'S SUB-LINE (L-214). It was the date, which was true while form 1 on a stock could only be read as two readings; the three span figures now apply here too and each side's label has to name the months actually read. `Reading at a date` puts its own date on its face, in the sub-line, exactly as an extremum does (spec 3a). */
         R.a = { label: rangeLabel(M, A), val: sideValue(M, A, 'read', measure) };
         R.b = { label: rangeLabel(M, B), val: sideValue(M, B, 'read', measure) };
         R.totalBasis = COPY.basisFigStockRead;
-        /* narrowed to the figure it describes, the same way spec 5.2g narrows form 2's
-           stock note: its second sentence is about the reading, not about the form. */
+        /* narrowed to the figure it describes, the same way spec 5.2g narrows form 2's stock note: its second sentence is about the reading, not about the form. */
         if (measure === 'read') R.note = COPY.noteStockNoPrior;
       } else {
         R.a = { label: rangeLabel(M, A), val: sideValue(M, A, 'total', measure) };
@@ -1523,9 +1063,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
 
     if (F === 'halves') {
-      /* on a stock the provisional treatment is a TRUNCATION, not a flag (L-193 2.4's
-         one stated exception, L-198 2.7d), so the halves are cut at the settled edge
-         and the card prints that date in its ranges. */
+      /* on a stock the provisional treatment is a TRUNCATION, not a flag (L-193 2.4's one stated exception, L-198 2.7d), so the halves are cut at the settled edge and the card prints that date in its ranges. */
       var H = M.kind === 'stock' ? settledOf(M, idxs) : idxs.slice();
       if (H.length < 24) return { refusal: COPY.refuseShortHalves };
       var cut = H.length >> 1;                       /* the extra month goes to the LATER half */
@@ -1537,15 +1075,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
       R.ix = [h1, h2];
       if (M.kind === 'stock') {
         R.totalBasis = COPY.basisFigStockHalves;
-        /* NARROWED TO THE FIGURE IT DESCRIBES (L-214, spec 5.2g). Its trigger was "form 2
-           on a stock", when a stock half had one reading; a stock half has three now and
-           the sentence is true of one of them.
-           THIS COMMENT USED TO END "Not one word of it changes", and that stopped being
-           true on 17 September 2026. One word does: `month-end` is now `{bucketEnd}`, by
-           Cary's ruling (L-250). The old reasoning was about WHY a stock has no half total,
-           which is still right and is not what the grain moved. Kept as the record of a
-           superseded argument rather than deleted, because a stale comment defending the
-           previous state is how the next reader gets talked out of a correct change. */
+        /* NARROWED TO THE FIGURE IT DESCRIBES (L-214, spec 5.2g). Its trigger was "form 2  on a stock", when a stock half had one reading; a stock half has three now and the sentence is true of one of them. One word does: `month-end` is now `{bucketEnd}`, by Cary's ruling (L-250). */
         if (measure === 'avg') R.note = COPY.noteStockHalves;
       } else {
         R.periods = 'The period is ' + H.length + ' months, split at the midpoint into ' +
@@ -1554,19 +1084,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
         R.totalBasis = 'Per month, each half. ' + R.periods +
           ' The two half totals are shown with their month counts and are not differenced.';
       }
-      /* seasonally honest with no flag ONLY when the period is a multiple of 24 months.
-         A whole number of fiscal years is NOT sufficient (L-198 2.7b). */
+      /* seasonally honest with no flag ONLY when the period is a multiple of 24 months. A whole number of fiscal years is NOT sufficient (L-198 2.7b). */
       R.seasonal = (H.length % 24) !== 0;
       return R;
     }
 
     if (F === 'eraLike' || F === 'eraWhole') {
-      /* RE-READ BY CARY, 15 September 2026 (spec 5.2). The first period of both forms is
-         THE CHART'S RANGE, as it is on the other three; it used to be the current
-         administration to date, which is why these two disabled the period control and
-         printed a sentence saying so. There is no period control and that sentence is
-         struck. Form 3 takes the FIRST N months of the chosen administration, N being the
-         chart range's own length; form 4 takes the whole of it, per month. */
+      /* RE-READ BY CARY, 15 September 2026 (spec 5.2). The first period of both forms is THE CHART'S RANGE, as it is on the other three. Form 3 takes the FIRST N months of the chosen administration, N being the chart range's own length; form 4 takes the whole of it, per month. */
       runs = eraRuns(M);
       era = null;
       for (k = 0; k < runs.length; k++) if (String(runs[k].i) === String(o.detail)) era = runs[k];
@@ -1576,11 +1100,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
       if (!aIdx.length) return { unavailable: true };
       var bIdx;
       if (F === 'eraLike') {
-        /* REFUSED, NEVER CAPPED (spec 5.2d, carve-out 10.6 ruled by Cary on 15 September
-           2026). Capping at the administration's own length answers form 4's question
-           under a label that says "the same months", and form 4 is one line down the same
-           menu. The test is on the chart range's own length, which is the number the
-           refusal prints. */
+        /* REFUSED, NEVER CAPPED (spec 5.2d, carve-out 10.6 ruled by Cary on 15 September 2026). Capping at the administration's own length answers form 4's question  under a label that says "the same months", and form 4 is one line down the same menu. The test is on the chart range's own length, which is the number the refusal prints. */
         if (era.idxs.length < L) {
           return { refusal: COPY.refuseEraShort
             .replace('{name}', era.name)
@@ -1599,17 +1119,11 @@ function mountDocMarkers(surface,root,labelToKey,base){
       var bSide = { label: era.name + (F === 'eraLike' ? ', first ' : ', ') + bIdx.length + ' months',
                     val: sideValue(M, bIdx, m2, measure), ix: bIdx };
       orderPair(M, R, aSide, bSide);
-      /* THE SHARE BRANCH IS GONE FROM HERE AND THAT IS THE STRUCTURAL HALF OF THE FIX.
-         The share sentence was reachable only inside this era branch, so a share compared
-         on forms 1, 2 and 5 printed `Total`'s basis instead (L-214's finding). It is a
-         figure clause now, in figureClause(), and so it prints on every form. */
+      /* THE SHARE BRANCH IS GONE FROM HERE AND THAT IS THE STRUCTURAL HALF OF THE FIX.  The share sentence was reachable only inside this era branch, so a share compared on forms 1, 2 and 5 printed `Total`'s basis instead (L-214's finding). It is a figure clause now, in figureClause(), and so it prints on every form. */
       if (M.kind === 'stock') {
         R.totalBasis = COPY.basisStockPeriod;
       } else if (F === 'eraLike') {
-        /* the period clause is this sentence's second half, and the ONE difference is one
-           letter: the signed sentence reads `Per month, the chart's range ...`, so lifting
-           the tail out capitalises the `t` (spec 9g). Written from one fragment so the two
-           cannot drift apart. */
+        /* the period clause is this sentence's second half, and the ONE difference is one letter: the signed sentence reads `Per month, the chart's range ...`, so lifting the tail out capitalises the `t` (spec 9g). Written from one fragment so the two cannot drift apart. */
         var p3 = 'he chart\'s range is ' + aIdx.length + ' months, against the first ' +
           bIdx.length + ' months of ' + era.name + '. Taking the same number of months from each is the like-for-like comparison.';
         R.periods = 'T' + p3;
@@ -1617,8 +1131,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
       } else {
         R.periods = 'The chart\'s range is ' + aIdx.length + ' months and ' + era.name + ' is ' +
           bIdx.length + ' months.';
-        /* the `not differenced` clause is true of `Total` and of no other figure, because
-           no other figure shows a total at all, so it does not travel (spec 9g). */
+        /* the `not differenced` clause is true of `Total` and of no other figure, because no other figure shows a total at all, so it does not travel (spec 9g). */
         R.totalBasis = 'Per month, all months in each period. The chart\'s range is ' + aIdx.length + ' months and ' +
           era.name + ' is ' + bIdx.length + ' months, so the totals, ' + nInt(levelOver(M, aIdx)) + ' and ' +
           nInt(levelOver(M, bIdx)) + ', are not differenced.';
@@ -1626,10 +1139,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
       return R;
     }
 
-    /* form 5: any second period the user picks, from the menu the section's own period
-       select used to carry minus the chart's own range - the chart's range is the FIRST
-       period of every comparison now and cannot also be the second. Totals when the two
-       are equal length, per month with the basis named when they are not. */
+    /* form 5: any second period the user picks, from the menu the section's own period select used to carry minus the chart's own range - the chart's range is the FIRST period of every comparison now and cannot also be the second. Totals when the two are equal length, per month with the basis named when they are not. */
     var other = periodBy(M.periods, o.detail);
     if (!other || other.k === 'chart') return { unavailable: true };
     var X = idxs.slice(), Y = other.idxs.slice();
@@ -1676,23 +1186,14 @@ function mountDocMarkers(surface,root,labelToKey,base){
     /* the change is always the later side against the earlier one */
     var later = R.laterIsA ? R.a : R.b, earlier = R.laterIsA ? R.b : R.a;
     var pct = null, pts = null;
-    /* A PERCENTAGE IS COMPARED IN PERCENTAGE POINTS ON EVERY FORM, never as a percent
-       change of a percent (spec 5.2f note 3): the share, the overall rate and a middle
-       month of monthly percentages. The figure says which it is - sideValue() sets `pts`
-       - so this is one rule and not three special cases. */
+    /* A PERCENTAGE IS COMPARED IN PERCENTAGE POINTS ON EVERY FORM, never as a percent change of a percent (spec 5.2f note 3): the share, the overall rate and a middle month of monthly percentages. The figure says which it is - sideValue() sets `pts`- so this is one rule and not three special cases. */
     if (later.val.pts) {
       if (later.val.v != null && earlier.val.v != null) pts = later.val.v - earlier.val.v;
     } else if (later.val.v != null && earlier.val.v != null && earlier.val.v !== 0) {
       pct = 100 * (later.val.v - earlier.val.v) / Math.abs(earlier.val.v);
     }
     h += '<div class="tf-q">' + esc(M.metricLabel + ': ' + R.a.label + ' against ' + R.b.label) + '</div>';
-    /* EACH SIDE CARRIES THE FIGURE'S OWN LABEL (L-214, spec 3a). Two periods and two
-       numbers do not say what was measured, and on the two forms that read per month by
-       rule - halves and the same months of another administration - `Total` and `Average
-       per month` are the same two numbers, so the label is the only thing on the face that
-       answers "which figure is this". It is the figure select's own menu label: no new
-       string. It goes on BOTH sides rather than once in the heading, because at 390px the
-       two sides stack a screen-height apart. */
+    /* EACH SIDE CARRIES THE FIGURE'S OWN LABEL (L-214, spec 3a). Two periods and two numbers do not say what was measured, and on the two forms that read per month by rule - halves and the same months of another administration - `Total` and `Averageper month` are the same two numbers, so the label is the only thing on the face that answers "which figure is this". It goes on BOTH sides rather than once in the heading */
     var figLabel = measureLabel(M, o.measure);
     function side(x) {
       return '<div class="tf-side"><div class="tf-k">' + esc(x.label) + '</div><div class="tf-v">' +
@@ -1701,11 +1202,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
         (x.val.sub ? '<div class="tf-sub">' + esc(x.val.sub) + '</div>' : '') +
         '<div class="tf-fig">' + esc(figLabel) + '</div></div>';
     }
-    /* NO CHANGE CELL AT ALL ON `First and last month` (Cary, 15 September 2026, spec 3a
-       item 3). There is no single change between two pairs of endpoints. The cell is
-       ABSENT rather than blank or dashed - a blank cell invites a reading - and auto-fit
-       collapses the empty track, so the grid re-columns with no media query. The basis
-       line says why there is none. */
+    /* NO CHANGE CELL AT ALL ON `First and last month` (Cary, 15 September 2026, spec 3a item 3). There is no single change between two pairs of endpoints. The cell is ABSENT rather than blank or dashed - a blank cell invites a reading - and auto-fit collapses the empty track, so the grid re-columns with no media query. The basis line says why there is none. */
     var noChange = o.measure === 'firstlast';
     h += '<div class="tf-pair">' + side(R.a) + side(R.b) +
       (noChange ? '' :
@@ -1713,42 +1210,19 @@ function mountDocMarkers(surface,root,labelToKey,base){
        esc(pts != null ? signed(pts, ' pts') : (pct != null ? signed(pct, '%') : '-')) +
        '</div></div>') + '</div>';
     h += '<div class="tf-basis"><b>' + esc(COPY.basisLabel) + ':</b> ' + esc(R.basis) + '</div>';
-    /* gfill'd at the render rather than at either assignment, so one point covers both of
-       them: noteStockNoPrior carries no slot and is unaffected, noteStockHalves carries
-       {bucketEnd} (L-250, Cary's ruling of 17 September 2026). */
+    /* gfill'd at the render rather than at either assignment, so one point covers both of them: noteStockNoPrior carries no slot and is unaffected, noteStockHalves carries {bucketEnd} (L-250, Cary's ruling of 17 September 2026). */
     if (R.note) h += defLine(gfill(R.note, M.grain));
-    /* THE EXTREMUM KEEPS ITS NO-CAUSE NOTE ON A COMPARISON AND EARNS IT (spec 5.2f note
-       5): the lowest month of any period containing 2020 is April or May 2020 on four of
-       seven series, so the pairing invites a cause more strongly than a look-up does. The
-       settled-months truncation is disclosed in the basis clause itself and is not printed
-       twice. `peak` is excluded here for the same reason figureFor() excludes it. */
+    /* THE EXTREMUM KEEPS ITS NO-CAUSE NOTE ON A COMPARISON AND EARNS IT (spec 5.2f note 5): the lowest month of any period containing 2020 is April or May 2020 on four of  seven series, so the pairing invites a cause more strongly than a look-up does. The settled-months truncation is disclosed in the basis clause itself and is not printed  twice. `peak` is excluded here for the same reason figureFor() excludes it. */
     if (o.measure === 'best' || o.measure === 'worst') h += defLine(gfill(COPY.noteBestCause, M.grain));
-    /* NO PAIR FLAG AND NO DIRECTION LINE (L-207). The seasonal flag and the arm-D flag
-       below are not provisional strings and stay. */
+    /* NO PAIR FLAG AND NO DIRECTION LINE (L-207). The seasonal flag and the arm-D flag below are not provisional strings and stay. */
     if (R.seasonal) h += flagLine(COPY.noteHalfSeasonal);
     if (M.flags && M.flags.armD) h += flagLine(COPY.armD);
-    /* both of these read the periods ACTUALLY compared rather than the chart's range:
-       every form has a second period, and forms 2 to 5 can put months on the card that
-       the chart's range does not contain. */
+    /* both of these read the periods ACTUALLY compared rather than the chart's range: every form has a second period, and forms 2 to 5 can put months on the card that the chart's range does not contain. */
     var ixA = (R.ix && R.ix[0]) || per.idxs, ixB = (R.ix && R.ix[1]) || per.idxs;
     var firstMonth = M.spine[Math.min(ixA[0], ixB[0])];
     var longest = Math.max(ixA.length, ixB.length);
-    /* THE FEW-VALUES CAVEAT IS A PROPERTY OF THE PAIR (spec 5.2f, Middle month row). If
-       EITHER side has twelve values or fewer, the leave-one-out span is computed over the
-       two periods ACTUALLY compared and the WIDER of the two is printed - the pair is only
-       as settled as its less settled side. Count metrics only.
-       THIS COMMENT USED TO END "which is where the look-up answer carries the same caveat:
-       a stock has its own definition and a rate's middle month is a median of
-       percentages". The second half of that is still true and is why this is count metrics
-       only. The FIRST half stopped being true on 17 September 2026: the look-up's
-       defMedianFew moved to a count of BUCKETS with the grain, and for a few hours this
-       trigger still counted MONTHS, so the two caveats no longer said the same thing. Cary
-       ruled them aligned (L-250), so "twelve months" above is "twelve values" and the
-       count below is buckets. Kept as the record of a superseded argument rather than
-       deleted: it is the sentence that would otherwise talk the next reader out of the
-       alignment.
-       A MEDIAN IS TAKEN OVER THE BUCKETS, so "few values" is a count of buckets on both
-       sides. At Month grain a bucket is a month and this is the test it always was. */
+    /* THE FEW-VALUES CAVEAT IS A PROPERTY OF THE PAIR (spec 5.2f, Middle month row). If EITHER side has twelve values or fewer, the leave-one-out span is computed over the  two periods ACTUALLY compared and the WIDER of the two is printed - the pair is only as settled as its less settled side. Count metrics only.
+       A MEDIAN IS TAKEN OVER THE BUCKETS, so "few values" is a count of buckets on both sides. At Month grain a bucket is a month and this is the test it always was. */
     var nbA = periodGrain(M, ixA, M.grain).B.length, nbB = periodGrain(M, ixB, M.grain).B.length;
     if (o.measure === 'median' && M.kind === 'count' && Math.min(nbA, nbB) <= 12) {
       var jk = Math.max(jackknife(ixA.map(function (i) { return M.series[i]; })) || 0,
@@ -1761,13 +1235,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return R;
   }
 
-  /* ══ THE SECTION - state, ask line, caption, footer ══════════════════════════════
-     One state object per page load. The user's ask survives a filter change, which is
-     what makes the "follows the chart's filters" caption meaningful. ══════════════ */
-  /* NO `period` IN THE STATE. The section has no period control of its own (spec 4,
-     Cary, 15 September 2026): its glance, its look-up and the first period of all five
-     comparison forms are the chart's range, always. `detail` is the one period a user
-     still picks, and it is a comparison's SECOND one. */
+  /* ══ THE SECTION - state, ask line, caption, footer ══════════════════════════════ One state object per page load. The user's ask survives a filter change, which is what makes the "follows the chart's filters" caption meaningful. ══════════════ */
+  /* NO `period` IN THE STATE. The section has no period control of its own (spec 4, Cary, 15 September 2026): its glance, its look-up and the first period of all five comparison forms are the chart's range, always. `detail` is the one period a user still picks, and it is a comparison's SECOND one. */
   var S = { mode: 'lookup', asked: false, measure: null,
             form: 'prev', detail: null };
 
@@ -1789,15 +1258,9 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
 
   /* ── the ask line. FIGURE plus COMPARISON, and nothing else (spec 4 item 1, Cary,
-     15 September 2026). There is no period select, no date input and no preset menu: the
-     only <select>s in this section are the figure, the comparison form and the form's own
-     second choice. The figure select STAYS on the line in compare mode, because an era
-     comparison of a share is a different and sounder question from an era comparison of a
-     level (L-198 2.4). ─────────────────────────────────────────────────────────────── */
+     15 September 2026). There is no period select, no date input and no preset menu: the only <select>s in this section are the figure, the comparison form and the form's own second choice. The figure select STAYS on the line in compare mode, because an era comparison of a share is a different and sounder question from an era comparison of a level (L-198 2.4). ─────────────────────────────────────────────────────────────── */
   function buildAsk(M, per, host) {
-    /* the compare menu is the look-up menu minus a stock's `Reading at a date` off form 1
-       (L-214). paint() picks the same list, so a user on that entry who changes the form
-       is moved to `Average month-end reading` visibly, in the select they are looking at. */
+    /* the compare menu is the look-up menu minus a stock's `Reading at a date` off form 1 (L-214). paint() picks the same list, so a user on that entry who changes the form is moved to `Average month-end reading` visibly, in the select they are looking at. */
     var keys = S.mode === 'compare' ? measuresForCompare(M, S.form) : measureList(M), i, h = '';
     var msel = '<select id="tfm" aria-label="' + esc(COPY.measureLabel) + '">';
     for (i = 0; i < keys.length; i++) msel += optTag(keys[i], measureLabel(M, keys[i]), S.measure);
@@ -1823,19 +1286,14 @@ function mountDocMarkers(surface,root,labelToKey,base){
         }
         h += '</select>';
       }
-      /* THERE IS NO SETTLED-MONTHS CONTROL (L-207, Cary 15 September 2026, spec section
-         8 item 30). Its two labels are struck with it and are not quoted here, and a
-         comparison reaching into provisional months computes over all months - which is
-         what the default always did. */
+      /* THERE IS NO SETTLED-MONTHS CONTROL (L-207, Cary 15 September 2026, spec section  8 item 30). Its two labels are struck with it and are not quoted here, and a comparison reaching into provisional months computes over all months */
       if (M.kind === 'stock' && S.form === 'prev') h += '<span class="tf-def tf-askline">' + esc(COPY.noteStockNoPrior) + '</span>';
     } else {
       h += '<span class="lead">' + esc(COPY.askLead) + '</span>' + msel;
       if (M.kind === 'stock') h += '<span class="tf-def tf-askline">' + esc(COPY.noteStockSelected) + '</span>';
     }
 
-    /* the one control that turns a look-up into a comparison. A pressed toggle keeps its
-       own label: the fill and aria-pressed carry the state, and relabelling it to the
-       reverse action makes the two channels disagree. */
+    /* the one control that turns a look-up into a comparison. A pressed toggle keeps its own label: the fill and aria-pressed carry the state, and relabelling it to the reverse action makes the two channels disagree. */
     var on = S.mode === 'compare';
     h += '<button type="button" id="tfcmp" class="tf-addcmp' + (on ? ' on' : '') +
          '" aria-pressed="' + (on ? 'true' : 'false') + '">' + esc(COPY.askCompare) + '</button>';
@@ -1844,11 +1302,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     function bind(id, ev, fn) { var el = host.querySelector('#' + id); if (el) el.addEventListener(ev, fn); }
     bind('tfm', 'change', function (e) { S.asked = true; S.measure = e.target.value; paint(M); });
     bind('tff', 'change', function (e) {
-      /* the second choice SURVIVES a move between the two era forms, because form 3's
-         refusal names form 4 as the route out and silently changing the administration
-         under the user on that move would answer a different question from the one the
-         refusal sent them to. Any other move resets it: the two kinds of second choice
-         are not interchangeable. */
+      /* the second choice SURVIVES a move between the two era forms, because form 3's refusal names form 4 as the route out and silently changing the administration under the user on that move would answer a different question from the one the refusal sent them to. Any other move resets it: the two kinds of second choice are not interchangeable. */
       var was = S.form;
       S.asked = true; S.form = e.target.value;
       if (!(eraForm(was) && eraForm(S.form))) S.detail = defaultDetail(M, S.form);
@@ -1866,24 +1320,9 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return { form: S.form, detail: S.detail, measure: S.measure };
   }
 
-  /* ── the caption and the footer. THERE IS NO TWO-TRUTHS MARKER AND NO RETURN CONTROL
-     (spec 4.1, Cary, 15 September 2026). They fired whenever a shown period was not the
-     chart's; with no period control of its own the section can never be on another period,
-     so the marker has no true trigger and the control has nothing to return from. They are
-     REMOVED rather than disabled: a marker sitting in the code with no trigger is the thing
-     a later reader restores by accident. `shownPeriods` went with them.
-     The caption is now unconditional, which is what makes it true on every state, and
-     since L-222 it also STATES that state: captionFor() substitutes the metric, the
-     chart's range with its convention and every narrowed filter into one template. It is
-     the same sentence shape on loading, on zero, on partial data and on a refusal,
-     because the chart's state is known before the cube arrives; only the figures wait.
-     THE CAPTION ROW carries the caption on the left and the section's ONE provisional
-     mark on the right (L-207): a flex row rather than an absolutely positioned icon, so
-     the caption wraps into the space the mark leaves instead of running under it. The
-     mark is built here rather than in the four shells so one edit covers all four.
-     THE FOOTER IS THE PAGE'S OWN CAPTION AND NOTHING ELSE. Its provisional sentence and
-     the hatch swatch beside it went with the eight struck strings; `Data runs to {month}`
-     lives on inside the mark's body, which is the only place it now appears. ────────── */
+  /* ── the caption and the footer. THERE IS NO TWO-TRUTHS MARKER AND NO RETURN CONTROL (spec 4.1, Cary, 15 September 2026). They fired whenever a shown period was not the chart's; with no period control of its own the section can never be on another period, so the marker has no true trigger and the control has nothing to return from. They are REMOVED rather than disabled: a marker sitting in the code with no trigger is the thing a later reader restores by accident. `shownPeriods` went with them. The caption is now unconditional, which is what makes it true on every state, and since L-222 it also STATES that state: captionFor() substitutes the metric, the chart's range with its convention and every narrowed filter into one template. It is the same sentence shape on loading, on zero, on partial data and on a refusal, because the chart's state is known before the cube arrives; only the figures wait.
+
+  /* THE CAPTION ROW carries the caption on the left and the section's ONE provisional mark on the right (L-207): a flex row rather than an absolutely positioned icon, so the caption wraps into the space the mark leaves instead of running under it. The mark is built here rather than in the four shells so one edit covers all four. THE FOOTER IS THE PAGE'S OWN CAPTION AND NOTHING ELSE. Its provisional sentence and the hatch swatch beside it went with the eight struck strings; `Data runs to {month}` lives on inside the mark's body, which is the only place it now appears. ────────── */
   function paintChrome(M, els) {
     els.cap.className = 'tf-cap';
     els.cap.innerHTML = '<span class="tf-captxt">' + esc(captionFor(M)) + '</span>' +
@@ -1904,16 +1343,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
     M.periods = buildPeriods(M);
     if (!M.periods.length) { els.strip.innerHTML = ''; els.body.innerHTML = ''; return; }
-    /* THE PERIOD IS THE CHART'S RANGE AND THE USER DOES NOT PICK IT (spec 4). The rest of
-       M.periods is form 5's second-period menu and nothing else reads it. */
+    /* THE PERIOD IS THE CHART'S RANGE AND THE USER DOES NOT PICK IT (spec 4). The rest of M.periods is form 5's second-period menu and nothing else reads it. */
     var per = M.periods[0];
     var keys = S.mode === 'compare' ? measuresForCompare(M, S.form) : measureList(M);
     if (keys.indexOf(S.measure) < 0) S.measure = keys[0];
     if (S.mode === 'compare' && S.detail == null) S.detail = defaultDetail(M, S.form);
 
-    /* THE METRIC THIS SECTION DOES NOT READ. matters_pending is a cumulative running
-       balance this project does not publish a level for, so no figure is offered on it
-       (spec section 8 item 8). It shows the partial-data state rather than a number. */
+    /* THE METRIC THIS SECTION DOES NOT READ. matters_pending is a cumulative running balance this project does not publish a level for, so no figure is offered on it (spec section 8 item 8). It shows the partial-data state rather than a number. */
     if (M.notOffered) {
       els.strip.innerHTML = '<div class="tf-stat"><div class="tf-v muted-v">-</div>' +
         '<div class="tf-k">' + esc(M.metricLabel) + '</div>' +
@@ -1926,9 +1362,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
     /* region 1: the glance strip, permanent, on the chart's own period */
     renderGlance(els.strip, M, per);
-    /* region 2: one ask line and one answer, held back until the user has asked. With
-       the answer open on load the section was 608px against 318px at 1200px, measured
-       in Chromium (design-lab/l199-shots.js), and everything here pushes the chart down. */
+    /* region 2: one ask line and one answer, held back until the user has asked. With the answer open on load the section was 608px against 318px at 1200px, measured in Chromium (design-lab/l199-shots.js), and everything here pushes the chart down. */
     buildAsk(M, per, els.ask);
     if (!S.asked) els.body.innerHTML = '';
     else if (S.mode === 'compare') renderCompare(els.body, M, per, cmpOpts());
@@ -1940,11 +1374,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
   function render(model) {
     var root = document.querySelector('.kpis'); if (!root) return;
     model.root = root;
-    /* the page's Group by state, one of the four keys on #grain's buttons. Normalised
-       here so gnoun() and grainBuckets() cannot disagree about an unrecognised value:
-       gnoun() falls back to month and grainBuckets() would fall through to fiscal year.
-       A page that hands over nothing gets month, which is the default and the state all
-       the signed copy was signed for. */
+    /* the page's Group by state, one of the four keys on #grain's buttons. Normalised here so gnoun() and grainBuckets() cannot disagree about an unrecognised value:   gnoun() falls back to month and grainBuckets() would fall through to fiscal year. A page that hands over nothing gets month, which is the default and the state all the signed copy was signed for. */
     model.grain = GRAIN[model.grain] ? model.grain : 'month';
     if (!model.flags) model.flags = {};
     if (model.kind !== 'rate') model.rate = null;
@@ -1956,12 +1386,10 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
   g.LIONS_TOPLINE = {
     render: render, COPY: COPY, FORMS: FORMS,
-    /* exported for the L-204 ported check, which asserts the arithmetic against the
-       cubes rather than against the rendered strings */
+    /* exported for the L-204 ported check, which asserts the arithmetic against the cubes rather than against the rendered strings */
     _internals: { buildPeriods: buildPeriods, buildCompare: buildCompare, figureFor: figureFor,
                   levelOver: levelOver, shareOver: shareOver, eraRuns: eraRuns, state: S,
-                  /* L-250's ported check asserts the noun slots and the bucketing against
-                     the cubes rather than against the rendered strings */
+                  /* L-250's ported check asserts the noun slots and the bucketing against the cubes rather than against the rendered strings */
                   gfill: gfill, periodGrain: periodGrain }
   };
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -1969,14 +1397,11 @@ function mountDocMarkers(surface,root,labelToKey,base){
 /* ══════════════════════════════════════════════════════════════════════════════════
    THE DATA TABLE AND ITS CSV - ONE ENGINE, FOUR DESCRIPTORS.
    L-233/L-237 built this on index.html; L-258 generalised it to civil.html,
-   agency.html and declinations.html, and L-301 is the build.
-   Specs: ops/handoffs/L-233-design-spec.md, ops/handoffs/L-258-design-spec.md.
+   agency.html and declinations.html, and L-301 is the build. Specs: ops/handoffs/L-233-design-spec.md, ops/handoffs/L-258-design-spec.md.
 
    WHY IT LIVES HERE AND NOT IN FOUR PAGE SCRIPTS (L-258 section 1, C0).
-   1. Invariant 9 is unchanged on all four dashboards: shared/shared.js is already in
-      every chain, so no script and no stylesheet is added or removed anywhere.
-   2. The strings Cary signed exist in ONE place and cannot drift four ways. The shared
-      ones are in COPY below; a page's own words are in its descriptor's `copy`.
+   1. Invariant 9 is unchanged on all four dashboards: shared/shared.js is already in every chain, so no script and no stylesheet is added or removed anywhere.
+   2. The strings Cary signed exist in ONE place and cannot drift four ways. The shared ones are in COPY below; a page's own words are in its descriptor's `copy`.
    3. The invariant-3 defences are the same code, written once and controlled once.
 
    WHAT A DESCRIPTOR OWES THE ENGINE. Everything page-shaped:
@@ -1997,49 +1422,39 @@ function mountDocMarkers(surface,root,labelToKey,base){
      hasEdge                  whether this page carries tr.edge (two of the four do)
      afterHead(thead)         optional hook, e.g. index.html's doc markers
      csvLine(state,nExtra)    optional; pages whose machine-column count varies
-
-   House style D-042: no em dashes, in the copy and in these comments.
-   ══════════════════════════════════════════════════════════════════════════════════ */
+════════════════════════════════════════════════════════════════════════════════ */
 (function (g) {
   'use strict';
 
-  /* A RENDERING budget, not a property of the data. L-233 section 8; re-measured at 22
-     columns for L-258 section 8 and it still sits inside the same band. */
+  /* A RENDERING budget, not a property of the data. L-233 section 8; re-measured at 22 columns for L-258 section 8 and it still sits inside the same band. */
   var ROW_CAP = 8000;
 
-  /* The strings that are identical on all four dashboards. Signed by Cary on
-     16 September 2026 (L-233 section 6) and 19 September 2026 (L-258 section 6). */
+  /* The strings that are identical on all four dashboards. */
   var COPY = {
     rowsLabel: 'Break rows out by',
     rowsDistrict: 'District',
     colsLabel: 'Columns',
     distSum: function (n) { return n + ' districts, added together'; },
     addsTotal: 'is the total', addsYes: 'yes', addsNo: 'no - overlaps',
-    /* The signed criminal refusal ends "select fewer districts or categories". Only the
-       final noun is per page, because "categories" names nothing on agency.html and
-       names the wrong axis on declinations.html, where the categories are rows and the
-       reasons are columns. Everything before it is unchanged, character for character. */
+    /* The signed criminal refusal ends "select fewer districts or categories". Only the final noun is per page, because "categories" names nothing on agency.html and  names the wrong axis on declinations.html, where the categories are rows and the reasons are columns. */
     refusal: function (n, cap, noun) {
-      return 'This selection would draw ' + n.toLocaleString() + ' rows and the table draws up to ' +
+      return 'This selection would create ' + n.toLocaleString() + ' rows and the table builds up to ' +
         cap.toLocaleString() + '. Narrow the date range, choose a coarser Group by, or select fewer districts or ' + noun + '.';
     },
-    /* L-257. The placeholder between the panel opening and the table landing. It names
-       the ACT and never a duration: the duration is a property of the reader's device. */
-    pending: 'Drawing the table…',
+    /*The placeholder between the panel opening and the table landing. It names the ACT and never a duration: the duration is a property of the reader's device. */
+    pending: 'Building the table…',
     footProvUp: function (n) {
-      return 'Rows marked † are provisional: the most recent ' + n + ' months are still being reported, so those figures will rise. The mark uses the widest window across the columns in this table, so a month marked here can still be settled for filings on their own.';
+      return 'Rows marked † are provisional: the most recent ' + n + ' months are still being reported so these numbers are expected to be higher.';
     },
-    /* L-258 section 5.4. A net stock is OVERSTATED at the vintage edge and will FALL,
-       so the flows caveat is wrong in the dangerous direction for a pending column.
-       Chosen by LIONS_PROV.dirAll() over the window keys the active columns carry. */
+    /* L-258 section 5.4. A net stock is OVERSTATED at the vintage edge and will FALL, so the flows caveat is wrong in the dangerous direction for a pending column. Chosen by LIONS_PROV.dirAll() over the window keys the active columns carry. */
     footProvDown: function (n) {
-      return 'Rows marked † are provisional: the most recent ' + n + ' months are still being reported. A pending caseload is overstated at that edge and will fall, because terminations are reported more slowly than filings.';
+      return 'Rows marked † are provisional: the most recent ' + n + ' months are still being reported. In general, pending caseloads are overstated at the final month, because terminations are reported more slowly than filings.';
     },
-    partialNote: '* part period - fewer months than the period holds.',
+    partialNote: '* partial period.',
     scrollHint: function (n) { return 'Scroll the table sideways to see all ' + n + ' columns.'; },
     csvLine: function (n) {
       return 'The CSV has the same rows and the same figures as the table, plus ' + n +
-        ' columns that spell out in words what the table shows as marks: the period\'s grain, whether it is a part period, whether it is provisional and how many months that covers, and what each key cell is.';
+        ' columns that with notes: reporting period, whether it is a partial period, whether data is provisional and how many months that includes, and what each key cell is.';
     }
   };
 
@@ -2052,10 +1467,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
   var rint = function (x) { return x == null ? '-' : Math.round(x).toLocaleString(); };
   var p1 = function (x) { return x == null ? '-' : x.toFixed(1); };
 
-  /* District slots are IDENTICAL on all four dashboards. Three levels, and the national
-     row is never called a sum: the national cube file is its own read, not a sum over
-     the 93 districts, and the table must not imply otherwise even though the two agree
-     exactly (L-258 section 3.1). */
+  /* District slots are IDENTICAL on all four dashboards. Three levels, and the national row is never called a sum: the national cube file is its own read, not a sum over the 93 districts, and the table must not imply otherwise even though the two agree exactly (L-258 section 3.1). */
   function districtSlots(state) {
     var sel = (state.dists.has('National') || state.dists.size === 0) ? [] : Array.from(state.dists);
     if (!sel.length) return [{ label: 'National', level: 'national', set: new Set(['National']) }];
@@ -2066,13 +1478,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     return [{ label: COPY.distSum(sel.length), level: 'selection_sum', set: new Set(sel) }];
   }
 
-  /* The dimension-slot builder for every axis whose parts PARTITION their cube's own
-     total row exactly: civil causes, civil client agencies, declination program
-     categories and declination referring agencies. Measured on the promoted July 2026
-     cubes, per axis, in design-lab/l258-cube-measure.js - not inherited from Criminal,
-     where the answer is different and depends on the occurrence axis.
-     Because the parts partition exactly and no cell in these cubes is negative, the
-     complement row is non-negative BY CONSTRUCTION rather than by measurement. */
+  /* The dimension-slot builder for every axis whose parts PARTITION their cube's own total row exactly: civil causes, civil client agencies, declination program categories and declination referring agencies. Measured on the promoted July 2026 cubes, per axis, in design-lab/l258-cube-measure.js - not inherited from Criminal, where the answer is different and depends on the occurrence axis. Because the parts partition exactly and no cell in these cubes is negative, the complement row is non-negative BY CONSTRUCTION rather than by measurement. */
   function partitioningSlots(desc, state) {
     var c = desc.copy, sel = desc.selectedDims(state);
     var total = { label: c.totalLabel, level: 'cube_total', target: { kind: 'all' }, additive: COPY.addsTotal };
@@ -2086,9 +1492,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
         { label: c.complementLabel, level: 'complement', complementOf: all, additive: COPY.addsYes }]);
     }
     if (!state.rowsBy.dim) {
-      /* L-267's fourth Adds up? value. One row and no total row means there is no sum in
-         the table and no second row to overlap with, so the column answers what the row
-         IS rather than a yes/no question with no subject. */
+      /* L-267's fourth Adds up? value. One row and no total row means there is no sum in the table and no second row to overlap with, so the column answers what the row IS rather than a yes/no question with no subject. */
       if (sel.length === 1) return [{ label: sel[0], level: 'member', target: { kind: 'keys', keys: new Set(sel) }, additive: c.addsOne }];
       return [{ label: c.dimSum(sel.length), level: 'selection_sum', target: { kind: 'keys', keys: new Set(sel) }, additive: COPY.addsYes }];
     }
@@ -2102,9 +1506,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     function activeCols(state) {
       return desc.cols(state).filter(function (c) { return c.g === 'key' || state.tblCols[c.g] !== false; });
     }
-    /* The L-014 envelope: the table's own provisional mark is the WIDEST window across
-       the columns it is CURRENTLY printing, so the chart and the table can legitimately
-       mark different spans. Never hard-coded, always computed from the active set. */
+    /* The L-014 envelope: the table's own provisional mark is the WIDEST window across the columns it is CURRENTLY printing, so the chart and the table can legitimately mark different spans. Never hard-coded, always computed from the active set. */
     function windowKeys(state) {
       return activeCols(state).filter(function (c) { return c.w; }).map(function (c) { return c.w; });
     }
@@ -2120,11 +1522,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
       return grainBuckets(desc.spine(), desc.visIdx(), state.grain).length
         * districtSlots(state).length * desc.dimSlots(state).length;
     }
-    /* Invariant 4, structurally: the COMPONENT counts are bucketed first and every ratio
-       formula runs on the bucketed components afterwards, in desc.derive(). Never a mean
-       of monthly percentages. A STOCK is a level, so it takes the bucket's LAST month
-       instead - summing one is what made civil.html's chart disagree with its own table
-       by a constant 38,768 (L-126 / L-155). */
+    /* Invariant 4, structurally: the COMPONENT counts are bucketed first and every ratio formula runs on the bucketed components afterwards, in desc.derive(). Never a mean of monthly percentages. A STOCK is a level, so it takes the bucket's LAST month instead - summing one is what made civil.html's chart disagree with its own table by a constant 38,768 (L-126 / L-155). */
     function bucketComponents(R, B) {
       var o = {};
       for (var k in R) o[k] = desc.stockKeys.indexOf(k) >= 0 ? bucketEnd(R[k], B) : bucketSum(R[k], B);
@@ -2177,13 +1575,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
 
     /* The CSV MIRRORS the table: same rows, same order, same figures, same metric
-       columns, plus the machine columns that carry the marks the screen draws, each one
-       placed next to the column it qualifies. Headers are field names, not display
-       labels (style guide section 9). A percentage is emitted at 2dp where the screen
-       rounds to 1dp: that is presentation, not identity.
-       Invariant 6 survives the export boundary as THREE columns and may not be collapsed
-       to one: `provisional` is the flag, `provisional_window_months` is what makes it
-       interpretable away from this page, and `period_partial` is a DIFFERENT fact. */
+       columns, plus the machine columns that carry the marks the screen draws each one placed next to the column it qualifies. Headers are field names, not display labels (style guide section 9). A percentage is emitted at 2dp where the screen rounds to 1dp: that is presentation, not identity. Invariant 6 survives the export boundary as THREE columns and may not be collapsed to one: `provisional` is the flag, `provisional_window_months` is what makes it interpretable away from this page, and `period_partial` is a DIFFERENT fact. */
     function csvColumns(state, cols) {
       var out = [];
       cols.forEach(function (c) {
@@ -2214,11 +1606,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
     function el(id) { return document.getElementById(id); }
     function clear(state, text) {
-      /* NO SILENT TRUNCATION, ever: a truncated table that still offers a download is how
-         a user gets a file quietly missing half its rows. The basis line stays, because it
-         still describes what the rows would be; the summary line, the scroll hint and the
-         caveats go, because a caveat about rows that were not drawn is noise. D-1: the CSV
-         mirrors the table, so the download refuses with it. */
+      /* NO SILENT TRUNCATION, ever: a truncated table that still offers a download is how a user gets a file quietly missing half its rows. The basis line stays, because it still describes what the rows would be; the summary line, the scroll hint and the caveats go, because a caveat about rows that were not drawn is noise. D-1: the CSV mirrors the table, so the download refuses with it. */
       el('refusal').textContent = text; el('refusal').hidden = false;
       el('tblwrap').hidden = true; el('dl').disabled = true;
       if (el('dl2')) el('dl2').disabled = true;
@@ -2229,9 +1617,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     function render(state) {
       var n = rowCount(state);
       el('basisline').textContent = desc.basisLine(state);
-      /* The empty state reuses the refusal's container and idiom - one vocabulary for
-         "here is why there is no table" - and it is checked BEFORE the budget, because a
-         table with no measure has no row count worth reporting. */
+      /* The empty state reuses the refusal's container and idiom - one vocabulary for "here is why there is no table" - and it is checked BEFORE the budget, because a  table with no measure has no row count worth reporting. */
       var empty = desc.emptyState ? desc.emptyState(state) : null;
       if (empty) { clear(state, empty); return { rows: [], cols: [], provN: provWindow(state) }; }
       if (n > ROW_CAP) {
@@ -2247,22 +1633,13 @@ function mountDocMarkers(surface,root,labelToKey,base){
       }).join('') + '</tr>';
       el('tbody').innerHTML = built.rows.map(function (r) {
         var cls = [];
-        /* `edge` is CARRIED FORWARD UNCHANGED on the pages that already have it,
-           hard-coded date and all. Its threshold is undocumented and its styling fails
-           WCAG 1.4.1 and 1.4.3. Cary RULED on 16 September 2026 (L-233 section 10, D-2)
-           that it is carried forward exactly as it is and that both defects go to the
-           data-analyst as L-236. declinations.html has never had the class and does not
-           gain one here. */
+        /* `edge` is CARRIED FORWARD UNCHANGED on the pages that already have it, hard-coded date and all. Its threshold is undocumented and its styling fails WCAG 1.4.1 and 1.4.3. Cary RULED on 16 September 2026 (L-233 section 10, D-2) that it is carried forward exactly as it is and that both defects go to the data-analyst as L-236. declinations.html has never had the class and does not gain one here. */
         if (desc.hasEdge && r.period_grain === 'month' && r.period.slice(0, 7) <= '1996-09') cls.push('edge');
         if (r._prov) cls.push('recent');
         if (r[desc.dimKey + '_level'] === 'cube_total') cls.push('rowtotal');
         return '<tr' + (cls.length ? ' class="' + cls.join(' ') + '"' : '') + '>' + cols.map(function (c) {
           if (c.k === 'period') return '<td class="k">' + esc(r.period) + (r._prov ? PV().tableMark() : '') + '</td>';
-          /* The trap columns FOLD INTO the dimension cell below 560px rather than being
-             dropped: their value differs between the total row and the member rows, and
-             that difference is the whole invariant-3 point. The meta span is display:none
-             at desktop width, so it is out of the accessibility tree there and nothing is
-             read twice. */
+          /* The trap columns FOLD INTO the dimension cell below 560px rather than being dropped: their value differs between the total row and the member rows, and that difference is the whole invariant-3 point. The meta span is display:none at desktop width, so it is out of the accessibility tree there and nothing is  read twice. */
           if (c.k === desc.dimKey) {
             return '<td class="k">' + esc(r[c.k]) + '<span class="kmeta">' +
               (desc.hasBasisCol ? esc(r.counting_basis) + ' &middot; ' : '') + 'adds up: ' + esc(r.additive) + '</span></td>';
