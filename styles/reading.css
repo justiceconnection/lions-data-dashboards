@@ -98,3 +98,13 @@ table.doc-tbl tr.tot td{font-weight:700;border-top:1px solid var(--ink)}
 .doc-faq > section h3{cursor:default;color:var(--ink);font-size:13px;font-weight:600;display:flex;align-items:flex-start;gap:7px;padding:8px 0;margin:0}
 .doc-faq > section h3::before{content:"\25B8";color:var(--mut);font-size:11px;line-height:1.6;display:inline-block;flex:none}
 .doc-faq > section p{margin:0 0 8px 18px}
+
+
+/* The standing statement at the foot of the page. It is a direct child of .wrap and sits
+   outside the mounted notes, so the surface filter and the expand control cannot reach it
+   and nothing collapses it. Geometry is the site footnote's, restated here rather than
+   reused: .foot sets white-space:pre-line, which would render this paragraph's source
+   line breaks as hard breaks. Measure matches .doc-page so the rule above this block and
+   the rule above the line above it end on the same pixel. */
+.doc-aiuse{max-width:78ch;margin:20px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+.doc-aiuse p{margin:0;font-size:12px;line-height:1.45;color:var(--ink)}
