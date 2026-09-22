@@ -3,7 +3,7 @@
 .chartbox{height:420px!important}
 .chartbox.sm{height:330px!important}
 /* item 1 - folded dashboard nav (accordion), used by all three designs */
-/* the .nv-acc accordion moved to shared/shared.css under L-263 - same declarations,
+/* the .nv-acc accordion lives in shared/shared.css - same declarations,
    one stylesheet earlier in the cascade, so the four dashboards paint identically and
    reading-the-data.html, which loads no lab.css, gets the component too. */
 

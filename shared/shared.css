@@ -23,7 +23,7 @@ button{cursor:pointer}
 .seg{display:flex;gap:6px}
 .seg button:hover{border-color:var(--accent)}
 .seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-/* .seg is flex-wrap:nowrap, so a seg wider than its container overflows the DOCUMENT rather than wrapping. The five Administration buttons need 321px at their own min-content widths; below 760px shell2.js folds .controls into the Filters panel,  which is 254px wide at a 320px viewport, so the row hung 34px off the right edge of all four dashboards. Wrapping is the only fix that leaves the type size, the padding and the labels alone. L-265. */
+/* .seg is flex-wrap:nowrap, so a seg wider than its container overflows the DOCUMENT rather than wrapping. The five Administration buttons need 321px at their own min-content widths; below 760px shell2.js folds .controls into the Filters panel,  which is 254px wide at a 320px viewport, so the row hung 34px off the right edge of all four dashboards. Wrapping is the only fix that leaves the type size, the padding and the labels alone. */
 #presets{flex-wrap:wrap}
 #presets button{padding:8px 12px;font-size:15px}
 .ms{position:relative}
@@ -103,7 +103,7 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 
 @media(max-width:600px){.dashnav{display:none}.dashsel{display:block}}
 
-/* ── THE TOPLINE SECTION - L-199 direction B, built under L-204, 15 September 2026 */
+/* ── THE TOPLINE SECTION ─────────────────────────────────────────────────────── */
 .kpis{background:var(--panel);border:1px solid var(--line);border-radius:12px;
   padding:12px 14px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 
@@ -112,7 +112,7 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
   align-items:flex-start;justify-content:space-between;gap:10px}
 .tf-captxt{min-width:0}
 
-/* ── THE SECTION'S ONE PROVISIONAL MARK (L-207) ────────────────────────────────────── */
+/* ── THE SECTION'S ONE PROVISIONAL MARK ────────────────────────────────────────────── */
 .tf-provwrap{position:relative;flex:none;display:inline-flex}
 .tf-prov{display:inline-flex;align-items:center;justify-content:center;width:26px;
   height:26px;padding:0;background:var(--panel);border:1px solid var(--line);
@@ -163,7 +163,7 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .tf-answer{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#fff}
 .tf-q{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);
   font-weight:700;margin-bottom:6px}
-/* THE TWO PERIODS OF A COMPARISON ARE DIVIDED (L-207). The same grid-plus-box-shadow
+/* THE TWO PERIODS OF A COMPARISON ARE DIVIDED. The same grid-plus-box-shadow
    idiom .tf-strip already uses, for the same reason: auto-fit re-columns with no media query, and a box-shadow at -1px/-1px falls outside the container's own box and is  clipped by overflow:hidden, so the first cell of every ROW carries no rule. Side by side that draws a vertical hairline between the two periods and before the change; stacked on a phone the vertical rules are clipped at the left edge and the horizontal ones appear instead. One rule, two behaviours, no media query and no new colour: it is --line, the hairline the strip, the basis line and the answer border already use. The -13px margin matches .tf-answer's own 13px padding. .tf-delta's rule is deleted with
    the flex row it belonged to; the class stays on the change cell as a hook. */
 .tf-pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -204,7 +204,7 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .chk label{font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--ink)}
 .ms-btn{min-width:150px;text-align:left}
 .ms-panel{position:absolute;z-index:30;top:calc(100% + 4px);left:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.14)}
-/* L-234: text-transform/letter-spacing restored verbatim from styles/index.css, styles/agency.css and styles/declinations.css, which carried them until db2e5da consolidated this rule here and dropped them. Without them .ctl label's uppercase inherits down onto the option rows, and because these labels are white-space:nowrap  and .ms-panel has no max-width the panel sizes to its widest label and grows ~34%, overflowing the viewport at 390 and 320 (L-229 test report D-1). civil.html never carried them, so this moves civil's option labels to lowercase too - a knowing,accepted change for consistency, not a regression. */
+/* text-transform/letter-spacing are restored verbatim from styles/index.css, styles/agency.css and styles/declinations.css, which carried them until this rule was consolidated here and they were dropped. Without them .ctl label's uppercase inherits down onto the option rows, and because these labels are white-space:nowrap  and .ms-panel has no max-width the panel sizes to its widest label and grows ~34%, overflowing the viewport at 390 and 320. civil.html never carried them, so this moves civil's option labels to lowercase too - a knowing,accepted change for consistency, not a regression. */
 .ms-list label{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:6px;font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer;white-space:nowrap}
 .ms-dept{font-weight:600;margin-top:4px}
 .ms-sub label{padding-left:22px;font-size:12.5px;color:#333}
@@ -212,11 +212,11 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 .chartbox{position:relative;width:100%}
 #summary{color:var(--mut);font-size:12.5px;margin:2px 2px}
 .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:12px;position:relative}
-/* L-229: restored verbatim from styles/index.css and styles/agency.css, which carried these two rules identically until db2e5da moved the rest of the block here and dropped  these. The basis control row - "Program-category basis:" on index.html, "Agency basis:" on agency.html - is the only user of either. */
+/* Restored verbatim from styles/index.css and styles/agency.css, which carried these two rules identically until the rest of the block moved here and these were dropped. The basis control row - "Program-category basis:" on index.html, "Agency basis:" on agency.html - is the only user of either. */
 .occbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;font-size:12.5px;color:var(--mut)}
 .occhint{font-size:11.5px;color:var(--mut);opacity:.8}
 
-/* ── The wide data table (L-233, built under L-237) ────────────────────────────────── ONE declaration of this block is deliberately NOT here: `.tblwrap{max-height:70vh}` at phone width. `.tblwrap`'s max-height is per-page and lives in each page's own stylesheet - index/agency/declinations 520px, civil 480px - and every page stylesheet  loads AFTER this file, so a media rule here at equal specificity would lose the cascade and never apply. It is in all four page stylesheets, beside the value each one overrides - styles/index.css since L-237, and styles/civil.css, styles/agency.css and styles/declinations.css since L-301. */
+/* ── The wide data table ─────────────────────────────────────────────────────────── ONE declaration of this block is deliberately NOT here: `.tblwrap{max-height:70vh}` at phone width. `.tblwrap`'s max-height is per-page and lives in each page's own stylesheet - index/agency/declinations 520px, civil 480px - and every page stylesheet  loads AFTER this file, so a media rule here at equal specificity would lose the cascade and never apply. It is in all four page stylesheets, beside the value each one overrides - styles/index.css, styles/civil.css, styles/agency.css and styles/declinations.css. */
 /* the two shape controls - INSIDE the table panel, never a .wrap child with a
    controls/masters/master/occbar class, which shell2.js folds away below 760px */
 .tbl-shape{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:0 0 10px;font-size:12.5px}
@@ -229,7 +229,7 @@ td .provmark{color:#9a9b96;font-size:11px;padding-left:3px}
 /* the basis line and the refusal reuse the topline section's idioms, so the page has one vocabulary for "here is what this is" and "here is why there is no figure" */
 .tbl-basis{font-size:12px;color:var(--ink);margin:0 0 8px;border-left:4px solid var(--ink);padding:6px 9px;background:#fff;border-radius:0 6px 6px 0}
 .tbl-refusal{border-left:4px solid var(--ink);background:#fff;border-radius:0 6px 6px 0;padding:8px 10px;font-size:12.5px;line-height:1.4;color:var(--ink);margin:0 0 8px}
-/* the one-line screen/file difference note, next to the download button (style guide 9) */
+/* the one-line screen/file difference note, next to the download button */
 .csvline{color:var(--mut);font-size:12px;margin:8px 0 0}
 /* accessibility helper: visually-hidden but available to screen readers */
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;border:0!important}

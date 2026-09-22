@@ -6,14 +6,14 @@ const CATPAL=(window.LIONS_PAL||PALETTE);
 const RPAL=["#2a78d6","#c02d5a","#1d9e75","#7a4fc0","#0e8a8a","#d9622b"];
 const DOC_SURFACE='civil';
 
-// ── L-155: `cases_pending` is a COUNTED column, read from its own cube ───────────
+// ── `cases_pending` is a COUNTED column, read from its own cube ─────────────────
 // `civil_pending_cube_national.csv` / `civil_pending_cube.csv`:
 //   ym [, district], category, role, cases_pending.
 // It is NOT a column on `civil_cube` and it is NOT accumulated in the browser any more.
 // The old running net (cumulative cases_filed - cases_terminated from 1994-10) was an
 // index of net change since October 1994, not a caseload: it went negative in 375 of 382
 // months for role Plaintiff, and the chart restarted the sum at the window's first month,
-// so it plotted 45,788 where this page's own table said 84,556. L-126.
+// so it plotted 45,788 where this page's own table said 84,556.
 //
 // THE ZERO-SUPPRESSION CONTRACT, AND IT RUNS THE WHOLE SPINE. The cube omits zero rows,
 // because the full-spine build measured 127.55 MiB, over GitHub's per-file block. So a
@@ -24,7 +24,6 @@ const DOC_SURFACE='civil';
 // wrong readings, because it invites a reader to think the series was discontinued.
 // Outside the spine there is genuinely nothing, so the value is null and nothing is
 // drawn. Every read goes through pendingArr(), so no call site can get it wrong.
-// `docs/DASHBOARD_STYLE_GUIDE.md` section 6a.
 let PNAT=null,PFULL=null,PSP_N=null,PSP_F=null,pnatLoading=false,pfullLoading=false;
 const MULT=(window.LIONS_MULT&&window.LIONS_MULT.civil)||{cases_filed:[1.6598,1.1815,1.0872,1.0611,1.0438,1.0358,1.0313,1.0273],cases_terminated:[1.7179,1.2881,1.1729,1.1248,1.0884,1.0563,1.0393,1.0305]};
 function hasPred(m){ return !!MULT[m]; }
@@ -35,14 +34,13 @@ const METRICS_CASES=[["cases_filed","Cases filed"],["cases_pending","Cases pendi
 const METRICS_MATTERS=[["matters_received","Matters received"],["matters_pending","Matters pending"],["matters_terminated","Matters terminated"]];
 // Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
 // (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
-// of "2021-01" put January 2021 - Biden's first month - inside the Trump I range and made
-// it 49 months against the band's 48 (L-221).
+// of "2021-01" put 2021-01, the next administration's first month, inside the Trump I
+// range and made it 49 months against the band's 48.
 const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const CURRENT="civil.html";
-// Provisional (right-censored) data - L-014, revised to rev B in L-021.
-// Spec: ops/handoffs/L-003-design-spec.md (revision B).
+// Provisional (right-censored) data.
 // All the logic lives in shared/provisional.js; this page only makes calls.
-// Two things this page owns for rev B, neither of them logic:
+// Two things this page owns, neither of them logic:
 //   scales.x.ticks.padding:6 on every chart carrying the treatment - a LAYOUT
 //     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
 //     bar lives in that space; Chart.js defaults to 3 and the bar would touch
@@ -74,8 +72,8 @@ function parsePend(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Obj
     rows[i-1]={ym,grp:c[I.category],role:c[I.role],district:I.district!==undefined?c[I.district]:"National",v:+c[I.cases_pending]||0}; }
   return {rows,spine:{lo,hi}}; }
 // All causes selected reads the cube's own `category='ALL'` total row, never a sum of the
-// 14 causes (invariant 3). They do partition exactly here, but the total row is still the
-// right thing to read.
+// 14 causes: parts can overlap, so summing them double-counts. They do partition
+// exactly here, but the total row is still the right thing to read.
 function pendingArr(dists,cats,role){
   const useNat=dists.has('National')||dists.size===0;
   const src=useNat?PNAT:PFULL, sp=useNat?PSP_N:PSP_F;
@@ -109,11 +107,11 @@ function aggregateRaw(nat, full, spine, dists, cats, role){
 function agg(dists,cats,role){ const R=aggregateRaw(NAT,FULL,SPINE,dists,cats,role); R.cp=pendingArr(dists,cats,role); return R; }
 const mean3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2])/3;
 function cumsum(arr){ let acc=0; return arr.map(v=>acc+=v); }
-// THE CASES BRANCH OF THIS FUNCTION IS DELETED (L-155): cases_pending reads the counted
+// THE CASES BRANCH OF THIS FUNCTION IS DELETED: cases_pending reads the counted
 // column. What is left is matters only, and it is still a running net because
-// `matters_pending` is NOT in the promoted pending cube - it is held on L-149. So that
+// `matters_pending` is NOT in the published pending cube and is deliberately held. So that
 // series is an index of net change since October 1994 and not a stock; the entry that
-// says so on "Reading the data" is written, signed and does not render until the column
+// says so on "Reading the data" is written and does not render until the column
 // exists, and `matters_pending` carries no marker for the same reason. Do not add a
 // cases-shaped branch back here.
 function mattersPendingSeries(R){ return cumsum(R.mr.map((v,i)=>v-R.cf[i]-R.mt[i])); }
@@ -150,15 +148,15 @@ function leftItems(){ return state.seriesBy==='category'
 function rightLabelText(){ return state.ax2&&state.ax2sel.size?[...state.ax2sel].slice(0,3).join(', ')+(state.ax2sel.size>3?'…':''):''; }
 const rint=x=>x==null?"-":Math.round(x).toLocaleString();
 
-// ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
+// ── THE TOPLINE SECTION ─────────────────────────────────────────────────────────
 // The four KPI cards and their renderKPIs() are retired. Two rules this page carries
 // that the others do not:
 //   `cases_pending` is a STOCK - a reading at a date, never a total over a period, and
 //   its provisional treatment is a truncation rather than a flag on the extrema.
-//   `matters_pending` is NOT offered at all (spec section 8 item 8): it is a running net
+//   `matters_pending` is NOT offered at all: it is a running net
 //   since October 1994, not a published level, and the section says so rather than
 //   printing a number for it.
-// Invariant 3: the share denominator is the cube's own ALL total row over the same
+// The share denominator is the cube's own ALL total row over the same
 // period, never the sum of the selected causes.
 function renderTopline(){
   const R=agg(state.dists,state.cats,state.role);
@@ -168,15 +166,16 @@ function renderTopline(){
   const selName = all ? 'all causes'
                 : (state.cats.size===1 ? [...state.cats][0] : 'the selected causes');
   const series=metricArray(R,m);
-  // Invariant 7: the topline engine is additive. A browser holding an old cached
+  // The topline engine is ADDITIVE: it decorates what the page has already rendered, and
+  // a failure in it must still leave a readable dashboard. A browser holding an old cached
   // shared/shared.js against this page script has no LIONS_TOPLINE, so a missing or
   // throwing engine logs and leaves the chart to render.
   if(!window.LIONS_TOPLINE){ console.warn('LIONS_TOPLINE unavailable - topline section skipped'); return; }
-  // L-222: facts here, sentence in the engine. See index.page.js.
+  // Facts here, sentence in the engine. See index.page.js.
   const C=window.LIONS_TOPLINE.COPY;
   try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:m, metricLabel:metricLabel(m),
-    // L-250: the section's period figures follow the page's Group by control, exactly
+    // The section's period figures follow the page's Group by control, exactly
     // as the chart and the data table do. No control is added inside the section.
     grain:state.grain,
     kind: stock?'stock':'count', series, rate:null,
@@ -196,19 +195,19 @@ function renderTopline(){
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════════
-   THE DATA TABLE AND ITS CSV - L-258, built under L-301.
+   THE DATA TABLE AND ITS CSV
    The engine is LIONS_TABLE in shared/shared.js, which this page already loads, so
-   INVARIANT 9 IS UNCHANGED: no script and no stylesheet was added to or removed from
-   this page's chain. Everything below is this page's descriptor: its columns, its cube
-   read, its dimension slots, its signed copy.
-   Spec: ops/handoffs/L-258-design-spec.md, copy signed by Cary 19 September 2026.
+   THE PAGE'S FIXED LOAD ORDER IS UNCHANGED: no script and no stylesheet was added to,
+   removed from or reordered in this page's list. Everything below is this page's
+   descriptor: its columns, its cube
+   read, its dimension slots, its copy.
    ══════════════════════════════════════════════════════════════════════════════════ */
 const ROW_CAP=window.LIONS_TABLE.ROW_CAP;
 const TCOPY=window.LIONS_TABLE.COPY;
 /* `g` is the column group a user can switch off; 'key' is never switchable, so a CSV
    consumer parsing by name has a stable key set whatever the user does. `w` is the
    provisional-window metric key the column takes: the table's own mark is the WIDEST
-   across the columns it is currently printing (the L-014 envelope rule). `fold` marks
+   across the columns it is currently printing. `fold` marks
    the column that folds INTO the cause cell below 560px. `cls` carries the stock
    hairline - a level is not something to add down. */
 const TBL_COLS=[
@@ -233,14 +232,14 @@ const TBL_COLS=[
   {k:'d_other_pct',g:'rates',h:'Other disposition %',t:'pct',w:'cases_terminated'}
 ];
 /* Every user-facing string this table puts on the page that is not already in
-   LIONS_TABLE.COPY. Signed by Cary verbatim on 19 September 2026 (spec section 6).
-   Never an em dash (D-042). */
+   LIONS_TABLE.COPY. The wording here is settled: do not reword it in passing.
+   Never an em dash. */
 const TBL_COPY={
   totalLabel:'All causes of action',
   /* Criminal's complement reads "Other categories, and cases with none recorded" because
      there really is a residual there. On this cube the 14 causes reach category='ALL'
-     EXACTLY - 0 of 1,146 (ym, role) keys disagree on any of 9 columns, measured in
-     design-lab/l258-cube-measure.js - so a label claiming uncategorised members would
+     EXACTLY - 0 of 1,146 (ym, role) keys disagree on any of 9 columns, measured rather
+     than assumed - so a label claiming uncategorised members would
      assert something false. This one names what the row is. */
   complementLabel:'Other causes of action, summed',
   dimSum:n=>n+' causes of action, summed',
@@ -277,7 +276,7 @@ function tblDistRows(d){
    explicitly with `+c[I[k]]||0`. That the coercion is right rather than convenient is
    measured: read that way the five columns reproduce cases_terminated on every one of
    the 15,643 national and 641,931 district rows, including the 9,483 rows carrying a
-   blank cell AND a non-zero cases_terminated (design-lab/l258-cube-measure.js). */
+   blank cell AND a non-zero cases_terminated. */
 function aggregateTable(dists,target){
   const useNat=dists.has('National')||dists.size===0;
   const idx=new Map();
@@ -318,7 +317,7 @@ const TBL_DESC={
   dimSlots:st=>window.LIONS_TABLE.partitioningSlots(TBL_DESC,st),
   selectedDims:()=>tblSelCauses(),
   dimList:()=>CATLIST,
-  /* Invariant 4: these run on components the engine has ALREADY bucketed, so a
+  /* These run on components the engine has ALREADY bucketed, so a
      fiscal-year settlement share is the year's settlements over the year's terminations
      and never the mean of twelve monthly rates. The five shares total 100.0% on every
      row, because the five d_* columns partition cases_terminated exactly. */
@@ -333,7 +332,7 @@ const TBL_DESC={
 const TBL=window.LIONS_TABLE.make(TBL_DESC);
 const activeTblCols=()=>TBL.activeCols(state);
 function tblRowCount(){ return TBL.rowCount(state); }
-/* FOUR STATES, counted before the branch was written (style guide 5g, after L-249 D-C).
+/* FOUR STATES, counted before the branch was written.
    A state missing from the enumeration does not fall through to a neighbour. */
 function tblBasisLine(st){
   const p=window.LIONS_TABLE.grainNoun(st.grain), sel=tblSelCauses();
@@ -344,7 +343,7 @@ function tblBasisLine(st){
 }
 function renderTable(){ LAST=TBL.render(state); }
 
-/* ── L-257's lazy build, inherited exactly (spec C7) ────────────────────────────────
+/* ── The lazy build: the table is not drawn until the panel is opened ──────────────
  * The table is built on the FIRST OPEN of the disclosure and marked stale by any filter,
  * date, preset, role, column-group or grain change. TWO THINGS STAY EAGER, and both are
  * state-derived and build no rows: tblRowCount() is three cheap counts, so an over-cap
@@ -375,11 +374,11 @@ function baseScales(pct,rightTitle,anyR){ return {x:{grid:{display:false,drawTic
   y1:{position:'right',display:anyR,beginAtZero:!pct,title:{display:anyR,text:rightTitle,color:'#212123',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{drawOnChartArea:false}}}; }
 
 const TT={enabled:false,external:extTooltip};
-// L-126 / L-155: a STOCK is a level, so a quarter or a fiscal year takes the level at the
+// A STOCK is a level, so a quarter or a fiscal year takes the level at the
 // bucket's LAST month. Summing a stock across a bucket, or cumulating one from the
 // window's first month, is exactly what made this chart disagree with its own table by a
 // constant 38,768. A flow or a ratio is unchanged: bucket the component counts first,
-// then run the metric formula (invariant 4).
+// then run the metric formula - never the mean of the per-month rates.
 function seriesFor(dists,cats,metric,B){ const R=agg(dists,cats,state.role);
   return PV.family(metric)==='stock' ? bucketEnd(metricArray(R,metric),B)
                                      : metricArray(bucketComp(R,B),metric); }
@@ -508,17 +507,17 @@ function render(){
   const needFull=!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district';
   /* The district cube can also finish and FAIL: FULL stays null with fullLoading back to
      false, and the old `&& fullLoading` guard fell straight through into aggregateRaw(),
-     which threw `full is not iterable` on a null and left the page dead (L-275). Return
+     which threw `full is not iterable` on a null and left the page dead. Return
      on "no FULL" whatever the reason. It deliberately does not fall back to the national
      rows, which would print national figures under a district label. It also does not
      overwrite the message ensureFull()'s catch wrote - that catch only logged when this
-     guard was written and writes the failure string as of L-224. */
-  /* L-224: render() writes NOTHING to #status. The filter-state line this used to
+     guard was written and writes the failure string now. */
+  /* render() writes NOTHING to #status. The filter-state line this used to
      print is deleted - the topline caption is a superset of it - and the progress and
      failure messages belong to the ensure functions, which are the only things that know
      which one is true. A render that wrote here would wipe a failure within one tick. */
   if(needFull && !FULL) return;
-  /* L-283: the pending cubes are a SECOND source with their own failure, and the guard
+  /* The pending cubes are a SECOND source with their own failure, and the guard
      above never reached them. pendingArr() returns a column of nulls when they are
      missing, which the topline draws as "None in this period." under a district label -
      an answer of zero where the cube has 1,081. Refuse the same way. */
@@ -528,10 +527,10 @@ function render(){
 function buildCSV(){
   /* #dl sits OUTSIDE the panel and is live with the table never built, so the download
      does the build itself rather than going silently dead on the empty LAST below. Same
-     button, same rows, same cap: D-1 is not re-opened, and an over-cap selection still
+     button, same rows, same cap, so an over-cap selection still
      refuses, because tblBuild() runs the same refusal branch the table does. */
   if(tblDirty) tblBuild();
-  if(LAST.rows.length===0) return;   /* D-1: if the table refuses to draw, the download refuses too */
+  if(LAST.rows.length===0) return;   /* if the table refuses to draw, the download refuses too */
   const blob=new Blob([TBL.csvText(state,LAST)],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
   const ct=(state.cats.has('ALL')||state.cats.size===0)?'ALL':(state.cats.size===1?[...state.cats][0].replace(/\W+/g,''):state.cats.size+'causes');
@@ -571,9 +570,9 @@ function buildAx2Picker(){ state.ax2sel=new Set(); const mount=document.getEleme
   } else {
     ax2MS=multiSelect('ax2sel',{items:(state.seriesBy==='category'?CATLIST:districtList()),plain:true,emptyLabel:'pick series…',initial:state.ax2sel,searchable:state.seriesBy==='district',
       fmt:state.seriesBy==='district'?fmtDist:undefined, onChange:v=>{ state.ax2sel=new Set(v); renderChart(); }}); } }
-// ── L-155: the pending cubes are fetched LAZILY, never at page load ─────────────
+// ── The pending cubes are fetched LAZILY, never at page load ───────────────────
 // `cases_pending` is the only metric that needs them; `matters_pending` does not, because
-// it is not in the cube (L-149). The district file is 33.74 MiB and is fetched only when
+// it is not in the cube. The district file is 33.74 MiB and is fetched only when
 // a district selection actually needs it.
 const NEEDS_PEND=m=>m==='cases_pending';
 function pendWanted(){ if(NEEDS_PEND(state.metric)) return true;
@@ -600,14 +599,14 @@ async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; SL.
     SL.setLoading(null); SL.clearLoadError(); }
   catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } fullLoading=false; }
 function populateMetric(){ const sel=document.getElementById("metric");
-  // L-144: the glyph is an INDEX into "Reading the data", not a severity signal. Which
+  // The glyph is an INDEX into "Reading the data", not a severity signal. Which
   // metrics carry it is REFERENCES.flags in shared/config.js, and a held entry
-  // (matters_pending, L-149) resolves to no marker at all.
+  // (matters_pending) resolves to no marker at all.
   sel.innerHTML=metricsList().map(m=>`<option value="${m[0]}">${docMetricLabel(DOC_SURFACE,m[0],m[1])}</option>`).join("");
   state.metric=metricsList()[0][0]; sel.value=state.metric; }
 
 async function init(){ renderNav();
-  /* L-224: the national cube is 1.5-3 MB and until it lands the page is a blank chart
+  /* The national cube is 1.5-3 MB and until it lands the page is a blank chart
      with no explanation. The message is cleared by the same resource arriving, below;
      the setup between here and the first render() is synchronous, so no paint happens
      in between and clearing here is clearing at the first render. */
@@ -659,7 +658,7 @@ async function init(){ renderNav();
   document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize'));
     if(!willOpen||!tblDirty) return;
     /* Over cap there is nothing to build and no wait to explain, so the refusal shows at
-       once and WITHOUT the placeholder (L-257 design note section 5). renderTable()
+       once and WITHOUT the placeholder. renderTable()
        returns straight out of its refusal branch, so this is cheap enough to run inline. */
     if(tblRowCount()>ROW_CAP){ tblBuild(); return; }
     /* ORDER MATTERS. The panel is already unhidden above, so this mutation lands in a
@@ -678,8 +677,8 @@ async function init(){ renderNav();
   // first paint: the national view renders immediately and this streams in behind it.
   // The point is that opening the district filter and switching districts is instant,
   // rather than making the user wait on a multi-megabyte download mid-interaction.
-  // Cary's call, 31 Aug 2026 - responsiveness over bytes. It is the dominant share of
-  // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
+  // Responsiveness over bytes, deliberately. It is the dominant share of
+  // this site's bandwidth: do not change it to a lazy load without measuring first.
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();

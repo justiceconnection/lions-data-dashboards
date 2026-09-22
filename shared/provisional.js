@@ -1,6 +1,4 @@
 /* LIONS dashboards - provisional (right-censored) data treatment.
- * Ledger L-021 (revision B), implementing ops/handoffs/L-003-design-spec.md rev B.
- * Ported from the reference implementation at design-lab/shared/provisional.js.
  *
  * What this is: every LIONS vintage under-reports its most recent months. This module
  * decides WHICH buckets are provisional and paints a consistent marker on them. It does
@@ -11,15 +9,14 @@
  * and the vintage edge is max(ym) in the cube the page has already fetched
  * (SPINE[SPINE.length-1]). No new cube column, no rebuild.
  *
- * Load order (invariant 9): body end, between shared/config.js and shared/shared.js.
+ * Load order, which is fixed: body end, between shared/config.js and shared/shared.js.
  * It has no dependency on shared.js and must exist before scripts/<page>.page.js runs.
- * Revision B adds and removes no asset, so invariant 9 is UNCHANGED by this change -
- * stated explicitly because the invariant carries its own amendment rule and "nothing
- * to do" is a conclusion, not an assumption.
+ * This file adds and removes no asset, so the four dashboards' fixed load order is
+ * unchanged - said out loud because "nothing changed" is the easy thing to assume.
  *
- * ── REVISION B - 31 Aug 2026, ledger L-019 (design) / L-021 (implementation) ────────
- * Rev A shipped and FAILED QA on 100%-stacked charts (L-003 test report, D1-D3).
- * The governing rule of this revision:
+ * ── THE STACKED-CHART TREATMENT ───────────────────────────────────────────────────
+ * An earlier treatment shipped and then failed on 100%-stacked charts, three ways.
+ * The governing rule that replaced it:
  *
  *   ON A STACKED CHART THE MARKER IS INK LAID OVER THE DATA, NEVER A TRANSFORM
  *   APPLIED TO IT.
@@ -33,7 +30,7 @@
  *   - stacked charts get a TWO-TONE hatch drawn OVER the fills instead of a flat hatch
  *     under them. Worst-case mean-luminance shift 17/255; worst-case local contrast
  *     41/255, against the 3/255 the under-hatch actually achieved through an 80%-alpha
- *     fill (that arithmetic is D1 - no alpha tuning could have fixed it, because the
+ *     fill - and no alpha tuning could have fixed that, because the
  *     fill was over it; only a change of stacking order could).
  *   - stacked charts get an OPEN RIGHT EDGE - the stacked stand-in for the line
  *     family's hollow terminal point. The zone reads as a bracketed interval.
@@ -41,9 +38,9 @@
  *     the only mark outside the plot area, where nothing it covers is data. Requires
  *     scales.x.ticks.padding >= 6 on every chart carrying the treatment.
  *   - the label gets a halo, a darker ink (#3f4043) and an outside-the-zone fallback,
- *     so it draws at EVERY zone width. The rev-A `w > 64` guard is gone and must not
+ *     so it draws at EVERY zone width. The earlier `w > 64` guard is gone and must not
  *     come back: at the default 13-year range the zone is ~43px, so the label never
- *     drew - on the family where it was the only surviving non-colour channel (D3).
+ *     drew - on the family where it was the only surviving non-colour channel.
  * Line-chart behaviour (fade, hollow endpoints, flat hatch) is UNCHANGED - it passed.
  *
  * Channel count after this revision: line family 6 chart channels (4 non-colour);
@@ -55,8 +52,8 @@
 
   /* ── 1. How wide is the provisional window? ─────────────────────────────────
    * Months back from the vintage edge that are still materially incomplete.
-   * Derived from the calibrated completion curve in
-   *   docs/Vintage_Revision_Analysis_MayJunJul_2026.md §3
+   * Derived from the calibrated completion curve measured across three consecutive
+   *   vintages of the same series.
    *
    * RULE: mark every month whose calibrated completion factor is > 1.05 (more than
    * ~5% of its eventual total still missing), then
@@ -64,7 +61,7 @@
    *              claims, and never too thin to see at quarter/FY grain;
    *   CAP   6  - the published table only runs to age 6, so 6 is the largest window
    *              the evidence actually supports. The two outflow windows are
-   *              LOWER BOUNDS, not measurements (see the spec).
+   *              LOWER BOUNDS, not measurements.
    *
    *   criminal filed   x1.29 1.08 1.04                     -> >1.05 at ages 0-1  -> 2, floored to 3
    *   civil    filed   x1.64 1.18 1.09 1.06 1.05           -> >1.05 at ages 0-3  -> 4
@@ -76,8 +73,8 @@
    * objection that killed the prediction lines in Aug 2026: the age-0 criminal
    * termination factor moved from x2.9 to x5.4 between two vintage pairs, and the
    * boundary did not move at all. Re-deriving them when a new vintage lands is a
-   * Data Analyst / Knowledge Steward job - it is not a cube rebuild.
-   * UNCHANGED IN REVISION B - QA confirmed the widths are right.
+   * job for whoever maintains the data - it is not a cube rebuild.
+   * These widths were checked against the curve above, not guessed.
    */
   var WINDOWS = { crim_in: 3, crim_out: 6, civ_in: 4, civ_out: 6, civ_stock: 6 };
 
@@ -142,7 +139,7 @@
 
   /* ── 4. Colour helpers ──────────────────────────────────────────────────────
    * FADE is the provisional channel ON LINE CHARTS ONLY. DASH is already taken: the
-   * style guide uses borderDash [5,4] to mean "right axis". Never overload it.
+   * chart conventions use borderDash [5,4] to mean "right axis". Never overload it.
    * Fade is NOT used on stacked charts - see §4a and decorateLine below.
    */
   var FADE_ALPHA = 0.45;
@@ -162,14 +159,14 @@
     return m;
   }
 
-  /* ── 4a. The zone texture - the heart of revision B ─────────────────────────
-   * TILES is DATA, not code, so the spec, this module, the SVG exporter and the check
+  /* ── 4a. The zone texture - the heart of the treatment ─────────────────────
+   * TILES is DATA, not code, so this module, the SVG exporter and the check
    * harness all read the same numbers. Each tile is an 8x8 canvas carrying 45-degree
    * strokes. Because the strokes run at 45 degrees, ANY axis-aligned run of 8 pixels
    * crosses each stroke exactly once - which is what makes the arithmetic below exact.
    *
    *   'flat'    one charcoal stroke. For UNSTACKED charts, drawn UNDER the data.
-   *             Passed QA on the line charts; unchanged from rev A.
+   *             Checked on the line charts, and unchanged from the earlier version.
    *
    *   'stacked' one WHITE stroke and one CHARCOAL stroke. For stacked charts, drawn
    *             OVER the data, because on a stacked chart there is no "under" - the
@@ -179,11 +176,10 @@
    * carries fills from #212123 (L~33) to pale. A dark hatch vanishes on the dark
    * fills; a light hatch vanishes on the pale ones. Pairing opposite polarities means
    * one stroke always contrasts, AND the two nearly cancel in the mean - so the
-   * region gains texture WITHOUT ITS COLOUR MOVING. That is the whole fix for D2: on
+   * region gains texture WITHOUT ITS COLOUR MOVING. That is the whole fix: on
    * a 100%-stacked chart colour IS the data.
    *
-   * Both properties are computed by meanShift()/localContrast() below and asserted in
-   * design-lab/prov-lab.check.js §15:
+   * Both properties are computed by meanShift()/localContrast() below and measured:
    *   MEAN SHIFT     worst case 16.9/255 over the whole luminance range.
    *                  The deleted scrim's worst case was 85.3/255 - 5x heavier.
    *   LOCAL CONTRAST worst case 41/255, at L=169, which is exactly the luminance
@@ -256,9 +252,9 @@
    * already carries, so "dashed = right axis" survives intact.
    * Point radii: union with whatever the caller already set for partial periods.
    *
-   * REVISION B: a stacked dataset is REFUSED, not merely discouraged. Fading a
+   * A stacked dataset is REFUSED, not merely discouraged. Fading a
    * stacked area fill is the scrim defect by another route - it moves the colour, and
-   * on a stacked chart the colour is the series identity (spec §6.7). Callers mark
+   * on a stacked chart the colour is the series identity. Callers mark
    * stacked datasets with `_stacked:true`, per render, from the Sum/Stacked toggle.
    */
   function decorateLine(ds, flags, basePR) {
@@ -327,14 +323,14 @@
     catch (e) { return false; }
   }
 
-  /* Where does the label go? Rev A suppressed it below a 64px zone, which at the
+  /* Where does the label go? An earlier version suppressed it below a 64px zone, which at the
    * DEFAULT 13-year range meant it never drew at all - and on a stacked chart it was
-   * the only surviving non-colour channel (QA D3). D-017 settled that the ZONE has no
+   * the only surviving non-colour channel. It is settled that the ZONE has no
    * minimum rendered width; it said nothing about whether the zone is LABELLED. So:
    * inside the zone when it fits, otherwise immediately LEFT of the boundary rule,
    * which always has room on a long range. Omitted only when the whole plot is
    * narrower than the word - so in practice the label always draws.
-   * Do not reintroduce a width guard here or anywhere else (spec §6.8). */
+   * Do not reintroduce a width guard here or anywhere else. */
   function labelPlacement(z, textW) {
     var need = textW + STYLE.labelPad;
     if (z.x1 - z.x0 >= need) return { x: z.x1 - 7, align: 'right', where: 'inside' };

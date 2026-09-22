@@ -13,9 +13,9 @@ body{
   background:var(--bg);color:var(--ink);
   font-weight: 400;
   font-family: 'Ancizar Sans', 'Arial', sans-serif;
-  /* L-229: longhand on purpose. `font:14px/1.5em` names no family, and the shorthand
+  /* Longhand on purpose. `font:14px/1.5em` names no family, and the shorthand
      requires one, so the whole declaration is dropped and this page falls back to
-     16px/normal - the D-069 defect, twice now. Do not fold these two back into `font:`. */
+     16px/normal - a defect this page has had twice now. Do not fold these two back into `font:`. */
   font-size:14px;
   line-height:1.5em;
   color: var(--ink)
@@ -23,7 +23,7 @@ body{
   header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   header h1{font-size:18px;margin:0}
   header .tag{font-size:14px;color:var(--muted)}
-  /* L-144: the one link to "Reading the data". */
+  /* the one link to "Reading the data". */
   header .doclink{font-size:13px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
   header .doclink:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   /* the inline marker. */
@@ -82,9 +82,9 @@ body{
   .hint:hover{color:var(--ink)}
   .hint:focus-visible{outline:2px solid var(--ink);outline-offset:2px;color:var(--ink)}
 
-/* ── THE HINT BUBBLE (L-312, L-294). Style guide 5a. ──────────────────────────
+/* ── THE HINT BUBBLE ──────────────────────────────────────────────────────────
    One component, three surfaces: this, index.html's program-category basis, and
-   the topline's provisional mark (5f, D-059). It opens FOUR ways - hover, focus,
+   the topline's provisional mark. It opens FOUR ways - hover, focus,
    focus inside the bubble, and a click that PINS it - and the bubble is the
    button's aria-describedby target, so it is never [hidden] and never
    display:none and a screen-reader user has the sentence without opening it.
@@ -94,8 +94,8 @@ body{
    reaches DOWN to meet it, and that is the whole reason a link can live in
    here - without the reach, the pointer crosses 8.5px of dead ground between
    button and bubble, the bubble closes, and the link is unreachable by mouse.
-   Measured: design-lab/l312-shots.js --seed=nobridge breaks at step 14 of the
-   pointer walk. :focus-within is the same fix for the keyboard.
+   Measured with a scripted pointer walk: with the reach removed it breaks at step
+   14 of the walk. :focus-within is the same fix for the keyboard.
    It is the BUTTON's pseudo-element and not the bubble's, which is what keeps
    the bubble the only thing carrying a z-index. An earlier draft put z-index:6
    on .hint and every OTHER field's glyph then ghosted through an open bubble -
@@ -104,8 +104,8 @@ body{
    text-transform / letter-spacing / font-weight are RESETS, not taste. On Case
    Look-Up the bubble lives inside a .fld label, which is uppercase, 600 and
    letter-spaced; without these three the whole sentence and its link render in
-   CAPITALS. Found by looking at design-lab/l312-live-1280.png, not by counting
-   selectors - design-lab/l312-shots.js --seed=nolabelreset is the guard. */
+   CAPITALS. Found by looking at a 1280px screenshot, not by counting
+   selectors. Do not drop the three: nothing else resets the inherited label styling. */
 .hint{position:relative}
 .hinttip{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:-1px;padding:0;border:0;text-transform:none;letter-spacing:normal;font-weight:400}
 .hint:hover~.hinttip,.hint:focus-visible~.hinttip,.hint[aria-expanded="true"]~.hinttip,.hinttip:hover,.hinttip:focus-within{
@@ -212,9 +212,9 @@ body{
       <div class="fld"><label class="withhint">Court type<button type="button" class="hint" id="hintCourt" aria-expanded="false" aria-describedby="tipCourt" aria-label="Why some court types are no longer listed">&#9432;</button><span class="hinttip" id="tipCourt">Court type is the first court a record appeared in, so it is blank on every <b>Matter</b> and on every <b>Post-disposition Proceeding</b>, because neither has a filing that opens a case, and the Court type list no longer offers the post-disposition values; use <b>Record type</b> to separate those records instead. <a id="lnkCourt">Full note: Record types in Case Look-Up &#8594;</a></span></label><div id="ms_court"></div></div>
       <div class="fld"><label class="withhint">Disposition<button type="button" class="hint" id="hintDisp" aria-expanded="false" aria-describedby="tipDisp" aria-label="Differences between declinations and dispositions">&#9432;</button><span class="hinttip" id="tipDisp">Disposition is the last outcome recorded on a proceeding in a real court; a matter that was declined and later charged and prosecuted shows the outcome of <b>that prosecution</b>, so it can read <b>guilty</b> - to find declined matters, use the <b>Declination</b> filter, which is built from the declination itself. <a id="lnkDisp">Full note: Dispositions and declinations &#8594;</a></span></label><div id="ms_disp"></div></div>
 
-      <!-- L-111: the two new cells. Both are ordinary grid cells carrying an
+      <!-- The two cells. Both are ordinary grid cells carrying an
            ordinary control and NO prose, so the grid baselines are untouched
-           (style guide §5a: .filters is align-items:end, and prose in a cell
+           (.filters is align-items:end, and prose in a cell
            drops every other control in its row). -->
       <div class="fld"><label>Declination</label><select id="f_decl">
         <option value="">All records</option>
@@ -241,19 +241,19 @@ body{
 
     <details class="cols"><summary>Choose columns</summary><div class="colgrid" id="colChooser"></div></details>
 
-    <!-- L-312: the three short-form data notes that stood here are GONE. Each (i)
+    <!-- The three short-form data notes that stood here are GONE. Each (i)
          button now carries its own bubble inside its own label - one signed sentence
          and one link - so the answer arrives on hover, on keyboard focus and on tap
          instead of on a click, and no prose sits in a grid cell. The bubble is the
          button aria-describedby target and is never [hidden] and never display:none,
          so a screen-reader user has the sentence without opening anything.
-         Copy is binding: ops/handoffs/L-312-L-294-design-spec.md §4, signed by Cary
-         on 2026-09-20. The links are still built from REFERENCES at the foot of this
+         The copy in those bubbles is binding: do not reword it in passing.
+         The links are still built from REFERENCES at the foot of this
          file, so this page still gains no new dependency. -->
 
-    <!-- L-120, 2 Sep 2026 (Cary): the L-111 declination note (#declNote, -->
+    <!-- The declination note that stood here (#declNote) has been removed. -->
 
-    <!-- L-111 §7.3: the contradiction notice. role="status", NEVER role="alert"
+    <!-- The contradiction notice. role="status", NEVER role="alert"
          - nothing here is an error. Neither control is disabled and neither is
          auto-corrected: a control that silently rewrites another control's
          value is worse than a search that returns nothing and says why. -->
@@ -267,9 +267,9 @@ body{
     <div id="filterErr"></div>
   </div>
 
-  <!-- L-111 §5: the parity block. ONE render site, above the results and before
+  <!-- The parity block. ONE render site, above the results and before
        the existing informational banner in DOM order.
-       It sits OUTSIDE #resultArea deliberately. §7.3's "empty result" state
+       It sits OUTSIDE #resultArea deliberately. The "empty result" state
        requires the block to render on a 0-row search - where the difference is
        the whole dashboard figure and is correct and informative - and
        #resultArea is display:none when the count is 0. Inside it, that state
@@ -406,7 +406,7 @@ class MS{
       });
     });
   }
-  /* L-111: `onOpen` and `onChange` are optional hooks, undefined unless a caller
+  /* `onOpen` and `onChange` are optional hooks, undefined unless a caller
      assigns them, so every pre-existing instance behaves exactly as before.
      updateBtn() is the one funnel every selection change already passes through
      - checkbox, group header, Select all and Clear all reach it. */
@@ -445,13 +445,13 @@ async function init(){
   msCourt.setOptions(facets.courts||[]);
   msDisp.setOptions(facets.disps||[]);
   msLead.setOptions(facets.leadAgencies||[]);
-  /* L-111: the reason list comes from facets.json's `reasons` key, which
-     build_case_lookup_publish.py generates from SELECT DISTINCT
+  /* The reason list comes from facets.json's `reasons` key, which the
+     build generates from SELECT DISTINCT
      declination_reason. It is NEVER hardcoded here - a hand-edit to a
      build-generated facet file is reverted silently by the next rebuild
-     (established in L-106 §1). Order is the facet's alphabetical order with
+     rather than preserved. Order is the facet's alphabetical order with
      "Other" moved last, the project's existing convention for an "Other X"
-     leaf (style guide §8a). */
+     leaf. */
   msReason.setOptions(reasonOptions());
   (facets.statuses||[]).forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; $('f_status').appendChild(o); });
 
@@ -473,11 +473,11 @@ async function init(){
 }
 
 
-/* --------------------------------------------- L-078, L-306, L-312, L-294 --
-   THE HINT BUBBLE'S BEHAVIOUR. Style guide 5a. The same function is written
+/* --------------------------------------------------------------------------
+   THE HINT BUBBLE'S BEHAVIOUR. The same function is written
    again in web/scripts/index.page.js for index.html's program-category basis:
    the two pages share no file - Case Look-Up loads none of the dashboard chain
-   - so the style guide is what keeps the two copies one component.
+   - so keeping the two copies one component is discipline, not code.
 
    Four openers. Three of them are CSS (hover, :focus-visible, :focus-within)
    and cost no JS at all, so hover and keyboard still work if this script never
@@ -491,8 +491,8 @@ async function init(){
    bubble the button's handler had just opened, and clicking a label would do
    nothing.
 
-   L-312 deleted wireNote() with the three <details> notes it wired; L-307 had
-   already deleted setupNote() and loadNoteCount(). None of the three has a
+   wireNote(), setupNote() and loadNoteCount() were deleted with the three <details>
+   notes they wired. None of the three has a
    caller now. */
 function wireHint(btnId, tipId){
   var b=document.getElementById(btnId), t=document.getElementById(tipId);
@@ -515,26 +515,25 @@ function setupNotes(){
 
 
 /* ==========================================================================
-   L-111 - declination filtering, and the parity block that compares this
+   Declination filtering, and the parity block that compares this
    page's count with the Criminal Matter Declinations dashboard's own figure.
 
-   Spec: ops/handoffs/L-111-design-spec.md. Style guide §5c. D-036/D-038/D-039.
 
    THE THREE RULES THAT ARE ARITHMETIC, NOT TASTE
    1. NO FIGURE IS HARD-CODED. Both sides are queried and the difference is
       subtracted. The residual is 7 in FY2025, 0 in FY2024, 43 in FY2026-to-date
       and 30,328 all-time - a constant would be wrong in most windows a user can
-      pick. That is the error D-038 exists to correct.
+      pick. Hard-coding one is exactly the error this rule exists to prevent.
    2. THE FAIL-SAFE RULE. The search result is NEVER gated on the cube. The
       count renders the moment the search returns; every dashboard-derived
       figure is a CLAUSE that appears when it arrives and is absent otherwise,
       and the block reads correctly with no dashboard number in it at all.
-   3. INVARIANT 3. The dashboard figure is read from the cube's own total row,
+   3. THE CUBE'S OWN ALL ROW IS THE TOTAL. The dashboard figure is read from it,
       category='ALL', summed over MONTHS and - where the user has picked them -
-      over REASONS, which partition. It is NEVER summed over categories.
+      over REASONS, which partition. It is NEVER summed over the categories, which overlap, so summing them would double-count.
    ========================================================================== */
 
-/* Alphabetical with "Other" last (style guide §8a). Never hardcoded: this reads
+/* Alphabetical with "Other" last. Never hardcoded: this reads
    facets.json's build-generated `reasons` key. */
 function reasonOptions(){
   const all=(facets.reasons||[]).slice();
@@ -547,14 +546,15 @@ function reasonOptions(){
    select leaving "All records"; a reason being ticked; the reason dropdown
    opening. NEVER on page load - 2.06 MiB raw that a user who is not using this
    feature must not pay for.
-   L-120 removed a FOURTH trigger - the declination note being expanded - with
+   A FOURTH trigger - the declination note being expanded - was removed with
    the note itself. The three that remain still cover every path to the parity
    block, and that is not a coincidence: the block renders only when
    lastRun.declFilter is true, which needs f_decl==='only' or a ticked reason,
    and both of those fire onFilterChange() → ensureCube(). If you ever make the
    block render on some other condition, give the cube a trigger for it too.
-   Cube files carry no ?v= stamp by design (invariant 10): they are fetched
-   {cache:"reload"}, so promoting a rebuilt cube needs no bump here.           */
+   Cube files carry no ?v= stamp by design: a changed script or stylesheet needs its
+   ?v= bumped or browsers keep serving the old one, but cubes are fetched
+   {cache:"reload"}, so a rebuilt cube needs no bump here.                     */
 const CUBE_URL='../data/decl_cat_cube_national.csv';
 let cube=null;            /* null = not loaded yet | 'failed' | {byYm,maxYm} */
 let cubeStarted=false;
@@ -570,7 +570,7 @@ function parseCube(text){
   for(let i=1;i<lines.length;i++){
     const ln=lines[i]; if(!ln) continue;
     const f=ln.split(',');
-    if(f[iCat]!=='ALL') continue;          /* invariant 3 - the cube's own total row */
+    if(f[iCat]!=='ALL') continue;          /* the ALL row IS the total; the categories overlap, so summing them double-counts */
     const ym=f[iYm], rs=f[iRs], n=Number(f[iN]);
     if(!ym||!isFinite(n)) continue;
     (byYm[ym]=byYm[ym]||{})[rs]=(byYm[ym][rs]||0)+n;
@@ -626,7 +626,7 @@ function parityCheck(){
      Category entry is the non-obvious one: the cube's axis is 16 umbrella
      groups and this page's is the 99 specifics, matched all-occurrences, so the
      two axes do not correspond even where the labels look like they should
-     (L-105 §4). */
+     correspond. */
   const narrowed=[];
   if(msDist.values().length) narrowed.push('District');
   if(msCat.values().length) narrowed.push('Category');
@@ -726,19 +726,19 @@ function renderParity(){
     why.push('The dashboard figure is its all-reasons total, <b>including Other</b>. The dashboard’s own default view '+
              'leaves Other unticked; tick the seven named reasons here to match what it shows.');
   }
-  /* Invariant 6, discharged on a component with no chart to mark. */
+  /* The newest months are incomplete: say so, even on a component with no chart to mark. */
   why.push('The most recent months are still being reported on both sides and will rise.');
   h.push('<div class="why">'+why.join(' ')+'</div>');
   el.innerHTML=h.join(''); el.hidden=false;
 }
 
-/* L-120: renderNoteCount() lived here - the #declNote runtime clause (§8.3),
+/* renderNoteCount() lived here - the #declNote runtime clause,
    the one sentence in that note that described the comparison. The note is
    gone (see the HTML above), so the function and its cubeSubs subscription
    went with it. renderParity() is untouched and is still subscribed; it is the
    only cube consumer now. */
 /* ---- wiring ---------------------------------------------------------------
-   Additive by construction, exactly as L-078's note is: it reads filters, adds
+   Additive by construction: it reads filters, adds
    two clauses to currentFilter(), and changes no existing result. */
 function onFilterChange(){
   renderConflict();
@@ -820,7 +820,7 @@ function currentFilter(){
   const ct=inList('court_type', msCourt.values()); if(ct) c.push(ct);
   const dp=inList('disposition', msDisp.values()); if(dp) c.push(dp);
   const st=$('f_status').value; if(st) c.push('status='+sqlLit(st));
-  /* L-111: two independent clauses that do not interact. The IS NOT NULL clause
+  /* Two independent clauses that do not interact. The IS NOT NULL clause
      is kept even when a declination date range is set - a user can choose
      "Declined matters only" and leave the dates blank, and that must work. */
   const dc=$('f_decl').value;
@@ -851,7 +851,7 @@ async function runSearch(){
     const n=Number((await qy("SELECT count(*) n FROM "+SRC+""+f.where))[0].n);
     $('count').textContent=n.toLocaleString()+' cases matched';
     $('csvBtn').disabled=n===0;
-    /* L-111, THE FAIL-SAFE RULE: the parity block is rendered here, off the
+    /* THE FAIL-SAFE RULE: the parity block is rendered here, off the
        search result alone, BEFORE the row query and without ever awaiting the
        cube. Every dashboard-derived figure inside it is a clause that appears
        when it arrives. Snapshot the filter state at the moment of search, so
@@ -868,8 +868,8 @@ async function runSearch(){
   $('searchBtn').disabled=false;
 }
 
-/* L-095 / L-093 - value labels, one map, two renderers.
-   Cary's naming decision gives a `record_type` value a stored token
+/* Value labels, one map, two renderers.
+   The naming convention gives a `record_type` value a stored token
    (`post_disposition`) and a separate display name. This map is the single
    source of truth for every such value whose stored form differs from the text
    a user should see, and BOTH output paths read it:
@@ -899,7 +899,7 @@ function renderTable(cols, rows){
   const thead=$('tbl').querySelector('thead'), tbody=$('tbl').querySelector('tbody');
   thead.innerHTML='<tr>'+cols.map(k=>`<th data-c="${k}">${labels[k]}${sortState.col===k?(sortState.dir<0?' ▼':' ▲'):''}</th>`).join('')+'</tr>';
   thead.querySelectorAll('th').forEach(th=>th.onclick=()=>{ const c=th.dataset.c; sortState={col:c,dir:sortState.col===c?-sortState.dir:1}; runSearch(); });
-  // L-144: the marker on the Filed column. `filed_date` is the one column on this page an
+  // The marker on the Filed column. `filed_date` is the one column on this page an
   // entry names - "filed" means a wider thing here than on the Criminal dashboard, and
   // this page always returns the larger number. Rebuilt with the header on every search,
   // so it cannot go stale; a click on it must not sort, hence stopPropagation.
@@ -937,7 +937,7 @@ init().catch(e=>console.error(e));
 </script>
 <!-- Dashboard selector: reads the shared DASHBOARDS list (single source of truth) and links back
      to the dashboards with the correct relative path. No Filters dropdown here by design. -->
-<script src="../shared/config.js?v=20260920a"></script>
+<script src="../shared/config.js?v=20260922c"></script>
 <script>
 (function(){
   var CUR='case-lookup/index.html';
@@ -949,7 +949,7 @@ init().catch(e=>console.error(e));
   sel.onchange=function(){ if(sel.value!==CUR) location.href=pathFor(sel.value); };
   var onA=nav.querySelector('a.on'); if(onA) onA.addEventListener('click',function(e){ e.preventDefault(); });
   var m=DASHBOARDS.filter(function(d){return d.file===CUR;})[0]; if(m) document.getElementById('dnavCur').textContent=m.name;
-  // L-144: the header link and the marker on the "Date range applies to" option. Both
+  // The header link and the marker on the "Date range applies to" option. Both
   // come from REFERENCES in shared/config.js, which this page already loads for the nav,
   // so Case Look-Up gains NO new script and no new dependency. `../` because this page is
   // one directory down.
@@ -962,7 +962,7 @@ init().catch(e=>console.error(e));
     if(bo && REFERENCES.entryFor('lookup','filed_date')) {
       /* marker glyph removed site-wide; keep the option text unchanged */
     }
-    // L-306 §8b, L-312: the three hint bubbles' links. Built through entryFor()
+    // The three hint bubbles' links. Built through entryFor()
     // and then href(), never a hard-coded path: entryFor() returns null for an
     // entry the notes page does not publish, and in that case the <a> and the
     // space before it are removed - the link is the last phrase of the bubble now,

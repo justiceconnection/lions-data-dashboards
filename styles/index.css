@@ -8,8 +8,8 @@
 #summary{margin:2px 2px;font-size:12.5px;color:var(--mut)}
 #note{margin:2px 2px 8px;min-height:14px;font-size:12px;color:#8a6d1f}
 .tblwrap{max-height:520px}
-/* L-233/L-237: the phone height for the wide table. It sits HERE and not in the
-   shared section 5g block, because .tblwrap's max-height is per-page - index, agency
+/* The phone height for the wide table. It sits HERE and not in the
+   shared stylesheet's table block, because .tblwrap's max-height is per-page - index, agency
    and declinations 520px, civil 480px - and this stylesheet loads after
    shared/shared.css, so a media rule there at equal specificity would never win. */
 @media(max-width:560px){.tblwrap{max-height:70vh}}
@@ -29,7 +29,7 @@
     margin:0 0 4px}
 .ms-sub label{
     display:flex;align-items:center;gap:7px;padding:3px 6px 3px 28px;font-size:12.5px;color:#333;cursor:pointer;white-space:nowrap}
-/* L-249: the auto-deselect note, under the group row that fired. NOT a .ms-list label -
+/* The auto-deselect note, under the group row that fired. NOT a .ms-list label -
    those are white-space:nowrap with no max-width on the panel, which is the mechanism
    that pushes this panel off a 390px viewport. This wraps and caps at 34ch, so it can
    never be what widens the panel. Colour is not a channel: the lead clause is --ink on
@@ -41,7 +41,7 @@
 /* the persistent polite live region - created once, outside .ms-list, textContent only */
 .ms-live{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
   clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
-/* L-249 D-A: the grouped picker's cell takes a full row below 760px. The category
+/* The grouped picker's cell takes a full row below 760px. The category
    dropdown hangs 216px off a 390px viewport and 122px off 320px today, because
    .ms-list label is white-space:nowrap (shared.css:267) and .ms-panel has no max-width
    (:258), with the widest option label at 395px - so group and sub-category labels are
@@ -57,9 +57,9 @@
 }
 
 
-/* ── THE HINT BUBBLE (L-312, L-294). Style guide 5a. ──────────────────────────
+/* ── THE HINT BUBBLE ─────────────────────────────────────────────────────────
    One component, three surfaces: this, index.html's program-category basis, and
-   the topline's provisional mark (5f, D-059). It opens FOUR ways - hover, focus,
+   the topline's provisional mark. It opens FOUR ways - hover, focus,
    focus inside the bubble, and a click that PINS it - and the bubble is the
    button's aria-describedby target, so it is never [hidden] and never
    display:none and a screen-reader user has the sentence without opening it.
@@ -69,8 +69,8 @@
    reaches DOWN to meet it, and that is the whole reason a link can live in
    here - without the reach, the pointer crosses 8.5px of dead ground between
    button and bubble, the bubble closes, and the link is unreachable by mouse.
-   Measured: design-lab/l312-shots.js --seed=nobridge breaks at step 14 of the
-   pointer walk. :focus-within is the same fix for the keyboard.
+   Measured with a scripted pointer walk: with the reach removed it breaks at step
+   14 of the walk. :focus-within is the same fix for the keyboard.
    It is the BUTTON's pseudo-element and not the bubble's, which is what keeps
    the bubble the only thing carrying a z-index. An earlier draft put z-index:6
    on .hint and every OTHER field's glyph then ghosted through an open bubble -
@@ -79,8 +79,8 @@
    text-transform / letter-spacing / font-weight are RESETS, not taste. On Case
    Look-Up the bubble lives inside a .fld label, which is uppercase, 600 and
    letter-spaced; without these three the whole sentence and its link render in
-   CAPITALS. Found by looking at design-lab/l312-live-1280.png, not by counting
-   selectors - design-lab/l312-shots.js --seed=nolabelreset is the guard. */
+   CAPITALS. Found by looking at a 1280px screenshot, not by counting
+   selectors. Do not drop the three: nothing else resets the inherited label styling. */
 .hint{position:relative}
 .hinttip{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:-1px;padding:0;border:0;text-transform:none;letter-spacing:normal;font-weight:400}
 .hint:hover~.hinttip,.hint:focus-visible~.hinttip,.hint[aria-expanded="true"]~.hinttip,.hinttip:hover,.hinttip:focus-within{
@@ -93,7 +93,7 @@
 .hinttip a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
 .hinttip a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
-/* ── the program-category basis affordance (L-294) ────────────────────────────
+/* ── the program-category basis affordance ───────────────────────────────────
    26x26 BOX here, where the topline's mark is also 26x26: .occbar is a flex row
    whose seg buttons are 37px tall, so the box costs nothing. Case Look-Up's
    16px glyph reaches 26x26 through ::after instead, because its label line box

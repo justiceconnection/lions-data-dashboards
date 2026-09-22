@@ -5,11 +5,11 @@
 <title>Civil Matters and Cases - LIONS</title>
 <link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="shared/multipliers.js?v=202606"></script>
-<link rel="stylesheet" href="shared/shared.css?v=20260921a">
-<link rel="stylesheet" href="lab.css?v=20260917a">
-<link rel="stylesheet" href="styles/shell2.css?v=20260917a">
-<link rel="stylesheet" href="styles/civil.css?v=20260919a">
+<script src="shared/multipliers.js?v=202606b"></script>
+<link rel="stylesheet" href="shared/shared.css?v=20260922c">
+<link rel="stylesheet" href="lab.css?v=20260922c">
+<link rel="stylesheet" href="styles/shell2.css?v=20260922c">
+<link rel="stylesheet" href="styles/civil.css?v=20260922c">
 <script src="scripts/civil.head.js?v=20260820c"></script>
 </head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
@@ -47,7 +47,7 @@
       <div class="ax2row"><div class="seg" id="ax2by"><button data-v="series" class="on">Series</button><button data-v="metric">Metric</button></div><div id="ax2sel"></div></div></div>
   </div>
 
-  <!-- The topline section, L-199 direction B (L-204). The root KEEPS class="kpis":
+  <!-- The topline section. The root KEEPS class="kpis":
        shell2.js finds it by that class and hangs its "Topline metrics" header and
        collapse caret off it, so the page adds no title of its own. -->
   <div class="kpis">
@@ -69,10 +69,11 @@
     <div id="legend3"></div><div id="chart3msg"></div><div class="chartbox sm" id="chart3box"><canvas id="chart3" role="img" aria-label="Disposition mix chart showing percent of cases terminated by disposition type.">Disposition mix chart showing percent of cases terminated by disposition type.</canvas></div></div>
 
   <div class="tabletoggle"><button id="tblToggle" class="disc" aria-expanded="false">▸ Show data table</button></div>
-  <!-- L-258, built under L-301. The table stays exactly where it is: inside
+  <!-- The table stays exactly where it is: inside
        #tablePanel, behind the same disclosure, inside the same .tblwrap, above the same
-       #dl button. No new page, no new panel, no new card, no move - so invariant 9's
-       load chain is unchanged and no script or stylesheet is added or removed.
+       #dl button. No new page, no new panel, no new card, no move - so the fixed order
+       in which this page loads its assets is unchanged: nothing is added, removed or
+       reordered, and reordering that list on its own would break the page.
        The two shape controls sit HERE and not in a .controls block: shell2.js collects
        the .wrap children classed occbar/masters/master/controls into the Filters
        top-dropdown (web/shell2.js:36-37) and opens that dropdown only at min-width:760px
@@ -104,7 +105,7 @@
     <p class="tbl-refusal" id="refusal" hidden></p>
     <p class="scrollhint" id="scrollhint"></p>
     <div class="topbar"><button id="dl2">Download CSV</button></div>
-    <!-- L-257: the first-open placeholder. STATIC and initially EMPTY, because a
+    <!-- The first-open placeholder. STATIC and initially EMPTY, because a
          role="status" created together with its own text is not reliably announced;
          only its textContent ever changes. It sits inside #tblwrap so the labelled
          region is never empty while the table is being drawn, and so the refusal path,
@@ -124,11 +125,11 @@
   <p class="csvline" id="csvline"></p>
   <div class="foot" id="footnote"></div>
 </div>
-<script src="shared/config.js?v=20260920a"></script>
-<script src="shared/provisional.js?v=20260903a"></script>
-<script src="shared/shared.js?v=20260921a"></script>
-<script src="scripts/civil.page.js?v=20260921a"></script><!-- LIONS auto-height reporter (for Framer embed) -->
+<script src="shared/config.js?v=20260922c"></script>
+<script src="shared/provisional.js?v=20260922c"></script>
+<script src="shared/shared.js?v=20260922e"></script>
+<script src="scripts/civil.page.js?v=20260922c"></script><!-- LIONS auto-height reporter (for Framer embed) -->
 <script src="shared/height-reporter.js?v=20260903a"></script>
 <script src="lab.js?v=20260903a"></script>
-<script src="shell2.js?v=20260917b"></script>
+<script src="shell2.js?v=20260922c"></script>
 </body></html>

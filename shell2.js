@@ -49,7 +49,7 @@
   var gbtn=document.createElement('button'); gbtn.type='button'; gbtn.className='dw-btn dw-guide-btn';
   gbtn.setAttribute('aria-expanded','false'); gbtn.innerHTML=book+'<span>User guide</span> <span class="dw-chev">▾</span>';
   bar.appendChild(gbtn);
-  /* ── L-144: the third control, "Reading the data". A LINK, not a button: it navigates to the reference page rather than opening a panel here. Built only if shared/config.js loaded and only if we can name which surface we are on - a control  that guesses the surface would send `?from=` a lie. It is deliberately NOT in DASHBOARDS and NOT inside .dashnav, which lab.js folds into a collapsed accordion. */
+  /* ── The third control, "Reading the data". A LINK, not a button: it navigates to the reference page rather than opening a panel here. Built only if shared/config.js loaded and only if we can name which surface we are on - a control  that guesses the surface would send `?from=` a lie. It is deliberately NOT in DASHBOARDS and NOT inside .dashnav, which lab.js folds into a collapsed accordion. */
   try{
     var cur=(typeof CURRENT!=='undefined'&&CURRENT)||(location.pathname.split('/').pop()||'index.html');
     var skey=null;

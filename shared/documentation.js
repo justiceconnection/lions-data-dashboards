@@ -3,7 +3,8 @@
  * ONE source for all 26 entries. Loaded by that page and by NOTHING else - the four
  * dashboards and Case Look-Up get their link and their marker targets from
  * `shared/config.js`'s REFERENCES, which they already load, so nothing here is on any
- * dashboard's load chain (invariant 9).
+ * dashboard's load list, which is fixed: adding to it, removing from it or reordering
+ * it breaks the page.
  *
  * NOTHING IS FETCHED AT PAGE LOAD except one range request. Every entry declares the
  * national cubes it needs; an entry that needs none renders instantly, an entry that needs
@@ -14,13 +15,12 @@
  *   {{key}}      a figure. Must sit inside a [[ ]] clause.
  *   [[ ... ]]    a droppable clause. Dropped whole if any figure inside is absent.
  * Anything outside a clause is standing prose and must read as a complete sentence with
- * no numbers in it. tests/docs-check.js asserts that, and asserts that no live value is
+ * no numbers in it. An automated check asserts that, and asserts that no live value is
  * written into a copy string.
  *
- * D-042: no em dashes anywhere in this file, including in user-facing copy.
+ * House style: no em dashes anywhere in this file, including in user-facing copy.
  *
- * Spec: ops/handoffs/L-144-design-spec.md (revision C, copy and placement signed by Cary
- * 4 September 2026). Do not edit a copy string without moving DOC_REVISED and the hash.
+ * Do not edit a copy string without moving DOC_REVISED and the hash.
  */
 (function () {
   "use strict";
@@ -29,13 +29,13 @@
      PROSE_SHA hashes this module's own strings: HEAD, the GROUPS walk, and each QUOTED
      figure's value beside its source. COPY_SHA hashes the copy authored in the page,
      #doc-copy-html in web/reading-the-data.html, which is what a visitor reads.
-     tests/docs-check.js check 26(e) recomputes both; an edit that does not move the
+     An automated check recomputes both; an edit that does not move the
      matching stamp goes red. Neither can force REVISED to be right - they can only make
      a silent prose edit impossible.
-     PROSE_SHA covered `src` and never `v`, and GROUPS is empty, so until 16 September
-     2026 (L-217) it covered no figure and no page copy at all.  */
+     PROSE_SHA covered `src` and never `v`, and GROUPS is empty, so for a while it
+     covered no figure and no page copy at all.  */
   var REVISED   = '2026-09-20';
-  var PROSE_SHA = 'bf13437a';   /* recomputed by tests/docs-check.js check 26(e); there is no generator script */
+  var PROSE_SHA = 'bf13437a';   /* recomputed by that same check; there is no generator script */
   var COPY_SHA  = '37be5f81';   /* same check, over #doc-copy-html in reading-the-data.html */
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
@@ -92,7 +92,6 @@
     cl_mag_dc:    { v: '58,379',  src: OURS_JUL },
     doj_gap_lo:   { v: '3.5%',    src: DOJ_5YR },
     doj_gap_hi:   { v: '7.6%',    src: DOJ_5YR },
-    /* L-047, Cary's ruling of 3 September 2026 */
     mag_excl:     { v: '23,283',    src: OURS_JUL },
     mag_1325:     { v: '15,117',    src: OURS_JUL },
     no_dc_n:      { v: '2,687,790', src: OURS_JUL },
@@ -135,7 +134,7 @@
 
     /* over-count: numerator is a SUM OF PARTS, denominator is the cube's own total row
        grp='ALL' AND subcat='ALL'. That row exists only at occ='all' (382 rows, verified
-       3 Sep 2026), which is why occ is pinned here and not taken from the page. */
+       rather than assumed), which is why occ is pinned here and not taken from the page. */
     oc_umb_all_parts: { needs: 'lions_cube', fn: function () { return fmt(oc(null, 'umb', 'cases_filed').parts); } },
     oc_umb_all_total: { needs: 'lions_cube', fn: function () { return fmt(oc(null, 'umb', 'cases_filed').total); } },
     oc_umb_all_pct:   { needs: 'lions_cube', fn: function () { return over(oc(null, 'umb', 'cases_filed').ratio); } },
@@ -321,7 +320,7 @@
 
   /* ── the pending comparison. DOJ's side is printed and cited. OUR side is read
         live from the cube, never supplied and never written down: the matters
-        definition is still open and every one of these figures may move (L-138).
+        definition is still open and every one of these figures may move.
         A row renders only when both halves are available.                         ── */
   var DOJ_T5 = {
     /* metric, fiscal year, role -> DOJ's printed figure, Table 5 Totals rows */
@@ -347,7 +346,7 @@
   /* The pending series live in their OWN cubes, not as a column on civil_cube:
      civil_pending_cube (ym, [district,] category, role, cases_pending) and
      civil_agency_pending_cube. Whichever the page loaded is the one read here.
-     matters_pending is not in either cube today (held, L-149), so the matters
+     matters_pending is not in either cube today (deliberately held), so the matters
      entry cannot render and its copy is kept rather than deleted.
 
      ZERO SUPPRESSION. These cubes omit zero rows: a missing month inside the
@@ -392,7 +391,7 @@
         ['Plaintiff', 'Defendant', 'Other'].forEach(function (role) {
           var ours = pendingAt(m, asOf, role);
           /* a reconstructed zero RENDERS. Hiding a fault is worse than showing an
-             absurd number: style guide 5c's fourth outcome, do not guess and do
+             absurd number. Do not guess and do
              not hide. Only a genuinely unavailable figure drops the clause. */
           if (ours === null) return;
           out.push([METRIC_WORDS[m], 'FY' + y, ROLE_WORDS[role], ours, DOJ_T5[m][y][role]]);
@@ -449,11 +448,11 @@
   /* ── which national cube each entry needs, and nothing more. This IS the lazy
         fetch plan: an entry that needs nothing renders instantly, and an entry that
         needs a cube fetches it on first open and never again in the session.
-        Raw / gzipped, measured on the promoted files 4 Sep 2026:
+        Raw / gzipped, measured on the published files:
           lions_cube 5.37 / 0.65 · civil_cube 0.79 / 0.19 · agency_cube 1.48 / 0.27
           civil_agency_cube 1.92 / 0.39 · decl_cat_cube 2.06 / 0.17
           civil_pending_cube 0.56 / 0.08 · civil_agency_pending_cube 1.41 / 0.18 MiB
-        Nothing is fetched at page load. See the spec, section 6.                   */
+        Nothing is fetched at page load.                                            */
   var ENTRY_CUBES = {
     'e-dc-only':            ['lions_cube'],
     'e-filed-two':          ['lions_cube'],
@@ -506,7 +505,7 @@
     var r = rows('civil_cube')[0];
     return !!(r && Object.prototype.hasOwnProperty.call(r, col));
   }
-  /* ── THE GUARD, and revision C had to change how it is answered ────────────
+  /* ── THE GUARD, and why it is answered the way it is ──────────────────────
      A gated entry must not render when the series it describes does not exist. On a dashboard the page had already loaded the cube, so the guard was free.  On a standalone page with lazy fetching the cube is never loaded until an entry is opened, so the guard would have answered "absent" forever and the entry could never have appeared. Found by running it, not by reading it.
 
      The question is only "does this cube have this column", so it is answered by a RANGE request for the first kilobyte, which is the header line. That is the same capability Case Look-Up already depends on for its Parquets. If the host ignores the Range header it returns the whole file instead, which is 0.56 MiB and still correct, so this degrades to slow rather than to wrong. If the    request fails outright the column is treated as ABSENT, which is the
@@ -540,7 +539,7 @@
       el.innerHTML = pageCopy.innerHTML;
       /* and take the source out of the document. It is the copy's source, not a second
          rendering of it: left in place every entry and every published id is on the page
-         twice, and an id that appears twice resolves to whichever came first (L-212). */
+         twice, and an id that appears twice resolves to whichever came first. */
       if (pageCopy.parentNode) pageCopy.parentNode.removeChild(pageCopy);
       // ensure the surface filter and controls exist even when page copy is provided
       if (!el.querySelector('.doc-filter')) {
@@ -578,7 +577,7 @@
       try {
         // Render the whole mount (for any head-level figures) and each entry.
         // An entry that is still waiting on a cube is NOT settled: its placeholders
-        // are left alone here and filled by rerender() once the cube lands (L-215).
+        // are left alone here and filled by rerender() once the cube lands.
         renderHtmlEntry(el);
         [].slice.call(el.querySelectorAll('details.doc-entry')).forEach(function(d){
           renderHtmlEntry(d, !(ENTRY_CUBES[d.id] || []).length);
@@ -794,7 +793,7 @@
       if (!html) { if (settled) { tb.parentNode && tb.parentNode.removeChild(tb); } return; }
       /* in .doc-tblwrap, as the GROUPS path and reading.css both have it: the wrapper
          is the horizontal scroll container, and without it a seven-column table
-         scrolls the whole page sideways at 390 (L-215). */
+         scrolls the whole page sideways at 390. */
       var ent = tb.closest ? tb.closest('details.doc-entry') : null;
       var sum = ent && ent.querySelector('summary');
       tb.innerHTML = wrapTable(html, (sum ? sum.textContent.trim() : kind) + ', table, scrollable sideways');
@@ -864,7 +863,7 @@
   function ping() { try { window.dispatchEvent(new Event('resize')); } catch (e) {} }
 
   /* ── entry points: a plain link, on every surface ─────────────────────────
-     Revision B needed a scroll, a focus move and a transient "it moved" line,
+     An earlier design needed a scroll, a focus move and a transient "it moved" line,
      because the notes were elsewhere on the same page and a Framer auto-height
      iframe cannot scroll itself. A standalone page needs none of it: the browser
      navigates and resolves the fragment. That machinery is deleted, not carried. */

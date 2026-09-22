@@ -19,19 +19,18 @@ let CAT_NAT=null,CAT_FULL=null,AG_NAT=null,AG_FULL=null,SPINE=[],
 let CATLIST=[],DEPTS_AG=[],AGLIST=[];
 // Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
 // (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
-// of "2021-01" put January 2021 - Biden's first month - inside the Trump I range and made
-// it 49 months against the band's 48 (L-221).
+// of "2021-01" put 2021-01, the next administration's first month, inside the Trump I
+// range and made it 49 months against the band's 48.
 const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const DEPT_ORDER=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const CURRENT="declinations.html";
-// Provisional (right-censored) data - L-014, revised to rev B in L-021.
-// Spec: ops/handoffs/L-003-design-spec.md (revision B).
+// Provisional (right-censored) data.
 // All the logic lives in shared/provisional.js; this page only makes calls.
-// Two things this page owns for rev B, neither of them logic:
+// Two things this page owns, neither of them logic:
 //   scales.x.ticks.padding:6 on every chart carrying the treatment - a LAYOUT
-//     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The bar lives in that space; Chart.js defaults to 3 and the bar would touch the tick labels.
-//   _stacked:true on datasets built for a stacked render - the input to LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
+//     PRECONDITION of the gutter bar, not a style choice. The bar lives in that space; Chart.js defaults to 3 and the bar would touch the tick labels.
+//   _stacked:true on datasets built for a stacked render - the input to LIONS_PROV.decorateLine's refusal to fade a stacked fill.
 //     Set per render, because the mix charts flip family at runtime.
 // A declination is a disposition event on a criminal matter, so `declined` is criminal
 // OUTFLOW: window 6 months, on both charts, the table and the CSV.
@@ -54,7 +53,7 @@ function parseAg(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Objec
 
 // per-reason time series (summed over selected districts + selected categories/agencies)
 // `reasons` defaults to the page's own selection; the topline section passes all eight in
-// to build the share denominator without disturbing state (L-204).
+// to build the share denominator without disturbing state.
 function seriesByReason(reasons){
   const want=reasons||state.reasons;
   const useNat=state.dists.has('National')||state.dists.size===0;
@@ -77,9 +76,9 @@ function seriesByReason(reasons){
 function selReasons(){ return REASON_ORDER.filter(r=>state.reasons.has(r)); }
 
 // Every reason under the SAME district and category/agency selection, whatever the
-// reason filter is. This is the share denominator for the topline section: invariant 3
-// says the total is the cube's own total row, and on the declination cubes the eight
-// reasons partition category='ALL' exactly (ratio 1.000000, D-039/D-040), so summing
+// reason filter is. This is the share denominator for the topline section. The total is
+// the cube's own ALL row, never a sum of overlapping categories, and on the declination
+// cubes the eight reasons partition category='ALL' exactly (measured at ratio 1.000000), so summing
 // all eight of them under one selection IS that row rather than an over-count.
 function allReasonTotal(){
   const S=seriesByReason(new Set(REASON_ORDER)), out=new Array(SPINE.length).fill(0);
@@ -149,12 +148,12 @@ function renderChart2(){
     plugins:[adminBands,PV.plugin]});
 }
 /* ══════════════════════════════════════════════════════════════════════════════════
-   THE DATA TABLE AND ITS CSV - L-258, built under L-301.
+   THE DATA TABLE AND ITS CSV
    The engine is LIONS_TABLE in shared/shared.js, which this page already loads, so
-   INVARIANT 9 IS UNCHANGED: no script and no stylesheet was added to or removed from
-   this page's chain.
+   THE PAGE'S FIXED LOAD ORDER IS UNCHANGED: no script and no stylesheet was added to,
+   removed from or reordered in this page's list.
 
-   THIS PAGE IS THE ASYMMETRICAL ONE, deliberately (spec C5). Its series ARE the reasons,
+   THIS PAGE IS THE ASYMMETRICAL ONE, deliberately. Its series ARE the reasons,
    so THE EIGHT REASONS STAY COLUMNS - they are this page's measure, exactly as the five
    disposition columns are the criminal table's - and the row slots are district x
    (program category | referring agency), which is what the page's own Break down by
@@ -162,12 +161,12 @@ function renderChart2(){
    ratio 1.000000 both ways, so the reason columns partition the row's own total and the
    shares total 100.0% of the selected reasons.
 
-   L-139 LANDS HERE. The column headed a bare `Total` was the total of the SELECTED reasons - 1,847 against the cube's 1,872 at 2014-10 - which is a labelling defect and
+   THE TOTAL COLUMN NAMES ITS PARTS. A column headed a bare `Total` would be the total of the SELECTED reasons - 1,847 against the cube's 1,872 at 2014-10 - which is a labelling defect and
    not a wrong number. It becomes TWO columns that each name their parts, so the difference is on the face of the table instead of hidden in a heading. THERE IS NO
-   reason='ALL' ROW IN EITHER DECLINATION CUBE to read instead - 0 such rows in all four files, checked rather than assumed (design-la l258-cube-measure.js, L-281) - so the all-reasons figure is a CHECKED SUM and the label says so rather than calling it the cube's total.
+   reason='ALL' ROW IN EITHER DECLINATION CUBE to read instead - 0 such rows in all four files, checked rather than assumed - so the all-reasons figure is a CHECKED SUM and the label says so rather than calling it the cube's total.
 
    THE (ym, reason) GRID IS ZERO-SUPPRESSED: 133 of 3,056 keys at category='ALL' carry no row, and an absent key is a TRUE ZERO, not a gap. aggregateTable() fills the grid by initialising every reason across the whole spine before it adds anything, so nothing  downstream can read a measured zero as unknown.
-   Spec: ops/handoffs/L-258-design-spec.md, copy signed by Cary 19 September 2026. ══════════════════════════════════════════════════════════════════════════════════ */
+   ══════════════════════════════════════════════════════════════════════════════════ */
 const ROW_CAP=window.LIONS_TABLE.ROW_CAP;
 const TCOPY=window.LIONS_TABLE.COPY;
 const rkey=r=>'r_'+r.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
@@ -194,7 +193,7 @@ const TBL_COPY={
   lineOneAg:p=>'One row per '+p+'. Figures show cases from one referring agency.',
   lineSumAg:(p,n)=>'One row per '+p+'. Figures shown are cases from '+n+' referring agencies summed; each declined matter is counted once.',
   lineBreakoutAg:'Agency rows add up to the total row once "Other referring agencies, summed" is included.',
-  /* appended in EVERY state, because the reason selection is a second axis and L-139 is exactly what happens when it goes unstated */
+  /* appended in EVERY state, because the reason selection is a second axis and an unstated one is exactly what produces a total whose parts are not named */
   reasonClause:n=>' Reason columns reflect '+n+' of the eight possible reasons, and each share is of those '+n+'.',
   reasonClauseAll:' Reason columns show all eight reasons, each share is divided by the total.',
   notesExtra:'Each declined matter only has one reason, so reason columns can be summed to match the "summed" column beside them.',
@@ -251,7 +250,7 @@ const TBL_DESC={
       {k:'additive',g:'key',h:'Summable',fold:true}
     ];
     /* the reason names are UNCHANGED, character for character, from the columns this
-       table printed before L-258 */
+       table printed before the reason columns were split out */
     for(const r of sel) c.push({k:rkey(r),g:'reasons',h:r,t:'int',w:PROV_METRIC});
     for(const r of sel) c.push({k:rkey(r)+'_pct',g:'shares',h:r+' %',t:'pct',w:PROV_METRIC});
     c.push({k:'selected_reasons_total',g:'totals',h:TBL_COPY.selTotal(sel.length),t:'int',w:PROV_METRIC,cls:'tot'});
@@ -261,7 +260,7 @@ const TBL_DESC={
   get dimNounPlural(){ return isAg()?'referring agencies':'program categories'; },
   hasBasisCol:false,
   /* declinations.page.js has never carried tr.edge and does not gain it here - a reading
-     of the three page scripts, not an assumption (spec section 5.5) */
+     of the three page scripts, not an assumption */
   hasEdge:false,
   stockKeys:[], extraKeyCsv:[],
   pv:PVOPT, defaultWindowKey:PROV_METRIC,
@@ -272,9 +271,9 @@ const TBL_DESC={
   /* The share denominator is the SELECTED reasons, not all eight, so the table and the
      page's own 100%-stacked chart agree: that chart normalises on the selected reasons
      and its axis says so. The all-eight figure is beside it as its own column, which is
-     what makes an incomplete selection VISIBLE instead of implied. That is L-139.
-     Invariant 4: both totals and every share run on components the engine has ALREADY
-     bucketed, never on a mean of monthly percentages. */
+     what makes an incomplete selection VISIBLE instead of implied.
+     Sum the components across the period and then divide: both totals and every share run
+     on components the engine has ALREADY bucketed, never on a mean of monthly percentages. */
   derive:(r,st)=>{
     let sel=0,all=0;
     for(const x of REASON_ORDER){ const v=r[rkey(x)]||0; all+=v; if(st.reasons.has(x)) sel+=v; }
@@ -295,7 +294,7 @@ const TBL=window.LIONS_TABLE.make(TBL_DESC);
 const activeTblCols=()=>TBL.activeCols(state);
 function tblRowCount(){ return TBL.rowCount(state); }
 /* FOUR STATES plus a clause appended in every one of them, counted before the branch was
-   written (style guide 5g, after L-249 D-C). A state missing from the enumeration does
+   written. A state missing from the enumeration does
    not fall through to a neighbour. */
 function tblBasisLine(st){
   const p=window.LIONS_TABLE.grainNoun(st.grain), sel=tblSelDims(), ag=isAg();
@@ -311,7 +310,7 @@ function renderTable(){ LAST=TBL.render(state); }
 function syncRowsByLabel(){ const b=document.getElementById('rowsbydim');
   if(b) b.textContent=isAg()?'Referring agency':'Program category'; }
 
-/* ── L-257's lazy build, inherited exactly (spec C7) ──────────────────────────────── */
+/* ── The lazy build: the table is not drawn until the panel is opened ────────────── */
 let tblDirty=true;
 const tblPanelOpen=()=>!document.getElementById('tablePanel').hidden;
 function tblBuild(){ document.getElementById('tblpending').textContent=''; renderTable(); tblDirty=false; }
@@ -359,11 +358,11 @@ async function render(){
   const needFull=!useNat;
   if(isAg()){ if(!AG_NAT) await ensureAgency(); if(needFull) await ensureAgFull(); }
   else if(needFull){ await ensureCatFull(); }
-  /* L-283: seriesByReason()'s `if(!rows) return out;` is NOT a guard - `out` is already  zero-filled, so a missing cube is ANSWERED with zero under a district label: the topline reads "None in this period." and the table prints 1,136 cells of 0 where the cube has 2,702. Refuse instead, the way index.html and civil.html do (L-275): hold
+  /* seriesByReason()'s `if(!rows) return out;` is NOT a guard - `out` is already  zero-filled, so a missing cube is ANSWERED with zero under a district label: the topline reads "None in this period." and the table prints 1,136 cells of 0 where the cube has 2,702. Refuse instead, the way index.html and civil.html do: hold
      the previous view and leave the message the failed ensure wrote. Falling back to the
      national rows is not an option either - that prints national figures under a
      district label.
-     L-224: render() writes NOTHING to #status. The filter-state line this used to print
+     render() writes NOTHING to #status. The filter-state line this used to print
      is deleted, the topline caption being a superset of it, and a render that wrote here
      would wipe a failure within one tick. */
   if(!(isAg()?(useNat?AG_NAT:AG_FULL):(useNat?CAT_NAT:CAT_FULL))) return;
@@ -371,12 +370,12 @@ async function render(){
   renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); tblInvalidate();
 }
 
-// ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
+// ── THE TOPLINE SECTION ─────────────────────────────────────────────────────────
 // THIS PAGE HAD NO TOPLINE AT ALL until now, and it gains one with three figures:
 // the total declined, the average per month, and the selected reasons' share of all
-// eight. Two flags ride on it and neither is optional: the arm-D definition note on any
-// total or change (D-039/D-040), and the reason-scheme note on a share comparison that
-// reaches before October 2014.
+// eight. Two flags ride on it and neither is optional: the definition-change note on any
+// total or change, and the reason-scheme note on a share comparison that
+// reaches before 2014-10.
 function renderTopline(){
   const sel=selReasons();
   const series=new Array(SPINE.length).fill(0);
@@ -385,15 +384,16 @@ function renderTopline(){
   const tot=allReasonTotal();
   const all=sel.length===REASON_ORDER.length;
   const selName = all ? 'all reasons' : (sel.length===1 ? sel[0] : 'the selected reasons');
-  // Invariant 7: the topline engine is additive. A browser holding an old cached
+  // The topline engine is ADDITIVE: it decorates what the page has already rendered, and
+  // a failure in it must still leave a readable dashboard. A browser holding an old cached
   // shared/shared.js against this page script has no LIONS_TOPLINE, so a missing or
   // throwing engine logs and leaves the chart to render.
   if(!window.LIONS_TOPLINE){ console.warn('LIONS_TOPLINE unavailable - topline section skipped'); return; }
-  // L-222: facts here, sentence in the engine. See index.page.js.
+  // Facts here, sentence in the engine. See index.page.js.
   const C=window.LIONS_TOPLINE.COPY;
   try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:PROV_METRIC, metricLabel:'Matters declined',
-    // L-250: the section's period figures follow the page's Group by control, exactly
+    // The section's period figures follow the page's Group by control, exactly
     // as the charts do. No control is added inside the section.
     grain:state.grain,
     kind:'count', series, rate:null,
@@ -414,10 +414,10 @@ function renderTopline(){
 function buildCSV(){
   /* #dl sits OUTSIDE the panel and is live with the table never built, so the download
      does the build itself rather than going silently dead on the empty LAST below. Same
-     rows, same cap: D-1 is not re-opened, and an over-cap selection or an empty reason
+     rows, same cap, so an over-cap selection or an empty reason
      selection still refuses, because tblBuild() runs the same branches the table does. */
   if(tblDirty) tblBuild();
-  if(LAST.rows.length===0) return;   /* D-1: if the table refuses to draw, the download refuses too */
+  if(LAST.rows.length===0) return;   /* if the table refuses to draw, the download refuses too */
   const blob=new Blob([TBL.csvText(state,LAST)],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
   a.download=`lions_declinations_${state.dim}_${dt}_${state.grain}_${state.from}_${state.to}.csv`; a.click();
@@ -511,7 +511,7 @@ function buildDimPicker(){
 }
 
 async function init(){ renderNav();
-  /* L-224: the national cube is 1.5-3 MB and until it lands the page is a blank chart
+  /* The national cube is 1.5-3 MB and until it lands the page is a blank chart
      with no explanation. The message is cleared by the same resource arriving, below;
      the setup between here and the first render() is synchronous, so no paint happens
      in between and clearing here is clearing at the first render. */
@@ -554,7 +554,7 @@ async function init(){ renderNav();
   document.getElementById('tblToggle').addEventListener('click',()=>{ const p=document.getElementById('tablePanel'); const willOpen=p.hidden; p.hidden=!willOpen; const b=document.getElementById('tblToggle'); b.textContent=(willOpen?'▾ Hide data table':'▸ Show data table'); b.setAttribute('aria-expanded',willOpen?'true':'false'); window.dispatchEvent(new Event('resize'));
     if(!willOpen||!tblDirty) return;
     /* Over cap there is nothing to build and no wait to explain, so the refusal shows at
-       once and WITHOUT the placeholder (L-257 design note section 5). renderTable()
+       once and WITHOUT the placeholder. renderTable()
        returns straight out of its refusal branch, so this is cheap enough to run inline. */
     if(tblRowCount()>ROW_CAP){ tblBuild(); return; }
     /* ORDER MATTERS. The panel is already unhidden above, so this mutation lands in a
@@ -573,8 +573,8 @@ async function init(){ renderNav();
   // first paint: the national view renders immediately and this streams in behind it.
   // The point is that opening the district filter and switching districts is instant,
   // rather than making the user wait on a multi-megabyte download mid-interaction.
-  // Cary's call, 31 Aug 2026 - responsiveness over bytes. It is the dominant share of
-  // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
+  // Responsiveness over bytes, deliberately. It is the dominant share of
+  // this site's bandwidth: do not change it to a lazy load without measuring first.
   ensureCatFull(); render();
 }
 if(typeof document!=='undefined') init();

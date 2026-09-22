@@ -18,14 +18,13 @@ function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const 
 const METRICS=[["cases_filed","Cases filed"],["cases_terminated","Cases terminated"],["clearance","Clearance %"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
 // Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
 // (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
-// of "2021-01" put January 2021 - Biden's first month - inside the Trump I range and made
-// it 49 months against the band's 48 (L-221).
+// of "2021-01" put 2021-01, the next administration's first month, inside the Trump I
+// range and made it 49 months against the band's 48.
 const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
 const CURRENT="index.html";
-// Provisional (right-censored) data - L-014, revised to rev B in L-021.
-// Spec: ops/handoffs/L-003-design-spec.md (revision B).
+// Provisional (right-censored) data.
 // All the logic lives in shared/provisional.js; this page only makes calls.
-// Two things this page owns for rev B, neither of them logic:
+// Two things this page owns, neither of them logic:
 //   scales.x.ticks.padding:6 on every chart carrying the treatment - a LAYOUT
 //     PRECONDITION of the gutter bar (spec §3.6/§6.9), not a style choice. The
 //     bar lives in that space; Chart.js defaults to 3 and the bar would touch
@@ -107,21 +106,21 @@ const r1=x=>x==null?"-":x.toLocaleString(undefined,{maximumFractionDigits:1});
 const rint=x=>x==null?"-":Math.round(x).toLocaleString();
 const p1=x=>x==null?"-":x.toFixed(1);
 
-// ── THE TOPLINE SECTION (L-199 direction B, L-204) ───────────────────────────────
+// ── THE TOPLINE SECTION ─────────────────────────────────────────────────────────
 // The four KPI cards and their renderKPIs() are retired: this page now hands the
 // shared engine in shared/shared.js a model of the series it has already aggregated,
 // and the engine does the rest. Nothing here reads a cube a second time.
-// Invariant 3: the share denominator is the cube's own ALL total row, never the sum of
+// The share denominator is the cube's own ALL total row, never the sum of
 // the selected categories - aggregateRaw() with cats={'ALL'} takes grp='ALL' AND
 // subcat='ALL', which exists only at occ='all'.
-// Invariant 4: a percent metric is handed over as its two component series, so the
+// A percent metric is handed over as its two component series, so the
 // engine computes a ratio of sums and never an average of monthly percentages.
 function renderTopline(){
   const R=aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats);
   const TOT=aggregateRaw(NAT,FULL,SPINE,state.dists,new Set(['ALL']));
   const m=state.metric, pct=isPct(m);
   // denLabel names the series the rate divides BY, for the glance's second slot: the
-  // page already has the name, so the slot costs no new string (spec §5.1).
+  // page already has the name, so the slot costs no new string.
   const rate = m==='clearance' ? {num:R.term,den:R.filed,denLabel:metricLabel('cases_filed')}
              : m==='guilty_pct' ? {num:R.guilty,den:R.dt,denLabel:metricLabel('defendants_terminated')}
              : m==='dismissed_pct' ? {num:R.dismissed,den:R.dt,denLabel:metricLabel('defendants_terminated')} : null;
@@ -129,17 +128,18 @@ function renderTopline(){
   const selName = all ? 'all categories'
                 : (state.cats.size===1 ? [...state.cats][0] : 'the selected categories');
   const series=metricArray(R,m);
-  // Invariant 7: the topline engine is additive. A browser holding an old cached
+  // The topline engine is ADDITIVE: it decorates what the page has already rendered, and
+  // a failure in it must still leave a readable dashboard. A browser holding an old cached
   // shared/shared.js against this page script has no LIONS_TOPLINE, so a missing or
   // throwing engine logs and leaves the chart to render.
   if(!window.LIONS_TOPLINE){ console.warn('LIONS_TOPLINE unavailable - topline section skipped'); return; }
-  // L-222: the caption states the chart's state, so the page hands over the FACTS and the
-  // engine owns the SENTENCE. Every string below is the engine's own COPY, so the signed
+  // The caption states the chart's state, so the page hands over the FACTS and the
+  // engine owns the SENTENCE. Every string below is the engine's own COPY, so the settled
   // wording lives in one place and cannot drift four ways across four page scripts.
   const C=window.LIONS_TOPLINE.COPY;
   try{ window.LIONS_TOPLINE.render({
     spine:SPINE, view:visIdx(), metricKey:m, metricLabel:metricLabel(m),
-    // L-250: the section's period figures follow the page's Group by control, exactly
+    // The section's period figures follow the page's Group by control, exactly
     // as the chart and the data table do. No control is added inside the section.
     grain:state.grain,
     kind: pct?'rate':'count', series, rate,
@@ -159,12 +159,11 @@ function renderTopline(){
   }); }catch(e){ console.warn('LIONS_TOPLINE.render failed - topline section skipped', e); }
 }
 
-/* ── THE DATA TABLE AND CSV (L-233, built under L-237) ──────────────────────────────
- * Spec: ops/handoffs/L-233-design-spec.md. Copy signed by Cary 16 September 2026.
+/* ── THE DATA TABLE AND CSV ───────────────────────────────────────────────────────
  *
  * A row is ONE CELL of period x district-slot x category-slot. Every slot always names
  * something: a member, or an aggregate that says what it aggregates. No slot is ever
- * blank and no figure is ever headed a bare "Total" (L-139).
+ * blank and no figure is ever headed a bare "Total".
  *
  * The table follows the page's Group by control and has no period control of its own, so
  * it can never be on a grain the chart is not on.
@@ -174,18 +173,19 @@ function renderTopline(){
  * now basis line state 2, directly above the table, so #note is no longer written to.
  */
 /* The table and its CSV are built by LIONS_TABLE in shared/shared.js, which every
-   dashboard already loads (invariant 9 is unchanged by L-301: no script and no
-   stylesheet was added to or removed from any chain). This page passes a DESCRIPTOR -
+   dashboard already loads (the fixed load order is unchanged: no script and no
+   stylesheet was added to, removed from or reordered in any page's list). This page
+   passes a DESCRIPTOR -
    TBL_DESC below - carrying its own columns, its own cube read, its own dimension slots
-   and its own signed copy. The shared strings are authored once, in LIONS_TABLE.COPY,
+   and its own copy. The shared strings are authored once, in LIONS_TABLE.COPY,
    and aliased into TBL_COPY below so they cannot drift four ways.
-   L-258 section 1 C0; built under L-301. */
-const ROW_CAP=window.LIONS_TABLE.ROW_CAP;   // a RENDERING budget, not a property of the data - spec section 8
+   */
+const ROW_CAP=window.LIONS_TABLE.ROW_CAP;   // a RENDERING budget, not a property of the data
 const TCOPY=window.LIONS_TABLE.COPY;
 /* `g` is the column group a user can switch off; 'key' is never switchable, so a CSV
    consumer parsing by name has a stable set of five key columns whatever the user does.
    `w` is the provisional-window metric key the column takes: the table's own mark is the
-   WIDEST across the columns it is currently printing (the L-014 envelope rule).
+   WIDEST across the columns it is currently printing.
    `fold` marks the two columns that fold INTO the category cell below 560px. */
 const TBL_COLS=[
   {k:'period',g:'key',h:'Period'},
@@ -211,14 +211,14 @@ const TBL_COLS=[
 ];
 /* The six columns the CSV carries and the screen does not. Each spells out in a word what
    the table shows as a mark or as cell text. Declared to the user in TBL_COPY.csvLine,
-   beside the download button, because style guide section 9 requires any surviving
-   screen/file difference to be stated there.
+   beside the download button, because any surviving
+   screen/file difference must be stated there.
    LIONS_TABLE.csvColumns() emits exactly these six, positionally, next to the column
-   each one qualifies; this list is the written inventory the signed csvLine counts. */
+   each one qualifies; this list is the written inventory csvLine counts. */
 const CSV_EXTRA=['period_grain','period_partial','provisional','provisional_window_months',
   'district_level','category_level'];
-/* Every user-facing string the table and the CSV put on the page. Signed by Cary verbatim
-   on 16 September 2026 (spec section 6). Never an em dash (D-042). */
+/* Every user-facing string the table and the CSV put on the page. The wording here is
+   settled: do not reword it in passing. Never an em dash. */
 const TBL_COPY={
   totalLabel:'All categories',
   complementLabel:'Other categories, and cases with none recorded',
@@ -226,17 +226,17 @@ const TBL_COPY={
   catSum:n=>n+' categories, added together',
   basisDistinct:'Distinct total', basisAll:'All occurrences', basisPrimary:'Primary category',
   addsTotal:TCOPY.addsTotal, addsYes:TCOPY.addsYes, addsNo:TCOPY.addsNo,
-  /* L-267. The FOURTH value of the Adds up? column, and the reason it is a fourth rather than a reuse: with breakout off and exactly ONE category selected the table holds one row and no total row, so there is no sum in it and no second row to overlap with. 'yes' would claim the rows reach a total that is not on the table, 'no - overlaps' would claim an overlap between rows that do not exist, and 'is the total' - which is what this state carried until L-267 - is flatly false. It parallels addsTotal in grammar for the same reason: both answer what the row IS, because the column's yes/no question has no subject on a one-row table. */
+  /* The FOURTH value of the Adds up? column, and the reason it is a fourth rather than a reuse: with breakout off and exactly ONE category selected the table holds one row and no total row, so there is no sum in it and no second row to overlap with. 'yes' would claim the rows reach a total that is not on the table, 'no - overlaps' would claim an overlap between rows that do not exist, and 'is the total' - which is what this state carried before - is flatly false. It parallels addsTotal in grammar for the same reason: both answer what the row IS, because the column's yes/no question has no subject on a one-row table. */
   addsOne:'is one category',
   lineNoBreakoutAll:p=>'One row per '+p+'. Figures show the database\'s total cases for all program categories, counted once per case.',
   lineNoBreakoutSum:(p,n)=>'One row per '+p+'. Figures show '+n+' program categories added together, and a case labeled with more than one category is shown more than once.',
-  /* L-249 D-C, signed by Cary verbatim on 17 September 2026 (spec section 6.2). The SIXTH basis-line state: breakout off with exactly ONE category selected. It fell through the sel.length>1 test to lineNoBreakoutAll above, which then told the reader the figures were the cube's own total row for all program categories while the table showed one. Basis line 1 is unchanged - it was right for its own state and the ROUTING was wrong. */
+  /* The SIXTH basis-line state: breakout off with exactly ONE category selected. It fell through the sel.length>1 test to lineNoBreakoutAll above, which then told the reader the figures were the cube's own total row for all program categories while the table showed one. Basis line 1 is unchanged - it was right for its own state and the ROUTING was wrong. */
   lineNoBreakoutOne:(p,occ)=>'One row per '+p+'. Figures shown are one program category, counted '+(occ==='primary'?'once by the case\'s primary code':'under every labeled code')+'.',
   lineBreakoutAllOcc:'Program category rows will add up to a number that differs from the total row, because cases may be filed with multiple program categories. The total row is the database\'s own total for all categories, counted once per case.',
   lineBreakoutPrimary:'Program category rows will reach the total row once "Other categories, and cases with none recorded" is included.',
   lineOverlap:'You have selected an umbrella category and one of its own sub-categories, so two of these rows count the same cases. Toggle one of them off.',
   refusal:(n,cap)=>TCOPY.refusal(n,cap,'categories'),
-  /* L-257, signed by Cary verbatim on 17 September 2026 (design note section 7a). The
+  /* The
      placeholder shown between the panel opening and the table landing. It names the ACT
      and never a duration: the duration is a property of the reader's device and nobody
      has measured a phone. The verb is this page's own - the refusal above says "draw". */
@@ -270,7 +270,7 @@ function tblDistRows(d){
               (382 of 382 national rows, 35,523 of 35,523 district rows), so honouring an
               occ='primary' selection here would match no row at all: the table would read
               zero, or fall through to summing the categories, and that fall-through IS
-              invariant 3's own failure mode. aggregateRaw()'s catAll branch is safe for
+              exactly the double-count the ALL row exists to prevent. aggregateRaw()'s catAll branch is safe for
               the same reason - it tests only grp and subcat - and both must stay that way
               on purpose rather than by inheritance.
      'keys' - one or more grp|subcat targets AT the selected occurrence axis. */
@@ -297,11 +297,12 @@ const tblSelCats=()=> (state.cats.has('ALL')||state.cats.size===0)?[]:[...state.
 const tblSelDists=()=> (state.dists.has('National')||state.dists.size===0)?[]:[...state.dists];
 /* An umbrella selected together with one of its own specifics double-counts even at
    occ='primary', because the specifics partition their umbrella EXACTLY there.
-   groupedCatSelect()'s pick() has prevented that combination since L-242 (D-074, 17
-   September 2026), so no selection made through this picker can make the test below
+   groupedCatSelect()'s pick() prevents that combination, so no selection made through
+   this picker can make the test below
    return true. THAT GUARD IS ONE PICKER ON ONE PAGE AND NOT A PROPERTY OF THE CUBE:
    nothing about lions_cube changed, and an analyst who sums an umbrella row and one of
-   its own subcat rows by hand gets the same exact double count. Invariant 3 governs
+   its own subcat rows by hand gets the same exact double count. The rule that the cube's
+   own ALL row IS the total, and that overlapping parts are never summed to one, governs
    that, not this function. */
 function tblSelectionOverlaps(){
   const s=tblSelCats();
@@ -336,7 +337,7 @@ function tblCategorySlots(){
 }
 /* The descriptor this page hands LIONS_TABLE. Every field is this page's own; the row
    model, the bucketing, the CSV shape, the refusal and the DOM writing are the engine's
-   and are identical on all four dashboards (L-258 section 1 C0, built under L-301). */
+   and are identical on all four dashboards. */
 const TBL_DESC={
   spine:()=>SPINE, visIdx:()=>visIdx(),
   cols:()=>TBL_COLS,
@@ -346,7 +347,7 @@ const TBL_DESC={
   pv:PVOPT, defaultWindowKey:'cases_filed',
   aggregate:(st,dists,target)=>aggregateTable(dists,target),
   dimSlots:()=>tblCategorySlots(),
-  /* Invariant 4: every one of these runs on components the engine has ALREADY bucketed,
+  /* Every one of these runs on components the engine has ALREADY bucketed,
      so a fiscal-year clearance rate is the year's terminations over the year's filings
      and never the mean of twelve monthly rates. */
   derive:r=>{ const dt=r.defendants_terminated;
@@ -371,7 +372,7 @@ function tblBasisLine(){
   if(!state.rowsBy.category){
     const sel=tblSelCats();
     if(sel.length>1) return TBL_COPY.lineNoBreakoutSum(grainNoun(),sel.length);
-    /* L-249 D-C: SIX states now, not five. This one used to fall through to the
+    /* SIX states, not five. This one used to fall through to the
        all-categories line. The enumeration is the contract: a state missing from it does
        not fall through to a neighbour, it gets its own line. */
     if(sel.length===1) return TBL_COPY.lineNoBreakoutOne(grainNoun(),state.occ);
@@ -382,7 +383,7 @@ function tblBasisLine(){
 
 function renderTable(){ LAST=TBL.render(state); }
 
-/* ── L-257: the table is built on FIRST OPEN, and not while the disclosure is shut ──
+/* ── The table is built on FIRST OPEN, not while the disclosure is shut ───────────
  * renderTable() used to run in the main render path whether or not #tablePanel was
  * hidden, so the full price was paid and nothing was shown: measured at 6,494 rows,
  * 356.7 ms of a 634.6 ms build, on every filter, date, preset, metric, occurrence-axis
@@ -531,11 +532,11 @@ function render(){
   const needFull=!(state.dists.has('National')||state.dists.size===0)||state.seriesBy==='district';
   /* The district cube can also finish and FAIL: FULL stays null with fullLoading back to
      false, and the old `&& fullLoading` guard fell straight through into aggregateRaw(),
-     which threw `full is not iterable` on a null and left the page dead (L-275). Return
+     which threw `full is not iterable` on a null and left the page dead. Return
      on "no FULL" whatever the reason. Two things this deliberately does NOT do: it does
      not overwrite the message ensureFull()'s catch wrote, and it does not fall back to
      the national rows, which would print national figures under a district label. */
-  /* L-224: render() writes NOTHING to #status. The filter-state line this used to
+  /* render() writes NOTHING to #status. The filter-state line this used to
      print is deleted - the topline caption is a superset of it - and the progress and
      failure messages belong to ensureFull(), which is the only thing that knows which
      one is true. A render that wrote here would wipe a failure within one tick. */
@@ -545,31 +546,31 @@ function render(){
 /* ── THE CSV ────────────────────────────────────────────────────────────────────────
  * It MIRRORS the table: same rows, same order, same figures, same metric column set,
  * plus the six machine columns that carry the marks the screen draws. Headers are raw
- * field names, not display labels (style guide section 9). A percentage is emitted at
+ * field names, not display labels. A percentage is emitted at
  * 2dp where the screen rounds to 1dp - that is presentation, not identity.
  *
- * Invariant 6 survives the export boundary as THREE columns, not one, and they may not
+ * THE PROVISIONAL MARK survives the export boundary as THREE columns, not one, and may not
  * be collapsed: `provisional` is the flag, `provisional_window_months` is what makes it
  * interpretable away from this page, and `period_partial` is a DIFFERENT fact (a bucket
- * holding fewer months than its period, not a bucket still being reported) that style
- * guide section 6a says never to merge with it. Losing a mark at the export boundary is
- * L-012 in another layer.
+ * holding fewer months than its period, not a bucket still being reported) and must
+ * never be merged with it. The newest months are incomplete: mark them, never hide them,
+ * and losing a mark at the export boundary loses them just as surely as dropping it here.
  *
  * ONE mark on the screen is NOT in the file and it is named here rather than left to be
- * found: `tr.edge`, the grey tint at or before 1996-09. D-2 carries that class forward
+ * found: `tr.edge`, the grey tint at or before 1996-09. The table carries that class forward
  * untouched, so the gap is carried forward with it; closing it means shipping a flag
- * whose meaning nobody has written down (L-236). */
+ * whose meaning nobody has written down. */
 function csvColumns(){ return TBL.csvColumns(state,LAST.cols.length?LAST.cols:activeTblCols()); }
 function buildCSVText(){ return TBL.csvText(state,LAST); }
 function buildCSV(){
-  /* L-257: #dl sits OUTSIDE the panel and is live with the table never built, so the
+  /* #dl sits OUTSIDE the panel and is live with the table never built, so the
      download does the build itself rather than going silently dead on the empty LAST
      below. It costs the row-building share only, about 80 ms at 6,494 rows. Same button,
-     same rows, same cap: D-1 is not re-opened, and an over-cap selection still refuses,
+     same rows, same cap, so an over-cap selection still refuses,
      because tblBuild() runs the same refusal branch the table does. civil.page.js does
      the same thing on its own #dl. */
   if(tblDirty) tblBuild();
-  if(LAST.rows.length===0) return;   /* D-1: if the table refuses to draw, the download refuses too */
+  if(LAST.rows.length===0) return;   /* if the table refuses to draw, the download refuses too */
   const blob=new Blob([buildCSVText()],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   const dt=(state.dists.has('National')||state.dists.size===0)?'National':(state.dists.size===1?[...state.dists][0]:state.dists.size+'dists');
   const ct=(state.cats.has('ALL')||state.cats.size===0)?'ALL':(state.cats.size===1?[...state.cats][0].replace(/\W+/g,''):state.cats.size+'cats');
@@ -609,13 +610,13 @@ function buildAx2Picker(){ state.ax2sel=new Set(); const mount=document.getEleme
   } else {
     ax2MS=multiSelect('ax2sel',{items:(state.seriesBy==='category'?CATLIST:districtList()),plain:true,emptyLabel:'pick series…',initial:state.ax2sel,searchable:state.seriesBy==='district',
       fmt:state.seriesBy==='district'?fmtDist:undefined, onChange:v=>{ state.ax2sel=new Set(v); renderChart(); }}); } }
-/* L-249, signed by Cary verbatim on 17 September 2026 (spec section 6.1). The two forms
+/* The two forms
    of the auto-deselect note, and there is no third. Every cleared sub-category is named,
    however many there are: replacing the names with a count reproduces in miniature the
    defect this repairs, so there is no threshold anywhere in it. No glyph - this is a
    statement of what the control did, not a caution, and a warning mark would frame a
    correct automatic action as the user's error. No figure from the data, ever. The words
-   "umbrella" and "sub-category" are taken from signed basis line 5. Never an em dash. */
+   "umbrella" and "sub-category" are taken from basis line 5. Never an em dash. */
 const CAT_COPY={
   noteClearedOne:(child,umb)=>[child+' was turned off. ','It is a sub-category of '+umb+', and counting both would count the same cases twice.'],
   noteClearedMany:(children,umb)=>[children.join(', ')+' were turned off. ','They are sub-categories of '+umb+', and counting them with it would count the same cases twice.']
@@ -624,7 +625,7 @@ const CAT_COPY={
 // collapsible specific sub-categories. 'All categories' default; groups collapsed by default.
 function groupedCatSelect(mountId,opts){
   const wrap=document.getElementById(mountId); wrap.classList.add('ms'); wrap.innerHTML='';
-  /* L-249: one class, and it is the whole container decision for the CSS. It scopes every
+  /* One class, and it is the whole container decision for the CSS. It scopes every
      new rule to the grouped picker, which exists on index.html alone, so nothing here can
      reach the district picker beside it or the other five surfaces. */
   wrap.classList.add('ms-grouped');
@@ -632,14 +633,14 @@ function groupedCatSelect(mountId,opts){
   const btn=document.createElement('button'); btn.type='button'; btn.className='ms-btn';
   const panel=document.createElement('div'); panel.className='ms-panel'; panel.hidden=true;
   const list=document.createElement('div'); list.className='ms-list';
-  /* L-249: the persistent polite live region. Created ONCE and outside .ms-list, because
+  /* The persistent polite live region. Created ONCE and outside .ms-list, because
      draw() replaces .ms-list's innerHTML wholesale and a live region born with its own
      text is not reliably announced. Only its textContent ever changes. */
   const live=document.createElement('div'); live.className='ms-live'; live.setAttribute('role','status');
   const label=()=> (sel.has('ALL')||sel.size===0)?'All categories':(sel.size===1?[...sel][0]:sel.size+' selected');
   const fire=()=>{ btn.textContent=label(); opts.onChange([...sel]); };
-  // L-242, RULED BY CARY 17 September 2026: an umbrella and one of its own specifics can
-  // never be selected together. The specifics partition their umbrella EXACTLY at
+  // An umbrella and one of its own specifics cannot both be selected: the specifics
+  // partition their umbrella EXACTLY at
   // occ='primary' - 262,827 keys x 9 columns, 0 mismatches - so selecting both counts
   // those cases PRECISELY twice, not approximately. This picker feeds aggregateRaw(),
   // so the double count reached both charts, the topline section, the table and the CSV.
@@ -647,11 +648,11 @@ function groupedCatSelect(mountId,opts){
   // an umbrella and one of its own specifics cannot be viewed side by side.
   // parentOf is built from opts.specs, because this component is handed its own
   // hierarchy and reads no page global. It assumes a specific label has ONE parent -
-  // the same assumption CATMAP already makes. Checked against web/data/ on 17 September
-  // 2026: 95 specific labels, one parent umbrella each, and no umbrella name is also a
+  // the same assumption CATMAP already makes. Checked against web/data/ rather than
+  // assumed: 95 specific labels, one parent umbrella each, and no umbrella name is also a
   // specific label.
   const parentOf={}; for(const u of opts.umbrellas) for(const s of (opts.specs[u]||[])) parentOf[s]=u;
-  /* L-249: transient, and the ONLY new state this component carries.
+  /* Transient, and the ONLY state this component carries beyond the selection.
      { umbrella, cleared:[...] }, or null. Set by pick() in exactly one case; cleared by
      the next interaction of any kind, before that interaction is processed. */
   let notice=null;
@@ -659,7 +660,7 @@ function groupedCatSelect(mountId,opts){
   const pick=(key,on)=>{ sel.delete('ALL');
     if(on){
       if(opts.specs[key]){
-        /* L-249: three conditions on top of "the box went on", and all of them are this
+        /* Three conditions on top of "the box went on", and all of them are this
            component's own state. (1) the key is an umbrella with specifics, (2) at least
            one of them was actually selected, (3) its group is COLLAPSED, so the boxes
            about to clear are not rendered and the user cannot see them go. With the group
@@ -672,7 +673,7 @@ function groupedCatSelect(mountId,opts){
       else if(parentOf[key]) sel.delete(parentOf[key]);                    // specific clears its parent
       sel.add(key);
     } else { sel.delete(key); if(sel.size===0) sel.add('ALL'); } };
-  /* L-249: the visible note. aria-hidden, because the live region says the same words and
+  /* The visible note. aria-hidden, because the live region says the same words and
      a screen-reader user must not hear them twice. */
   function noteEl(){
     const parts = notice.cleared.length===1
@@ -698,12 +699,12 @@ function groupedCatSelect(mountId,opts){
       row.append(lab);
       if(specs.length){ const cv=document.createElement('span'); cv.className='cv'; cv.textContent=expanded.has(u)?'▾':'▸';
         cv.title=expanded.has(u)?'Collapse':'Expand sub-categories';
-        /* L-249: expanding the group clears the note - at that moment the unticked boxes
+        /* Expanding the group clears the note - at that moment the unticked boxes
            say it themselves and a note beside them is redundant. */
         cv.addEventListener('click',e=>{ e.stopPropagation(); clearNotice(); expanded.has(u)?expanded.delete(u):expanded.add(u); draw(); });
         row.append(cv); }
       list.append(row);
-      /* L-249: directly under the group row that fired, which is the row the user has just
+      /* Directly under the group row that fired, which is the row the user has just
          clicked, so it is on screen by construction, and it stands exactly where the
          sub-list would be if the group were open. */
       if(notice && notice.umbrella===u) list.append(noteEl());
@@ -714,7 +715,7 @@ function groupedCatSelect(mountId,opts){
         list.append(box); } }
   }
   panel.append(live,list); wrap.append(btn,panel); btn.textContent=label(); draw();
-  /* L-249: closing the panel ends the note. It describes one interaction, not a standing
+  /* Closing the panel ends the note. It describes one interaction, not a standing
      condition, and a note still sitting there on the next open would be claiming to be one. */
   btn.addEventListener('click',e=>{ e.stopPropagation(); if(!panel.hidden){ clearNotice(); draw(); } panel.hidden=!panel.hidden; });
   document.addEventListener('click',e=>{ if(!wrap.contains(e.target)){ if(!panel.hidden){ clearNotice(); draw(); } panel.hidden=true; } });
@@ -735,10 +736,10 @@ async function ensureFull(){ if(FULL||fullLoading) return;
     SL.setLoading(null); SL.clearLoadError(); }
   catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } fullLoading=false; }
 
-/* ── THE HINT BUBBLE'S BEHAVIOUR (L-294). Style guide 5a. ────────────────────
+/* ── THE HINT BUBBLE'S BEHAVIOUR ─────────────────────────────────────────────
    The same function is written again in web/case-lookup/index.html's inline
    <script>: the two pages share no file - Case Look-Up loads none of this chain
-   - so the style guide is what keeps the two copies one component.
+   - so keeping the two copies one component is discipline, not code.
 
    Four openers. Three of them are CSS (hover, :focus-visible, :focus-within) and
    cost no JS at all, so hover and keyboard still work if this script never runs.
@@ -763,12 +764,12 @@ function wireHint(btnId, tipId){
 }
 
 async function init(){ renderNav();
-  /* L-294: wired HERE, above the first await, because the bar and its button are
+  /* Wired HERE, above the first await, because the bar and its button are
      static markup that paints before any cube arrives and the bubble reads no
      data - so the pin has to work even on the branch below that returns early
      when the national cube fails. */
   wireHint('hintOcc','tipOcc');
-  /* L-224: the national cube is 1.5-3 MB and until it lands the page is a blank chart
+  /* The national cube is 1.5-3 MB and until it lands the page is a blank chart
      with no explanation. The message is cleared by the same resource arriving, below;
      the setup between here and the first render() is synchronous, so no paint happens
      in between and clearing here is clearing at the first render. */
@@ -785,7 +786,7 @@ async function init(){ renderNav();
   CATKEYS=[...UMB]; for(const u of UMB) CATKEYS.push(...SPECS[u]);
   CATMAP={ALL:{grp:'ALL',subcat:'ALL'}};
   for(const u of UMB){ CATMAP[u]={grp:u,subcat:'ALL'}; for(const s of SPECS[u]) CATMAP[s]={grp:u,subcat:s}; }
-  // L-144: the marker rule is an INDEX into "Reading the data", not a severity signal.
+  // The marker rule is an INDEX into "Reading the data", not a severity signal.
   // On this page it flags `cases_filed` and `defendants_filed` only - the two series the
   // DOJ Table 3B entry names. Not `clearance`, not the termination series: a caveat that
   // covers every metric on a surface is carried by the bar link, not by a glyph on each.
@@ -798,7 +799,7 @@ async function init(){ renderNav();
   document.querySelectorAll('#seriesBy button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#seriesBy button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.seriesBy=b.dataset.v;
     if(state.seriesBy==='district') await ensureFull(); if(state.ax2by==='series') buildAx2Picker(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); }));
-  // The table follows Group by (spec section 4.2): its period column IS the chart's
+  // The table follows Group by: its period column IS the chart's
   // bucket, so a grain change has to rebuild it as well as the two charts.
   document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); tblInvalidate(); }));
   document.querySelectorAll('#occ button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#occ button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.occ=b.dataset.v; render(); }));
@@ -813,7 +814,7 @@ async function init(){ renderNav();
   state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
-  /* L-257 co-edit: the screen/file difference line is a CONSTANT and is set once here,
+  /* The screen/file difference line is a CONSTANT and is set once here,
      not from renderTable(). #csvline sits outside the panel, under a download button that
      is live from page load, so writing it from the build would leave it blank until the
      panel was first opened. It also closes a pre-existing defect: the refusal branch
@@ -848,8 +849,8 @@ async function init(){ renderNav();
   // first paint: the national view renders immediately and this streams in behind it.
   // The point is that opening the district filter and switching districts is instant,
   // rather than making the user wait on a multi-megabyte download mid-interaction.
-  // Cary's call, 31 Aug 2026 - responsiveness over bytes. It is the dominant share of
-  // this site's bandwidth, so read ops/DECISIONS.md D-016 before changing it.
+  // Responsiveness over bytes, deliberately. It is the dominant share of
+  // this site's bandwidth: do not change it to a lazy load without measuring first.
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();

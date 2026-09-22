@@ -1,10 +1,10 @@
-/* "Reading the data" - the reference page's own styles (L-144).
+/* "Reading the data" - the reference page's own styles.
  *
  * Loaded ONLY by web/reading-the-data.html, after shared/shared.css, which already
  * supplies :root, body, .wrap, h1, .sub, .foot, .dashnav and .dashsel. Everything here is
  * the notes component and the Back control.
  *
- * Four properties this component is not free to give up, from the spec's section 13:
+ * Four properties this component is not free to give up:
  *   - nothing uses --accent and there is no alpha anywhere. Yellow is 1.19:1 on white,
  *     so there is nothing to composite away and no contrast argument to re-run.
  *   - the pressed filter chip is a SHAPE change (filled vs outlined) as well as a colour
@@ -14,7 +14,7 @@
  *     scroll it back.
  *   - this is NOT section 5b's caution shape (#fff9c4 plus a 4px charcoal rule). That
  *     shape was argued for on contrast arithmetic for a warning; reusing it for a
- *     reference section dilutes it (style guide 5c's precedent).
+ *     reference section dilutes it.
  *
  * Buttons here set their own box because shared/shared.css styles `button` with nothing
  * but `cursor:pointer`.
@@ -30,7 +30,7 @@ button.doc-chip,button.doc-expand{font:inherit;color:var(--ink);background:var(-
 .doc-back:hover{background:#f4f4f2;border-color:#d7d7d3}
 .doc-back:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
-/* ── the notes. Same component as revision B minus the panel wrapper: this IS the
+/* ── the notes. The same component minus the panel wrapper: this IS the
       page now, so there is no outer <details> and no card around everything.
       Nothing is colour-coded, nothing uses --accent, no alpha anywhere. ── */
 .doc-page{max-width:78ch}

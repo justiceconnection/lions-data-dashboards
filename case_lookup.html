@@ -6,7 +6,7 @@
 <title>Case Look-Up has moved - Justice Connection</title>
 <link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
 <!--
-  L-068 / L-075 - redirect stub, 2026-09-01.
+  Redirect stub.
   This page used to be a second, older Case Look-Up app. It range-read the same two
   Parquets as the canonical app under a URL that carried no cache key, so a visitor
   here could mix stale and fresh byte ranges after a Parquet promotion and hit a ZSTD
@@ -14,8 +14,9 @@
   bookmarked/shared URLs and any Framer iframe embed keep working (there is no
   404.html in the Pages clone).
   DO NOT add a script, a stylesheet, a Parquet fetch or DuckDB-WASM to this file.
-  With no Parquet read here, the second BUILD constant no longer exists and
-  invariant 11 governs two constants, not three.
+  With no Parquet read here, the second BUILD constant no longer exists, so the site
+  keeps two constants, not three: PART guards the build and BUILD guards the browser,
+  and neither substitutes for the other.
 -->
 <link rel="canonical" href="https://justiceconnection.github.io/lions-data-dashboards/case-lookup/index.html">
 <meta http-equiv="refresh" content="3;url=./case-lookup/index.html">

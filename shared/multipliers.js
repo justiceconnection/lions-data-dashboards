@@ -1,10 +1,10 @@
-/* LIONS reporting-lag completion multipliers — shared across dashboards.
+/* LIONS reporting-lag completion multipliers - shared across dashboards.
  *
  * Estimated final = reported value x multiplier[age], where age = months since the month ended
  * (age 0 = newest/least-complete month; ages 0-7 = the last 8 months, older months assumed final).
  * Derived by chain-ladder from the May-2026 vs June-2026 vintage pair; vintage-agnostic (the dashboards
  * compute age from whatever cube is loaded). To refine the estimates across ALL dashboards, edit the
- * arrays here only. Reference: completion_multipliers.csv / Completion_Multipliers_2026.md.
+ * arrays here only. Reference: completion_multipliers.csv.
  */
 window.LIONS_MULT = {
   criminal: {

@@ -4,7 +4,7 @@ const DASHBOARDS=[{name:"Criminal Cases",file:"index.html"},{name:"Civil Matters
 const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.05)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.12)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.05)"},{name:"Trump II",a:"2025-01",b:"9999-12",c:"rgba(33,33,35,0.12)"}];
 const ADMIN_SEQ=['obama2','trump1','biden','trump2'];
 
-// ── "Reading the data" - the reference page every surface links to (L-144) ──────
+// ── "Reading the data" - the reference page every surface links to ─────────────
 // ONE constant, two render sites, six surfaces. `shell2.js` renders the bar control on
 // the four dashboards; `case-lookup/index.html` renders its own header link. Markers are
 // rendered by each `scripts/<page>.page.js`.
@@ -16,10 +16,10 @@ const ADMIN_SEQ=['obama2','trump1','biden','trump2'];
 // every dashboard at every width. The control stays visible in the bar.
 const REFERENCES={
   page:"reading-the-data.html",
-  label:"Documentation",              // must equal LIONS_DOC.HEAD.button; docs-check asserts it
+  label:"Documentation",              // must equal LIONS_DOC.HEAD.button; a build check asserts it
   arrow:"→",
   // surface key -> the dashboard it names. `name` must match LIONS_DOC.SURFACES exactly
-  // (docs-check asserts it); `file` is what the Back control on the notes page links to.
+  // (a build check asserts it); `file` is what the Back control on the notes page links to.
   surfaces:{
     index:{name:"Criminal Cases",file:"index.html"},
     civil:{name:"Civil Matters and Cases",file:"civil.html"},
@@ -51,8 +51,8 @@ const REFERENCES={
     return (base||"")+this.page+(s?"?from="+s:"")+(entryId?"#"+entryId:"");
   },
   // Entries whose copy is signed but which the notes page does not render yet, because
-  // the series they describe is not in the promoted cube. `matters_pending` is held on
-  // L-149. entryFor() returns null for a held entry, so a marker can never point at an
+  // the series they describe is not in the published cube. `matters_pending` is held
+  // for that reason. entryFor() returns null for a held entry, so a marker can never point at an
   // anchor the page does not publish - and the held set is stated once, here, rather
   // than re-derived in each page script.
   held:["e-pending-entry-date"],
