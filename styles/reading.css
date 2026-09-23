@@ -111,7 +111,7 @@ table.doc-tbl tr.tot td{font-weight:700;border-top:1px solid var(--ink)}
 
 /* The heading on the standing statement. Type is the page's section heading; the rule and
    the space above it belong to the container, so this drops the border and the top margin
-   that h2.doc-grp carries or the foot of the page draws two hairlines 12px apart. Muted,
+   that h2.doc-grp carries or the foot of the page draws two hairlines 33px apart. Muted,
    uppercase and letter-spaced is also what keeps it from reading as an entry summary: no
    summary on this page is any of the three. */
 .doc-aiuse-h{font-size:16px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);

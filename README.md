@@ -4,7 +4,7 @@ Four dashboards, a case search and a reference page over the **LIONS** caseload 
 the case-management data of the 94 United States Attorneys' offices, released publicly by
 the Department of Justice. Published by **Justice Connection**.
 
-**Live site:** [https://justiceconnection.github.io/lions-data-dashboards/](https://www.thejusticeconnection.org/accountability/doj-data-dashboard)
+**Live site:** https://www.thejusticeconnection.org/accountability/doj-data-dashboard
 
 Everything here runs in the browser. There is no server, no database behind the site and no
 analytics: the pages fetch static files from this repository and compute in the page.
