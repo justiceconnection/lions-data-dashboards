@@ -61,7 +61,7 @@ function renderNav(){ const nav=document.getElementById('dashnav'), sel=document
       'agency.html':       'Loading referring-agency data…',
       'declinations.html': 'Loading declinations data…'
     },
-    loadDistrict:        'Loading district detail…',
+    loadDistrict:        'Loading district details…',
     loadPending:         'Loading pending caseload…',
     loadDistrictPending: 'Loading district pending caseload…',
     loadCivil:           'Loading civil data…',
@@ -250,6 +250,102 @@ function downloadChartSVG(chart, filename, title){
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
   }catch(e){ console.error('SVG export failed',e); alert('SVG export failed: '+(e&&e.message||e)); }
 }
+
+/* Share header + buttons utilities
+   - window.LIONS_initShareButtons(): attach handlers to any .share-btn on the page
+   - window.LIONS_injectShareHeader(opts): injects the header-actions markup after the first H1
+   Both are safe to call multiple times; handlers are idempotent.
+*/
+(function(){
+  if(typeof window==='undefined') return;
+
+  function _attachShareHandlers(root){
+    if(window.__LIONS_SHARE_INIT) return; // ensure only once per page
+    const buttons = (root||document).querySelectorAll('.share-btn');
+    if(!buttons || buttons.length===0) return;
+    window.__LIONS_SHARE_INIT = true;
+    const title = document.title || (document.querySelector('h1') && document.querySelector('h1').innerText) || 'LIONS Dashboard';
+    const canonical = (document.querySelector('link[rel="canonical"]')||{}).href;
+    const url = canonical || location.href;
+    const esc = s=>encodeURIComponent(s);
+    function openShare(u){ try{ window.open(u,'_blank','noopener'); }catch(e){} }
+    buttons.forEach(btn=>{
+      btn.addEventListener('click', function(){
+        const p = this.dataset.provider;
+        if(p==='native'){
+          if(navigator.share){ navigator.share({title, url}).catch(()=>{}); }
+          else { alert('Native sharing not available on this device.'); }
+          return;
+        }
+        if(p==='copy'){
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(url).then(()=>{
+              const oldTitle = this.getAttribute('title') || this.getAttribute('aria-label') || '';
+              this.setAttribute('title','Link copied');
+              setTimeout(()=>{ if(oldTitle) this.setAttribute('title', oldTitle); else this.removeAttribute('title'); }, 1300);
+            }).catch(()=>{ prompt('Copy this link', url); });
+          } else { prompt('Copy this link', url); }
+          return;
+        }
+        const t = esc(title), u = esc(url);
+        let shareUrl = null;
+        if(p==='twitter') shareUrl = `https://twitter.com/intent/tweet?text=${t}&url=${u}`;
+        if(p==='facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${u}`;
+        if(p==='linkedin') shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${u}&title=${t}`;
+        if(p==='email') shareUrl = `mailto:?subject=${t}&body=${u}`;
+        if(shareUrl) openShare(shareUrl);
+      });
+    });
+  }
+
+  // Expose an init function that can be called from other scripts
+  window.LIONS_initShareButtons = function(){ _attachShareHandlers(document); };
+  // Backwards-compatible alias
+  window.LIONS_ShareButtons = window.LIONS_initShareButtons;
+
+  // Inject the header-actions DOM and wire it up. opts.imgPath defaults to '/assets/processed'
+  window.LIONS_injectShareHeader = function(opts){
+    opts = opts || {};
+    const imgPath = opts.imgPath || '/assets/processed';
+    if(document.querySelector('.header-actions')) return document.querySelector('.header-actions');
+    const h1 = document.querySelector('h1');
+    const container = document.createElement('div');
+    container.className = 'header-actions';
+    container.setAttribute('aria-hidden','false');
+    container.innerHTML = `
+      <div class="share-label">Share:</div>
+      <div class="share-buttons" role="group" aria-label="Share dashboard">
+        <button class="share-btn" data-provider="native" aria-label="Open native share">Share</button>
+        <button class="share-btn small" data-provider="twitter" aria-label="Share on Twitter"><img src="${imgPath}/x-2.png" alt="Twitter"></button>
+        <button class="share-btn small" data-provider="facebook" aria-label="Share on Facebook"><img src="${imgPath}/facebook.png" alt="Facebook"></button>
+        <button class="share-btn small" data-provider="linkedin" aria-label="Share on LinkedIn"><img src="${imgPath}/linkedin.png" alt="LinkedIn"></button>
+        <button class="share-btn small" data-provider="email" aria-label="Share by email">✉️</button>
+        <button class="share-btn small" data-provider="copy" aria-label="Copy link">🔗</button>
+      </div>
+    `;
+    const subEl = document.querySelector('.sub');
+    if(subEl && subEl.parentNode){
+      subEl.appendChild(container);
+    } else if(h1 && h1.parentNode) {
+      h1.insertAdjacentElement('afterend', container);
+    } else {
+      document.body.insertBefore(container, document.body.firstChild);
+    }
+    // Attach handlers now that buttons exist
+    _attachShareHandlers(container);
+    return container;
+  };
+
+  // Auto-initialize any existing buttons on DOM ready and inject header if none present
+  function _onReady(){
+    window.LIONS_initShareButtons();
+    if(!document.querySelector('.header-actions')){
+      try{ window.LIONS_injectShareHeader(); }catch(e){}
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', _onReady);
+  else _onReady();
+})();
 
 
 function docMetricLabel(surface,key,label){

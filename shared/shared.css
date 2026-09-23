@@ -255,3 +255,14 @@ th.tot,td.tot{border-left:1px solid var(--line)}
   td.k,th.k{max-width:120px}
   td.k:first-child{white-space:nowrap;max-width:none}
 }
+
+/* Share buttons (used in the dashboard header) */
+.header-actions{display:flex;align-items:center;gap:.6rem;margin:.25rem 0 1rem 0}
+.header-actions .share-label{font-size:.95rem;color:var(--ink);margin-right:.4rem}
+.share-buttons{display:flex;gap:.4rem}
+.share-btn{background:var(--panel2);border:1px solid var(--line);padding:6px 8px;border-radius:6px;cursor:pointer;font-size:14px;line-height:1;color:var(--ink)}
+.share-btn:hover{background:#f2f2f2}
+.share-btn.small{padding:4px 7px;font-size:13px}
+.share-btn img{display:block;width:18px;height:18px}
+.share-btn:focus{outline:2px solid #8ab4ff;outline-offset:2px}
+

@@ -33,10 +33,10 @@ button.doc-chip,button.doc-expand{font:inherit;color:var(--ink);background:var(-
 /* ── the notes. The same component minus the panel wrapper: this IS the
       page now, so there is no outer <details> and no card around everything.
       Nothing is colour-coded, nothing uses --accent, no alpha anywhere. ── */
-.doc-page{max-width:78ch}
+.doc-page{max-width: 75%}
 .doc-stand{margin:0 0 8px;font-size:14px}
 .doc-where{margin:0 0 14px;color:var(--mut);font-size:13px}
-.doc-filter{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px;
+.doc-filter{max-width: 75%; display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px;
   padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .doc-filter-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);margin-right:4px}
 .doc-chip{font-size:12.5px;padding:5px 11px;border-radius:999px;background:var(--panel);
@@ -106,7 +106,7 @@ table.doc-tbl tr.tot td{font-weight:700;border-top:1px solid var(--ink)}
    reused: .foot sets white-space:pre-line, which would render this paragraph's source
    line breaks as hard breaks. Measure matches .doc-page so the rule above this block and
    the rule above the line above it end on the same pixel. */
-.doc-aiuse{max-width:78ch;margin:20px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+.doc-aiuse{max-width:75%;margin:20px 0 0;padding-top:12px;border-top:1px solid var(--line)}
 .doc-aiuse p{margin:0;font-size:12px;line-height:1.45;color:var(--ink)}
 
 /* The heading on the standing statement. Type is the page's section heading; the rule and
