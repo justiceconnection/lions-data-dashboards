@@ -108,3 +108,11 @@ table.doc-tbl tr.tot td{font-weight:700;border-top:1px solid var(--ink)}
    the rule above the line above it end on the same pixel. */
 .doc-aiuse{max-width:78ch;margin:20px 0 0;padding-top:12px;border-top:1px solid var(--line)}
 .doc-aiuse p{margin:0;font-size:12px;line-height:1.45;color:var(--ink)}
+
+/* The heading on the standing statement. Type is the page's section heading; the rule and
+   the space above it belong to the container, so this drops the border and the top margin
+   that h2.doc-grp carries or the foot of the page draws two hairlines 12px apart. Muted,
+   uppercase and letter-spaced is also what keeps it from reading as an entry summary: no
+   summary on this page is any of the three. */
+.doc-aiuse-h{font-size:16px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);
+  margin:0 0 6px;font-weight:600}
