@@ -99,8 +99,19 @@
 
   function family(metric) { return FAMILY[metric] || 'out'; }   /* unknown -> widest */
 
+  /* A metric whose window or direction is its OWN, looked up BEFORE the family.
+   * matters_pending is a stock, so it still reads at bucket ends and takes the topline's
+   * stock path, but it is counted as recorded at each month-end rather than netted: older
+   * month-ends move by a handful of matters from one vintage to the next, only the newest
+   * month is still settling, and it moves UP as late entries arrive. Left to the family it
+   * would take civ_stock's six months and "will fall", marking five settled months and
+   * stating the wrong direction. */
+  var WINDOW_BY_METRIC = { matters_pending: 1 };
+  var DIR_BY_METRIC = { matters_pending: 'mayrise' };
+
   /* n(metric, {civil}) -> window length in months */
   function n(metric, opts) {
+    if (WINDOW_BY_METRIC[metric]) return WINDOW_BY_METRIC[metric];
     var civil = !!(opts && opts.civil), f = family(metric);
     if (f === 'stock') return WINDOWS.civ_stock;
     if (civil) return f === 'in' ? WINDOWS.civ_in : WINDOWS.civ_out;
@@ -110,14 +121,26 @@
   function nMax(metrics, opts) {
     var m = 0; (metrics || []).forEach(function (k) { m = Math.max(m, n(k, opts)); }); return m || WINDOWS.crim_out;
   }
-  /* 'up' = will rise, 'down' = will fall. Share/mix charts pass 'mix' explicitly. */
-  function dir(metric) { return family(metric) === 'stock' ? 'down' : 'up'; }
-  /* Direction for a set of plotted metrics: 'down' only when every one of them is a
-     net stock, because that is the only case where the whole zone reads "will fall". */
+  /* 'up' = will rise, 'down' = will fall, 'mayrise' = may rise (a metric's own direction,
+     from DIR_BY_METRIC). Share/mix charts pass 'mix' explicitly. */
+  function dir(metric) {
+    if (DIR_BY_METRIC[metric]) return DIR_BY_METRIC[metric];
+    return family(metric) === 'stock' ? 'down' : 'up';
+  }
+  /* Direction for a set of plotted metrics: 'down' only when every one of them will fall,
+     because that is the only case where the whole zone reads "will fall", and 'mayrise'
+     only when every one of them may rise. 'mixed' when a metric that may rise shares the
+     chart with one that will fall and with nothing that will rise: neither direction is
+     true of the whole zone. Every other combination reads "will rise", as it always has. */
   function dirAll(metrics) {
     var ms = (metrics || []).filter(Boolean);
     if (!ms.length) return 'up';
-    return ms.every(function (k) { return family(k) === 'stock'; }) ? 'down' : 'up';
+    var ds = ms.map(dir);
+    var all = function (d) { return ds.every(function (x) { return x === d; }); };
+    if (all('down')) return 'down';
+    if (all('mayrise')) return 'mayrise';
+    if (ds.indexOf('up') < 0 && ds.indexOf('mayrise') >= 0 && ds.indexOf('down') >= 0) return 'mixed';
+    return 'up';
   }
 
   /* ── 3. Which buckets are provisional? ──────────────────────────────────────
@@ -307,7 +330,7 @@
     labelHalo: 'rgba(251,251,251,0.92)',
     labelFont: '600 10.5px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
     labelPad:  14,                         /* px of slack the label needs to fit     */
-    labelTop:  24                          /* one line under the era-band label (11) */
+    labelTop:  24                          /* px below the top of the plot           */
   };
 
   function zone(ch) {
@@ -416,9 +439,17 @@
    * d: 'up' (understated, will rise) | 'down' (net stock, overstated, will fall)
    *    | 'mix' (100%-stacked share: under-reporting distorts the MIX, because
    *             categories mature at very different rates - it does not simply
-   *             make the edge lower).
+   *             make the edge lower)
+   *    | 'mayrise' (a stock counted as recorded: late entries can only add to it)
+   *    | 'mixed' (a chart carrying metrics whose directions disagree).
+   * The two newer phrases read in the singular on a one-month window; the three older
+   * ones are never given a window that short.
    */
   function phrase(nMonths, d) {
+    var recent = nMonths === 1 ? 'the most recent month is still being reported'
+                               : 'the most recent ' + nMonths + ' months are still being reported';
+    if (d === 'mayrise') return recent + (nMonths === 1 ? '; this figure may rise' : '; these figures may rise');
+    if (d === 'mixed') return recent + (nMonths === 1 ? '; this figure may change' : '; these figures may change');
     if (d === 'down') return 'the most recent ' + nMonths + ' months are still being reported; these figures are overstated and will fall';
     if (d === 'mix')  return 'the most recent ' + nMonths + ' months are still being reported; the mix is distorted, not just low';
     return 'the most recent ' + nMonths + ' months are still being reported; these figures will rise';

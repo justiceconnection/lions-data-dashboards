@@ -3,26 +3,31 @@
 <meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Criminal Cases - LIONS</title>
+<link rel="canonical" href="index.html">
 <link rel="icon" href="assets/JusticeConnection_Icon_Black.png" type="image/png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="shared/multipliers.js?v=202606b"></script>
-<link rel="stylesheet" href="shared/shared.css?v=20260922c">
+<link rel="stylesheet" href="shared/shared.css?v=20260924b">
 <link rel="stylesheet" href="lab.css?v=20260922c">
 <link rel="stylesheet" href="styles/shell2.css?v=20260922c">
-<link rel="stylesheet" href="styles/index.css?v=20260922c">
+<link rel="stylesheet" href="styles/index.css?v=20260930a">
 <script src="scripts/index.head.js?v=20260820c"></script>
 </head><body><div class="wrap">
   <nav class="dashnav" id="dashnav"></nav>
   <select class="dashsel" id="dashsel" aria-label="Choose dashboard"></select>
   <h1>Criminal Cases</h1>
-  <div class="sub"> This interactive tool, developed by the Justice Connection, showcases trends in case filing and clearance by the U.S. Department of Justice’s Legal Information Office Network System (LIONS). This dashboard highlights criminal cases filed by U.S. Attorney's Offices on behalf of the United States as plaintiff. <br> <br> All data is from publicly released DOJ data, which ranges from October 1994 to July 2026 and will be updated on a monthly basis with information from LIONS. For more information about this data, <a href="https://justiceconnection.github.io/lions-data-dashboards/index.html#footnote">see the footnote below</a> or <a href="reading-the-data.html">our data documentation page</a>. <span id="status" aria-live="polite"></span></div> 
+  <!-- Share header injected by shared/shared.js (call LIONS_injectShareHeader() to control insertion) -->
+  <div class="sub"> This interactive tool, developed by the Justice Connection, showcases trends in case filing and clearance by the U.S. Department of Justice’s Legal Information Office Network System (LIONS). This dashboard highlights criminal cases filed by U.S. Attorney's Offices on behalf of the United States as plaintiff. <br> <br> All data is from publicly released DOJ data, which ranges from October 1994 to August 2026 and will be updated on a monthly basis with information from LIONS. For more information about this data, <a href="https://justiceconnection.github.io/lions-data-dashboards/index.html#footnote">see the footnote below</a> or <a href="reading-the-data.html">our data documentation page</a>. <span id="status" aria-live="polite"></span>
+  
+    
+  </div> 
 
   <div class="occbar">Program-category basis:
     <span class="seg" id="occ"><button data-v="all" class="on">All occurrences</button><button data-v="primary">Primary only</button></span>
     <button type="button" class="hint occ-hint" id="hintOcc" aria-expanded="false" aria-describedby="tipOcc" aria-label="What the program-category basis does to the charts">&#9432;</button>
     <div class="hinttip" id="tipOcc">
       <p>Each criminal case is tagged with one or more program categories.</p>
-      <p>To see all cases tagged with multiple program categories, toggle "all occurrences," which is how DOJ refers to this data. Note this will mean the bottom chart will add up to more than 100% and the same cases will be visualized multiple times in line charts.</p>
+      <p>To see all cases tagged with multiple program categories, toggle "all occurrences," which is how DOJ refers to this data. Note this will mean the program category chart will add up to more than 100% and the same cases will be visualized multiple times in line charts.</p>
       <p>To see case data tagged with their primary category - the first code entered for a case - select "primary only." All cases will only be counted once in charts.</p>
       <p>When all categories are selected, topline metrics default to counting unique cases filed, regardless of program category.</p>
     </div>
@@ -79,6 +84,13 @@
     <div class="chartbox sm"><canvas id="chart2" role="img" aria-label="Program category distribution chart showing share of cases filed.">Program category distribution chart showing share of cases filed.</canvas></div>
   </div>
 
+  <div class="card">
+    <h3><span id="chart3Title">Outcomes other than guilty - % of defendants terminated</span></h3>
+    <div class="subhead" id="chart3Sub">Share of defendants whose cases ended in each period, for every outcome except guilty. The rest of each period, up to 100%, is Guilty. Each defendant is counted once, under the outcome recorded for their case.</div>
+    <div id="legend3"></div><div id="chart3msg"></div>
+    <div class="chartbox sm" id="chart3box"><canvas id="chart3" role="img" aria-label="Disposition mix chart showing percent of defendants terminated by disposition type.">Disposition mix chart showing percent of defendants terminated by disposition type.</canvas></div>
+  </div>
+
   <div id="note"></div>
   <div class="tabletoggle"><button id="tblToggle" class="disc" aria-expanded="false">▸ Show data table</button></div>
   <!-- The table stays exactly where it is: inside
@@ -118,11 +130,12 @@
   <div class="bottombar"><button id="dl">Download CSV</button></div>
   <p class="csvline" id="csvline"></p>
   <div class="foot" id="footnote"></div>
+  <p class="site-contact">Questions or feedback? Email <a href="mailto:dashboard@thejusticeconnection.org?subject=DOJ%20National%20Caseload%20Data%20Dashboard" target="_blank" rel="noopener">dashboard@thejusticeconnection.org</a></p>
 </div>
-<script src="shared/config.js?v=20260922c"></script>
-<script src="shared/provisional.js?v=20260922c"></script>
-<script src="shared/shared.js?v=20260922e"></script>
-<script src="scripts/index.page.js?v=20260922c"></script>
+<script src="shared/config.js?v=20261002a"></script>
+<script src="shared/provisional.js?v=20261002a"></script>
+<script src="shared/shared.js?v=20260929a"></script>
+<script src="scripts/index.page.js?v=20261002a"></script>
 <script src="shared/height-reporter.js?v=20260903a"></script>
 <script src="lab.js?v=20260903a"></script>
 <script src="shell2.js?v=20260922c"></script>

@@ -17,11 +17,9 @@ const state={dim:'category',dists:new Set(['National']),cats:new Set(['ALL']),ag
 let CAT_NAT=null,CAT_FULL=null,AG_NAT=null,AG_FULL=null,SPINE=[],
   catFullLoading=false,agLoading=false,agFullLoading=false,dMS=null,chart=null,chart2=null;
 let CATLIST=[],DEPTS_AG=[],AGLIST=[];
-// Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
-// (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
-// of "2021-01" put 2021-01, the next administration's first month, inside the Trump I
-// range and made it 49 months against the band's 48.
-const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
+// The presets come from ADMINS in shared/config.js (adminPresets() there): each `to` is the
+// band's LAST month, because visIdx() filters from <= ym <= to and `b` is an exclusive end.
+const PRESETS=adminPresets(state.to);
 const DEPT_ORDER=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const CURRENT="declinations.html";
@@ -87,14 +85,28 @@ function allReasonTotal(){
   return out;
 }
 
-const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
+const adminBands={id:'admin',
+  // The era names sit in a 16px strip reserved ABOVE the plot, so no data can cover them: a stacked chart's fills cover the whole plot. Each band's own tint runs up into the strip, so a name sits in the band it names. Names, spans and tints all come from ADMINS in shared/config.js.
+  beforeInit(ch){ window.Chart.layouts.addBox(ch,{position:'top',weight:0,fullSize:false,options:{},isHorizontal(){return true;},update(w){ this.width=w; this.height=16; },draw(){}}); },
+  beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
   const x=ch.scales.x,area=ch.chartArea,ctx=ch.ctx; const half=labels.length>1?Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))/2:10;
+  const top=area.top-16, spans=[];
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
-    ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,area.top,x1-x0,area.bottom-area.top);
-    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
-    if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
-}};
+    ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,top,x1-x0,area.bottom-top); ctx.restore();
+    spans.push({name:ad.name,l:Math.max(x0,area.left),r:Math.min(x1,area.right)}); }
+  // A name is centred in its band when it fits. One that does not fit is pinned to the plot edge instead, but only for the first or last band and only when the band is at least half the name's width; centred names are placed first and a pinned one never overlaps them.
+  ctx.save(); ctx.font='11px sans-serif'; ctx.fillStyle='#4f504c'; ctx.textAlign='left';
+  const fit=[],pin=[],done=[];
+  spans.forEach((sp,i)=>{ const w=ctx.measureText(sp.name).width, span=sp.r-sp.l;
+    if(w+6<=span) fit.push([sp.name,(sp.l+sp.r)/2-w/2,w]);
+    else if(span>=w/2&&i===spans.length-1&&sp.r>=area.right-0.5) pin.push([sp.name,area.right-2-w,w]);
+    else if(span>=w/2&&i===0&&sp.l<=area.left+0.5) pin.push([sp.name,area.left+2,w]); });
+  for(const [name,lx,w] of fit.concat(pin)){ if(done.some(([a,b])=>lx<b+6&&lx+w>a-6))continue; done.push([lx,lx+w]); ctx.fillText(name,lx,area.top-4); }
+  ctx.restore(); }
+};
+// The era strip must never stop a chart drawing: a hook that throws logs the error and the chart renders without it.
+for(const k of ['beforeInit','beforeDraw']){ const f=adminBands[k]; adminBands[k]=function(){ try{ return f.apply(this,arguments); }catch(e){ console.error(e); } }; }
 
 let SER={};
 function scopeText(){ const dt=(state.dists.has('National')||state.dists.size===0)?'National':state.dists.size+' districts';
@@ -536,7 +548,7 @@ async function init(){ renderNav();
     const contig=idx.length===0||(idx[idx.length-1]-idx[0]+1===idx.length);
     state.admins=contig?ns:new Set([k]); applyAdmins(); render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
-  state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
+  state.to=ms[ms.length-1];Object.assign(PRESETS,adminPresets(state.to));document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
   document.getElementById("dl").addEventListener("click",buildCSV);

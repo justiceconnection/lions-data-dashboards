@@ -8,7 +8,7 @@ const DOC_SURFACE='civil';
 
 // ── `cases_pending` is a COUNTED column, read from its own cube ─────────────────
 // `civil_pending_cube_national.csv` / `civil_pending_cube.csv`:
-//   ym [, district], category, role, cases_pending.
+//   ym [, district], category, role, cases_pending, matters_pending.
 // It is NOT a column on `civil_cube` and it is NOT accumulated in the browser any more.
 // The old running net (cumulative cases_filed - cases_terminated from 1994-10) was an
 // index of net change since October 1994, not a caseload: it went negative in 375 of 382
@@ -24,19 +24,18 @@ const DOC_SURFACE='civil';
 // wrong readings, because it invites a reader to think the series was discontinued.
 // Outside the spine there is genuinely nothing, so the value is null and nothing is
 // drawn. Every read goes through pendingArr(), so no call site can get it wrong.
+//
+// `matters_pending` rides in the same files with its OWN coverage: it is counted only from
+// the first month whose cell carries a value (2009-09 on the current files), and every cell
+// before that is EMPTY. An empty cell is absent, never zero, so the parse keeps it null and
+// the zero-fill runs only from that first valued month (`mlo`), read from the file.
 let PNAT=null,PFULL=null,PSP_N=null,PSP_F=null,pnatLoading=false,pfullLoading=false;
-const MULT=(window.LIONS_MULT&&window.LIONS_MULT.civil)||{cases_filed:[1.6598,1.1815,1.0872,1.0611,1.0438,1.0358,1.0313,1.0273],cases_terminated:[1.7179,1.2881,1.1729,1.1248,1.0884,1.0563,1.0393,1.0305]};
-function hasPred(m){ return !!MULT[m]; }
-function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const last=SPINE.length-1;
-  return arr.map((v,i)=>{ if(v==null) return null; const age=last-i; return v*(age>=0&&age<mm.length?mm[age]:1); }); }
 const DISP=[["d_judg_us","Judgment For U.S.","#1d9e75"],["d_settle","Settlements","#2a78d6"],["d_against","Judgment Against U.S.","#d9622b"],["d_dismissed","Dismissed","#7a4fc0"],["d_other","Other","#8a8b86"]];
 const METRICS_CASES=[["cases_filed","Cases filed"],["cases_pending","Cases pending"],["cases_terminated","Cases terminated"]];
 const METRICS_MATTERS=[["matters_received","Matters received"],["matters_pending","Matters pending"],["matters_terminated","Matters terminated"]];
-// Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
-// (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
-// of "2021-01" put 2021-01, the next administration's first month, inside the Trump I
-// range and made it 49 months against the band's 48.
-const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
+// The presets come from ADMINS in shared/config.js (adminPresets() there): each `to` is the
+// band's LAST month, because visIdx() filters from <= ym <= to and `b` is an exclusive end.
+const PRESETS=adminPresets(state.to);
 const CURRENT="civil.html";
 // Provisional (right-censored) data.
 // All the logic lives in shared/provisional.js; this page only makes calls.
@@ -48,11 +47,14 @@ const CURRENT="civil.html";
 //   _stacked:true on datasets built for a stacked render - the input to
 //     LIONS_PROV.decorateLine's refusal to fade a stacked fill (spec §6.7).
 //     Set per render, because the mix charts flip family at runtime.
-// This dashboard is civil throughout: inflow window 4 months, outflow 6, net stock 6.
-// It is the only surface with a DOWN-direction metric - pending is a running net
-// (received − terminated), and because outflow lags far more than inflow it is
-// OVERSTATED at the edge and will fall. Telling a user it will rise is worse than
-// saying nothing, so the copy is direction-aware.
+// This dashboard is civil throughout: inflow window 4 months, outflow 6. The two
+// pending metrics are month-end STOCKS read from the pending cube, never accumulated
+// here. Cases pending is a counted stock: it takes the stock family's 6-month window and
+// the "will fall" direction. Matters pending is counted as recorded at each month-end,
+// from the first month its column carries a value (read from the file, never typed),
+// and takes its own window of 1 month and the "may rise" direction, looked up in
+// shared/provisional.js before the family. The copy is direction-aware because telling a
+// user a figure will rise when it will fall is worse than saying nothing.
 const PV=window.LIONS_PROV;
 const SL=window.LIONS_STATUS;
 const PVOPT={civil:true};
@@ -66,27 +68,38 @@ function parseCSV(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Obje
     for(const k of NUM) o[k]=+c[I[k]]||0; out[i-1]=o; } return out; }
 
 function parsePend(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Object.fromEntries(H.map((h,i)=>[h,i]));
-  const rows=new Array(L.length-1); let lo=null,hi=null;
+  const rows=new Array(L.length-1); let lo=null,hi=null,mlo=null;
   for(let i=1;i<L.length;i++){ const c=L[i].split(","); const ym=c[I.ym];
     if(lo===null||ym<lo) lo=ym; if(hi===null||ym>hi) hi=ym;
-    rows[i-1]={ym,grp:c[I.category],role:c[I.role],district:I.district!==undefined?c[I.district]:"National",v:+c[I.cases_pending]||0}; }
-  return {rows,spine:{lo,hi}}; }
+    const mc=I.matters_pending!==undefined?c[I.matters_pending]:undefined;
+    const mv=(mc===""||mc===undefined)?null:+mc;
+    if(mv!==null&&(mlo===null||ym<mlo)) mlo=ym;
+    rows[i-1]={ym,grp:c[I.category],role:c[I.role],district:I.district!==undefined?c[I.district]:"National",v:+c[I.cases_pending]||0,mv}; }
+  return {rows,spine:{lo,hi,mlo}}; }
 // All causes selected reads the cube's own `category='ALL'` total row, never a sum of the
 // 14 causes: parts can overlap, so summing them double-counts. They do partition
 // exactly here, but the total row is still the right thing to read.
-function pendingArr(dists,cats,role){
+// Both pending series in ONE pass over the rows, because the district file is 980,077 rows.
+// cases_pending fills from the file's first month; matters_pending from its own first
+// valued month, and is null throughout when the file carries no such column.
+function pendingArrs(dists,cats,role){
   const useNat=dists.has('National')||dists.size===0;
   const src=useNat?PNAT:PFULL, sp=useNat?PSP_N:PSP_F;
-  if(!src||!sp) return SPINE.map(()=>null);            // not loaded yet, or the fetch failed
+  if(!src||!sp){ const none=SPINE.map(()=>null); return {cp:none,mp:none.slice()}; }   // not loaded yet, or the fetch failed
   const catAll=cats.has('ALL')||cats.size===0;
-  const idx=new Map();
+  const idx=new Map(), midx=new Map();
   for(const r of src){
     if(r.role!==role) continue;
     if(!useNat&&!dists.has(r.district)) continue;
     if(catAll?(r.grp!=='ALL'):(r.grp==='ALL'||!cats.has(r.grp))) continue;
-    idx.set(r.ym,(idx.get(r.ym)||0)+r.v); }
-  return SPINE.map(ym=> (ym>=sp.lo&&ym<=sp.hi) ? (idx.get(ym)||0) : null);
+    idx.set(r.ym,(idx.get(r.ym)||0)+r.v);
+    if(r.mv!==null) midx.set(r.ym,(midx.get(r.ym)||0)+r.mv); }
+  return { cp:SPINE.map(ym=> (ym>=sp.lo&&ym<=sp.hi) ? (idx.get(ym)||0) : null),
+           mp:SPINE.map(ym=> (sp.mlo!==null&&ym>=sp.mlo&&ym<=sp.hi) ? (midx.get(ym)||0) : null) };
 }
+function pendingArr(dists,cats,role,metric){ const P=pendingArrs(dists,cats,role); return metric==='matters_pending'?P.mp:P.cp; }
+// The first month matters_pending carries in the file the current selection reads, or null.
+function mattersFrom(){ const sp=(state.dists.has('National')||state.dists.size===0)?PSP_N:PSP_F; return sp?sp.mlo:null; }
 function aggregateRaw(nat, full, spine, dists, cats, role){
   const useNat = dists.has('National') || dists.size===0;
   const catAll = cats.has('ALL') || cats.size===0;
@@ -101,20 +114,14 @@ function aggregateRaw(nat, full, spine, dists, cats, role){
   for(const ym of spine){ const o=idx.get(ym); for(const k in R) R[k].push(o?o[k]:0); }
   return R;
 }
-// Every aggregation on this page goes through agg(), which is aggregateRaw plus the
+// Every aggregation on this page goes through agg(), which is aggregateRaw plus the two
 // counted pending series. aggregateRaw itself is left pure and is still what the module
 // exports, so it can be reasoned about without a second cube.
-function agg(dists,cats,role){ const R=aggregateRaw(NAT,FULL,SPINE,dists,cats,role); R.cp=pendingArr(dists,cats,role); return R; }
+function agg(dists,cats,role){ const R=aggregateRaw(NAT,FULL,SPINE,dists,cats,role); const P=pendingArrs(dists,cats,role); R.cp=P.cp; R.mp=P.mp; return R; }
 const mean3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2])/3;
-function cumsum(arr){ let acc=0; return arr.map(v=>acc+=v); }
-// THE CASES BRANCH OF THIS FUNCTION IS DELETED: cases_pending reads the counted
-// column. What is left is matters only, and it is still a running net because
-// `matters_pending` is NOT in the published pending cube and is deliberately held. So that
-// series is an index of net change since October 1994 and not a stock; the entry that
-// says so on "Reading the data" is written and does not render until the column
-// exists, and `matters_pending` carries no marker for the same reason. Do not add a
-// cases-shaped branch back here.
-function mattersPendingSeries(R){ return cumsum(R.mr.map((v,i)=>v-R.cf[i]-R.mt[i])); }
+// Both pending metrics read counted columns from the pending cube. Neither is accumulated
+// in the browser: a running net from the cube's first month leaves out everything already
+// open on that date and can fall below zero.
 function metricArray(R, metric){ switch(metric){
     case 'cases_filed': return R.cf.slice();
     case 'cases_filed_3mo': return R.cf.map((_,i)=>mean3(R.cf,i));
@@ -126,8 +133,8 @@ function metricArray(R, metric){ switch(metric){
     case 'matters_received_3mo': return R.mr.map((_,i)=>mean3(R.mr,i));
     case 'matters_terminated': return R.mt.slice();
     case 'matters_terminated_3mo': return R.mt.map((_,i)=>mean3(R.mt,i));
-    case 'matters_pending': return mattersPendingSeries(R);
-    case 'matters_pending_3mo': { const p=mattersPendingSeries(R); return p.map((_,i)=>mean3(p,i)); }
+    case 'matters_pending': return R.mp?R.mp.slice():SPINE.map(()=>null);
+    case 'matters_pending_3mo': { const p=R.mp||SPINE.map(()=>null); return p.map((_,i)=>mean3(p,i)); }
   } return R.cf.slice(); }
 function metricLabel(m){ const e=metricsList().find(x=>x[0]===m); return e?e[1]:m; }
 
@@ -151,11 +158,10 @@ const rint=x=>x==null?"-":Math.round(x).toLocaleString();
 // ── THE TOPLINE SECTION ─────────────────────────────────────────────────────────
 // The four KPI cards and their renderKPIs() are retired. Two rules this page carries
 // that the others do not:
-//   `cases_pending` is a STOCK - a reading at a date, never a total over a period, and
-//   its provisional treatment is a truncation rather than a flag on the extrema.
-//   `matters_pending` is NOT offered at all: it is a running net
-//   since October 1994, not a published level, and the section says so rather than
-//   printing a number for it.
+//   `cases_pending` and `matters_pending` are STOCKS - a reading at a date, never a total
+//   over a period, and their provisional treatment is a truncation rather than a flag on
+//   the extrema. `matters_pending` also hands over its coverage, so a period that ends
+//   before its first month says so rather than reading as zero.
 // The share denominator is the cube's own ALL total row over the same
 // period, never the sum of the selected causes.
 function renderTopline(){
@@ -186,9 +192,9 @@ function renderTopline(){
     filters:{ districts:distClause(state.dists), role:state.role,
               selection: all?null:{items:[...state.cats], noun:C.capNounCauses} },
     provN:PV.n(m,PVOPT),
-    caption: stock?'Pending cases compound over time: it is read at a date, never totalled over a period.'
+    caption: stock?'Pending {pend} compound over time: it is read at a date, never totalled over a period.'.replace('{pend}',m==='matters_pending'?'matters':'cases')
                   :'U.S. as '+state.role+'.',
-    notOffered: m==='matters_pending',
+    coverage: m==='matters_pending'?{from:mattersFrom()}:null,
     loading:!NAT,
     empty:!!NAT && !series.some(v=>v)
   }); }catch(e){ console.warn('LIONS_TOPLINE.render failed - topline section skipped', e); }
@@ -219,6 +225,7 @@ const TBL_COLS=[
   {k:'matters_terminated',g:'matters',h:'Matters terminated',t:'int',w:'matters_terminated'},
   {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},
   {k:'cases_terminated',g:'cases',h:'Cases terminated',t:'int',w:'cases_terminated'},
+  {k:'matters_pending',g:'pending',h:'Matters pending (at period end)',t:'int',w:'matters_pending',cls:'stock'},
   {k:'cases_pending',g:'pending',h:'Cases pending (at period end)',t:'int',w:'cases_pending',cls:'stock'},
   {k:'d_judg_us',g:'dispositions',h:'Judgment for U.S.',t:'int',w:'cases_terminated'},
   {k:'d_settle',g:'dispositions',h:'Settlements',t:'int',w:'cases_terminated'},
@@ -250,7 +257,7 @@ const TBL_COPY={
   lineOne:(p,role)=>'One row per '+p+', U.S. as '+role+'. Figures show one cause of action.',
   lineSum:(p,n,role)=>'One row per '+p+', U.S. as '+role+'. Figures show '+n+' causes of action added together, and each case is counted once.',
   lineBreakout:(p,role)=>'One row per '+p+' per cause of action, U.S. as '+role+'. The cause rows add up to the total row once "Other causes of action" is included.',
-  notesExtra:'Pending cases is a figure reported at the end of the period, not a reflection of cases during that period. Do not sum that column.',
+  notesExtra:'Pending matters and pending cases are figures reported at the end of the period, not a reflection of matters or cases during that period. Do not sum either column, and do not add one to the other.',
   refusal:(n,cap)=>TCOPY.refusal(n,cap,'causes of action'),
   pending:TCOPY.pending
 };
@@ -291,11 +298,12 @@ function aggregateTable(dists,target){
   else { for(const d of dists) for(const r of tblDistRows(d)) add(r); }
   const R={}; for(const k of NUM) R[k]=[];
   for(const ym of SPINE){ const o=idx.get(ym); for(const k of NUM) R[k].push(o?o[k]:0); }
-  /* cases_pending is a COUNTED column in a SECOND cube and is read through pendingArr(),
-     which is the only place that knows the zero-suppression contract: a month with no row
-     inside the loaded cube's own min..max is a ZERO, and a month outside it is null and
-     prints "-". It is a STOCK, so the engine takes the bucket's LAST month, never a sum. */
-  R.cases_pending=pendingArr(dists,target.kind==='all'?new Set(['ALL']):target.keys,state.role);
+  /* cases_pending and matters_pending are COUNTED columns in a SECOND cube and are read
+     through pendingArrs(), the only place that knows the zero-suppression contract: a month
+     with no row inside a column's own coverage is a ZERO, and a month outside it is null and
+     prints "-". Both are STOCKS, so the engine takes the bucket's LAST month, never a sum. */
+  const PA=pendingArrs(dists,target.kind==='all'?new Set(['ALL']):target.keys,state.role);
+  R.matters_pending=PA.mp; R.cases_pending=PA.cp;
   return R;
 }
 const tblSelCauses=()=>(state.cats.has('ALL')||state.cats.size===0)?[]:[...state.cats];
@@ -305,7 +313,7 @@ const TBL_DESC={
   cols:()=>TBL_COLS,
   dimKey:'cause', dimNounPlural:'causes of action',
   hasBasisCol:false, hasEdge:true,
-  stockKeys:['cases_pending'],
+  stockKeys:['matters_pending','cases_pending'],
   /* The U.S. role is a page filter, not a third breakout axis: there is no role='ALL'
      row in this cube to check a three-role sum against (1,146 category='ALL' rows, 382
      months x 3 roles, and no others - measured). It is stated in the basis line and it
@@ -361,18 +369,42 @@ function tblInvalidate(){
   document.getElementById('dl').disabled=over; document.getElementById('dl2').disabled=over;
 }
 
-const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
+const adminBands={id:'admin',
+  // The era names sit in a 16px strip reserved ABOVE the plot, so no data can cover them: a stacked chart's fills cover the whole plot. Each band's own tint runs up into the strip, so a name sits in the band it names. Names, spans and tints all come from ADMINS in shared/config.js.
+  beforeInit(ch){ window.Chart.layouts.addBox(ch,{position:'top',weight:0,fullSize:false,options:{},isHorizontal(){return true;},update(w){ this.width=w; this.height=16; },draw(){}}); },
+  beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
   const x=ch.scales.x,area=ch.chartArea,ctx=ch.ctx; const half=labels.length>1?Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))/2:10;
+  const top=area.top-16, spans=[];
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
-    ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,area.top,x1-x0,area.bottom-area.top);
-    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
-    if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
-}};
+    ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,top,x1-x0,area.bottom-top); ctx.restore();
+    spans.push({name:ad.name,l:Math.max(x0,area.left),r:Math.min(x1,area.right)}); }
+  // A name is centred in its band when it fits. One that does not fit is pinned to the plot edge instead, but only for the first or last band and only when the band is at least half the name's width; centred names are placed first and a pinned one never overlaps them.
+  ctx.save(); ctx.font='11px sans-serif'; ctx.fillStyle='#4f504c'; ctx.textAlign='left';
+  const fit=[],pin=[],done=[];
+  spans.forEach((sp,i)=>{ const w=ctx.measureText(sp.name).width, span=sp.r-sp.l;
+    if(w+6<=span) fit.push([sp.name,(sp.l+sp.r)/2-w/2,w]);
+    else if(span>=w/2&&i===spans.length-1&&sp.r>=area.right-0.5) pin.push([sp.name,area.right-2-w,w]);
+    else if(span>=w/2&&i===0&&sp.l<=area.left+0.5) pin.push([sp.name,area.left+2,w]); });
+  for(const [name,lx,w] of fit.concat(pin)){ if(done.some(([a,b])=>lx<b+6&&lx+w>a-6))continue; done.push([lx,lx+w]); ctx.fillText(name,lx,area.top-4); }
+  ctx.restore(); }
+};
+// The era strip must never stop a chart drawing: a hook that throws logs the error and the chart renders without it.
+for(const k of ['beforeInit','beforeDraw']){ const f=adminBands[k]; adminBands[k]=function(){ try{ return f.apply(this,arguments); }catch(e){ console.error(e); } }; }
 function baseScales(pct,rightTitle,anyR){ return {x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,padding:6,callback:grainTick(state.grain)}},
   y:{position:'left',beginAtZero:!pct,title:{display:true,text:metricLabel(state.metric),color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{color:'#e6e6e3'}},
   y1:{position:'right',display:anyR,beginAtZero:!pct,title:{display:anyR,text:rightTitle,color:'#212123',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:pct?(v=>v+'%'):(v=>v.toLocaleString())},grid:{drawOnChartArea:false}}}; }
 
+// The three chart strings Matters pending carries. The first sits in the legend whenever the
+// metric is plotted; the other two only while the visible range starts before the first month
+// the column carries, which is read from the file and never typed here.
+const MP_COPY={
+  wobble:'Month-to-month changes partly reflect when offices enter records, and a single month can move sharply',
+  start:'Matters pending is counted from {first_month}',
+  aria:'Matters pending is counted from {first_month}; there is no line before then.'
+};
+// Whether the visible range starts before the first month matters_pending carries.
+function mpStartsLate(){ const f=mattersFrom(), v=visIdx(); return !!f && v.length>0 && SPINE[v[0]]<f; }
 const TT={enabled:false,external:extTooltip};
 // A STOCK is a level, so a quarter or a fiscal year takes the level at the
 // bucket's LAST month. Summing a stock across a bucket, or cumulating one from the
@@ -406,9 +438,12 @@ function renderChart(){
     datasets.push(PV.decorateLine({label:metricLabel(m2)+' (R)',data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,borderDash:[5,4],yAxisID:'y1',_col:col},PV.bucketFlags(SPINE,B,PV.n(m2,PVOPT)),pr)); });
   const anyR=right.length>0||rMetrics.length>0;
   const rAxisTitle=(metricMode?(rMetrics.map(metricLabel).slice(0,3).join(', ')+(rMetrics.length>3?'…':'')):metricLabel(state.metric))+' (Right)';
+  const mpOn=plotted.includes('matters_pending');
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
      + (anyR?'<span class="lg" style="color:var(--mut)">- dashed = right axis</span>':'')
      + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
+     + (mpOn?'<span class="lg" style="color:var(--mut)">'+MP_COPY.wobble+'</span>':'')
+     + (mpOn&&mpStartsLate()?'<span class="lg" style="color:var(--mut)">'+MP_COPY.start.replace('{first_month}',monthLong(mattersFrom()))+'</span>':'')
      + (PV.anyProv(flagsZone)?PV.legendChip(nZone,provDir):'');   // separate marker from "*" - two different facts
   document.getElementById("chartTitle").textContent=metricLabel(state.metric)+" - "+state.role+" - by "+(state.seriesBy==='category'?'cause of action':'district');
   if(typeof window==='undefined'||!window.Chart){ return; }
@@ -432,7 +467,7 @@ function renderChart2(){
   if(state.mixMode==='sum'){ const data=totB.map((t,bi)=>{if(!t)return null;let s=0;for(const c2 of cats)s+=cAB[c2][bi];return 100*s/t;});
     datasets=[{label:(allSel?'All causes':cats.join(', ')),data,borderColor:'#212123',backgroundColor:'rgba(33,33,35,.10)',fill:true,tension:.25,pointRadius:0,borderWidth:2,_pct:true,_col:'#212123'}];
   } else { datasets=cats.map((c2,j)=>{const col=CATPAL[(CATLIST.indexOf(c2)+1)%CATPAL.length];return {label:c2,data:totB.map((t,bi)=>t?100*cAB[c2][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true};}); }
-  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("")
+  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor};box-shadow:inset 0 0 0 1px var(--mut)"></span>${ds.label}</span>`).join("")
     + (PV.anyProv(flagsMix)?PV.legendChip(nMix,'mix'):'');
   document.getElementById("chart2Title").textContent="Cause of action mix - % of "+primaryLabel()+(state.mixMode==='stacked'?" (stacked)":" (combined)");
   if(typeof window==='undefined'||!window.Chart) return;
@@ -487,8 +522,10 @@ function updateChartAccessibility(){
   const provA2=reaches(nA2)?(' '+PV.noteText(nA2,'mix')):'';
   const nA3=PV.n('cases_terminated',PVOPT);
   const provA3=reaches(nA3)?(' '+PV.noteText(nA3,'mix')):'';
+  const mpOn=state.metric==='matters_pending'||(state.ax2by==='metric'&&state.ax2sel.has('matters_pending'));
+  const startA=(mpOn&&mpStartsLate())?(' '+MP_COPY.aria.replace('{first_month}',monthLong(mattersFrom()))):'';
   chartEl.setAttribute('aria-label',
-    `${metricLabel(state.metric)} trend over time by ${state.seriesBy==='category'?'cause of action':'district'}. Filters: ${distText}; ${catText}; ${state.from} to ${state.to}; U.S. as ${state.role}; basis ${state.basis}.${provA}`
+    `${metricLabel(state.metric)} trend over time by ${state.seriesBy==='category'?'cause of action':'district'}. Filters: ${distText}; ${catText}; ${state.from} to ${state.to}; U.S. as ${state.role}; basis ${state.basis}.${provA}${startA}`
   );
   chart2El.setAttribute('aria-label',
     `Cause of action share over time as percent of ${primaryLabel()}, ${state.mixMode==='stacked'?'stacked view':'combined view'}. Filters: ${distText}; ${catText}; ${state.from} to ${state.to}; U.S. as ${state.role}; basis ${state.basis}.${provA2}`
@@ -571,10 +608,9 @@ function buildAx2Picker(){ state.ax2sel=new Set(); const mount=document.getEleme
     ax2MS=multiSelect('ax2sel',{items:(state.seriesBy==='category'?CATLIST:districtList()),plain:true,emptyLabel:'pick series…',initial:state.ax2sel,searchable:state.seriesBy==='district',
       fmt:state.seriesBy==='district'?fmtDist:undefined, onChange:v=>{ state.ax2sel=new Set(v); renderChart(); }}); } }
 // ── The pending cubes are fetched LAZILY, never at page load ───────────────────
-// `cases_pending` is the only metric that needs them; `matters_pending` does not, because
-// it is not in the cube. The district file is 33.74 MiB and is fetched only when
-// a district selection actually needs it.
-const NEEDS_PEND=m=>m==='cases_pending';
+// `cases_pending` and `matters_pending` are the two metrics that need them. The district
+// file is fetched only when a district selection actually needs it.
+const NEEDS_PEND=m=>m==='cases_pending'||m==='matters_pending';
 function pendWanted(){ if(NEEDS_PEND(state.metric)) return true;
   if(state.ax2by==='metric'){ for(const m of state.ax2sel) if(NEEDS_PEND(m)) return true; } return false; }
 async function ensurePendNat(){ if(PNAT||pnatLoading) return; pnatLoading=true;
@@ -600,8 +636,7 @@ async function ensureFull(){ if(FULL||fullLoading) return; fullLoading=true; SL.
   catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } fullLoading=false; }
 function populateMetric(){ const sel=document.getElementById("metric");
   // The glyph is an INDEX into "Reading the data", not a severity signal. Which
-  // metrics carry it is REFERENCES.flags in shared/config.js, and a held entry
-  // (matters_pending) resolves to no marker at all.
+  // metrics carry it is REFERENCES.flags in shared/config.js.
   sel.innerHTML=metricsList().map(m=>`<option value="${m[0]}">${docMetricLabel(DOC_SURFACE,m[0],m[1])}</option>`).join("");
   state.metric=metricsList()[0][0]; sel.value=state.metric; }
 
@@ -636,7 +671,7 @@ async function init(){ renderNav();
     const contig=idx.length===0||(idx[idx.length-1]-idx[0]+1===idx.length);
     state.admins=contig?ns:new Set([k]); applyAdmins(); render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
-  state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
+  state.to=ms[ms.length-1];Object.assign(PRESETS,adminPresets(state.to));document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
   /* The Pending column group is the ONE group that is off by default, because it is the
@@ -682,4 +717,4 @@ async function init(){ renderNav();
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();
-if(typeof module!=='undefined') module.exports={aggregateRaw,metricArray,mattersPendingSeries,pendingArr,parsePend};
+if(typeof module!=='undefined') module.exports={aggregateRaw,metricArray,pendingArr,parsePend};

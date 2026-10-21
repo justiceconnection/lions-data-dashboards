@@ -177,6 +177,35 @@ body{
   .dashnav a.on::after{transform:scaleX(1);background:#eaf54c}
   .dashsel{display:none;font:inherit;font-size:14.5px;font-weight:600;color:#eaf54c;background:#212123;border:1px solid #212123;border-radius:8px;padding:9px 12px;width:100%;max-width:360px;margin:0}
   @media(max-width:600px){ .dashnav{display:none} .dashsel{display:block} }
+  /* Contact line: the last element inside .wrap, as on every other page. */
+  .site-contact{margin:18px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:13px;line-height:1.5;color:var(--muted)}
+  .site-contact a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;padding:5px 0;white-space:nowrap}
+  .site-contact a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  @media(max-width:600px){.site-contact a{display:block;width:fit-content;padding:3px 0}}
+  /* The charge row and its picker. The row is the date bar's twin: picker flexible,
+     match select fixed. The picker panel has a fixed head over a scrolling list, so
+     the derived mark stays on screen whenever a section name is. An All charges cell
+     wraps between charges and never inside one, at a fixed width. */
+.chargebar{display:flex;flex-wrap:wrap;gap:16px;align-items:end;margin-top:14px}
+.chargebar .fld{flex:1 1 300px}
+.chargebar .fld.basis{flex:0 1 210px}
+.cs-panel{display:flex;flex-direction:column;max-height:340px;overflow:hidden;padding:8px}
+.cs-panel[hidden]{display:none}
+.cs-head{flex:none}
+.cs-list{flex:1 1 auto;overflow:auto;min-height:0}
+.cs-list label{align-items:flex-start}
+.cs-list label input{margin-top:3px}
+.cs-opt{display:flex;flex-direction:column;min-width:0}
+.cs-cite{font-weight:600;white-space:nowrap}
+.cs-lab{font-size:12.5px;color:var(--muted);line-height:1.35;white-space:normal}
+.cs-ghead{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600;margin:6px 7px 2px}
+.cs-note,.cs-foot,.cs-none{font-size:12px;line-height:1.4;color:var(--ink);margin:6px 7px}
+.cs-note{border-left:4px solid var(--ink);padding:2px 0 2px 8px}
+.cs-derived{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.4;color:var(--ink);margin:0 4px 8px}
+.dmark{display:inline-block;flex:none;font-size:10.5px;line-height:16px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:4px;padding:0 5px}
+.chgs{white-space:normal;width:24em}
+.chg{white-space:nowrap}
+@media(max-width:600px){.cs-search{font-size:16px}}
 </style>
 </head>
 <body>
@@ -222,6 +251,14 @@ body{
         <option value="exclude">Exclude declined matters</option>
       </select></div>
       <div class="fld"><label>Declination reason</label><div id="ms_reason"></div></div>
+    </div>
+
+    <!-- The charge row: two ordinary fields and no prose, like the date bar below it.
+         Removed whole at load when facets.json carries no section list. -->
+    <div class="chargebar" id="chargeBar">
+      <div class="fld"><label class="withhint">Charge (criminal)<button type="button" class="hint" id="hintCharge" aria-expanded="false" aria-describedby="tipCharge" aria-label="How the charge search works">&#9432;</button><span class="hinttip" id="tipCharge">A record matches when one of its charges is in a section you pick, subsections included, so 18 USC 924 also finds 924(c); only criminal records carry charges.</span></label><div id="cs_charge"></div></div>
+      <div class="fld basis"><label class="withhint">Match against<button type="button" class="hint" id="hintMatch" aria-expanded="false" aria-describedby="tipMatch" aria-label="What the lead charge is">&#9432;</button><span class="hinttip" id="tipMatch">The lead charge is the one charge recorded for the record as a whole, while Any charge also checks every count in its charging documents, so it never finds fewer records.</span></label>
+        <select id="f_chargeMode"><option value="any">Any charge</option><option value="lead">Lead charge only</option></select></div>
     </div>
 
     <div class="datebar">
@@ -283,6 +320,7 @@ body{
     </div>
     <div class="tablewrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
   </div>
+  <p class="site-contact">Questions or feedback? Email <a href="mailto:dashboard@thejusticeconnection.org?subject=DOJ%20National%20Caseload%20Data%20Dashboard" target="_blank" rel="noopener">dashboard@thejusticeconnection.org</a></p>
 </div>
 
 <dialog id="capDialog">
@@ -292,7 +330,7 @@ body{
 </dialog>
 
 <script type="module">
-let duckdb; const BUILD='prod8';
+let duckdb; const BUILD='prod10';
 const SHARDS=['cases_a_m.parquet','cases_n_z.parquet'];
 const SRC="read_parquet(['cases_a_m.parquet','cases_n_z.parquet'])";
 const EXPORT_CAP=500000;
@@ -322,6 +360,7 @@ const COLUMNS=[
   ['all_agencies','All agencies',false],
   ['litigating_responsibility','Litigating responsibility',false],
   ['lead_charge','Lead charge (criminal)',false],
+  ['all_charges','All charges (criminal)',false],
   ['national_priority','National priority',false],
   ['victim_witness','Victim/witness',false],
   ['drug_related','Drug-related',false],
@@ -341,6 +380,7 @@ const MONTHS=['January','February','March','April','May','June','July','August',
 const $=id=>document.getElementById(id);
 let db, conn, sortState={col:null,dir:1}, catByType={Civil:[],Criminal:[]}, facets={};
 let msDist, msCat, msRole, msCourt, msDisp, msLead, msReason;
+let csCharge=null;
 function sqlLit(s){ return "'"+String(s).replaceAll("'","''")+"'"; }
 function log(m){ try{ console.log('[case-lookup]', m); }catch(e){} }   // console only - the UI just shows "Loading…"
 window.addEventListener('error', e=> log('⚠️ error: '+(e.message||e.filename||e)));
@@ -416,6 +456,170 @@ class MS{
 }
 document.addEventListener('click',()=>document.querySelectorAll('.ms-panel').forEach(p=>p.hidden=true));
 
+/* --------------------------------------------------------------------------
+   THE CHARGE FILTER. Matching is at U.S. Code SECTION level, over two published
+   strings, all_charges and lead_charge, in EOUSA's raw shape: a title, a colon, a
+   zero-padded section, then whatever subsection was keyed ("18 :00922g1").
+   A section key is "18 USC 922". The facet list (facets.json chargeSections) is
+   built from the same token rule the pattern below encodes, so the list and the
+   matcher always agree.
+   The pattern is valid both as an RE2 pattern (DuckDB) and as a JavaScript
+   RegExp: it uses only ^ $ (?:) | * and character classes. It is anchored to a
+   token start, "(^|; )", and closes the section's digit run, "(?:[^0-9]|$)", so
+   18 USC 92 never matches 18 :00922 and 8 USC 1326 never matches 18 :01326. A
+   bare LIKE would match both, which is why the Category filter's matcher is not
+   reused here. */
+const CS_KEY=/^([1-9][0-9]?) USC ([1-9][0-9]*)$/;
+function parseKey(k){ const m=CS_KEY.exec(k); return m?{t:m[1],s:m[2]}:null; }
+/* One alternation per title, titles in first-picked order. Throws on anything
+   that is not a well-formed key, so a value that did not come from the facet
+   list can never reach the SQL. */
+function chargePattern(keys){
+  const byT={}, order=[];
+  keys.forEach(k=>{
+    const p=parseKey(k);
+    if(!p) throw new Error('not a section key: '+k);
+    if(!byT[p.t]){ byT[p.t]=[]; order.push(p.t); }
+    if(byT[p.t].indexOf(p.s)<0) byT[p.t].push(p.s);
+  });
+  if(!order.length) return null;
+  return '(^|; ) *0*(?:'+order.map(t=>t+' *: *0*(?:'+byT[t].join('|')+')').join('|')+')(?:[^0-9]|$)';
+}
+/* mode 'any' (the default) tests the lead charge OR any charge; 'lead' tests the
+   lead charge alone. Several sections combine with OR. Nothing picked returns
+   null, so the caller adds no clause at all. */
+function chargeWhere(keys, mode){
+  const p=chargePattern(keys); if(!p) return null;
+  const lead='coalesce(regexp_matches(lead_charge, '+sqlLit(p)+'), false)';
+  if(mode==='lead') return lead;
+  return '(coalesce(regexp_matches(all_charges, '+sqlLit(p)+'), false) OR '+lead+')';
+}
+/* What the user typed, read as a citation where it can be. Typing only narrows
+   the list; records are filtered by a ticked box and nothing else. */
+const CS_CITE=/^0*([1-9][0-9]?)(?:\s*(?:u\.?\s*s\.?\s*c\.?\s*a?\.?|:)\s*|\s+)(?:§+\s*|sec(?:tion)?\.?\s*)?0*([0-9]*)(.*)$/i;
+function readQuery(q){
+  const s=String(q||'').trim();
+  if(!s) return {kind:'empty'};
+  if(/^[0-9]+$/.test(s)) return {kind:'number', s:s.replace(/^0+/,'')};
+  /* a section number with a letter or subsection after it and no title, e.g. 1028A or 924(c) */
+  const n=/^0*([1-9][0-9]*)([a-z(].*)$/i.exec(s);
+  if(n) return {kind:'number', s:n[1], tail:n[2]};
+  const m=CS_CITE.exec(s);
+  if(m) return {kind:'cite', t:m[1], s:m[2], tail:m[3].trim()};
+  return {kind:'text', words:s.toLowerCase().split(/\s+/)};
+}
+/* the note echoes only a tail that looks like a subsection or a section letter */
+const CS_TAIL=/^[a-z0-9()]{1,12}$/i;
+const CS_CAP=50;
+/* sections: [[key,label?],...] in facet order (most records first). Picked
+   sections are always returned, whatever was typed, so they can be unticked. */
+function suggest(q, sections, selected){
+  selected=selected||[];
+  const r=readQuery(q); let exact=null, note=null, test;
+  if(r.kind==='empty') test=()=>true;
+  else if(r.kind==='number'){
+    test=p=>p.s.indexOf(r.s)===0;
+    if(r.tail && CS_TAIL.test(r.tail)) note={key:r.s, tail:r.tail};
+  }
+  else if(r.kind==='cite'){
+    test=p=>p.t===r.t && (r.s==='' || p.s.indexOf(r.s)===0);
+    if(r.s) exact=r.t+' USC '+r.s;
+    if(r.s && r.tail && CS_TAIL.test(r.tail)) note={key:exact, tail:r.tail};
+  } else test=(p,k,lab)=>{
+    const hay=(k+' '+(lab||'')).toLowerCase();
+    return r.words.every(w=>hay.indexOf(w)>=0);
+  };
+  const hits=[];
+  sections.forEach(e=>{
+    const k=e[0], lab=e[1], p=parseKey(k);
+    if(!p || selected.indexOf(k)>=0) return;
+    if(test(p,k,lab)) hits.push(e);
+  });
+  /* An exact section number goes first; otherwise the facet's own order stands
+     (Array.prototype.sort is stable). */
+  if(r.s){
+    const isExact=k=>{ const p=parseKey(k); return p.s===r.s && (r.kind!=='cite' || p.t===r.t); };
+    hits.sort((a,b)=>isExact(b[0])-isExact(a[0]));
+  }
+  const sel=sections.filter(e=>selected.indexOf(e[0])>=0);
+  return {selected:sel, matches:hits.slice(0,CS_CAP), total:hits.length, note, query:r};
+}
+function buttonText(selected){
+  return selected.length===0?'All' : selected.length===1?selected[0] : selected.length+' selected';
+}
+/* The All charges cell. Every charge is escaped and kept on one line; charges
+   wrap between each other. An empty value is the empty string - no wrapper, no
+   class, no title, no placeholder - identical on every row whatever the record. */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function chargesCell(v){
+  if(v==null || v==='') return '';
+  return '<div class="chgs">'+String(v).split('; ').map(t=>'<span class="chg">'+esc(t)+'</span>').join('; ')+'</div>';
+}
+const CS_COPY={
+  placeholder:'Type a section or a word, like 18 USC 924',
+  searchName:'Search U.S. Code sections',
+  dmark:'Derived',
+  derivedLine:'Section names are EOUSA codebook wording, matched to sections by Justice Connection.',
+  clear:'Clear',
+  selectedHead:'Selected',
+  foot:'Showing {shown} of {total} sections. Keep typing to narrow the list.',
+  none:'No U.S. Code section matches “{q}”. Try a title and section, like 18 USC 922.',
+  note:'Charges are searched by section number, so {key} also finds {key}{tail}.'
+};
+/* The picker: the MS dropdown's button and panel, with a search box over a
+   capped list and deliberately NO "Select all", which here would mean every
+   section of the U.S. Code. Everything the user typed reaches the page as text,
+   never markup. */
+class CS{
+  constructor(mount, sections){
+    this.sel=[]; this.sections=sections;
+    mount.classList.add('ms');
+    mount.innerHTML='<button type="button" class="ms-btn" id="csBtn" aria-haspopup="true" aria-expanded="false">All</button>'+
+      '<div class="ms-panel cs-panel" id="csPanel" hidden><div class="cs-head">'+
+      '<input class="ms-search cs-search" id="csSearch" autocomplete="off">'+
+      '<div class="cs-derived" id="csDerived"><span class="dmark"></span><span class="cs-dtext"></span></div>'+
+      '<div class="ms-tools"><a data-a="clear" id="csClear"></a></div></div>'+
+      '<div class="ms-list cs-list" id="csList"></div></div>';
+    this.btn=$('csBtn'); this.panel=$('csPanel'); this.search=$('csSearch'); this.list=$('csList');
+    this.search.placeholder=CS_COPY.placeholder; this.search.setAttribute('aria-label',CS_COPY.searchName);
+    mount.querySelector('.dmark').textContent=CS_COPY.dmark;
+    mount.querySelector('.cs-dtext').textContent=CS_COPY.derivedLine;
+    $('csClear').textContent=CS_COPY.clear;
+    this.btn.onclick=e=>{ e.stopPropagation(); const open=!this.panel.hidden;
+      document.querySelectorAll('.ms-panel').forEach(p=>p.hidden=true); this.panel.hidden=open;
+      this.btn.setAttribute('aria-expanded',String(!open)); if(!open){ this.render(); this.search.focus(); } };
+    this.panel.onclick=e=>e.stopPropagation();
+    this.search.oninput=()=>this.render();
+    $('csClear').onclick=()=>{ this.sel=[]; this.render(); this.update(); };
+    /* Capture phase, so a click that another dropdown's button stops still
+       closes this panel's state as well as its panel. */
+    document.addEventListener('click',e=>{ if(!mount.contains(e.target)){ this.panel.hidden=true; this.btn.setAttribute('aria-expanded','false'); } },true);
+  }
+  row(e){
+    const k=e[0], lab=document.createElement('label'), cb=document.createElement('input');
+    cb.type='checkbox'; cb.checked=this.sel.indexOf(k)>=0; cb.value=k;
+    cb.onchange=()=>{ if(cb.checked) this.sel.push(k); else this.sel.splice(this.sel.indexOf(k),1); this.render(); this.update(); };
+    const o=document.createElement('span'); o.className='cs-opt';
+    const c=document.createElement('span'); c.className='cs-cite'; c.textContent=k; o.appendChild(c);
+    if(e[1]){ const l=document.createElement('span'); l.className='cs-lab'; l.textContent=e[1]; o.appendChild(l); }
+    lab.appendChild(cb); lab.appendChild(o); return lab;
+  }
+  render(){
+    const q=this.search.value, r=suggest(q,this.sections,this.sel), L=this.list;
+    L.innerHTML='';
+    const add=(cls,text)=>{ const d=document.createElement('div'); d.className=cls; d.textContent=text; L.appendChild(d); };
+    if(r.selected.length){ add('cs-ghead',CS_COPY.selectedHead); r.selected.forEach(e=>L.appendChild(this.row(e))); }
+    if(r.note) add('cs-note',CS_COPY.note.split('{key}').join(r.note.key).replace('{tail}',r.note.tail));
+    if(!r.total && r.query.kind!=='empty') add('cs-none',CS_COPY.none.split('{q}').join(q.trim()));
+    r.matches.forEach(e=>L.appendChild(this.row(e)));
+    if(r.total>r.matches.length) add('cs-foot',CS_COPY.foot.replace('{shown}',r.matches.length).replace('{total}',r.total.toLocaleString('en-US')));
+  }
+  update(){ this.btn.textContent=buttonText(this.sel); if(this.onChange) this.onChange(); }
+  values(){ return this.sel.slice(); }
+}
+/* the picked section keys, or none when the charge row is not offered */
+function chargeKeys(){ return csCharge?csCharge.values():[]; }
+
 async function init(){
   const base=location.href.replace(/[^/]*$/,'');
   log('Build '+BUILD+' - starting…');
@@ -453,6 +657,11 @@ async function init(){
      "Other" moved last, the project's existing convention for an "Other X"
      leaf. */
   msReason.setOptions(reasonOptions());
+  /* The charge row is offered only when facets.json carries the section list. It is
+     a flex row, so it is removed rather than hidden: an author display rule would
+     override the hidden attribute. */
+  if(Array.isArray(facets.chargeSections)) csCharge=new CS($('cs_charge'), facets.chargeSections);
+  else $('chargeBar').remove();
   (facets.statuses||[]).forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; $('f_status').appendChild(o); });
 
   buildDatePickers(Math.max(1994, facets.minYear||1994), facets.maxYear||2026);
@@ -511,6 +720,8 @@ function wireHint(btnId, tipId){
 function setupNotes(){
   wireHint('hintRecord','tipRecord');
   wireHint('hintCourt','tipCourt');
+  wireHint('hintCharge','tipCharge');
+  wireHint('hintMatch','tipMatch');
 }
 
 
@@ -630,6 +841,7 @@ function parityCheck(){
   const narrowed=[];
   if(msDist.values().length) narrowed.push('District');
   if(msCat.values().length) narrowed.push('Category');
+  if(chargeKeys().length) narrowed.push('Charge');
   if(msRole.values().length) narrowed.push('U.S. role');
   if(msLead.values().length) narrowed.push('Lead agency');
   if(msCourt.values().length) narrowed.push('Court type');
@@ -647,10 +859,15 @@ function parityCheck(){
 function renderConflict(){
   const el=$('conflictNotice'); if(!el) return;
   const bad = $('f_decl').value==='exclude' && msReason.values().length>0;
-  if(!bad){ el.hidden=true; el.innerHTML=''; return; }
-  el.innerHTML='<span class="lead">⚠ These two filters cannot both be met.</span> '+
-    '<b>Declination</b> is set to exclude declined matters and <b>Declination reason</b> names one. '+
-    'No record can satisfy both, so this search will return nothing. Clear one of them.';
+  const civil = $('f_type').value==='Civil' && chargeKeys().length>0;
+  if(!bad && !civil){ el.hidden=true; el.innerHTML=''; return; }
+  /* One lead clause, then each contradiction that holds, the declination one first. */
+  const bodies=[];
+  if(bad) bodies.push('<b>Declination</b> is set to exclude declined matters and <b>Declination reason</b> names one. '+
+    'No record can satisfy both, so this search will return nothing. Clear one of them.');
+  if(civil) bodies.push('<b>Case type</b> is set to Civil and <b>Charge</b> names a section. '+
+    'Only criminal records carry charges, so this search will return nothing. Clear one of them.');
+  el.innerHTML='<span class="lead">⚠ These two filters cannot both be met.</span> '+bodies.join(' ');
   el.hidden=false;
 }
 
@@ -746,12 +963,12 @@ function onFilterChange(){
 }
 function setupDeclination(){
   wireHint('hintDisp','tipDisp');
-  ['f_decl','f_basis','f_record','f_status'].forEach(id=>{
+  ['f_decl','f_basis','f_record','f_status','f_chargeMode'].forEach(id=>{
     const el=$(id); if(!el) return;
     const prev=el.onchange;
     el.onchange=function(e){ if(prev) prev.call(this,e); onFilterChange(); };
   });
-  [msDist,msCat,msRole,msLead,msCourt,msDisp,msReason].forEach(ms=>{ if(ms) ms.onChange=onFilterChange; });
+  [msDist,msCat,msRole,msLead,msCourt,msDisp,msReason,csCharge].forEach(ms=>{ if(ms) ms.onChange=onFilterChange; });
   msReason.onOpen=ensureCube;
   cubeSubs.push(()=>{ renderParity(); });
   renderConflict();
@@ -815,6 +1032,7 @@ function currentFilter(){
   const rec=$('f_record').value; if(rec) c.push('record_type='+sqlLit(rec));
   const cats=msCat.values();
   if(cats.length) c.push('('+cats.map(x=>'(category_primary='+sqlLit(x)+' OR category_all LIKE '+sqlLit('%'+x+'%')+')').join(' OR ')+')');
+  const chg=chargeWhere(chargeKeys(), $('f_chargeMode') ? $('f_chargeMode').value : 'any'); if(chg) c.push(chg);
   const r=inList('us_role', msRole.values()); if(r) c.push(r);
   const la=inList('lead_agency', msLead.values()); if(la) c.push(la);
   const ct=inList('court_type', msCourt.values()); if(ct) c.push(ct);
@@ -909,7 +1127,7 @@ function renderTable(cols, rows){
       if(a){ a.addEventListener('click',e=>e.stopPropagation()); th.appendChild(a); }
     });
   }
-  tbody.innerHTML=rows.map(r=>'<tr>'+cols.map(k=>`<td>${fmtCell(r[k],k)}</td>`).join('')+'</tr>').join('');
+  tbody.innerHTML=rows.map(r=>'<tr>'+cols.map(k=>`<td>${k==='all_charges'?chargesCell(r[k]):fmtCell(r[k],k)}</td>`).join('')+'</tr>').join('');
 }
 
 async function downloadCSV(){
@@ -937,7 +1155,7 @@ init().catch(e=>console.error(e));
 </script>
 <!-- Dashboard selector: reads the shared DASHBOARDS list (single source of truth) and links back
      to the dashboards with the correct relative path. No Filters dropdown here by design. -->
-<script src="../shared/config.js?v=20260922c"></script>
+<script src="../shared/config.js?v=20261002a"></script>
 <script>
 (function(){
   var CUR='case-lookup/index.html';

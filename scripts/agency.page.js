@@ -20,11 +20,9 @@ const DISP=[["ju","Judgment For U.S.","#1d9e75"],["st","Settlements","#2a78d6"],
 const METRICS_R=[["cases_filed","Cases filed"],["cases_terminated","Cases terminated"],["clearance","Clearance %"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
 const METRICS_CASES=[["cases_filed","Cases filed"],["cases_pending","Cases pending"],["cases_terminated","Cases terminated"]];
 const METRICS_MATTERS=[["matters_received","Matters received"],["matters_pending","Matters pending"],["matters_terminated","Matters terminated"]];
-// Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
-// (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
-// of "2021-01" put 2021-01, the next administration's first month, inside the Trump I
-// range and made it 49 months against the band's 48.
-const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
+// The presets come from ADMINS in shared/config.js (adminPresets() there): each `to` is the
+// band's LAST month, because visIdx() filters from <= ym <= to and `b` is an exclusive end.
+const PRESETS=adminPresets(state.to);
 const DEPT_ORDER_R=["DOJ","DHS","Treasury","Defense","Interior","USPS","State","HHS","Agriculture","Labor","HUD","Veterans Affairs","Education","Energy/Environment","Commerce","State/Local & Other"];
 const SUB_ORDER_R={"DOJ":["FBI","DEA","ATF","USMS","INS (legacy)","Other DOJ"],"DHS":["CBP","ICE","HSI","Secret Service","Coast Guard","TSA","DHS-OIG","Other DHS"]};
 const DEPT_ORDER_V=["Social Security Admin","DOJ","DHS","Treasury","HUD","HHS","Education","Veterans Affairs","Small Business Admin","Agriculture","Defense","Labor","Interior","State","EPA","OPM","Energy","Commerce","USPS","Other"];
@@ -36,7 +34,7 @@ const docMode=()=>isCiv()?'agencyCivil':'agency';
 
 // ── `cases_pending` is a COUNTED column, read from its own cube ─────────────────
 // `civil_agency_pending_cube_national.csv` / `civil_agency_pending_cube.csv`:
-//   ym [, district], department, subagency, role, cases_pending.
+//   ym [, district], department, subagency, role, cases_pending, matters_pending.
 // Not a column on `civil_agency_cube`, and not accumulated in the browser any more: the
 // old running net plotted Bureau of Prisons at -368 where this page's own table said
 // 5,955. A caseload cannot be negative.
@@ -49,6 +47,11 @@ const docMode=()=>isCiv()?'agencyCivil':'agency';
 // that ends in 2019 reads as "no data after 2019" rather than "none after 2019". Outside
 // the spine there is nothing, so the value is null and nothing is drawn. Every read goes
 // through pendingArrC().
+//
+// `matters_pending` rides in the same files with its OWN coverage: it is counted only from
+// the first month whose cell carries a value (2009-09 on the current files), and every cell
+// before that is EMPTY. An empty cell is absent, never zero, so the parse keeps it null and
+// the zero-fill runs only from that first valued month (`mlo`), read from the file.
 let PCNAT=null,PCFULL=null,PSP_N=null,PSP_F=null,pcnatLoading=false,pcfullLoading=false;
 // Provisional (right-censored) data.
 // All the logic lives in shared/provisional.js; this page only makes calls.
@@ -104,27 +107,38 @@ function aggR(dists, ags){
   return R;
 }
 function parsePendC(t){ const L=t.trim().split(/\r?\n/), H=L[0].split(","), I=Object.fromEntries(H.map((h,i)=>[h,i]));
-  const rows=new Array(L.length-1); let lo=null,hi=null;
+  const rows=new Array(L.length-1); let lo=null,hi=null,mlo=null;
   for(let i=1;i<L.length;i++){ const c=L[i].split(","); const ym=c[I.ym];
     if(lo===null||ym<lo) lo=ym; if(hi===null||ym>hi) hi=ym;
-    rows[i-1]={ym,grp:c[I.subagency],dept:c[I.department],role:c[I.role],district:I.district!==undefined?c[I.district]:"National",v:+c[I.cases_pending]||0}; }
-  return {rows,spine:{lo,hi}}; }
+    const mc=I.matters_pending!==undefined?c[I.matters_pending]:undefined;
+    const mv=(mc===""||mc===undefined)?null:+mc;
+    if(mv!==null&&(mlo===null||ym<mlo)) mlo=ym;
+    rows[i-1]={ym,grp:c[I.subagency],dept:c[I.department],role:c[I.role],district:I.district!==undefined?c[I.district]:"National",v:+c[I.cases_pending]||0,mv}; }
+  return {rows,spine:{lo,hi,mlo}}; }
 // All agencies selected reads the cube's own `department='ALL' AND subagency='ALL'` total
 // row, never a sum of the parts: the parts overlap, so summing them double-counts.
 // Only that one key carries subagency='ALL', verified on the published cube, so the same
 // filter shape as aggC is correct here.
-function pendingArrC(dists,ags,role){
+// Both pending series in ONE pass over the rows, because the district file is 1,960,500 rows.
+// cases_pending fills from the file's first month; matters_pending from its own first
+// valued month, and is null throughout when the file carries no such column.
+function pendingArrsC(dists,ags,role){
   const useNat=dists.has('National')||dists.size===0;
   const src=useNat?PCNAT:PCFULL, sp=useNat?PSP_N:PSP_F;
-  if(!src||!sp) return SPINE.map(()=>null);            // not loaded yet, or the fetch failed
-  const agAll=ags.has('ALL'), idx=new Map();
+  if(!src||!sp){ const none=SPINE.map(()=>null); return {cp:none,mp:none.slice()}; }   // not loaded yet, or the fetch failed
+  const agAll=ags.has('ALL'), idx=new Map(), midx=new Map();
   for(const r of src){
     if(r.role!==role) continue;
     if(!useNat&&!dists.has(r.district)) continue;
     if(agAll?(r.grp!=='ALL'):(r.grp==='ALL'||!ags.has(r.grp))) continue;
-    idx.set(r.ym,(idx.get(r.ym)||0)+r.v); }
-  return SPINE.map(ym=> (ym>=sp.lo&&ym<=sp.hi) ? (idx.get(ym)||0) : null);
+    idx.set(r.ym,(idx.get(r.ym)||0)+r.v);
+    if(r.mv!==null) midx.set(r.ym,(midx.get(r.ym)||0)+r.mv); }
+  return { cp:SPINE.map(ym=> (ym>=sp.lo&&ym<=sp.hi) ? (idx.get(ym)||0) : null),
+           mp:SPINE.map(ym=> (sp.mlo!==null&&ym>=sp.mlo&&ym<=sp.hi) ? (midx.get(ym)||0) : null) };
 }
+function pendingArrC(dists,ags,role,metric){ const P=pendingArrsC(dists,ags,role); return metric==='matters_pending'?P.mp:P.cp; }
+// The first month matters_pending carries in the file the current selection reads, or null.
+function mattersFrom(){ const sp=(state.dists.has('National')||state.dists.size===0)?PSP_N:PSP_F; return sp?sp.mlo:null; }
 // ---- civil aggregation ----
 function aggC(dists, ags, role){
   const useNat=dists.has('National')||dists.size===0, agAll=ags.has('ALL');
@@ -140,12 +154,9 @@ function aggC(dists, ags, role){
 }
 const mean3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2])/3;
 const ratio3=(num,den,i)=>{ if(i<2)return null; const D=den[i]+den[i-1]+den[i-2],N=num[i]+num[i-1]+num[i-2]; return D>0?100*N/D:null; };
-function cumsum(a){ let acc=0; return a.map(v=>acc+=v); }
-// THE CASES BRANCH OF THIS FUNCTION IS DELETED: cases_pending reads the counted
-// column. What is left is matters only, and it is still a running net because
-// `matters_pending` is NOT in the published pending cube and is deliberately held. Do not add
-// a cases-shaped branch back here.
-function mattersPendingSeries(R){ return cumsum(R.mr.map((v,i)=>v-R.cf[i]-R.mt[i])); }
+// Both pending metrics read counted columns from the pending cube. Neither is accumulated
+// in the browser: a running net from the cube's first month leaves out everything already
+// open on that date and can fall below zero.
 function metricArrR(R,m){ switch(m){
   case 'cases_filed': return R.filed.slice();
   case 'cases_filed_3mo': return R.filed.map((_,i)=>mean3(R.filed,i));
@@ -169,14 +180,14 @@ function metricArrC(R,m){ switch(m){
   case 'matters_received_3mo': return R.mr.map((_,i)=>mean3(R.mr,i));
   case 'matters_terminated': return R.mt.slice();
   case 'matters_terminated_3mo': return R.mt.map((_,i)=>mean3(R.mt,i));
-  case 'matters_pending': return mattersPendingSeries(R);
-  case 'matters_pending_3mo': { const p=mattersPendingSeries(R); return p.map((_,i)=>mean3(p,i)); }
+  case 'matters_pending': return R.mp?R.mp.slice():SPINE.map(()=>null);
+  case 'matters_pending_3mo': { const p=R.mp||SPINE.map(()=>null); return p.map((_,i)=>mean3(p,i)); }
   } return R.cf.slice(); }
 // unified accessors
-// aggC and aggR are left pure and are still what the module exports; the counted pending
-// series is attached here, in the one place every render path goes through.
+// aggC and aggR are left pure and are still what the module exports; the two counted
+// pending series are attached here, in the one place every render path goes through.
 function aggregate(dists,ags){ if(!isCiv()) return aggR(dists,ags);
-  const R=aggC(dists,ags,state.role); R.cp=pendingArrC(dists,ags,state.role); return R; }
+  const R=aggC(dists,ags,state.role); const P=pendingArrsC(dists,ags,state.role); R.cp=P.cp; R.mp=P.mp; return R; }
 function metricArray(R,m){ return isCiv()?metricArrC(R,m):metricArrR(R,m); }
 function shareFlow(R){ return isCiv()?R[primaryFlow()]:R.filed; }
 
@@ -237,21 +248,45 @@ function renderTopline(){
               occ: isCiv()?C.capOccClient:(state.occ==='lead'?C.capOccLead:C.capOccAll) },
     provN:PV.n(m,pvopt()),
     caption: isCiv()?'U.S. as '+state.role+'.':'Counts U.S. District Court filings only.',
-    notOffered: m==='matters_pending',
+    coverage: isCiv()&&m==='matters_pending'?{from:mattersFrom()}:null,
     loading: isCiv()?!CNAT:!NAT,
     empty: !series.some(v=>v)
   }); }catch(e){ console.warn('LIONS_TOPLINE.render failed - topline section skipped', e); }
 }
 
-const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
+const adminBands={id:'admin',
+  // The era names sit in a 16px strip reserved ABOVE the plot, so no data can cover them: a stacked chart's fills cover the whole plot. Each band's own tint runs up into the strip, so a name sits in the band it names. Names, spans and tints all come from ADMINS in shared/config.js.
+  beforeInit(ch){ window.Chart.layouts.addBox(ch,{position:'top',weight:0,fullSize:false,options:{},isHorizontal(){return true;},update(w){ this.width=w; this.height=16; },draw(){}}); },
+  beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
   const x=ch.scales.x,area=ch.chartArea,ctx=ch.ctx; const half=labels.length>1?Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))/2:10;
+  const top=area.top-16, spans=[];
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
-    ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,area.top,x1-x0,area.bottom-area.top);
-    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
-    if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
-}};
+    ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,top,x1-x0,area.bottom-top); ctx.restore();
+    spans.push({name:ad.name,l:Math.max(x0,area.left),r:Math.min(x1,area.right)}); }
+  // A name is centred in its band when it fits. One that does not fit is pinned to the plot edge instead, but only for the first or last band and only when the band is at least half the name's width; centred names are placed first and a pinned one never overlaps them.
+  ctx.save(); ctx.font='11px sans-serif'; ctx.fillStyle='#4f504c'; ctx.textAlign='left';
+  const fit=[],pin=[],done=[];
+  spans.forEach((sp,i)=>{ const w=ctx.measureText(sp.name).width, span=sp.r-sp.l;
+    if(w+6<=span) fit.push([sp.name,(sp.l+sp.r)/2-w/2,w]);
+    else if(span>=w/2&&i===spans.length-1&&sp.r>=area.right-0.5) pin.push([sp.name,area.right-2-w,w]);
+    else if(span>=w/2&&i===0&&sp.l<=area.left+0.5) pin.push([sp.name,area.left+2,w]); });
+  for(const [name,lx,w] of fit.concat(pin)){ if(done.some(([a,b])=>lx<b+6&&lx+w>a-6))continue; done.push([lx,lx+w]); ctx.fillText(name,lx,area.top-4); }
+  ctx.restore(); }
+};
+// The era strip must never stop a chart drawing: a hook that throws logs the error and the chart renders without it.
+for(const k of ['beforeInit','beforeDraw']){ const f=adminBands[k]; adminBands[k]=function(){ try{ return f.apply(this,arguments); }catch(e){ console.error(e); } }; }
 
+// The three chart strings Matters pending carries. The first sits in the legend whenever the
+// metric is plotted; the other two only while the visible range starts before the first month
+// the column carries, which is read from the file and never typed here.
+const MP_COPY={
+  wobble:'Month-to-month changes partly reflect when offices enter records, and a single month can move sharply',
+  start:'Matters pending is counted from {first_month}',
+  aria:'Matters pending is counted from {first_month}; there is no line before then.'
+};
+// Whether the visible range starts before the first month matters_pending carries.
+function mpStartsLate(){ const f=mattersFrom(), v=visIdx(); return !!f && v.length>0 && SPINE[v[0]]<f; }
 const TT={enabled:false,external:extTooltip};
 // A STOCK is a level, so a quarter or a fiscal year takes the level at the
 // bucket's LAST month. Summing a stock across a bucket, or cumulating one from the
@@ -272,8 +307,11 @@ function renderChart(){
   const nOwn=PV.n(curMetric(),pvopt()), flagsOwn=PV.bucketFlags(SPINE,B,nOwn);
   const datasets=ags.map((ag)=>{ const arr=seriesFor(state.dists,new Set([ag]),curMetric(),B); const col=agColor(ag);
     return PV.decorateLine({label:ag,data:arr,borderColor:col,backgroundColor:col,tension:.25,pointRadius:pr,pointStyle:'circle',pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:1.4,pointHoverRadius:4,borderWidth:2,spanGaps:true,_col:col,_pct:pct},flagsOwn,pr); });
+  const mpOn=isCiv()&&curMetric()==='matters_pending';
   document.getElementById("legend").innerHTML=datasets.map(ds=>`<span class="lg"><span class="sw" style="background:${ds._col}"></span>${ds.label}</span>`).join("")
      + (anyPartial?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
+     + (mpOn?'<span class="lg" style="color:var(--mut)">'+MP_COPY.wobble+'</span>':'')
+     + (mpOn&&mpStartsLate()?'<span class="lg" style="color:var(--mut)">'+MP_COPY.start.replace('{first_month}',monthLong(mattersFrom()))+'</span>':'')
      + (PV.anyProv(flagsOwn)?PV.legendChip(nOwn,PV.dir(curMetric())):'');   // separate marker from "*" - two different facts
   document.getElementById("chartTitle").textContent=metricLabel(curMetric())+(isCiv()?" - "+state.role:"")+" - by "+(isCiv()?"client":"referring")+" agency";
   if(typeof window==='undefined'||!window.Chart){ return; }
@@ -302,7 +340,7 @@ function renderChart2(){
   } else {
     datasets=ags.map(a=>{ const col=agColor(a); return {label:a,data:totB.map((t,bi)=>t?100*aB[a][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true}; });
   }
-  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("")
+  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor};box-shadow:inset 0 0 0 1px var(--mut)"></span>${ds.label}</span>`).join("")
     + (PV.anyProv(flagsMix)?PV.legendChip(nMix,'mix'):'');
   const denom=isCiv()?primaryLabel():'referred cases filed';
   document.getElementById("chart2Title").textContent="Share of "+denom+" - % of total"+(state.mixMode==='stacked'?" (stacked)":" (combined)");
@@ -363,8 +401,9 @@ function updateChartAccessibility(){
   const provA2=reaches(nA2)?(' '+PV.noteText(nA2,'mix')):'';
   const nA3=PV.n('cases_terminated',pvopt());
   const provA3=reaches(nA3)?(' '+PV.noteText(nA3,'mix')):'';
+  const startA=(isCiv()&&curMetric()==='matters_pending'&&mpStartsLate())?(' '+MP_COPY.aria.replace('{first_month}',monthLong(mattersFrom()))):'';
   chartEl.setAttribute('aria-label',
-    `${metricLabel(curMetric())} trend over time by ${isCiv()?'client':'referring'} agency. Mode: ${modeText}. Filters: ${distText}; ${agText}; ${state.from} to ${state.to}${isCiv()?`; U.S. as ${state.role}; basis ${state.basis}`:''}.${provA}`
+    `${metricLabel(curMetric())} trend over time by ${isCiv()?'client':'referring'} agency. Mode: ${modeText}. Filters: ${distText}; ${agText}; ${state.from} to ${state.to}${isCiv()?`; U.S. as ${state.role}; basis ${state.basis}`:''}.${provA}${startA}`
   );
 
   chart2El.setAttribute('aria-label',
@@ -443,6 +482,7 @@ const TBL_COLS_V=[
   {k:'matters_terminated',g:'matters',h:'Matters terminated',t:'int',w:'matters_terminated'},
   {k:'cases_filed',g:'cases',h:'Cases filed',t:'int',w:'cases_filed'},
   {k:'cases_terminated',g:'cases',h:'Cases terminated',t:'int',w:'cases_terminated'},
+  {k:'matters_pending',g:'pending',h:'Matters pending (at period end)',t:'int',w:'matters_pending',cls:'stock'},
   {k:'cases_pending',g:'pending',h:'Cases pending (at period end)',t:'int',w:'cases_pending',cls:'stock'},
   {k:'d_judg_us',g:'dispositions',h:'Judgment for U.S.',t:'int',w:'cases_terminated'},
   {k:'d_settle',g:'dispositions',h:'Settlements',t:'int',w:'cases_terminated'},
@@ -494,7 +534,7 @@ const TBL_COPY_V={
   lineOne:(p,role)=>'One row per '+p+', U.S. as '+role+'. The figures are one client agency.',
   lineSum:(p,n,role)=>'One row per '+p+', U.S. as '+role+'. The figures are '+n+' client agencies added together, and each case is counted once.',
   lineBreakout:(p,role)=>'One row per '+p+' per client agency, U.S. as '+role+'. The agency rows add up to the total row once "Other client agencies" is included.',
-  notesExtra:'Cases pending is a single figure reported at the end of the period, not cases for the period. Do not sum that column.',
+  notesExtra:'Matters pending and cases pending are single figures reported at the end of the period, not matters or cases for the period. Do not sum either column, and do not add one to the other.',
   refusal:(n,cap)=>TCOPY.refusal(n,cap,'client agencies'),
   pending:TCOPY.pending
 };
@@ -534,10 +574,12 @@ function aggregateTable(dists,target){
   else { for(const d of dists) for(const r of tblDistRows(d)) add(r); }
   const R={}; for(const k of NUMS) R[k]=[];
   for(const ym of SPINE){ const o=idx.get(ym); for(const k of NUMS) R[k].push(o?o[k]:0); }
-  /* cases_pending is a COUNTED column in a SECOND cube, read through pendingArrC(),
-     which is the only place that knows the zero-suppression contract. It is a STOCK, so
-     the engine takes the bucket's LAST month and never a sum. Civil mode only. */
-  if(civ) R.cases_pending=pendingArrC(dists,target.kind==='all'?new Set(['ALL']):target.keys,state.role);
+  /* cases_pending and matters_pending are COUNTED columns in a SECOND cube, read through
+     pendingArrsC(), the only place that knows the zero-suppression contract and each
+     column's own coverage. Both are STOCKS, so the engine takes the bucket's LAST month and
+     never a sum. Civil mode only. */
+  if(civ){ const PA=pendingArrsC(dists,target.kind==='all'?new Set(['ALL']):target.keys,state.role);
+    R.matters_pending=PA.mp; R.cases_pending=PA.cp; }
   return R;
 }
 const tblSelAgs=()=>{ const a=curAgs(); return (a.has('ALL')||a.size===0)?[]:[...a]; };
@@ -575,7 +617,7 @@ const TBL_DESC={
   get dimNounPlural(){ return isCiv()?'client agencies':'referring agencies'; },
   get hasBasisCol(){ return !isCiv(); },
   hasEdge:true,
-  get stockKeys(){ return isCiv()?['cases_pending']:[]; },
+  get stockKeys(){ return isCiv()?['matters_pending','cases_pending']:[]; },
   /* The U.S. role is a page filter in civil mode, not a third breakout axis: there is no
      role='ALL' row in civil_agency_cube to check a three-role sum against. It is stated
      in the basis line and rides the CSV as a machine column. Criminal mode has no role. */
@@ -760,11 +802,10 @@ async function ensureFullC(){ if(CFULL||cfullLoading) return; cfullLoading=true;
   try{ const r=await fetch("./data/civil_agency_cube.csv",{cache:"reload"}); CFULL=parseCSV_C(await r.text()); if(dMS) dMS.setItems(districtList());
     SL.setLoading(null); SL.clearLoadError(); }catch(e){ console.error(e); SL.setLoadError(SL.COPY.errDistrict); } cfullLoading=false; }
 // ── The pending cubes are fetched LAZILY, never at page load ───────────────────
-// `cases_pending` is the only metric that needs them; `matters_pending` does not, because
-// it is not in the cube. The district file is 66.11 MiB - the third file on this
-// site over GitHub's 50 MiB warning - and is fetched only when a district selection
+// `cases_pending` and `matters_pending` are the two metrics that need them. The district
+// file is over GitHub's 50 MiB warning and is fetched only when a district selection
 // actually needs it.
-const NEEDS_PEND=m=>m==='cases_pending';
+const NEEDS_PEND=m=>m==='cases_pending'||m==='matters_pending';
 function pendWanted(){ return isCiv()&&NEEDS_PEND(curMetric()); }
 async function ensurePendNat(){ if(PCNAT||pcnatLoading) return; pcnatLoading=true;
   SL.setLoading(SL.COPY.loadPending);
@@ -793,8 +834,7 @@ function buildAgencyPicker(){
 }
 function populateMetric(){ const sel=document.getElementById("metric");
   // The glyph is an INDEX into "Reading the data", not a severity signal. Which
-  // metrics carry it is REFERENCES.flags in shared/config.js, per mode, and a held entry
-  // (matters_pending) resolves to no marker at all.
+  // metrics carry it is REFERENCES.flags in shared/config.js, per mode.
   sel.innerHTML=metricsList().map(m=>`<option value="${m[0]}">${docMetricLabel(docMode(),m[0],m[1])}</option>`).join("");
   if(!metricsList().some(m=>m[0]===curMetric())) setMetric(metricsList()[0][0]); sel.value=curMetric(); }
 
@@ -857,7 +897,7 @@ async function init(){ renderNav();
     const contig=idx.length===0||(idx[idx.length-1]-idx[0]+1===idx.length);
     state.admins=contig?ns:new Set([k]); applyAdmins(); render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
-  state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
+  state.to=ms[ms.length-1];Object.assign(PRESETS,adminPresets(state.to));document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(y=>y.classList.remove('on')); state.to=e.target.value; render(); });
   /* Opening the panel used to call ensurePending(true) unconditionally, so a reader who
@@ -896,4 +936,4 @@ async function init(){ renderNav();
   ensureFull(); render();
 }
 if(typeof document!=='undefined') init();
-if(typeof module!=='undefined') module.exports={aggR,aggC,metricArrR,metricArrC,buildDepts,mattersPendingSeries,pendingArrC,parsePendC};
+if(typeof module!=='undefined') module.exports={aggR,aggC,metricArrR,metricArrC,buildDepts,pendingArrC,parsePendC};

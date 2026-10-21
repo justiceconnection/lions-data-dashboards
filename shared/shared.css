@@ -255,3 +255,31 @@ th.tot,td.tot{border-left:1px solid var(--line)}
   td.k,th.k{max-width:120px}
   td.k:first-child{white-space:nowrap;max-width:none}
 }
+
+/* Share buttons (used in the dashboard header) */
+.header-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:.25rem 0 1rem 0}
+.header-actions .share-label{font-size:.95rem;color:var(--ink);margin-right:.4rem}
+.share-buttons{display:flex;flex-wrap:wrap;gap:.4rem}
+.share-btn{background:var(--panel2);border:1px solid var(--line);padding:6px 8px;border-radius:6px;cursor:pointer;font-size:14px;line-height:1;color:var(--ink)}
+.share-btn:hover{background:#f2f2f2}
+.share-btn.small{padding:4px 7px;font-size:13px}
+.share-btn img{display:block;width:18px;height:18px}
+.share-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+
+/* links inside running text on the dashboards: charcoal and always underlined, so the
+   underline and not the colour is what marks them */
+.sub a,.dw-guide-par a,.foot a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.sub a:focus-visible,.dw-guide-par a:focus-visible,.foot a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* Contact line: the last element inside .wrap on every page. It must stay inside .wrap,
+   because the height reporter measures .wrap and anything after it is cut off in the
+   embed. It must not go inside #footnote, which the shell rewrites whole after load. */
+.site-contact{margin:18px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:13px;line-height:1.5;color:var(--mut)}
+.site-contact a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;padding:5px 0;white-space:nowrap}
+.site-contact a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* on a phone the address always takes its own line, on every page alike */
+@media(max-width:600px){.site-contact a{display:block;width:fit-content;padding:3px 0}}
+/* same box as the block above it, so the two hairlines end on the same pixel */
+#footnote + .site-contact{max-width:980px;margin-left:auto;margin-right:auto}
+.doc-aiuse + .site-contact{max-width:75%}

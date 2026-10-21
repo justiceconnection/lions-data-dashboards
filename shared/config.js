@@ -3,6 +3,13 @@
 const DASHBOARDS=[{name:"Criminal Cases",file:"index.html"},{name:"Civil Matters and Cases",file:"civil.html"},{name:"Cases by Referring Agency",file:"agency.html"},{name:"Criminal Matter Declinations",file:"declinations.html"},{name:"Case Look-Up",file:"case-lookup/index.html"}];
 const ADMINS=[{name:"Obama II",a:"2013-01",b:"2017-01",c:"rgba(33,33,35,0.05)"},{name:"Trump I",a:"2017-01",b:"2021-01",c:"rgba(33,33,35,0.12)"},{name:"Biden",a:"2021-01",b:"2025-01",c:"rgba(33,33,35,0.05)"},{name:"Trump II",a:"2025-01",b:"9999-12",c:"rgba(33,33,35,0.12)"}];
 const ADMIN_SEQ=['obama2','trump1','biden','trump2'];
+// The administration presets, keyed by ADMIN_SEQ and built from ADMINS so the bands are written once.
+// Each preset's `to` is its LAST month: `b` is an EXCLUSIVE end, so the month before it. The open
+// era and "all" run to `openEnd`, which each dashboard moves to its newest month once the cube loads.
+function adminPresets(openEnd){
+  const prev=b=>{ const y=+b.slice(0,4), m=+b.slice(5,7); return m===1?(y-1)+'-12':y+'-'+String(m-1).padStart(2,'0'); };
+  const p={}; ADMINS.forEach((ad,i)=>{ p[ADMIN_SEQ[i]]=[ad.a, ad.b==='9999-12'?openEnd:prev(ad.b)]; });
+  p.all=[ADMINS[0].a,openEnd]; return p; }
 
 // ── "Reading the data" - the reference page every surface links to ─────────────
 // ONE constant, two render sites, six surfaces. `shell2.js` renders the bar control on
@@ -50,12 +57,12 @@ const REFERENCES={
     const s=this.surfaceOf(mode);
     return (base||"")+this.page+(s?"?from="+s:"")+(entryId?"#"+entryId:"");
   },
-  // Entries whose copy is signed but which the notes page does not render yet, because
-  // the series they describe is not in the published cube. `matters_pending` is held
-  // for that reason. entryFor() returns null for a held entry, so a marker can never point at an
-  // anchor the page does not publish - and the held set is stated once, here, rather
-  // than re-derived in each page script.
-  held:["e-pending-entry-date"],
+  // Entries whose copy is written but which the notes page does not render yet, because
+  // the series they describe is not in the published cube. None today. entryFor() returns
+  // null for a held entry, so a marker can never point at an anchor the page does not
+  // publish - and the held set is stated once, here, rather than re-derived in each page
+  // script.
+  held:[],
   entryFor(mode,key){
     const id=(this.flags[mode]||{})[key]||null;
     return (id&&this.held.indexOf(id)<0)?id:null;

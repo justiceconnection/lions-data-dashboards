@@ -61,7 +61,7 @@ function renderNav(){ const nav=document.getElementById('dashnav'), sel=document
       'agency.html':       'Loading referring-agency data…',
       'declinations.html': 'Loading declinations data…'
     },
-    loadDistrict:        'Loading district detail…',
+    loadDistrict:        'Loading district details…',
     loadPending:         'Loading pending caseload…',
     loadDistrictPending: 'Loading district pending caseload…',
     loadCivil:           'Loading civil data…',
@@ -110,6 +110,9 @@ function bucketComp(R,B){ const o={}; for(const k in R){ if(Array.isArray(R[k]))
 // A STOCK must never be summed across a bucket. A pending caseload is a level measured at a month end, so a quarter's value is the level at the quarter's LAST month, not the sum of its three months and not the net change across them. Pass the full-spine metric array through this instead of running the metric formula over bucketComp'd components. Which metrics are stocks is PV.family(m)==='stock' (shared/provisional.js), which is already the authority for the provisional window and the down-direction copy; do not invent a second predicate. Trailing nulls inside a bucket fall back to the last non-null month in it, so a partial bucket still reports a real level.
 function bucketEnd(arr,B){ return B.map(b=>{ for(let k=b.idxs.length-1;k>=0;k--){ const v=arr&&arr[b.idxs[k]]; if(v!=null) return v; } return null; }); }
 function grainLabels(B){ return B.map(b=>b.label+(b.partial?'*':'')); }   // "*" flags an incomplete period
+// A "YYYY-MM" month as its full month name and year, for copy that names the month a series begins in.
+function monthLong(ym){ const M=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const p=String(ym||'').split('-'); return p.length<2?'':M[(+p[1]||1)-1]+' '+p[0]; }
 function grainAnyPartial(B){ return B.some(b=>b.partial); }
 // grain-aware x-axis tick label: month keeps the "year at January" behavior; coarser grains show every label.
 function grainTick(grain){ return function(v,index){ const l=this.getLabelForValue(v); if(!l) return '';
@@ -251,6 +254,103 @@ function downloadChartSVG(chart, filename, title){
   }catch(e){ console.error('SVG export failed',e); alert('SVG export failed: '+(e&&e.message||e)); }
 }
 
+/* Share header + buttons utilities
+   - window.LIONS_initShareButtons(): attach handlers to any .share-btn on the page
+   - window.LIONS_injectShareHeader(opts): injects the header-actions markup after the first H1
+   Both are safe to call multiple times; handlers are idempotent.
+*/
+(function(){
+  if(typeof window==='undefined') return;
+
+  function _attachShareHandlers(root){
+    if(window.__LIONS_SHARE_INIT) return; // ensure only once per page
+    const buttons = (root||document).querySelectorAll('.share-btn');
+    if(!buttons || buttons.length===0) return;
+    window.__LIONS_SHARE_INIT = true;
+    const title = document.title || (document.querySelector('h1') && document.querySelector('h1').innerText) || 'LIONS Dashboard';
+    const canonical = (document.querySelector('link[rel="canonical"]')||{}).href;
+    const url = canonical || location.href;
+    const esc = s=>encodeURIComponent(s);
+    function openShare(u){ try{ window.open(u,'_blank','noopener'); }catch(e){} }
+    buttons.forEach(btn=>{
+      btn.addEventListener('click', function(){
+        const p = this.dataset.provider;
+        if(p==='native'){
+          if(navigator.share){ navigator.share({title, url}).catch(()=>{}); }
+          else { alert('Native sharing not available on this device.'); }
+          return;
+        }
+        if(p==='copy'){
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(url).then(()=>{
+              const oldTitle = this.getAttribute('title') || this.getAttribute('aria-label') || '';
+              this.setAttribute('title','Link copied');
+              setTimeout(()=>{ if(oldTitle) this.setAttribute('title', oldTitle); else this.removeAttribute('title'); }, 1300);
+            }).catch(()=>{ prompt('Copy this link', url); });
+          } else { prompt('Copy this link', url); }
+          return;
+        }
+        const t = esc(title), u = esc(url);
+        let shareUrl = null;
+        if(p==='twitter') shareUrl = `https://twitter.com/intent/tweet?text=${t}&url=${u}`;
+        if(p==='facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${u}`;
+        if(p==='linkedin') shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${u}&title=${t}`;
+        if(p==='email') shareUrl = `mailto:?subject=${t}&body=${u}`;
+        if(shareUrl) openShare(shareUrl);
+      });
+    });
+  }
+
+  // Expose an init function that can be called from other scripts
+  window.LIONS_initShareButtons = function(){ _attachShareHandlers(document); };
+  // Backwards-compatible alias
+  window.LIONS_ShareButtons = window.LIONS_initShareButtons;
+
+  // Inject the header-actions DOM and wire it up. opts.imgPath defaults to 'assets/processed',
+  // relative to the page, so the icons resolve under a project path as well as at a site root
+  window.LIONS_injectShareHeader = function(opts){
+    opts = opts || {};
+    const imgPath = opts.imgPath || 'assets/processed';
+    if(document.querySelector('.header-actions')) return document.querySelector('.header-actions');
+    const h1 = document.querySelector('h1');
+    const container = document.createElement('div');
+    container.className = 'header-actions';
+    container.setAttribute('aria-hidden','false');
+    container.innerHTML = `
+      <div class="share-label">Share:</div>
+      <div class="share-buttons" role="group" aria-label="Share dashboard">
+        <button class="share-btn" data-provider="native" aria-label="Open native share">Share</button>
+        <button class="share-btn small" data-provider="twitter" aria-label="Share on Twitter"><img src="${imgPath}/x-2.png" alt="Twitter"></button>
+        <button class="share-btn small" data-provider="facebook" aria-label="Share on Facebook"><img src="${imgPath}/facebook.png" alt="Facebook"></button>
+        <button class="share-btn small" data-provider="linkedin" aria-label="Share on LinkedIn"><img src="${imgPath}/linkedin.png" alt="LinkedIn"></button>
+        <button class="share-btn small" data-provider="email" aria-label="Share by email">✉️</button>
+        <button class="share-btn small" data-provider="copy" aria-label="Copy link">🔗</button>
+      </div>
+    `;
+    const subEl = document.querySelector('.sub');
+    if(subEl && subEl.parentNode){
+      subEl.appendChild(container);
+    } else if(h1 && h1.parentNode) {
+      h1.insertAdjacentElement('afterend', container);
+    } else {
+      document.body.insertBefore(container, document.body.firstChild);
+    }
+    // Attach handlers now that buttons exist
+    _attachShareHandlers(container);
+    return container;
+  };
+
+  // Auto-initialize any existing buttons on DOM ready and inject header if none present
+  function _onReady(){
+    window.LIONS_initShareButtons();
+    if(!document.querySelector('.header-actions')){
+      try{ window.LIONS_injectShareHeader(); }catch(e){}
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', _onReady);
+  else _onReady();
+})();
+
 
 function docMetricLabel(surface,key,label){
  if(typeof REFERENCES==='undefined') return label;
@@ -304,6 +404,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
      /* The section's single provisional mark replaces eight per-figure provisional strings and the footer's second sentence. The footer retains the page's caption only. There are two strings (name and body) because the icon needs an accessible name (announced by screen readers) in addition to the explanatory body text. The body is direction-neutral: it covers flows (which may rise), stocks (which may fall),and shares (whose composition changes). It carries `Data runs to {month}`, the one item the removed footer uniquely supplied. The {n} value is computed (model.provN,  LIONS_PROV.n()) for the selected metric so it follows metric changes. */
     provMarkName: 'Why recent months are incomplete',
     provMarkBody: 'Data runs to {month}. The most recent {n} months are still being reported, so figures may change.',
+    /* the same body when the selected metric's window is one month, which reads in the singular */
+    provMarkBodyOne: 'Data runs to {month}. The most recent month is still being reported, so figures may change.',
 
     /* controls */
     askLead: 'Calculate',
@@ -342,11 +444,12 @@ function mountDocMarkers(surface,root,labelToKey,base){
     noteMeanMedian: 'The average and the middle {bucket} differ by {gap}% here. District-level averages are more uneven than nationally.',
     /* `is an signal` -> `is a signal`. This is the ONE string in the section that does NOT render character for character as it did before the noun slots landed, at Group by = Month, and it is a deliberate copy change rather than a slip: nothing else in the sentence moves. */
     noteStockPeakEdge: 'Over all {buckets} the peak is the newest {bucket}, {edge}, which, due to incomplete reporting, is not necessarily a new high.',
-    noteStockSelected: 'Pending is a sum of cases. A total over a period adds up month-end balances which is not how pending cases are reported, so this section offers pending cases at a specific date instead.',
-    noteStockNoPrior: 'Pending cases cannot be compared over a prior period, only a figure at one date versus another.',
+    /* THE {pend} SLOT in the five stock sentences here and below: pendFill() puts `matters` in it on Matters pending and `cases` on every other stock, where each sentence renders character for character as it did before the slot existed. */
+    noteStockSelected: 'Pending is a sum of {pend}. A total over a period adds up month-end balances which is not how pending {pend} are reported, so this section offers pending {pend} at a specific date instead.',
+    noteStockNoPrior: 'Pending {pend} cannot be compared over a prior period, only a figure at one date versus another.',
     noteShareWhole: '',
     /* THE {bucketEnd} SLOT HERE IS DELIBERATE. The sentence renders byte-identical at Month grain. It takes the slot because it prints on the SAME CARD as basisFigStockHalves below, about the SAME figure: without it, fiscal-year grain gave a basis line saying `fiscal-year-end` and a note beside it saying `month-end`. See the form 2 stock branch in buildPair() for the half of this the comment there used to argue against. */
-    noteStockHalves: 'Pending cases has no half total. Each half is read as its average {bucketEnd} level over that half.',
+    noteStockHalves: 'Pending {pend} has no half total. Each half is read as its average {bucketEnd} level over that half.',
 
     /* ══ THE SIX GRAIN STRINGS, and EVERY ONE IS SILENT AT GROUP BY = MONTH.
     ═══════════════════════ */
@@ -374,8 +477,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
     basisFigStockMedian: 'The middle {bucketEnd} reading in each period.',
     basisFigStockPeak: 'The highest {bucketEnd} reading in each period, settled {buckets} only.',
     /* MOVED, not new: form 1's stock sentence and form 2's stock sentence were the FORM's basis and are now the clause of the figure the form used to choose on the user's behalf. Not one word of either changes. The third, basisStockPeriod above, moves the same way and is the `Average month-end reading` clause on forms 3, 4 and 5. */
-    basisFigStockRead: 'Two readings, one date each. Both dates are settled. Pending cases have no prior period of the same length, so this form reads the same date a period earlier.',
-    basisFigStockHalves: 'The average {bucketEnd} open caseload over each half. Pending cases have no half total, so a half is read as its average {bucketEnd} level rather than as a sum.',
+    basisFigStockRead: 'Two readings, one date each. Both dates are settled. Pending {pend} have no prior period of the same length, so this form reads the same date a period earlier.',
+    basisFigStockHalves: 'The average {bucketEnd} open caseload over each half. Pending {pend} have no half total, so a half is read as its average {bucketEnd} level rather than as a sum.',
     /* THE SHARE CLAUSE IS THE ONE AMENDED STRING. It was form 4's basis, so it named an administration and unequal lengths; it now prints on every form including form 1 where both periods are the same length and neither is an administration. Two words:`Each administration's` -> `Each period's`, `the unequal lengths` -> `the periods' lengths`. Nothing else in the sentence moves. It is built rather than stored because it carries the page's own selection name and occurrence basis. */
     /* a middle month over few values moves on any one of them. On a PAIR the span is computed over the two periods ACTUALLY compared and the wider is printed. */
     /* THE {buckets} SLOT AND THE BUCKET TRIGGER ARE DELIBERATE. The sentence renders byte-identical at Month grain. Both halves moved together and the trigger is the half that mattered: the look-up's own few-values caveat now counts BUCKETS, so a five-fiscal-year range at Fiscal Year grain fired it on the look-up (5 buckets) and stayed silent on a comparison of the same metric (form 2's halves are 30 months each) - the caveat went  missing exactly where a reader needs it. Wording it alone would have left that. */
@@ -395,8 +498,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
 
     /* states */
     unavailable: 'Not available for this period.',
-    /* appended to the line above when matters_pending is selected. Section 3 asks the partial-data state for the sentence AND one clause naming what is missing; the signed block carried only the first, and this is the second (9e delta, gap 3). */
-    notOfferedMatters: 'Matters pending is not published as a single figure, only as a running total since October 1994, so this section does not put a number on it.',
+    /* appended to the line above when Matters pending is read over a period that ends before the first month its column carries: there is no reading, and "None in this period." would call an absent reading zero. */
+    beforeStart: 'Matters pending is counted from {first_month}, and this period ends before then.',
     zero: 'None in this period.',
     loading: 'Still loading.'
   };
@@ -447,6 +550,10 @@ function mountDocMarkers(surface,root,labelToKey,base){
   };
   /* an unknown grain falls back to month, so a bad state cannot print an empty noun */
   function gnoun(grain) { return GRAIN[grain] || GRAIN.month; }
+  /* THE PENDING NOUN SLOT: `matters` on Matters pending, `cases` on every other stock. */
+  function pendFill(tpl, M) {
+    return String(tpl).replace(/\{pend\}/g, (M && M.metricKey === 'matters_pending') ? 'matters' : 'cases');
+  }
   function gfill(tpl, grain) {
     var G = gnoun(grain);
     return String(tpl)
@@ -658,7 +765,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
      A <button>, not a bare glyph, and that is about the mark reaching the reader rather than taste: a phone has  no hover, so a hover-only mark is hidden on touch, which is most of the traffic to a  dashboard embedded in a Framer page. It opens three ways - hover and keyboard focus in CSS, tap or click here - and the bubble is the button's aria-describedby target   and is NEVER `hidden` and never display:none, so a screen-reader user has the
      sentence without opening anything. The visible mark is the provisional HATCH, the  same texture LIONS_PROV draws on a right-censored chart band, plus the accessible  name: texture and text, never colour alone. It is 26x26, which clears WCAG 2.5.8's 24x24 target size and matches shell2's own caret. It is the SECOND child of the  caption row inside .kpis, so collapsing the section takes the mark with the figures  and shell2's caret - which sits on the LEFT of its own header, outside .kpis - is nowhere near it. ══════════════════════════════════════════════════════════════ */
   function provMarkHTML(month, n) {
-    var body = COPY.provMarkBody.replace('{month}', month).replace('{n}', String(n));
+    var body = (n === 1 ? COPY.provMarkBodyOne : COPY.provMarkBody).replace('{month}', month).replace('{n}', String(n));
     return '<span class="tf-provwrap">' +
       '<button type="button" class="tf-prov" id="tfprov" aria-expanded="false" ' +
         'aria-describedby="tfprovtip" aria-label="' + esc(COPY.provMarkName) + '">' +
@@ -762,7 +869,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
           var s = 0, c = 0;
           for (i = 0; i < P.vals.length; i++) if (P.vals[i] != null) { s += P.vals[i]; c++; }
           f.v = c ? nInt(s / c) : '-';
-          f.def = gfill(COPY.defStockAvg, grain).replace('{n}', String(P.B.length));
+          /* {n} counts READINGS, not buckets: a period that starts before a stock's first reading has buckets with nothing in them */
+          f.def = gfill(COPY.defStockAvg, grain).replace('{n}', String(c));
         } else {
           /* the period total divided by the NUMBER OF BUCKETS, which is the mean of the bucket values and so the mean of what the chart plots. A part period is one bucket and counts as one; the divisor is on the face in f.countLine */
           var t = levelOver(M, idxs);
@@ -773,7 +881,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
         var md = median(P.vals);
         f.v = M.kind === 'stock' ? nInt(md) : fmtRate(M, md);
         /* THE FEW-VALUES THRESHOLD IS NOW A COUNT OF BUCKETS, not of months. The caveat exists because a median over few values moves on any one of them, and the values medianed here are the buckets. At month grain the two readings coincide, which is why 12 is unchanged. It is the one number here that is inherited rather than measured. */
-        f.def = M.kind === 'stock' ? gfill(COPY.defStockMedian, grain).replace('{n}', String(P.B.length))
+        f.def = M.kind === 'stock' ? gfill(COPY.defStockMedian, grain).replace('{n}', String(P.vals.filter(function (x) { return x != null; }).length))
               : M.kind === 'rate' ? gfill(COPY.defMedianRate, grain).replace('{n}', String(P.B.length))
               : (P.B.length <= 12
                   ? gfill(COPY.defMedianFew, grain).replace('{n}', String(P.B.length)).replace('{jack}', n2(jackknife(P.vals) || 0))
@@ -803,7 +911,9 @@ function mountDocMarkers(surface,root,labelToKey,base){
             v = P.vals[i]; if (v == null) continue;
             if (top == null || v > top) { top = v; ti = i; }
           }
-          if (ti != null && P.prov[ti]) f.notes.push(gfill(COPY.noteStockPeakEdge, grain).replace('{edge}', P.labels[ti]));
+          /* not on a stock that may RISE as it settles: the note assumes one that falls */
+          var mayRise = window.LIONS_PROV && window.LIONS_PROV.dir(M.metricKey) === 'mayrise';
+          if (ti != null && P.prov[ti] && !mayRise) f.notes.push(gfill(COPY.noteStockPeakEdge, grain).replace('{edge}', P.labels[ti]));
         }
         /* a coarse grain can leave NOTHING both whole and settled - Last 12 months at fiscal-year grain is two part periods, one of them provisional. The section already owns a sentence for "there is no figure here" and it is reused, with the two notes above saying which exclusion emptied the set. No new refusal string is spent. */
         if (bi == null) { f.unavailable = true; f.def = COPY.unavailable; }
@@ -901,7 +1011,7 @@ function mountDocMarkers(surface,root,labelToKey,base){
     if (f.def2) h += defLine(f.def2);
     if (f.basis) h += defLine(f.basis);
     for (var j = 0; j < f.notes.length; j++) h += defLine(f.notes[j]);
-    if (M.kind === 'stock') h += defLine(COPY.noteStockSelected);
+    if (M.kind === 'stock') h += defLine(pendFill(COPY.noteStockSelected, M));
     if (M.flags && M.flags.armD) h += flagLine(COPY.armD);
 
     /* produces other topline calculations */
@@ -975,8 +1085,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
     if (M.kind === 'stock') {
       switch (measure) {
-        case 'read': return COPY.basisFigStockRead;
-        case 'avg': return form === 'halves' ? COPY.basisFigStockHalves : COPY.basisStockPeriod;
+        case 'read': return pendFill(COPY.basisFigStockRead, M);
+        case 'avg': return form === 'halves' ? pendFill(COPY.basisFigStockHalves, M) : COPY.basisStockPeriod;
         case 'median': return COPY.basisFigStockMedian;
         case 'peak': return COPY.basisFigStockPeak;
       }
@@ -1056,9 +1166,9 @@ function mountDocMarkers(surface,root,labelToKey,base){
         /* THE SIDE LABEL IS THE SPAN AND THE DATE IS THE FIGURE'S SUB-LINE. It used to be the date, which was true while form 1 on a stock could only be read as two readings; the three span figures now apply here too and each side's label has to name the months actually read. `Reading at a date` puts its own date on its face, in the sub-line, exactly as an extremum does. */
         R.a = { label: rangeLabel(M, A), val: sideValue(M, A, 'read', measure) };
         R.b = { label: rangeLabel(M, B), val: sideValue(M, B, 'read', measure) };
-        R.totalBasis = COPY.basisFigStockRead;
+        R.totalBasis = pendFill(COPY.basisFigStockRead, M);
         /* narrowed to the figure it describes, the same way spec 5.2g narrows form 2's stock note: its second sentence is about the reading, not about the form. */
-        if (measure === 'read') R.note = COPY.noteStockNoPrior;
+        if (measure === 'read') R.note = pendFill(COPY.noteStockNoPrior, M);
       } else {
         R.a = { label: rangeLabel(M, A), val: sideValue(M, A, 'total', measure) };
         R.b = { label: rangeLabel(M, B), val: sideValue(M, B, 'total', measure) };
@@ -1083,9 +1193,9 @@ function mountDocMarkers(surface,root,labelToKey,base){
       R.laterIsA = false;
       R.ix = [h1, h2];
       if (M.kind === 'stock') {
-        R.totalBasis = COPY.basisFigStockHalves;
+        R.totalBasis = pendFill(COPY.basisFigStockHalves, M);
         /* NARROWED TO THE FIGURE IT DESCRIBES. Its trigger was "form 2  on a stock", when a stock half had one reading; a stock half has three now and the sentence is true of one of them. One word does: `month-end` is now `{bucketEnd}`. */
-        if (measure === 'avg') R.note = COPY.noteStockHalves;
+        if (measure === 'avg') R.note = pendFill(COPY.noteStockHalves, M);
       } else {
         R.periods = 'The period is ' + H.length + ' months, split at the midpoint into ' +
           h1.length + ' and ' + h2.length +
@@ -1293,10 +1403,10 @@ function mountDocMarkers(surface,root,labelToKey,base){
         h += '</select>';
       }
       /* THERE IS NO SETTLED-MONTHS CONTROL. Its two labels are struck with it and are not quoted here, and a comparison reaching into provisional months computes over all months */
-      if (M.kind === 'stock' && S.form === 'prev') h += '<span class="tf-def tf-askline">' + esc(COPY.noteStockNoPrior) + '</span>';
+      if (M.kind === 'stock' && S.form === 'prev') h += '<span class="tf-def tf-askline">' + esc(pendFill(COPY.noteStockNoPrior, M)) + '</span>';
     } else {
       h += '<span class="lead">' + esc(COPY.askLead) + '</span>' + msel;
-      if (M.kind === 'stock') h += '<span class="tf-def tf-askline">' + esc(COPY.noteStockSelected) + '</span>';
+      if (M.kind === 'stock') h += '<span class="tf-def tf-askline">' + esc(pendFill(COPY.noteStockSelected, M)) + '</span>';
     }
 
     /* the one control that turns a look-up into a comparison. A pressed toggle keeps its own label: the fill and aria-pressed carry the state, and relabelling it to the reverse action makes the two channels disagree. */
@@ -1355,12 +1465,12 @@ function mountDocMarkers(surface,root,labelToKey,base){
     if (keys.indexOf(S.measure) < 0) S.measure = keys[0];
     if (S.mode === 'compare' && S.detail == null) S.detail = defaultDetail(M, S.form);
 
-    /* THE METRIC THIS SECTION DOES NOT READ. matters_pending is a cumulative running balance this project does not publish a level for, so no figure is offered on it. It shows the partial-data state rather than a number. */
-    if (M.notOffered) {
+    /* A STOCK COUNTED ONLY FROM A GIVEN MONTH, read over a period with no reading in it. The page hands over `coverage` for such a stock ({from: the first month its column carries, or null when the file carries no such column}); a period that ends before that month shows the unavailable state and says why, never "None in this period.", which would call an absent reading zero. A stock without `coverage` never takes this branch. */
+    if (M.coverage && !M.loading && !per.idxs.some(function (i) { return M.series[i] != null; })) {
       els.strip.innerHTML = '<div class="tf-stat"><div class="tf-v muted-v">-</div>' +
         '<div class="tf-k">' + esc(M.metricLabel) + '</div>' +
         '<div class="tf-win">' + esc(per.label) + '</div>' +
-        defLine(COPY.unavailable + ' ' + COPY.notOfferedMatters) + '</div>';
+        defLine(COPY.unavailable + (M.coverage.from ? ' ' + COPY.beforeStart.replace('{first_month}', monthName(M.coverage.from)) : '')) + '</div>';
       els.ask.innerHTML = ''; els.body.innerHTML = '';
       paintChrome(M, els);
       return;
@@ -1536,7 +1646,9 @@ function mountDocMarkers(surface,root,labelToKey,base){
     }
     function provDirection(state) {
       var k = windowKeys(state);
-      return k.length ? PV().dirAll(k) : 'up';
+      /* the foot follows the widest window the table prints. A pending column that may rise never prints without Cases pending beside it, whose window is the widest and whose direction is to fall, so a 'mixed' set reads as falling here */
+      var d = k.length ? PV().dirAll(k) : 'up';
+      return d === 'mixed' ? 'down' : d;
     }
     function rowCount(state) {
       return grainBuckets(desc.spine(), desc.visIdx(), state.grain).length
@@ -1562,7 +1674,8 @@ function mountDocMarkers(surface,root,labelToKey,base){
             var tot = cache.get('__all');
             var part = bucketComponents(desc.aggregate(state, d.set, { kind: 'keys', keys: new Set(slot.complementOf) }), B);
             var o = {};
-            for (var k in tot) o[k] = tot[k].map(function (v, i) { return v - part[k][i]; });
+            /* a stock column is null where it has no reading, and the difference of two absent readings is absent, not zero */
+            for (var k in tot) o[k] = tot[k].map(function (v, i) { return (v == null || part[k][i] == null) ? null : v - part[k][i]; });
             return o;
           }
           var key = slot.level === 'cube_total' ? '__all' : slot.label;

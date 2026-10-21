@@ -34,9 +34,9 @@
      a silent prose edit impossible.
      PROSE_SHA covered `src` and never `v`, and GROUPS is empty, so for a while it
      covered no figure and no page copy at all.  */
-  var REVISED   = '2026-09-20';
-  var PROSE_SHA = 'bf13437a';   /* recomputed by that same check; there is no generator script */
-  var COPY_SHA  = '37be5f81';   /* same check, over #doc-copy-html in reading-the-data.html */
+  var REVISED   = '2026-10-21';
+  var PROSE_SHA = '2cc0bbbb';   /* recomputed by that same check; there is no generator script */
+  var COPY_SHA  = 'c0c5449e';   /* same check, over #doc-copy-html in reading-the-data.html */
 
   /* ── surfaces ─────────────────────────────────────────────────────────── */
   var SURFACES = {
@@ -73,15 +73,16 @@
                  'fiscal years 2021 to 2025, Table 4, "United States Attorneys’ Offices’ Civil ' +
                  'Caseload", printed pages 17 to 19, each as of 30 September. All five retrieved ' +
                  '3 September 2026.';
-  var DOJ_T5_CITE = 'Five editions of the United States Attorneys’ Annual Statistical Report, ' +
-                 'fiscal years 2021 to 2025, Table 5, "Civil Matters and Cases by Cause of Action", ' +
-                 'printed pages 20 and 21, each as of 30 September. All five retrieved 3 September 2026.';
+  var DOJ_T5_CITE = 'Seventeen editions of the United States Attorneys’ Annual Statistical Report, ' +
+                 'fiscal years 2009 to 2025, Table 5, "Civil Matters and Cases by Cause of Action", ' +
+                 'each as of 30 September. Retrieved 3 and 28 September 2026.';
   var OURS_JUL = 'Measured on this site’s July 2026 data.';
+  var OURS_AUG = 'Measured on this site’s August 2026 data.';
 
   var QUOTED = {
     doj_3b_cases: { v: '63,954',  src: DOJ_FY25 },
     doj_3b_defs:  { v: '76,409',  src: DOJ_FY25 },
-    cl_fy_cases:  { v: '87,560', src: OURS_JUL },
+    cl_fy_cases:  { v: '87,754', src: OURS_AUG },
     decl_old_all: { v: '658,958', src: OURS_JUL },
     decl_old_fy:  { v: '25,855',  src: OURS_JUL },
     dev_lo:       { v: '2.9',     src: OURS_JUL },
@@ -92,11 +93,11 @@
     cl_mag_dc:    { v: '58,379',  src: OURS_JUL },
     doj_gap_lo:   { v: '3.5%',    src: DOJ_5YR },
     doj_gap_hi:   { v: '7.6%',    src: DOJ_5YR },
-    mag_excl:     { v: '23,283',    src: OURS_JUL },
-    mag_1325:     { v: '15,117',    src: OURS_JUL },
-    no_dc_n:      { v: '2,687,790', src: OURS_JUL },
-    no_dc_d:      { v: '4,461,215', src: OURS_JUL },
-    no_dc_pct:    { v: '60.2%',     src: OURS_JUL },
+    mag_excl:     { v: '23,307',    src: OURS_AUG },
+    mag_1325:     { v: '15,116',    src: OURS_AUG },
+    no_dc_n:      { v: '2,694,792', src: OURS_AUG },
+    no_dc_d:      { v: '4,474,131', src: OURS_AUG },
+    no_dc_pct:    { v: '60.2%',     src: OURS_AUG },
     /* the received-date entry, both halves quoted from ONE measurement: a rebuild
        moves a live denominator and not a quoted numerator, so they are never mixed */
     pend_imp_n:   { v: '225,697',   src: OURS_JUL },
@@ -107,6 +108,17 @@
 
   /* ── LIVE figures. Each names the cube it needs; absent cube, absent figure. ── */
   var LIVE = {
+    /* the first month matters_pending carries, read from the cube and never typed */
+    mp_first_month: { needs: 'civil_pending_cube', fn: function () {
+      if (!pendingHas('matters_pending')) return null; var f = null;
+      rows('civil_pending_cube').forEach(function (r) {
+        if (r.district !== undefined && r.district !== 'National') return;
+        if (r.matters_pending !== '' && r.matters_pending != null && (f === null || r.ym < f)) f = r.ym;
+      });
+      if (!f) return null;
+      var M = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return M[+f.slice(5) - 1] + ' ' + f.slice(0, 4);
+    } },
     crim_fy: { needs: 'lions_cube', fn: function () { return lastFullFY('lions_cube'); } },
 
     crim_fy_cases: { needs: 'lions_cube', fn: function () {
@@ -319,8 +331,8 @@
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
   /* ── the pending comparison. DOJ's side is printed and cited. OUR side is read
-        live from the cube, never supplied and never written down: the matters
-        definition is still open and every one of these figures may move.
+        live from the cube, never supplied and never written down, so a rebuild moves
+        it without anyone editing this file.
         A row renders only when both halves are available.                         ── */
   var DOJ_T5 = {
     /* metric, fiscal year, role -> DOJ's printed figure, Table 5 Totals rows */
@@ -332,6 +344,20 @@
       2025: { Plaintiff: 7104, Defendant: 83887, Other: 7837 }
     },
     matters_pending: {
+      /* FY2009-FY2020: Table 5, Matters Pending, each role's Totals row; each year's three
+         roles sum to that report's printed Grand Total. FY2005 has no entry. */
+      2009: { Plaintiff: 8818, Defendant: 1290, Other: 3703 },
+      2010: { Plaintiff: 8428, Defendant: 1065, Other: 3977 },
+      2011: { Plaintiff: 8917, Defendant: 1036, Other: 4397 },
+      2012: { Plaintiff: 8220, Defendant: 939, Other: 4906 },
+      2013: { Plaintiff: 8353, Defendant: 1081, Other: 5439 },
+      2014: { Plaintiff: 7425, Defendant: 995, Other: 5390 },
+      2015: { Plaintiff: 7027, Defendant: 1386, Other: 5601 },
+      2016: { Plaintiff: 6327, Defendant: 1546, Other: 5371 },
+      2017: { Plaintiff: 6184, Defendant: 956, Other: 5368 },
+      2018: { Plaintiff: 5675, Defendant: 778, Other: 5674 },
+      2019: { Plaintiff: 7227, Defendant: 785, Other: 4664 },
+      2020: { Plaintiff: 7715, Defendant: 795, Other: 4800 },
       2021: { Plaintiff: 7945, Defendant: 860, Other: 4293 },
       2022: { Plaintiff: 7437, Defendant: 902, Other: 4111 },
       2023: { Plaintiff: 7136, Defendant: 936, Other: 4092 },
@@ -340,14 +366,18 @@
     }
   };
   var ROLE_WORDS = { Plaintiff: 'U.S. as plaintiff', Defendant: 'U.S. as defendant',
-                     Other: 'all other designations' };
+                     Other: 'all other designations',
+                     /* a SUM of the three role rows: the cube carries no role=ALL row, and the
+                        three roles partition, each record carrying exactly one. DOJ's grand
+                        total is the same sum of its three role blocks. */
+                     All: 'all three roles, added together' };
   var METRIC_WORDS = { cases_pending: 'Cases pending', matters_pending: 'Matters pending' };
 
   /* The pending series live in their OWN cubes, not as a column on civil_cube:
      civil_pending_cube (ym, [district,] category, role, cases_pending) and
      civil_agency_pending_cube. Whichever the page loaded is the one read here.
-     matters_pending is not in either cube today (deliberately held), so the matters
-     entry cannot render and its copy is kept rather than deleted.
+     matters_pending is a column in both, EMPTY before the first month it is counted
+     from, and an empty cell is absent, never a zero.
 
      ZERO SUPPRESSION. These cubes omit zero rows: a missing month inside the
      cube's own spine is a ZERO, not a gap. Reading them row by row would make a
@@ -372,6 +402,9 @@
     var lo = null, hi = null, v = null;
     rows(c).forEach(function (r) {
       if (r.district !== undefined && r.district !== 'National') return;   /* national grain only */
+      /* an EMPTY cell is absent, never a zero (+"" is 0 in JS), and the spine is the
+         column's own coverage, so months before a column begins read null */
+      if (r[metric] === '' || r[metric] === undefined) return;
       if (lo === null || r.ym < lo) lo = r.ym;
       if (hi === null || r.ym > hi) hi = r.ym;
       if (isTotalRow(r) && r.role === role && r.ym === ym) v = num(r, metric);
@@ -396,9 +429,25 @@
           if (ours === null) return;
           out.push([METRIC_WORDS[m], 'FY' + y, ROLE_WORDS[role], ours, DOJ_T5[m][y][role]]);
         });
+        /* the all-roles row, drawn only when all three role rows were, so a total is never
+           a sum over a missing part */
+        var tot = pendingTotal(m, y);
+        if (tot) out.push([METRIC_WORDS[m], 'FY' + y, ROLE_WORDS.All, tot.ours, tot.doj, 'tot']);
       });
     });
     return out.length ? out : null;
+  }
+  /* ours and DOJ's for all three roles at one 30 September, or null when any one of the
+     three is unavailable */
+  function pendingTotal(m, y) {
+    if (!pendingHas(m) || !DOJ_T5[m][y]) return null;
+    var c = pendingCube(); if (!c || (y + '-09') > edge(c)) return null;
+    var ours = 0, doj = 0, ok = true;
+    ['Plaintiff', 'Defendant', 'Other'].forEach(function (role) {
+      var v = pendingAt(m, y + '-09', role);
+      if (v === null) ok = false; else { ours += v; doj += DOJ_T5[m][y][role]; }
+    });
+    return ok ? { ours: ours, doj: doj } : null;
   }
   function wrapTable(html, label) {
     if (!html) return '';
@@ -431,7 +480,7 @@
         '<thead><tr><th scope="col">Fiscal year</th><th scope="col">United States role</th>' +
         '<th scope="col">Here</th><th scope="col">DOJ published</th><th scope="col">Difference</th></tr></thead><tbody>' +
         PR.map(function (r) {
-          return '<tr><td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td>' +
+          return '<tr' + (r[5] === 'tot' ? ' class="tot"' : '') + '><td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td>' +
             '<td class="n">' + fmt(r[3]) + '</td><td class="n">' + fmt(r[4]) + '</td>' +
             '<td class="n">' + word(r[3] / r[4]) + '</td></tr>';
         }).join('') + '</tbody></table>';
@@ -459,7 +508,7 @@
     'e-doj-3b':             ['lions_cube'],
     'e-doj-t4':             ['civil_cube'],
     'e-doj-t5-cases':       ['civil_pending_cube'],
-    'e-pending-entry-date': [],
+    'e-pending-entry-date': ['civil_pending_cube'],   /* its table and its first-month clause read the pending cube */
     'e-two-crim':           ['lions_cube', 'agency_cube'],
     'e-cat-overlap':        ['lions_cube'],
     'e-ag-overlap':         ['agency_cube']

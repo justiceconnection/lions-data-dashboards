@@ -5,22 +5,10 @@ const NUM=["cases_filed","defendants_filed","cases_terminated","defendants_termi
 const PALETTE=["#212123","#2a78d6","#d9622b","#1d9e75","#7a4fc0","#c02d5a","#0e8a8a","#b8860b","#5a6acf","#c23b8a","#7a7b76","#2f9e44","#e06a2b","#3b6fd4"];
 const CATPAL=(window.LIONS_PAL||PALETTE);
 const RPAL=["#2a78d6","#c02d5a","#1d9e75","#7a4fc0","#0e8a8a","#d9622b"];
-const MULT=(window.LIONS_MULT&&window.LIONS_MULT.criminal)||{cases_filed:[1.3018,1.0759,1.0437,1.0274,1.0227,1.017,1.0131,1.0118],cases_terminated:[2.9339,1.9899,1.6706,1.4302,1.248,1.1781,1.136,1.0995]};
-function hasPred(m){ return m==='cases_filed'||m==='cases_terminated'||m==='clearance'; }
-function predMetric(R, metric){
-  if(metric==='cases_filed') return predOf(R.filed,'cases_filed');
-  if(metric==='cases_terminated') return predOf(R.term,'cases_terminated');
-  if(metric==='clearance'){ const pf=predOf(R.filed,'cases_filed'), pt=predOf(R.term,'cases_terminated');
-    return pf.map((f,i)=> (f!=null&&f>0)?100*pt[i]/f:null); }
-  return null; }
-function predOf(arr, metric){ const mm=MULT[metric]; if(!mm) return null; const last=SPINE.length-1;
-  return arr.map((v,i)=>{ if(v==null) return null; const age=last-i; return v*(age>=0&&age<mm.length?mm[age]:1); }); }
 const METRICS=[["cases_filed","Cases filed"],["cases_terminated","Cases terminated"],["clearance","Clearance %"],["defendants_filed","Defendants filed"],["defendants_terminated","Defendants terminated"],["guilty_pct","Guilty disposition %"],["dismissed_pct","Dismissed disposition %"]];
-// Each band's `to` is its LAST month, not the next administration's first. `b` in ADMINS
-// (shared/config.js) is an EXCLUSIVE end, and visIdx() filters from <= ym <= to, so a `to`
-// of "2021-01" put 2021-01, the next administration's first month, inside the Trump I
-// range and made it 49 months against the band's 48.
-const PRESETS={obama2:["2013-01","2016-12"],trump1:["2017-01","2020-12"],biden:["2021-01","2024-12"],trump2:["2025-01","2026-06"],all:["2013-01","2026-06"]};
+// The presets come from ADMINS in shared/config.js (adminPresets() there): each `to` is the
+// band's LAST month, because visIdx() filters from <= ym <= to and `b` is an exclusive end.
+const PRESETS=adminPresets(state.to);
 const CURRENT="index.html";
 // Provisional (right-censored) data.
 // All the logic lives in shared/provisional.js; this page only makes calls.
@@ -61,11 +49,13 @@ function aggregateRaw(nat, full, spine, dists, cats){
     if(catAll){ if(!(r.grp==='ALL'&&sub(r)==='ALL')) return; }
     else { if(r.grp==='ALL'||r.occ!==occ) return; if(!targets.has(r.grp+'\u0001'+sub(r))) return; }
     let o=idx.get(r.ym);
-    if(!o){o={filed:0,term:0,df:0,dt:0,guilty:0,dismissed:0}; idx.set(r.ym,o);}
-    o.filed+=r.cases_filed; o.term+=r.cases_terminated; o.df+=r.defendants_filed; o.dt+=r.defendants_terminated; o.guilty+=r.guilty; o.dismissed+=r.dismissed; };
+    if(!o){o={filed:0,term:0,df:0,dt:0,guilty:0,dismissed:0,not_guilty:0,rule_20_21:0,other:0}; idx.set(r.ym,o);}
+    o.filed+=r.cases_filed; o.term+=r.cases_terminated; o.df+=r.defendants_filed; o.dt+=r.defendants_terminated; o.guilty+=r.guilty; o.dismissed+=r.dismissed;
+    o.not_guilty+=r.not_guilty; o.rule_20_21+=r.rule_20_21; o.other+=r.other; };
   if(useNat){ for(const r of nat) add(r); } else { for(const r of full) if(dists.has(r.district)) add(r); }
-  const R={filed:[],term:[],df:[],dt:[],guilty:[],dismissed:[]};
-  for(const ym of spine){ const o=idx.get(ym); R.filed.push(o?o.filed:0); R.term.push(o?o.term:0); R.df.push(o?o.df:0); R.dt.push(o?o.dt:0); R.guilty.push(o?o.guilty:0); R.dismissed.push(o?o.dismissed:0); }
+  const R={filed:[],term:[],df:[],dt:[],guilty:[],dismissed:[],not_guilty:[],rule_20_21:[],other:[]};
+  for(const ym of spine){ const o=idx.get(ym); R.filed.push(o?o.filed:0); R.term.push(o?o.term:0); R.df.push(o?o.df:0); R.dt.push(o?o.dt:0); R.guilty.push(o?o.guilty:0); R.dismissed.push(o?o.dismissed:0);
+    R.not_guilty.push(o?o.not_guilty:0); R.rule_20_21.push(o?o.rule_20_21:0); R.other.push(o?o.other:0); }
   return R;
 }
 const mean3=(a,i)=> i<2?null:(a[i]+a[i-1]+a[i-2])/3;
@@ -407,14 +397,28 @@ function tblInvalidate(){
   document.getElementById('dl').disabled=over; document.getElementById('dl2').disabled=over;
 }
 
-const adminBands={id:'admin',beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
+const adminBands={id:'admin',
+  // The era names sit in a 16px strip reserved ABOVE the plot, so no data can cover them: a stacked chart's fills cover the whole plot. Each band's own tint runs up into the strip, so a name sits in the band it names. Names, spans and tints all come from ADMINS in shared/config.js.
+  beforeInit(ch){ window.Chart.layouts.addBox(ch,{position:'top',weight:0,fullSize:false,options:{},isHorizontal(){return true;},update(w){ this.width=w; this.height=16; },draw(){}}); },
+  beforeDraw(ch){ const labels=ch.data._ym||ch.data.labels; if(!labels||!labels.length)return;
   const x=ch.scales.x,area=ch.chartArea,ctx=ch.ctx; const half=labels.length>1?Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))/2:10;
+  const top=area.top-16, spans=[];
   for(const ad of ADMINS){ let s=-1,e=-1; for(let i=0;i<labels.length;i++){ if(labels[i]>=ad.a&&labels[i]<ad.b){ if(s<0)s=i; e=i; } }
     if(s<0)continue; const x0=x.getPixelForValue(s)-half,x1=x.getPixelForValue(e)+half;
-    ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,area.top,x1-x0,area.bottom-area.top);
-    ctx.fillStyle='rgba(70,70,66,0.7)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
-    if(x1-x0>44) ctx.fillText(ad.name,(x0+x1)/2,area.top+11); ctx.restore(); }
-}};
+    ctx.save(); ctx.fillStyle=ad.c; ctx.fillRect(x0,top,x1-x0,area.bottom-top); ctx.restore();
+    spans.push({name:ad.name,l:Math.max(x0,area.left),r:Math.min(x1,area.right)}); }
+  // A name is centred in its band when it fits. One that does not fit is pinned to the plot edge instead, but only for the first or last band and only when the band is at least half the name's width; centred names are placed first and a pinned one never overlaps them.
+  ctx.save(); ctx.font='11px sans-serif'; ctx.fillStyle='#4f504c'; ctx.textAlign='left';
+  const fit=[],pin=[],done=[];
+  spans.forEach((sp,i)=>{ const w=ctx.measureText(sp.name).width, span=sp.r-sp.l;
+    if(w+6<=span) fit.push([sp.name,(sp.l+sp.r)/2-w/2,w]);
+    else if(span>=w/2&&i===spans.length-1&&sp.r>=area.right-0.5) pin.push([sp.name,area.right-2-w,w]);
+    else if(span>=w/2&&i===0&&sp.l<=area.left+0.5) pin.push([sp.name,area.left+2,w]); });
+  for(const [name,lx,w] of fit.concat(pin)){ if(done.some(([a,b])=>lx<b+6&&lx+w>a-6))continue; done.push([lx,lx+w]); ctx.fillText(name,lx,area.top-4); }
+  ctx.restore(); }
+};
+// The era strip must never stop a chart drawing: a hook that throws logs the error and the chart renders without it.
+for(const k of ['beforeInit','beforeDraw']){ const f=adminBands[k]; adminBands[k]=function(){ try{ return f.apply(this,arguments); }catch(e){ console.error(e); } }; }
 
 const TT={enabled:false,external:extTooltip};
 function renderChart(){
@@ -478,7 +482,7 @@ function renderChart2(){
   } else {
     datasets=cats.map(c=>{ const col=catColor(c); return {label:c,data:totB.map((t,bi)=>t?100*cAB[c][bi]/t:null),borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true}; });
   }
-  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor}"></span>${ds.label}</span>`).join("")
+  document.getElementById("legend2").innerHTML=(state.mixMode==='stacked'?datasets:[{label:datasets[0].label,borderColor:'#212123'}]).map(ds=>`<span class="lg"><span class="sw" style="background:${ds.borderColor};box-shadow:inset 0 0 0 1px var(--mut)"></span>${ds.label}</span>`).join("")
     + (PV.anyProv(flagsMix)?PV.legendChip(nMix,'mix'):'');
   document.getElementById("chart2Title").textContent="Program Category Distribution";
   if(typeof window==='undefined'||!window.Chart){ return; }
@@ -493,6 +497,68 @@ function renderChart2(){
   if(chart2) chart2.destroy();
   chart2=mkChart(document.getElementById('chart2').getContext('2d'),cfg);
 }
+
+/* ── CHART 3: OUTCOMES OTHER THAN GUILTY ──────────────────────────────────────────
+   The four non-guilty dispositions, stacked, each as a share of the SELECTION'S OWN
+   defendants_terminated - never the ALL row and never chart 2's denominator, so the four
+   plus Guilty always make 100. Guilty itself is not drawn: it is about 95% of every period
+   and would flatten the other four into a few pixels. The subhead says the rest of each
+   period is Guilty, and Guilty's range share stays in the aria-label and in the table.
+   The dispositions count DEFENDANTS, each under the outcome recorded for their case.
+   Row selection is aggregateRaw()'s: "All categories" reads the cube's total row, which
+   exists only at occ='all', so that branch does not test occ, on purpose.
+   Ratio-of-sums: every numerator and the denominator are bucketed first, then divided
+   once. A bucket with no defendants terminated is null (a gap), never 0.
+   Order is a channel: top band first = legend order = the table's column order. */
+const DISP3=[
+  ['not_guilty','Not guilty','#231820'],
+  ['dismissed','Dismissed','#53A33B'],
+  ['rule_20_21','Rule 20/21','#193B79'],
+  ['other','Other disposition','#6B6C68']
+];
+const DISP3_GUILTY='Guilty';
+const C3={
+  axis:'% of defendants terminated',
+  empty:'No defendants were terminated in this selection and date range, so there is no disposition mix to show.',
+  ariaHead:'Outcomes other than guilty over time as percent of defendants terminated.',
+  ariaRange:'Across the whole date range:'
+};
+let chart3=null, M3=null;
+function chart3Model(){
+  const B=grainBuckets(SPINE,visIdx(),state.grain);
+  const R=bucketComp(aggregateRaw(NAT,FULL,SPINE,state.dists,state.cats),B);
+  const den=R.dt, totDen=den.reduce((a,b)=>a+b,0);
+  const shares={}, range={};
+  for(const k of ['guilty',...DISP3.map(d=>d[0])]){
+    shares[k]=den.map((t,i)=>t>0?100*R[k][i]/t:null);
+    range[k]=totDen>0?100*R[k].reduce((a,b)=>a+b,0)/totDen:null; }
+  const n=PV.n('defendants_terminated',PVOPT);
+  return {B,labels:grainLabels(B),ymAxis:B.map(b=>SPINE[b.idxs[0]]),shares,range,n,flags:PV.bucketFlags(SPINE,B,n),empty:totDen===0};
+}
+function renderChart3(){
+  M3=null;
+  const M=chart3Model(), box=document.getElementById('chart3box'), msg=document.getElementById('chart3msg'), lg=document.getElementById('legend3');
+  if(M.empty){ box.style.display='none'; msg.style.display='block'; msg.textContent=C3.empty; lg.innerHTML='';
+    if(chart3){ chart3.destroy(); chart3=null; } M3=M; return; }
+  box.style.display=''; msg.style.display='none'; msg.textContent='';
+  const anyProv=PV.anyProv(M.flags);
+  lg.innerHTML=DISP3.map(([k,name,col])=>`<span class="lg"><span class="sw" style="background:${col};box-shadow:inset 0 0 0 1px var(--mut)"></span>${name}</span>`).join('')
+    + (grainAnyPartial(M.B)?'<span class="lg" style="color:var(--mut)">* partial period (fewer months than the full period)</span>':'')
+    + (anyProv?PV.legendChip(M.n,'mix'):'');
+  M3=M;
+  if(typeof window==='undefined'||!window.Chart){ return; }
+  const datasets=DISP3.map(([k,name,col])=>({label:name,data:M.shares[k],borderColor:col,backgroundColor:col+'cc',fill:true,tension:.2,pointRadius:0,borderWidth:0.8,_pct:true,_col:col,_stacked:true}));
+  const cfg={type:'line',data:{labels:M.labels,datasets:datasets.slice().reverse(),_ym:M.ymAxis,_prov:anyProv?M.flags:null},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:TT},
+      scales:{x:{grid:{display:false,drawTicks:false},ticks:{color:'#6b6c68',font:{size:11},autoSkip:state.grain!=='month',maxRotation:0,padding:6,callback:grainTick(state.grain)}},
+        y:{stacked:true,beginAtZero:true,title:{display:true,text:C3.axis,color:'#6b6c68',font:{size:11}},ticks:{color:'#6b6c68',font:{size:11},callback:v=>v+'%'},grid:{color:'#e6e6e3'}}}},
+    plugins:[adminBands,PV.plugin]};
+  if(chart3) chart3.destroy();
+  chart3=mkChart(document.getElementById('chart3').getContext('2d'),cfg);
+}
+/* Additive to charts 1 and 2: a throw in here is logged and leaves them drawn. */
+function renderChart3Safe(){ try{ renderChart3(); }catch(e){ console.warn('chart 3 render failed', e); } }
 
 function updateChartAccessibility(){
   const chartEl=document.getElementById('chart');
@@ -526,6 +592,21 @@ function updateChartAccessibility(){
   chart2El.setAttribute('aria-label',
     `Program category distribution over time as a share of cases filed, ${mixText}. Filters: ${distText}; ${catText}; ${state.from} to ${state.to}; counting basis ${basisText}.${provA2}`
   );
+
+  // Chart 3. Guarded so a failure here cannot cost charts 1 and 2 their labels or the table.
+  try{
+    const chart3El=document.getElementById('chart3');
+    if(chart3El && M3){
+      if(M3.empty){ chart3El.setAttribute('aria-label',C3.empty); }
+      else {
+        const rng=' '+C3.ariaRange+' '+[['guilty',DISP3_GUILTY],...DISP3].map(([k,name])=>name+' '+M3.range[k].toFixed(1)+'%').join(', ')+'.';
+        const aCut3=PV.cutIndex(SPINE,M3.n);
+        const provA3=visIdx().some(i=>i>aCut3)?(' '+PV.noteText(M3.n,'mix')):'';
+        chart3El.setAttribute('aria-label',
+          `${C3.ariaHead} Filters: ${distText}; ${catText}; ${state.from} to ${state.to}; counting basis ${basisText}.${rng}${provA3}`);
+      }
+    }
+  }catch(e){ console.warn('chart 3 label failed', e); }
 }
 
 function render(){
@@ -541,7 +622,7 @@ function render(){
      failure messages belong to ensureFull(), which is the only thing that knows which
      one is true. A render that wrote here would wipe a failure within one tick. */
   if(needFull && !FULL) return;
-  renderTopline(); renderChart(); renderChart2(); updateChartAccessibility(); tblInvalidate(); }
+  renderTopline(); renderChart(); renderChart2(); renderChart3Safe(); updateChartAccessibility(); tblInvalidate(); }
 
 /* ── THE CSV ────────────────────────────────────────────────────────────────────────
  * It MIRRORS the table: same rows, same order, same figures, same metric column set,
@@ -800,8 +881,9 @@ async function init(){ renderNav();
     if(state.seriesBy==='district') await ensureFull(); if(state.ax2by==='series') buildAx2Picker(); render(); }));
   document.querySelectorAll('#mixMode button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mixMode button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.mixMode=b.dataset.v; renderChart2(); }));
   // The table follows Group by: its period column IS the chart's
-  // bucket, so a grain change has to rebuild it as well as the two charts.
-  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); tblInvalidate(); }));
+  // bucket, so a grain change has to rebuild it as well as the three charts. The chart 3
+  // label needs no call here: its range shares are the same at every grain.
+  document.querySelectorAll('#grain button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#grain button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.grain=b.dataset.v; renderTopline(); renderChart(); renderChart2(); renderChart3Safe(); tblInvalidate(); }));
   document.querySelectorAll('#occ button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#occ button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.occ=b.dataset.v; render(); }));
   document.querySelectorAll('#ax2by button').forEach(b=>b.addEventListener('click',async()=>{ document.querySelectorAll('#ax2by button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.ax2by=b.dataset.v; if(state.ax2by!=='metric'&&state.seriesBy==='district') await ensureFull(); buildAx2Picker(); renderChart(); }));
   document.querySelectorAll('#presets button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.p;
@@ -811,7 +893,7 @@ async function init(){ renderNav();
     const contig=idx.length===0||(idx[idx.length-1]-idx[0]+1===idx.length);
     state.admins=contig?ns:new Set([k]); applyAdmins(); render(); }));
   for(const id of ["from","to"]){ const el=document.getElementById(id); el.min=ms[0]; el.max=ms[ms.length-1]; }
-  state.to=ms[ms.length-1];PRESETS.trump2[1]=state.to;PRESETS.all[1]=state.to;document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
+  state.to=ms[ms.length-1];Object.assign(PRESETS,adminPresets(state.to));document.getElementById("from").value=state.from; document.getElementById("to").value=state.to;
   document.getElementById("from").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.from=e.target.value; render(); });
   document.getElementById("to").addEventListener("change",e=>{ state.admins.clear(); document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on')); state.to=e.target.value; render(); });
   /* The screen/file difference line is a CONSTANT and is set once here,
